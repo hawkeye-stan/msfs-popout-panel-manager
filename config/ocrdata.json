@@ -1,0 +1,58 @@
+﻿[
+  // G1000
+  {
+    "profile": "G1000",
+    "defaultProfile": "true",
+    "ocrImageScale": 1.0,
+    "evalData": [
+      {
+        "popoutName": "PFD",
+        "data": [ "PFD", "XPDR", "Nearest", "MAP/HSI", "Ident", "Tmr/Ref" ]
+      },
+      {
+        "popoutName": "MFD",
+        "data": [ "FUEL", "QTY", "GAL", "FFLOW GPH", "OIL", "PRESS", "ELECTRICAL", "BATT", "VOLTS", "Navigation Map" ]
+      }
+    ]
+  },
+  // G3000
+  {
+    "profile": "G3000",
+    "defaultProfile": "false",
+    "ocrImageScale": 1.0,
+    "evalData": [
+      {
+        "popoutName": "FMS",
+        "data": [ "PFD Home", "NAV SOURCE", "Bearing 1", "Bearing 2", "Bearing", "Speed Bugs", "Timers", "Minimums", "PDF Settings" ]
+      },
+      {
+        "popoutName": "PFD",
+        "data": [ "PFD", "PDF Map", "Ranges", "Range+", "Range-", "Active Nav", "WX Radar", "WX", "Controls" ]
+      },
+      {
+        "popoutName": "MFD",
+        "data": [ "STBY", "PROP", "FUEL", "OIL", "OIL PSI", "PRESS", "CABIN PRESS", "DIFF PSI", "ELECTRICAL", "BATT", "VOLTS", "Navigation Map" ]
+      }
+    ]
+  },
+  // Custom Sample Profile - delete this if you don't need it
+  {
+    "profile": "Custom Sample Profile",
+    "defaultProfile": "false",
+    "ocrImageScale": 1.0,
+    "evalData": [
+      {
+        "popoutName": "Whatever Panel 1",
+        "data": [ "Text to detect 1", "Text to detect 2" ]
+      },
+      {
+        "popoutName": "Whatever Panel 2",
+        "data": [ "Text to detect 3", "Text to detect 4" ]
+      },
+      {
+        "popoutName": "Whatever Panel 3",
+        "data": [ "Text to detect 4", "Text to detect 4" ]
+      }
+    ]
+  }
+]

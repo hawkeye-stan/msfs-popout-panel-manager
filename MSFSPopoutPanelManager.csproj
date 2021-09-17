@@ -1,0 +1,111 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Platforms>x64</Platforms>
+    <Version>1.0</Version>
+    <AssemblyName>MSFSPopoutPanelManager</AssemblyName>
+    <RootNamespace>MSFSPopoutPanelManager</RootNamespace>
+    <ApplicationIcon>WindowManager.ico</ApplicationIcon>
+    <Authors>Stanley Kwok</Authors>
+    <Product>MSFS Popout Window Manager</Product>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="UIAutomationClient">
+      <HintPath>..\..\..\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\UIAutomationClient.dll</HintPath>
+    </Reference>
+    <Reference Include="UIAutomationTypes">
+      <HintPath>..\..\..\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\UIAutomationTypes.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="C:\Users\hawkeye\.nuget\packages\tesseract\4.1.1\build\\..\x86\leptonica-1.80.0.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="C:\Users\hawkeye\.nuget\packages\tesseract\4.1.1\build\\..\x86\tesseract41.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.3" />
+    <PackageReference Include="Tesseract" Version="4.1.1" />
+    <PackageReference Include="Tesseract.Data.English" Version="4.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\hawkeye\.nuget\packages\tesseract.data.english\4.0.0\build\tessdata\eng.traineddata" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="MainWindow.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="ChildWindow.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="config\ocrdata.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="OcrEvalData.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="Rect.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="WindowManager.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="MainForm.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="FileManager.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="UserData.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="GenericEventArgs.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="README.md" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="AnalysisEngine.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="images\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="LICENSE" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="LICENSE">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="README.md">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
