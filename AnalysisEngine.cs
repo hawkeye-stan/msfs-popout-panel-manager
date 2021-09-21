@@ -15,34 +15,37 @@ namespace MSFSPopoutPanelManager
 {
     public class AnalysisEngine
     {
-        [DllImport("user32.dll", EntryPoint = "GetWindowText",
-        ExactSpelling = false, CharSet = CharSet.Auto, SetLastError = true)]
-        private static extern int GetWindowText(IntPtr hWnd, StringBuilder lpWindowText, int nMaxCount);
-
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool EnumChildWindows(IntPtr window, EnumWindowProc callback, IntPtr lParam);
 
-        [DllImport("user32.dll", ExactSpelling = true, CharSet = System.Runtime.InteropServices.CharSet.Auto)]
-        public static extern int GetWindowThreadProcessId(IntPtr hWnd, out int lpdwProcessId);
-
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern Int32 GetClassName(IntPtr hWnd, StringBuilder StrPtrClassName, Int32 nMaxCount);
+
+        [DllImport("user32.dll", ExactSpelling = true, CharSet = CharSet.Auto)]
+        public static extern int GetWindowThreadProcessId(IntPtr hWnd, out int lpdwProcessId);
+
+        [DllImport("user32.dll", ExactSpelling = false, CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern int GetWindowText(IntPtr hWnd, StringBuilder lpWindowText, int nMaxCount);
+
+        [DllImport("user32.dll")]
+        public static extern bool SetWindowText(System.IntPtr hwnd, System.String lpString);
 
         [DllImport("user32.dll")]
         private static extern int GetWindowRect(IntPtr hwnd, out Rect lpRect);
 
-        [DllImport("user32.dll", EntryPoint = "SetWindowPos")]
-        public static extern IntPtr SetWindowPos(IntPtr hWnd, int hWndInsertAfter, int x, int Y, int cx, int cy, int wFlags);
+        [DllImport("user32.dll")]
+        static extern bool MoveWindow(IntPtr hWnd, int x, int y, int width, int height, bool repaint);
 
-        [DllImport("user32.dll", SetLastError = true)]
+        [DllImport("user32.dll")]
+        public static extern IntPtr SetWindowPos(IntPtr hWnd, int hWndInsertAfter, int x, int y, int cx, int cy, uint wFlags);
+
+        [DllImport("user32.dll")]
         static extern bool SetForegroundWindow(IntPtr hWnd);
 
         private delegate bool EnumWindowProc(IntPtr hwnd, IntPtr lParam);
-        private const short SWP_NOZORDER = 0X4;
-        private const int SWP_SHOWWINDOW = 0x0040;
+        const int SWP_SHOWWINDOW = 0x0040;
 
-        
         public AnalysisEngine() { }
 
         public event EventHandler<EventArgs<string>> OnStatusUpdated;
@@ -91,8 +94,16 @@ namespace MSFSPopoutPanelManager
                 childWindow.ClassName = className.ToString();
             }
 
-            // Remove all child windows where class name is not 'AceApp'
+            // Remove all child windows where class name is not 'AceApp' and try to determine popout type
             simWindow.ChildWindowsData.RemoveAll(x => x.ClassName != "AceApp" || (x.Title != null && x.Title.Contains("Microsoft Flight Simulator", StringComparison.CurrentCultureIgnoreCase)));
+            simWindow.ChildWindowsData = simWindow.ChildWindowsData.GroupBy(x => x.Handle).Select(g => g.First()).ToList();
+            
+            simWindow.ChildWindowsData.ForEach(x => {
+                if (String.IsNullOrEmpty(x.Title) || x.Title.Contains("Custom - ") || x.Title.Contains("Failed Analysis"))
+                     x.PopoutType = PopoutType.Custom;
+                else
+                    x.PopoutType = PopoutType.BuiltIn;
+            });
 
             if(simWindow.ChildWindowsData.Count > 0)
             {
@@ -102,9 +113,9 @@ namespace MSFSPopoutPanelManager
 
                 foreach (var childWindow in simWindow.ChildWindowsData)
                 {
-                    // Figure out what windows is what?
-                    if (String.IsNullOrEmpty(childWindow.Title))
+                    if (childWindow.PopoutType == PopoutType.Custom)
                     {
+                        // Figure out what windows is what?
                         // Theses are the windows with no system menu bar title (ie. PFD, MFD, FMS, etc)
                         // We need to take a screenshot and do OCR to try to figure them out
                         Rect rect = new Rect();
@@ -118,23 +129,23 @@ namespace MSFSPopoutPanelManager
                         var newHeight = Convert.ToInt32(originalHeight * ocrImageScale);
                         rect.Right = rect.Left + newWidth;
                         rect.Bottom = rect.Top + newHeight;
-                        SetWindowPos(childWindow.Handle, 0, rect.Left, rect.Top, newWidth, newHeight, SWP_NOZORDER | SWP_SHOWWINDOW);
+                        MoveWindow(childWindow.Handle, rect.Left, rect.Top, newWidth, newHeight, true);
                         SetForegroundWindow(childWindow.Handle);
                         Thread.Sleep(500);
 
                         var image = TakeScreenShot(rect);
-                        SetWindowPos(childWindow.Handle, 0, rect.Left, rect.Top, originalWidth, originalHeight, SWP_NOZORDER | SWP_SHOWWINDOW);
-
+                        MoveWindow(childWindow.Handle, rect.Left, rect.Top, originalWidth, originalHeight, true);
+                        
                         // OCR the image into text
                         var imageText = OcrImage(image);
                         var popoutName = EvaluateImageText(imageText, ocrEvaluationData);
-                        childWindow.Title = childWindow.Title ?? popoutName;
-                        childWindow.PopoutType = PopoutType.Custom;
+                        childWindow.Title = popoutName == null ? $"Failed Analysis - {childWindow.Handle}" : $"Custom - {popoutName}";
+                        childWindow.PopoutType = popoutName == null ? PopoutType.Undetermined : PopoutType.Custom;
 
-                        if(!debugInfo.TryAdd(popoutName ?? $"Failed Analysis - {childWindow.Handle.ToString()}", imageText))
-                        {
-                            debugInfo.Add($"{popoutName} - {childWindow.Handle.ToString()}", imageText);
-                        }
+                        SetWindowText(childWindow.Handle, childWindow.Title);
+
+                        if (!debugInfo.TryAdd(childWindow.Title, imageText))
+                            debugInfo.Add($"{childWindow.Title} - {childWindow.Handle}", imageText);
                     }
                 }
 
@@ -144,6 +155,8 @@ namespace MSFSPopoutPanelManager
 
                 // Remove all windows that cannot be identified
                 simWindow.ChildWindowsData.RemoveAll(x => x.Title == null);
+
+                OnStatusUpdated?.Invoke(this, new EventArgs<string>("Anaylsis completed."));
             }
             else
             {
@@ -239,8 +252,7 @@ namespace MSFSPopoutPanelManager
 
             return result.GetText();
         }
-
-        
+                
         private string EvaluateImageText(string imageText, OcrEvalData ocrEvaluationData)
         {
             if(ocrEvaluationData != null)

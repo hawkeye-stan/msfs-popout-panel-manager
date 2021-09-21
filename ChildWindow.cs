@@ -6,7 +6,7 @@ namespace MSFSPopoutPanelManager
     {
         public ChildWindow()
         {
-            PopoutType = PopoutType.BuiltIn;
+            PopoutType = PopoutType.Undetermined;
         }
 
         public int ProcessId { get; set; }
@@ -23,6 +23,7 @@ namespace MSFSPopoutPanelManager
     public enum PopoutType
     {
         BuiltIn,
-        Custom
+        Custom,
+        Undetermined
     }
 }

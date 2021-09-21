@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -12,6 +13,14 @@ namespace MSFSPopoutPanelManager
     {
         private SynchronizationContext _syncRoot;
         private WindowManager _popoutWindowsManager;
+
+        private static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
+        private const UInt32 SWP_NOSIZE = 0x0001;
+        private const UInt32 SWP_NOMOVE = 0x0002;
+        private const UInt32 TOPMOST_FLAGS = SWP_NOMOVE | SWP_NOSIZE;
+
+        [DllImport("user32.dll", EntryPoint = "SetWindowPos")]
+        public static extern IntPtr SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int x, int Y, int cx, int cy, uint wFlags);
 
         public MainForm()
         {
@@ -26,6 +35,11 @@ namespace MSFSPopoutPanelManager
             _popoutWindowsManager.OnSimulatorStarted += HandleOnSimulatorStarted;
             _popoutWindowsManager.OnOcrDebugged += HandleOnOcrDebugged;
             _popoutWindowsManager.CheckSimulatorStarted();
+
+            SetWindowPos(this.Handle, HWND_TOPMOST, this.Left, this.Top, this.Width, this.Height, TOPMOST_FLAGS);
+
+            var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+            lblVersion.Text += version.ToString();
         }
 
         private void btnAnalyze_Click(object sender, EventArgs e)
@@ -33,15 +47,26 @@ namespace MSFSPopoutPanelManager
             txtStatus.Clear();
 
             var profile = GetProfileDropDown();
-            _popoutWindowsManager.Analyze(profile);
+            var success = _popoutWindowsManager.Analyze(profile);
+
+            btnApplySettings.Enabled = success;
+            btnSaveSettings.Enabled = success;
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private void btnApplySettings_Click(object sender, EventArgs e)
         {
             txtStatus.Clear();
 
             var profile = GetProfileDropDown();
-            _popoutWindowsManager.SaveProfile(profile);
+            _popoutWindowsManager.ApplySettings(profile, chkHidePanelTitleBar.Checked, chkAlwaysOnTop.Checked);
+        }
+
+        private void btnSaveSettings_Click(object sender, EventArgs e)
+        {
+            txtStatus.Clear();
+
+            var profile = GetProfileDropDown();
+            _popoutWindowsManager.SaveSettings(profile, chkHidePanelTitleBar.Checked, chkAlwaysOnTop.Checked);
         }
 
         private void SetProfileDropDown()
@@ -81,6 +106,7 @@ namespace MSFSPopoutPanelManager
         private void HandleOnSimulatorStarted(object source, EventArgs arg)
         {
             _syncRoot.Post(SetMsfsRunningMessage, "MSFS is running");
+            
         }
 
         private void SetMsfsRunningMessage(object arg)
@@ -93,7 +119,6 @@ namespace MSFSPopoutPanelManager
             }
 
             btnAnalyze.Enabled = true;
-            btnSave.Enabled = true;
         }
 
         private void HandleOnOcrDebugged(object source, EventArgs<Dictionary<string, string>> arg)
@@ -127,6 +152,62 @@ namespace MSFSPopoutPanelManager
                     tabControlOcrDebug.TabPages.Add(tabPage);
                 }
             }
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            notifyIcon1.BalloonTipText = "Application Minimized";
+            notifyIcon1.BalloonTipTitle = "MSFS 2020 Pop Out Panel Manager";
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            // Put all panels popout back to original state
+            _popoutWindowsManager.RestorePanelTitleBar();
+        }
+
+        private void MainForm_Resize(object sender, EventArgs e)
+        {
+            if (this.WindowState == FormWindowState.Minimized)
+            {
+                if (checkBoxMinimizeToTray.Checked)
+                {
+                    ShowInTaskbar = false;
+                    notifyIcon1.Visible = true;
+                    notifyIcon1.ShowBalloonTip(1000);
+                }
+            }
+        }
+
+        private void notifyIcon1_DoubleClick(object sender, EventArgs e)
+        {
+            ShowInTaskbar = true;
+            notifyIcon1.Visible = false;
+            WindowState = FormWindowState.Normal;
+        }
+
+        private void comboBoxProfile_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var userData = FileManager.ReadUserData();
+
+            if (userData != null)
+            {
+                var userProfile = userData.Profiles.Find(x => x.Name == Convert.ToString(comboBoxProfile.SelectedValue));
+                if (userProfile != null)
+                {
+                    chkAlwaysOnTop.Checked = userProfile.AlwaysOnTop;
+                    chkHidePanelTitleBar.Checked = userProfile.HidePanelTitleBar;
+                }
+                else
+                {
+                    // default values
+                    chkAlwaysOnTop.Checked = false;
+                    chkHidePanelTitleBar.Checked = false;
+                }
+            }
+
+            btnApplySettings.Enabled = false;
+            btnSaveSettings.Enabled = false;
         }
     }
 }

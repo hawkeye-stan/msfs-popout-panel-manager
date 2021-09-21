@@ -8,7 +8,9 @@ namespace MSFSPopoutPanelManager
 
         public bool DefaultProfile { get; set; }
 
-        // scale the image so OCR can better recognize the text
+        /// <summary>
+        /// Scale the image so OCR can better recognize text
+        /// </summary>
         public double OCRImageScale { get; set; }
 
         public List<PopoutEvalData> EvalData { get; set; }

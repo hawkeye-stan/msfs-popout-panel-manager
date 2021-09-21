@@ -5,12 +5,13 @@
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <Platforms>x64</Platforms>
-    <Version>1.0</Version>
+    <Version>1.1</Version>
     <AssemblyName>MSFSPopoutPanelManager</AssemblyName>
     <RootNamespace>MSFSPopoutPanelManager</RootNamespace>
     <ApplicationIcon>WindowManager.ico</ApplicationIcon>
     <Authors>Stanley Kwok</Authors>
-    <Product>MSFS Popout Window Manager</Product>
+    <Product>MSFS 2020 Popout Window Manager</Product>
+    <PackageId>MSFS 2020 Popout Panel Manager</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -103,9 +104,16 @@
     <None Update="LICENSE">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Vesion.md">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="README.md">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="Vesion.md" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-﻿# MSFS Pop Out Panel Manager
+# MSFS Pop Out Panel Manager
 MSFS Pop Out Panel Manager is a utility application for MSFS 2020 which helps save and position pop out panels such as PDF and MFD to be used by applications such as Sim Innovations Air Manager's overlay. This is a **proof of concept** application since I do not use Air Manager so I'm kind of guessing how it works. I kept reading messages on flightsimulator.com that flightsimers would like a utility like this so as a coding exercise I just created it. I welcome any feedback to help improve the accuracy and usefulness of this utility. You are welcome to take a copy of this code to further enhance it and use within anything you created.
 
 ## Pop Out Panel Positioning Annoyance
@@ -12,15 +12,15 @@ The concept to determine the untitled panels to be reposition is pretty straight
  - The OCRed text (mostly 'gibberish' by the way) will be compared to a predefined set of keywords that are defined by the user. These comparison text can be customized and additional panel types and profiles can be [added](#profile-and-ocr-data-file-definition) for various plane configurations.
  - By being able to identify the untitled panels, this solves the problem of not able to easily reposition these panel in subsequent flight.
  
-## Application Workflow Steps
- 1. User starts the utility. The application will automatic connect when MSFS starts.
- 2. User pops out the **Individual** untitled panels such as MFD or PFD on G1000 in MSFS. **Please make sure  the pop out panels are not inactive/blank.** If so, there will be nothing to analyze.
+## How to Use?
+ 1. User starts the application and it will automatic connect when MSFS starts.
+ 2. User pops out the **Individual** untitled panels such as MFD or PFD on G1000 in MSFS. **Please make sure the pop out panels are not inactive/blank.**
  3. **Important!** User choose the desired profile.
  4. User selects **Analyze** for the panels that were popped out.
- 5. Once analysis is completed, user positions these untitled panels in addition to any predefined toolbar menu panels to the desired location on the screen.
- 6. User **Saves** the positions of these panels.
- 7. In subsequent flight, user pops out the untitled and/or predefined panels again.
- 8. User selects **Analyze**.
+ 5. Once analysis is completed, user can positions these untitled panels in addition to any predefined toolbar menu panels to the desired location on the screen. You will notice now the "untitled" panels will have new captions.
+ 6. User select **Save Settings** to save the position of these panels. If desire, user can change addition settings of 'Hide Panel Title Bar' and 'Always on Top'. When everything is perfect, user selects **Save Settings** to save all open panels coordinates and settings for this particular profile. 
+ 7. In subsequent flight, user pops out some or all of the untitled and/or predefined panels again.
+ 8. User selects **Analyze** then selects **Apply Settings**.
  9. These panels will then automatically reposition themselves to their saved positions.
   
 ## User Interface
@@ -28,15 +28,15 @@ The concept to determine the untitled panels to be reposition is pretty straight
 <img src="images/ui-screenshot.png" hspace="10"/>
 </p>
 
-### OCR Debug Information
-All untitled panels OCR extracted text will be represented here by an individual tab. When an untitled panel failed analysis, a tab control marked ***Failed Analysis - xxxx*** will be shown. You can use the extracted text here (if any) as basis to adjust the OCR data definition file. 
+## OCR Debug Information
+All untitled panels OCR extracted text will be represented here by individual tab. When an untitled panel failed analysis, a tab control marked **Failed Analysis - xxxx **will be shown. You can use these extracted text as basis to adjust the OCR data definition file. 
 
 ## OCR Concept / Further Enhancement
 
- - Currently, Tesseract OCR recognition is not very accurate but is good enough!
+ - Currently, Tesseract OCR recognition is not very accurate for this use case but is good enough!
  - Screenshot images text recognition can be [customized](#profile-and-ocr-data-file-definition) by configuration file for better accuracy.
  - To enhance the initial accuracy of Tessearat OCR, the screenshot has its color inverted, then sharpened, then grayscale before text recognition occurs.
- - I only used the default Tessearact OCR function. There are probably better way to improve the accuracy with OCR advanced features and more image preprocessing.
+ - I only used the default Tessearact OCR function. There are probably better way to improve the accuracy with OCR advanced features and more preprocessing of the images.
  - For panels that have no obvious text such as some of the pop out gauges on A320, currently these panels cannot be recognized. Maybe for future enhancement, using color mapping or snippet of screenshot to do the comparison.
 
 ## Profile and OCR Data File Definition
@@ -72,7 +72,7 @@ The file definition [config/ocrdata.json](config/ocrdata.json) is pretty self-ex
 
 ## Common Problem Resolution
 
- - Failed Analysis - Make sure to select correct/desire profile before clicking Analyze.
+ - Failed Analysis - Make sure to select correct/desire profile before clicking Analyze. You can manually adjust the size of the panel and try to analyze it again.
  - Failed Analysis - Experiment with ocrImageScale and keyword list in ocrdata definition file.
 
 ## Author

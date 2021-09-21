@@ -21,6 +21,10 @@ namespace MSFSPopoutPanelManager
 
         public string Name { get; set; }
 
+        public bool AlwaysOnTop { get; set; }
+
+        public bool HidePanelTitleBar { get; set; }
+
         public Dictionary<string, Rect> PopoutNames;
     }
 }
