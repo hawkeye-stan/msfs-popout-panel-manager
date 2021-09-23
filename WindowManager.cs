@@ -35,14 +35,20 @@ namespace MSFSPopoutPanelManager
         const int WS_CAPTION = WS_BORDER | WS_DLGFRAME; 
 
         private const int MSFS_CONNECTION_RETRY_TIMEOUT = 2000;
+        private FileManager _fileManager;
         private Timer _timer;
         private UserData _userData;
         private MainWindow _simWindow;
         private AnalysisEngine _analysisEngine;
         private Dictionary<IntPtr, Int64> _originalChildWindowStyles;
 
-        public WindowManager()
+        private bool _currentHidePanelTitleBarStatus;
+        private bool _currentAlwaysOnTopStatus;
+
+        public WindowManager(FileManager fileManager)
         {
+            _fileManager = fileManager;
+
             _analysisEngine = new AnalysisEngine();
             _analysisEngine.OnStatusUpdated += (source, e) => OnStatusUpdated?.Invoke(source, e);
             _analysisEngine.OnOcrDebugged += (source, e) => OnOcrDebugged?.Invoke(source, e);
@@ -70,20 +76,33 @@ namespace MSFSPopoutPanelManager
             };
         }
 
+        public void Reset()
+        {
+            // reset these statuses
+            _currentHidePanelTitleBarStatus = false;
+            _currentAlwaysOnTopStatus = false;
+            RestorePanelTitleBar();
+
+            _originalChildWindowStyles = null;
+        }
+
         public bool Analyze(string profileName)
         {
+           
+
             _originalChildWindowStyles = null;
             _simWindow.ChildWindowsData = new List<ChildWindow>();
 
-            _analysisEngine.Analyze(ref _simWindow, profileName);
+            var evalData = _fileManager.ReadProfileData().Find(x => x.Profile == profileName);
+            _analysisEngine.Analyze(ref _simWindow, evalData);
 
             return _simWindow.ChildWindowsData.FindAll(x => x.PopoutType == PopoutType.Custom || x.PopoutType == PopoutType.BuiltIn).Count > 0;
         }
 
-        public void ApplySettings(string profileName, bool showPanelTitleBar, bool alwaysOnTop)
+        public void ApplySettings(string profileName, bool hidePanelTitleBar, bool alwaysOnTop)
         {
             // Try to load previous profiles
-            _userData = FileManager.ReadUserData();
+            _userData = _fileManager.ReadUserData();
             var profileSettings = _userData != null ? _userData.Profiles.Find(x => x.Name == profileName) : null;
 
             if (profileSettings == null)
@@ -98,8 +117,18 @@ namespace MSFSPopoutPanelManager
             if (childWindows.Count > 0)
             {
                 ApplyPositions(profileSettings, childWindows);
-                ApplyAlwaysOnTop(alwaysOnTop, childWindows);
-                ApplyHidePanelTitleBar(showPanelTitleBar, childWindows);
+
+                if (_currentHidePanelTitleBarStatus != hidePanelTitleBar)
+                {
+                    _currentHidePanelTitleBarStatus = hidePanelTitleBar;
+                    ApplyHidePanelTitleBar(hidePanelTitleBar, childWindows);
+                }
+
+                if(_currentAlwaysOnTopStatus != alwaysOnTop)
+                {
+                    _currentAlwaysOnTopStatus = alwaysOnTop;
+                    ApplyAlwaysOnTop(alwaysOnTop, childWindows);
+                }
             }
         }
 
@@ -134,7 +163,7 @@ namespace MSFSPopoutPanelManager
                     }
                 }
 
-                FileManager.WriteUserData(_userData);
+                _fileManager.WriteUserData(_userData);
                 OnStatusUpdated?.Invoke(this, new EventArgs<string>("Pop out panel positions have been saved."));
             }
         }
@@ -171,6 +200,15 @@ namespace MSFSPopoutPanelManager
                     Rect rect = new Rect();
                     GetWindowRect(childWindow.Handle, ref rect);
                     SetWindowPos(childWindow.Handle, new IntPtr(-1), rect.Left, rect.Top, rect.Right - rect.Left, rect.Bottom - rect.Top, SWP_ALWAYS_ON_TOP);
+                }
+            }
+            else
+            {
+                foreach (var childWindow in childWindows)
+                {
+                    Rect rect = new Rect();
+                    GetWindowRect(childWindow.Handle, ref rect);
+                    SetWindowPos(childWindow.Handle, new IntPtr(-2), rect.Left, rect.Top, rect.Right - rect.Left, rect.Bottom - rect.Top, 0);
                 }
             }
         }

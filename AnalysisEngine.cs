@@ -51,7 +51,7 @@ namespace MSFSPopoutPanelManager
         public event EventHandler<EventArgs<string>> OnStatusUpdated;
         public event EventHandler<EventArgs<Dictionary<string, string>>> OnOcrDebugged;
 
-        public void Analyze(ref MainWindow simWindow, string profile)
+        public void Analyze(ref MainWindow simWindow, OcrEvalData ocrEvaluationData)
         {
             MainWindow processZeroMainWindow = null;
 
@@ -107,7 +107,6 @@ namespace MSFSPopoutPanelManager
 
             if(simWindow.ChildWindowsData.Count > 0)
             {
-                var ocrEvaluationData = FileManager.ReadProfileData().Find(x => x.Profile == profile);
                 var ocrImageScale = ocrEvaluationData.OCRImageScale;
                 Dictionary<string, string> debugInfo = new Dictionary<string, string>();
 
@@ -133,7 +132,7 @@ namespace MSFSPopoutPanelManager
                         SetForegroundWindow(childWindow.Handle);
                         Thread.Sleep(500);
 
-                        var image = TakeScreenShot(rect);
+                        var image = TakeScreenShot(rect, childWindow.Handle.ToInt32());
                         MoveWindow(childWindow.Handle, rect.Left, rect.Top, originalWidth, originalHeight, true);
                         
                         // OCR the image into text
@@ -220,7 +219,7 @@ namespace MSFSPopoutPanelManager
             return true;
         }
 
-        private byte[] TakeScreenShot(Rect rect)
+        private byte[] TakeScreenShot(Rect rect, int imageId)
         {
             var bounds = new System.Drawing.Rectangle(rect.Left, rect.Top, rect.Right - rect.Left, rect.Bottom - rect.Top);
             var bitmap = new Bitmap(bounds.Width, bounds.Height);
@@ -237,9 +236,17 @@ namespace MSFSPopoutPanelManager
             using(var img = SixLabors.ImageSharp.Image.Load(imageBytes))
             {
                 img.Mutate(x => x.Invert().GaussianSharpen().Grayscale());
+
+                double imageRatio = 250 / 72.0;  // change from default of 72 DPI to 250 DPI
+
+                img.Metadata.HorizontalResolution *= imageRatio;
+                img.Metadata.VerticalResolution *= imageRatio;
                 var memoryStream = new MemoryStream();
                 img.Save(memoryStream, new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder());
-                img.Save(@".\test.jpg");
+#if DEBUG
+                Directory.CreateDirectory("imageDebug");
+                img.Save(@$"./imageDebug/test-{imageId}.jpg");
+#endif
                 return memoryStream.ToArray();
             }
         }

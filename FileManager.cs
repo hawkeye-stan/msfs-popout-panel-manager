@@ -7,11 +7,18 @@ namespace MSFSPopoutPanelManager
 {
     public class FileManager
     {
-        public static UserData ReadUserData()
+        private string _startupPath;
+
+        public FileManager(string startupPath)
+        {
+            _startupPath = startupPath;
+        }
+
+        public UserData ReadUserData()
         {
             try
             {
-                using (StreamReader reader = new StreamReader(@".\config\userdata.json"))
+                using (StreamReader reader = new StreamReader(_startupPath + @"\config\userdata.json"))
                 {
                     string json = reader.ReadToEnd();
                     return JsonConvert.DeserializeObject<UserData>(json);
@@ -23,18 +30,18 @@ namespace MSFSPopoutPanelManager
             }
         }
 
-        public static void WriteUserData(UserData userData)
+        public void WriteUserData(UserData userData)
         {
-            using (StreamWriter file = File.CreateText(@".\config\userdata.json"))
+            using (StreamWriter file = File.CreateText(_startupPath + @"\config\userdata.json"))
             {
                 JsonSerializer serializer = new JsonSerializer();
                 serializer.Serialize(file, userData);
             }
         }
 
-        public static List<OcrEvalData> ReadProfileData()
+        public List<OcrEvalData> ReadProfileData()
         {
-            using (StreamReader reader = new StreamReader(@".\config\ocrdata.json"))
+            using (StreamReader reader = new StreamReader(_startupPath + @"\config\ocrdata.json"))
             {
                 string json = reader.ReadToEnd();
 

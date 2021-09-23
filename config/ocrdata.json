@@ -1,7 +1,7 @@
 ﻿[
-  // G1000
+  // G1000 NXi
   {
-    "profile": "G1000",
+    "profile": "G1000 / G1000 NXi",
     "defaultProfile": "true",
     "ocrImageScale": 1.0,
     "evalData": [
@@ -35,9 +35,57 @@
       }
     ]
   },
+  // Flybywire A320NX
+  {
+    "profile": "Flybywire A320NX",
+    "defaultProfile": "false",
+    "ocrImageScale": 1,
+    "evalData": [
+      {
+        "popoutName": "Screen1",
+        "data": [ "QNH", "29.92" ]
+      },
+      {
+        "popoutName": "Screen2",
+        "data": [ "REL", "GW" ]
+      },
+      {
+        "popoutName": "Screen3",
+        "data": [ "TAS", "GS", "NM", "GPS", "Primary", "PPOS" ]
+      },
+      {
+        "popoutName": "Screen4",
+        "data": [ "F.FLOW", "AUTO BRK", "KG/MIN", "FOB", "TAT", "SAT" ]
+      }
+    ]
+  },
+  // Asobo A320
+  {
+    "profile": "Asobo A320",
+    "defaultProfile": "false",
+    "ocrImageScale": 1,
+    "evalData": [
+      {
+        "popoutName": "Screen1",
+        "data": [ "IDLE" ]
+      },
+      {
+        "popoutName": "Screen2",
+        "data": [ "TAS", "GS", "NM" ]
+      },
+      {
+        "popoutName": "Screen3",
+        "data": [ "F.FLOW", "KG", "KG/MIN", "FOB", "TAT", "SAT" ]
+      },
+      {
+        "popoutName": "Screen4",
+        "data": [ "SPD", "SEL", "CLB", "NAV", "QNH" ]
+      }
+    ]
+  },
   // Custom Sample Profile - delete this if you don't need it
   {
-    "profile": "Custom Sample Profile",
+    "profile": "ZZZ - Custom Sample Profile",
     "defaultProfile": "false",
     "ocrImageScale": 1.0,
     "evalData": [

@@ -12,7 +12,8 @@ namespace MSFSPopoutPanelManager
     public partial class MainForm : Form
     {
         private SynchronizationContext _syncRoot;
-        private WindowManager _popoutWindowsManager;
+        private FileManager _fileManager;
+        private WindowManager _windowManager;
 
         private static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
         private const UInt32 SWP_NOSIZE = 0x0001;
@@ -25,19 +26,22 @@ namespace MSFSPopoutPanelManager
         public MainForm()
         {
             InitializeComponent();
-
             _syncRoot = SynchronizationContext.Current;
+
+            _fileManager = new FileManager(Application.StartupPath);
+
+            _windowManager = new WindowManager(_fileManager);
+            _windowManager.OnStatusUpdated += HandleOnStatusUpdated;
+            _windowManager.OnSimulatorStarted += HandleOnSimulatorStarted;
+            _windowManager.OnOcrDebugged += HandleOnOcrDebugged;
+            _windowManager.CheckSimulatorStarted();
 
             SetProfileDropDown();
 
-            _popoutWindowsManager = new WindowManager();
-            _popoutWindowsManager.OnStatusUpdated += HandleOnStatusUpdated;
-            _popoutWindowsManager.OnSimulatorStarted += HandleOnSimulatorStarted;
-            _popoutWindowsManager.OnOcrDebugged += HandleOnOcrDebugged;
-            _popoutWindowsManager.CheckSimulatorStarted();
-
+#if DEBUG
+            // Set application windows always on top for easy debugging
             SetWindowPos(this.Handle, HWND_TOPMOST, this.Left, this.Top, this.Width, this.Height, TOPMOST_FLAGS);
-
+#endif
             var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
             lblVersion.Text += version.ToString();
         }
@@ -47,7 +51,7 @@ namespace MSFSPopoutPanelManager
             txtStatus.Clear();
 
             var profile = GetProfileDropDown();
-            var success = _popoutWindowsManager.Analyze(profile);
+            var success = _windowManager.Analyze(profile);
 
             btnApplySettings.Enabled = success;
             btnSaveSettings.Enabled = success;
@@ -58,7 +62,7 @@ namespace MSFSPopoutPanelManager
             txtStatus.Clear();
 
             var profile = GetProfileDropDown();
-            _popoutWindowsManager.ApplySettings(profile, chkHidePanelTitleBar.Checked, chkAlwaysOnTop.Checked);
+            _windowManager.ApplySettings(profile, chkHidePanelTitleBar.Checked, chkAlwaysOnTop.Checked);
         }
 
         private void btnSaveSettings_Click(object sender, EventArgs e)
@@ -66,15 +70,15 @@ namespace MSFSPopoutPanelManager
             txtStatus.Clear();
 
             var profile = GetProfileDropDown();
-            _popoutWindowsManager.SaveSettings(profile, chkHidePanelTitleBar.Checked, chkAlwaysOnTop.Checked);
+            _windowManager.SaveSettings(profile, chkHidePanelTitleBar.Checked, chkAlwaysOnTop.Checked);
         }
 
         private void SetProfileDropDown()
         {
             try
             {
-                var profileData = FileManager.ReadProfileData();
-                var profiles = profileData.Select(x => x.Profile).Distinct();
+                var profileData = _fileManager.ReadProfileData();
+                var profiles = profileData.Select(x => x.Profile).Distinct().OrderBy(x => x);
                 var defaultProfile = profileData.Find(x => x.DefaultProfile);
 
                 comboBoxProfile.DataSource = profiles.ToList();
@@ -89,6 +93,32 @@ namespace MSFSPopoutPanelManager
         private string GetProfileDropDown()
         {
             return comboBoxProfile.SelectedItem.ToString();
+        }
+
+        private void comboBoxProfile_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _windowManager.Reset();
+
+            var userData = _fileManager.ReadUserData();
+
+            if (userData != null)
+            {
+                var userProfile = userData.Profiles.Find(x => x.Name == Convert.ToString(comboBoxProfile.SelectedValue));
+                if (userProfile != null)
+                {
+                    chkAlwaysOnTop.Checked = userProfile.AlwaysOnTop;
+                    chkHidePanelTitleBar.Checked = userProfile.HidePanelTitleBar;
+                }
+                else
+                {
+                    // default values
+                    chkAlwaysOnTop.Checked = false;
+                    chkHidePanelTitleBar.Checked = false;
+                }
+            }
+
+            btnApplySettings.Enabled = false;
+            btnSaveSettings.Enabled = false;
         }
 
         private void HandleOnStatusUpdated(object source, EventArgs<string> arg)
@@ -163,7 +193,7 @@ namespace MSFSPopoutPanelManager
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             // Put all panels popout back to original state
-            _popoutWindowsManager.RestorePanelTitleBar();
+            _windowManager.RestorePanelTitleBar();
         }
 
         private void MainForm_Resize(object sender, EventArgs e)
@@ -186,28 +216,6 @@ namespace MSFSPopoutPanelManager
             WindowState = FormWindowState.Normal;
         }
 
-        private void comboBoxProfile_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            var userData = FileManager.ReadUserData();
-
-            if (userData != null)
-            {
-                var userProfile = userData.Profiles.Find(x => x.Name == Convert.ToString(comboBoxProfile.SelectedValue));
-                if (userProfile != null)
-                {
-                    chkAlwaysOnTop.Checked = userProfile.AlwaysOnTop;
-                    chkHidePanelTitleBar.Checked = userProfile.HidePanelTitleBar;
-                }
-                else
-                {
-                    // default values
-                    chkAlwaysOnTop.Checked = false;
-                    chkHidePanelTitleBar.Checked = false;
-                }
-            }
-
-            btnApplySettings.Enabled = false;
-            btnSaveSettings.Enabled = false;
-        }
+        
     }
 }
