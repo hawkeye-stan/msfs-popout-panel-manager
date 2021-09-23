@@ -35,6 +35,30 @@
       }
     ]
   },
+  // G3000
+  {
+    "profile": "A320",
+    "defaultProfile": "false",
+    "ocrImageScale": 0.75,
+    "evalData": [
+      {
+        "popoutName": "Screen1",
+        "data": [ "IDLE" ]
+      },
+      {
+        "popoutName": "Screen2",
+        "data": [ "TAS", "GS", "NM" ]
+      },
+      {
+        "popoutName": "Screen3",
+        "data": [ "F.FLOW", "KG", "KG/MIN", "FOB", "TAT", "SAT" ]
+      },
+      {
+        "popoutName": "Screen4",
+        "data": [ "SPD", "SEL", "CLB", "NAV", "QNH" ]
+      }
+    ]
+  },
   // Custom Sample Profile - delete this if you don't need it
   {
     "profile": "Custom Sample Profile",

@@ -104,6 +104,9 @@
     <None Update="LICENSE">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="VERSION.md">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Vesion.md">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
