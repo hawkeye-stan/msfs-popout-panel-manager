@@ -5,7 +5,9 @@
 * Increase OCR image accuracy by raising image DPI before analysis.
 * Added (very experimental) Asobo A320 and FlybyWire A320NX profiles as testing sample. These profiles do only work 100% of the time. Continue investigation into better OCR accuracy will be needed.
 * Added profile dropdown sorted by profile name.
-* Fixed an issue of unable to set or reset panel to NOT ALWAYS ON TOP
+* Fixed an issue of reapplying the same settings will cause panels to be out of sync.
+* Fixed an issue of switching profiles will cause panels to be out of sync.
+* Fixed an issue of unable to set or reset panel to NOT ALWAYS ON TOP.
 * Fixed application path issue for not able to find ocrdata.json file at startup.
 * Removed MSFS Pop Out Panel Manager is always on top (not the actual in-game panels themselves). Now it is only always on top during development debug mode if you compile and run the application from source code.
 
