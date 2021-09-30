@@ -1,0 +1,37 @@
+﻿[
+  {
+    "profileId": 1,
+    "profileName": "Cessna 172 Skyhawk (WT G1000 NXi)",
+    "analysisTemplateName": "WT-G1000NXi"
+  },
+  {
+    "profileId": 2,
+    "profileName": "DA62 (WT G1000 NXi)",
+    "analysisTemplateName": "WT-G1000NXi"
+  },
+  {
+    "profileId": 3,
+    "profileName": "A32NX (Flybywire) ",
+    "analysisTemplateName": "FBW-A32NX"
+  },
+  {
+    "profileId": 4,
+    "profileName": "Beechcraft King Air 350i (Original G3000)",
+    "analysisTemplateName": "G3000-KINGAIR"
+  },
+  {
+    "profileId": 5,
+    "profileName": "TBM 930 (Original G3000)",
+    "analysisTemplateName": "G3000"
+  },
+  {
+    "profileId": 6,
+    "profileName": "Cessna Citation CJ4",
+    "analysisTemplateName": "CJ4"
+  },
+{
+    "profileId": 7,
+    "profileName": "Asobo Planes with (Original G1000)",
+    "analysisTemplateName": "G1000"
+  }
+]

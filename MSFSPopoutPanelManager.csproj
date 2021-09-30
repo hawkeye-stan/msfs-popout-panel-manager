@@ -5,14 +5,21 @@
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <Platforms>x64</Platforms>
-    <Version>1.2</Version>
+    <Version>2.0</Version>
     <AssemblyName>MSFSPopoutPanelManager</AssemblyName>
     <RootNamespace>MSFSPopoutPanelManager</RootNamespace>
     <ApplicationIcon>WindowManager.ico</ApplicationIcon>
     <Authors>Stanley Kwok</Authors>
     <Product>MSFS 2020 Popout Window Manager</Product>
     <PackageId>MSFS 2020 Popout Panel Manager</PackageId>
+	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="ImageLibrary\**" />
+    <EmbeddedResource Remove="ImageLibrary\**" />
+    <None Remove="ImageLibrary\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <Reference Include="UIAutomationClient">
@@ -29,13 +36,16 @@
 
   <ItemGroup>
     <None Remove="C:\Users\hawkeye\.nuget\packages\tesseract\4.1.1\build\\..\x86\tesseract41.dll" />
+    <None Remove="Config\AnalysisData\analysisconfig.json" />
+    <None Remove="Config\planeprofile.json" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AForge" Version="2.2.5" />
+    <PackageReference Include="AForge.Imaging" Version="2.2.5" />
+    <PackageReference Include="DarkUI" Version="2.0.2" />
+    <PackageReference Include="MouseKeyHook" Version="5.6.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.3" />
-    <PackageReference Include="Tesseract" Version="4.1.1" />
-    <PackageReference Include="Tesseract.Data.English" Version="4.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,33 +53,20 @@
   </ItemGroup>
 
   <ItemGroup>
-    <NativeLibs Remove="MainWindow.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <NativeLibs Remove="ChildWindow.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="config\ocrdata.json">
+    <Content Include="Config\planeprofile.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\AnalysisData\analysisconfig.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 
   <ItemGroup>
-    <NativeLibs Remove="OcrEvalData.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <NativeLibs Remove="Rect.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <NativeLibs Remove="WindowManager.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <NativeLibs Remove="MainForm.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -81,10 +78,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <NativeLibs Remove="GenericEventArgs.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <NativeLibs Remove="README.md" />
   </ItemGroup>
 
@@ -93,14 +86,154 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="images\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <NativeLibs Remove="LICENSE" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Config\AnalysisData\cj4\cj4_mfd.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\AnalysisData\cj4\cj4_multipurpose_control.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\AnalysisData\cj4\cj4_pfd.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\AnalysisData\cj4\cj4_standby_altitude_module.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\AnalysisData\g1000\g1000_mfd.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\AnalysisData\g1000\g1000_mfd2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\AnalysisData\g1000\g1000_pfd.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\AnalysisData\g3000-kingair\g3000kingair_mfd.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\AnalysisData\g3000-kingair\g3000kingair_mfd2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\AnalysisData\g3000-kingair\g3000kingair_pfd.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\AnalysisData\g3000-kingair\g3000kingair_pfd2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\AnalysisData\g3000-kingair\g3000kingair_standby_altitude_module.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\AnalysisData\g3000\g3000_mfd.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\AnalysisData\g3000\g3000_mfd2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\AnalysisData\g3000\g3000_multipurpose_control.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\AnalysisData\g3000\g3000_pfd.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\AnalysisData\g3000\g3000_standby_altitude_module_1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\AnalysisData\g3000\g3000_standby_altitude_module_2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="config\matching\A320NX\a320nx_enginedisplay.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\AnalysisData\a32nx\a32nx_engine_display.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="config\matching\A320NX\a320nx_messagepanel.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\AnalysisData\a32nx\a32nx_message_panel.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="config\matching\A320NX\a320nx_multipurposecontrol.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\AnalysisData\a32nx\a32nx_multipurpose_control.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="config\matching\A320NX\a320nx_navdisplay.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\AnalysisData\a32nx\a32nx_nav_display.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\AnalysisData\a32nx\a32nx_pfd.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="config\matching\A320NX\a320nx_standbyaltitudeindication.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="config\matching\A320NX\a320nx_standby_altitude_indication.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\AnalysisData\a32nx\a32nx_standby_altitude_indicator.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="config\matching\A320NX\a320nx_systemdisplay.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\AnalysisData\a32nx\a32nx_system_display.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\AnalysisData\g1000nxi\g1000nxi_mfd.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\AnalysisData\g1000nxi\g1000nxi_mfd2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\AnalysisData\g1000nxi\g1000nxi_pfd.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\PreprocessingData\separation_button_qhd.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\PreprocessingData\separation_button_uhd.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="config\preprocess\blockmatch_wqhd1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="config\preprocess\G1000MFD.PNG">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="config\preprocess\G1000PFD.PNG">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="config\preprocess\G1000\g1000_mfd_wqhd.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="config\preprocess\g1000_mfd_wqhd.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="config\preprocess\g1000_pfd_wqhd..PNG">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="config\preprocess\G1000\g1000_pfd_wqhd.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="config\preprocess\g1000_pfd_wqhd.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\PreprocessingData\separation_button_hd.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="config\preprocessingdata\separation_button_wqhd.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="images\transparent.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="LICENSE">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -117,6 +250,209 @@
 
   <ItemGroup>
     <NativeLibs Remove="Vesion.md" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="PInvoke.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="Logger.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="Config\PreprocessingData\separation_button_hd.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="Config\PreprocessingData\separation_button_wqhd.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="ImageOperation.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="Config\PreprocessingData\g1000_pfd_wqhd.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="Config\PreprocessingData\g1000_mfd_wqhd.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="PopoutCoorOverlay.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="PopoutCoorOverlay.resx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="StartupForm.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="StartupForm.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="StartupForm.resx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="UserControlPopOutStep.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="UserControlPopOutStep.resx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="UserControlSeparateStep.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="UserControlSeparateStep.resx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="UserControlStepAnalyze.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="UserControlStepAnalyze.resx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="UserControlStepApplySettings.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="UserControlStepApplySettings.resx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="PanelManager.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="UserControlCommon.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="UserControlCommon.resx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="UserControlApplySettingsStep.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="UserControlPopOutStep.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="PopoutCoorOverlayForm.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="Properties\Resources.resx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="IdentifyPanelLocationModule.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="WindowManagementModule.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="PanelAnalysisModule.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="WindowProcess.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="Config\AnalysisData\analysisconfig.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="images\seperation_analysis.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="images\screenshot1.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="Config\planeprofile.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="Config\AnalysisData\g1000nxi\g1000nxi_mfd.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="Config\AnalysisData\g1000nxi\g1000nxi_pfd.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="Config\AnalysisData\g1000nxi\g1000nxi_mfd2.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="Modules\Enums.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="DataFileObjects.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="Modules\PlaneProfile.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="Modules\Structs.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="Modules\ImageAnalysis.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="UI\UserControlIdentifyPopOut.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="UI\UserControlApplySettings.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="Modules\PanelLocationSelectionModule.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="Modules\WindowManager.cs" />
   </ItemGroup>
 
 </Project>
