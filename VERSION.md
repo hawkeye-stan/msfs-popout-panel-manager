@@ -1,5 +1,8 @@
 # Version History
 <hr/>
+## Vesion 2.0.2.0
+* Added one second delay on mouse click when the application is trying to separate the chained pop out windows.
+
 ## Vesion 2.0.1.0
 * Changed how screen resolution is detected. Used vertical instead of horizontal resolution to account for ultra wide monitors.
 

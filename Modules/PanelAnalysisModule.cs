@@ -240,14 +240,17 @@ namespace MSFSPopoutPanelManager
 
             switch (rect.Bottom)
             {
+                case 1009:
                 case 1080:
                     return FlightSimResolution.HD;
+                case 1369:
                 case 1440:
                     return FlightSimResolution.QHD;
+                case 2089:
                 case 2160:
                     return FlightSimResolution.UHD;
                 default:
-                    return FlightSimResolution.QHD;
+                    return FlightSimResolution.HD;
             }
         }
 
@@ -325,6 +328,9 @@ namespace MSFSPopoutPanelManager
 
             var point = new Point { X = x, Y = y };
             Cursor.Position = new Point(point.X, point.Y);
+
+            // Wait for mouse to get into position
+            Thread.Sleep(1000);
 
             PInvoke.mouse_event(MOUSEEVENTF_LEFTDOWN, point.X, point.Y, 0, 0);
             Thread.Sleep(200);
