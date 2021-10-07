@@ -42,17 +42,8 @@ namespace MSFSPopoutPanelManager
             const uint KEYEVENTF_KEYUP = 0x2;
             const uint VK_RMENU = 0xA5;         // Right Alternate key
 
-            //const int WM_LBUTTONDOWN = 0x201;
-            //const int WM_LBUTTONUP = 0x202;
-
             foreach (var coor in screenCoordinates)
             {
-                //PInvoke.keybd_event(Convert.ToByte(VK_RMENU), 0, KEYEVENTF_EXTENDEDKEY, 0);
-                //PInvoke.SendMessage(simulatorHandle, WM_LBUTTONDOWN, 1, CreateLParam(coor.X, coor.Y));
-                //Thread.Sleep(200);
-                //PInvoke.SendMessage(simulatorHandle, WM_LBUTTONUP, 0, CreateLParam(coor.X, coor.Y));
-                //PInvoke.keybd_event(Convert.ToByte(VK_RMENU), 0, KEYEVENTF_KEYUP, 0);
-
                 // Move the cursor to the flight simulator screen then move the cursor into position
                 PInvoke.SetCursorPos(0, 0);
                 PInvoke.SetCursorPos(coor.X, coor.Y);

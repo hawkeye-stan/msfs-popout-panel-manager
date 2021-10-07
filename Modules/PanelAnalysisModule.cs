@@ -28,7 +28,7 @@ namespace MSFSPopoutPanelManager
             var processZero = GetProcessZero();
 
             // Move process zero childs back into simulator process
-            MoveChildWindowsIntoSimulatorPrcess(simulatorProcess, processZero);
+            MoveChildWindowsIntoSimulatorProcess(simulatorProcess, processZero);
 
             if (simulatorProcess.ChildWindows.Count > 0)
             {
@@ -49,7 +49,7 @@ namespace MSFSPopoutPanelManager
 
             // Now all newly pop out windows are in process zero, move them into flight simulator process
             processZero = GetProcessZero();
-            MoveChildWindowsIntoSimulatorPrcess(simulatorProcess, processZero);
+            MoveChildWindowsIntoSimulatorProcess(simulatorProcess, processZero);
 
             // Analyze the content of the pop out panels
             AnalyzePopoutWindows(simulatorProcess, profileId);
@@ -136,7 +136,7 @@ namespace MSFSPopoutPanelManager
             return String.IsNullOrEmpty(title.ToString()) ? null : title.ToString();
         }
 
-        private void MoveChildWindowsIntoSimulatorPrcess(WindowProcess simulatorProcess, WindowProcess processZero)
+        private void MoveChildWindowsIntoSimulatorProcess(WindowProcess simulatorProcess, WindowProcess processZero)
         {
             // The popout windows such as PFD and MFD attached itself to main window for Process ID zero instead of the MSFS process. 
             // Moving these windows back into MSFS main window
@@ -238,14 +238,13 @@ namespace MSFSPopoutPanelManager
             var rect = new Rect();
             PInvoke.GetClientRect(windowHandle, out rect);
 
-            switch (rect.Right)
+            switch (rect.Bottom)
             {
-                case 1920:
+                case 1080:
                     return FlightSimResolution.HD;
-                case 2560:
-                case 3440:
+                case 1440:
                     return FlightSimResolution.QHD;
-                case 3840:
+                case 2160:
                     return FlightSimResolution.UHD;
                 default:
                     return FlightSimResolution.QHD;
@@ -327,9 +326,9 @@ namespace MSFSPopoutPanelManager
             var point = new Point { X = x, Y = y };
             Cursor.Position = new Point(point.X, point.Y);
 
-            PInvoke.mouse_event(MOUSEEVENTF_LEFTDOWN, x, y, 0, 0);
+            PInvoke.mouse_event(MOUSEEVENTF_LEFTDOWN, point.X, point.Y, 0, 0);
             Thread.Sleep(200);
-            PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, 0);
+            PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, point.X, point.Y, 0, 0);
         }
 
         private void AnalyzePopoutWindows(WindowProcess simulatorProcess, int profileId)
