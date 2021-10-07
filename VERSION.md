@@ -1,7 +1,7 @@
 # Version History
 <hr/>
 ## Vesion 2.0.1.0
-* Change how screen resolution is detected. Used vertical instead of horizontal resolution to account for ultra wide monitors.
+* Changed how screen resolution is detected. Used vertical instead of horizontal resolution to account for ultra wide monitors.
 
 ## Version 2.0.0.0
 * Used new image recognition instead of OCR technology to determine pop outs.
