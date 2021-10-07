@@ -21,6 +21,8 @@ The v2.0 application concept is as follow:
 6. On subsequent flight, user will just need to reposition the definition of the 'ALT-Right Click' panels and the application will do the rest.
  
 ## How to Use?
+[Here](images/doc/userguide.mp4) is a video of what the app will do.
+
  1. Start the application **MSFSPopoutPanelManager.exe** and it will automatically connect when MSFS starts.
  2. Once the game starts and you're at the beginning of flight, first select a plane profile (for example A32NX by FlybyWire)
  3. You then click "START PANEL SELECTION" to define where the pop out panels will be using LEFT CLICK and CTRL-LEFT CLICK when done to save these information.
