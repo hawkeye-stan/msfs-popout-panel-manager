@@ -23,7 +23,12 @@ The v2.0 application concept is as follow:
 ## How to Use?
 [Here](images/doc/userguide.mp4) is a video of what the app will do.
 
- 1. Start the application **MSFSPopoutPanelManager.exe** and it will automatically connect when MSFS starts.
+ 1. Start the application **MSFSPopoutPanelManager.exe** and it will automatically connect when MSFS starts. You maybe prompt to download .NET framework 5.0. Please see the screenshot below to download and install x64 desktop version of the framework.
+
+<p align="center">
+<img src="images/doc/frameworkdownload.png" width="1000" hspace="10"/>
+</p>
+
  2. Once the game starts and you're at the beginning of flight, first select a plane profile (for example A32NX by FlybyWire)
  3. You then click "START PANEL SELECTION" to define where the pop out panels will be using LEFT CLICK and CTRL-LEFT CLICK when done to save these information.
  
