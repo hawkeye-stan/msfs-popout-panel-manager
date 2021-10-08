@@ -34,7 +34,7 @@ namespace MSFSPopoutPanelManager
             {
                 foreach(var customPopout in simulatorProcess.ChildWindows.FindAll(x => x.WindowType == WindowType.Undetermined))
                 {
-                    while (panelsToBeIdentified > 0)
+                    while (panelsToBeIdentified > 1)        // Do not have to separate the last panel
                     {
                         var coordinate = AnalyzeMergedPopoutWindows(simulatorProcess.Handle, customPopout.Handle);
                         if (!coordinate.IsEmpty)

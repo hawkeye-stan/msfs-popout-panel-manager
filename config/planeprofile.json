@@ -29,9 +29,14 @@
     "profileName": "Cessna Citation CJ4",
     "analysisTemplateName": "CJ4"
   },
-{
+  {
     "profileId": 7,
     "profileName": "Asobo Planes with (Original G1000)",
     "analysisTemplateName": "G1000"
+  },
+  {
+    "profileId": 8,
+    "profileName": "DA40NG (PMS50 GTN750)",
+    "analysisTemplateName": "pms50-gtn750"
   }
 ]
