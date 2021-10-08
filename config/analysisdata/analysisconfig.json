@@ -143,5 +143,25 @@
         "imagePaths": [ "cj4/cj4_multipurpose_control.png" ]
       }
     ]
+  },
+  {
+    "templateName": "pms50-gtn750",
+    "templates": [
+      {
+        "popoutId": 1,
+        "popoutName": "PFD",
+        "imagePaths": [ "pms50-gtn750/pms50_gtn750_pfd.png" ]
+      },
+      {
+        "popoutId": 2,
+        "popoutName": "MFD",
+        "imagePaths": [ "pms50-gtn750/pms50_gtn750_mfd.png" ]
+      },
+      {
+        "popoutId": 3,
+        "popoutName": "MFD",
+        "imagePaths": [ "pms50-gtn750/pms50_gtn750_mfd2.png" ]
+      }
+    ]
   }
 ]
