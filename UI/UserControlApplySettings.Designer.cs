@@ -116,6 +116,7 @@ namespace MSFSPopoutPanelManager
             this.dataGridViewPanels.Size = new System.Drawing.Size(820, 225);
             this.dataGridViewPanels.TabIndex = 8;
             this.dataGridViewPanels.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewPanels_CellEndEdit);
+            this.dataGridViewPanels.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dataGridViewPanels_CellFormatting);
             this.dataGridViewPanels.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this.dataGridViewPanels_CellValidating);
             // 
             // PanelName

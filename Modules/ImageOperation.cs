@@ -64,7 +64,12 @@ namespace MSFSPopoutPanelManager
             var rect = new Rect();
             PInvoke.GetWindowRect(windowHandle, out rect);
 
-            var bounds = new Rectangle(rect.Left, rect.Top, rect.Right - rect.Left, rect.Bottom - rect.Top);
+            var left = rect.Left;
+            var top = rect.Top;
+            var right = rect.Right;
+            var bottom = rect.Bottom;
+
+            var bounds = new Rectangle(left, top, right - left, bottom - top);
             var bitmap = new Bitmap(bounds.Width, bounds.Height);
 
             using (Graphics g = Graphics.FromImage(bitmap))

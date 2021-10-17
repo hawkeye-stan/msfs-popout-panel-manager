@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace MSFSPopoutPanelManager
@@ -34,6 +31,8 @@ namespace MSFSPopoutPanelManager
 
             checkBoxAlwaysOnTop.Checked = PanelManager.CurrentPanelProfile.PanelSettings.AlwaysOnTop;
             checkBoxHidePanelTitleBar.Checked = PanelManager.CurrentPanelProfile.PanelSettings.HidePanelTitleBar;
+
+           
         }
 
         private void buttonRestart_Click(object sender, EventArgs e)
@@ -74,6 +73,20 @@ namespace MSFSPopoutPanelManager
             var panel = PanelManager.CurrentPanelProfile.PanelSettings.PanelDestinationList.Find(x => x.PanelName == panelName);
 
             PInvoke.MoveWindow(panel.PanelHandle, left, top, width, height, true);
+        }
+
+        private void dataGridViewPanels_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.ColumnIndex == 0)
+            {
+                DataGridView dgv = sender as DataGridView;
+                PanelDestinationInfo data = dgv.Rows[e.RowIndex].DataBoundItem as PanelDestinationInfo;
+
+                if(!data.IsOpened && data.PanelType == WindowType.Custom_Popout)
+                {
+                    dataGridViewPanels.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.PaleVioletRed;
+                }                
+            }
         }
 
         private void dataGridViewPanels_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)

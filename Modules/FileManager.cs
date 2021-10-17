@@ -15,7 +15,16 @@ namespace MSFSPopoutPanelManager
             FileManager.StartupPath = Application.StartupPath;
         }
 
-        public static List<PlaneProfile> ReadPlaneProfileData()
+        public static List<PlaneProfile> ReadAllPlaneProfileData()
+        {
+            List<PlaneProfile> allProfiles = new List<PlaneProfile>();
+            allProfiles.AddRange(FileManager.ReadBuiltInPlaneProfileData());
+            allProfiles.AddRange(FileManager.ReadCustomPlaneProfileData());
+
+            return allProfiles;
+        }
+
+        public static List<PlaneProfile> ReadBuiltInPlaneProfileData()
         {
             try
             {
@@ -27,6 +36,57 @@ namespace MSFSPopoutPanelManager
             catch
             {
                 return new List<PlaneProfile>();
+            }
+        }
+
+        public static List<PlaneProfile> ReadCustomPlaneProfileData()
+        {
+            try
+            {
+                using (StreamReader reader = new StreamReader(GetFilePathByType(FilePathType.ProfileData) + "customplaneprofile.json"))
+                {
+                    return JsonConvert.DeserializeObject<List<PlaneProfile>>(reader.ReadToEnd());
+                }
+            }
+            catch
+            {
+               return new List<PlaneProfile>();
+            }
+        }
+
+        public static bool WriteBuiltInPlaneProfileData(List<PlaneProfile> profiles)
+        {
+            try
+            {
+                using (StreamWriter file = File.CreateText(GetFilePathByType(FilePathType.ProfileData) + "planeprofile.json"))
+                {
+                    JsonSerializer serializer = new JsonSerializer();
+                    serializer.Serialize(file, profiles);
+                }
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public static bool WriteCustomPlaneProfileData(List<PlaneProfile> profiles)
+        {
+            try
+            {
+                using (StreamWriter file = File.CreateText(GetFilePathByType(FilePathType.ProfileData) + "customplaneprofile.json"))
+                {
+                    JsonSerializer serializer = new JsonSerializer();
+                    serializer.Serialize(file, profiles);
+                }
+
+                return true;
+            }
+            catch
+            {
+                return false;
             }
         }
 
@@ -72,18 +132,85 @@ namespace MSFSPopoutPanelManager
             }
         }
 
-        public static List<AnalysisData> ReadAnalysisTemplateData()
+        public static List<AnalysisData> ReadAllAnalysisTemplateData()
         {
-            using (StreamReader reader = new StreamReader(GetFilePathByType(FilePathType.AnalysisData) + "analysisconfig.json"))
+            List<AnalysisData> allTemplates = new List<AnalysisData>();
+            allTemplates.AddRange(FileManager.ReadBuiltInAnalysisTemplateData());
+            allTemplates.AddRange(FileManager.ReadCustomAnalysisTemplateData());
+
+            return allTemplates;
+        }
+
+        public static List<AnalysisData> ReadBuiltInAnalysisTemplateData()
+        {
+            try
             {
-                try
+                using (StreamReader reader = new StreamReader(GetFilePathByType(FilePathType.AnalysisData) + "analysisconfig.json"))
                 {
-                    return JsonConvert.DeserializeObject<List<AnalysisData>>(reader.ReadToEnd());
+                    try
+                    {
+                        return JsonConvert.DeserializeObject<List<AnalysisData>>(reader.ReadToEnd());
+                    }
+                    catch(Exception ex)
+                    {
+                        throw new Exception("The file analysisconfig.json is invalid.");
+                    }
                 }
-                catch(Exception ex)
+            }
+            catch
+            {
+                return new List<AnalysisData>();
+            }
+        }
+
+        public static List<AnalysisData> ReadCustomAnalysisTemplateData()
+        {
+            try
+            {
+                using (StreamReader reader = new StreamReader(GetFilePathByType(FilePathType.AnalysisData) + "customanalysisconfig.json"))
                 {
-                    throw new Exception("The file analysisconfig.json is invalid.");
+                    try
+                    {
+                        return JsonConvert.DeserializeObject<List<AnalysisData>>(reader.ReadToEnd());
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception("The file customanalysisconfig.json is invalid.");
+                    }
                 }
+            }
+            catch
+            {
+                return new List<AnalysisData>();
+            }
+            
+        }
+
+        public static void WriteCustomAnalysisTemplateData(List<AnalysisData> analysisDataList)
+        {
+            using (StreamWriter file = File.CreateText(GetFilePathByType(FilePathType.AnalysisData) + "customanalysisconfig.json"))
+            {
+                JsonSerializer serializer = new JsonSerializer();
+                serializer.Serialize(file, analysisDataList);
+            }
+        }
+
+        public static void RemoveCustomAnalysisTemplate(string analysisTemplateName)
+        {
+            try
+            {
+                var templates = ReadCustomAnalysisTemplateData();
+                var template = templates.Find(x => x.TemplateName == analysisTemplateName);
+
+                if (template != null)
+                {
+                    var fullFilePath = GetFilePathByType(FilePathType.AnalysisData) + template.TemplateImagePath;
+                    Directory.Delete(fullFilePath, true);
+                }
+            }
+            catch
+            {
+
             }
         }
 
@@ -106,10 +233,12 @@ namespace MSFSPopoutPanelManager
             return new MemoryStream(File.ReadAllBytes(fullFilePath));
         }
 
-        public static void SaveFile(FilePathType filePathType, string fileName, MemoryStream memoryStream)
+        public static void SaveFile(FilePathType filePathType, string subFolder, string fileName, MemoryStream memoryStream)
         {
-            var folderPath = GetFilePathByType(filePathType);
-            var fullFilePath = GetFilePathByType(filePathType) + fileName;
+            subFolder = String.IsNullOrEmpty(subFolder) ? String.Empty : subFolder + @"\";
+
+            var folderPath = GetFilePathByType(filePathType) + subFolder;
+            var fullFilePath = folderPath + fileName;
 
             Directory.CreateDirectory(folderPath);
             

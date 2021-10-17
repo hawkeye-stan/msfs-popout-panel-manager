@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -68,14 +69,23 @@ namespace MSFSPopoutPanelManager
             };
         }
 
-        public void PlaneProfileChanged(int profileId, bool showCoordinateOverlay)
+        public void PlaneProfileChanged(int? profileId, bool showCoordinateOverlay)
         {
             Logger.LogStatus(String.Empty);
 
-            _currentPlaneProfile = FileManager.GetUserPlaneProfile(profileId);
-            _panelLocationSelectionModule.PlaneProfile = _currentPlaneProfile;
-            _panelLocationSelectionModule.ShowPanelLocationOverlay(showCoordinateOverlay);
-            _panelLocationSelectionModule.UpdatePanelLocationUI();
+            if (profileId != null)
+            {
+                _currentPlaneProfile = FileManager.GetUserPlaneProfile((int) profileId);
+                _panelLocationSelectionModule.PlaneProfile = _currentPlaneProfile;
+                _panelLocationSelectionModule.ShowPanelLocationOverlay(showCoordinateOverlay);
+                _panelLocationSelectionModule.UpdatePanelLocationUI();
+            }
+            else
+            {
+                _panelLocationSelectionModule.PlaneProfile = null;
+                _panelLocationSelectionModule.ShowPanelLocationOverlay(showCoordinateOverlay);
+                _panelLocationSelectionModule.UpdatePanelLocationUI();
+            }
         }
 
         public void SetDefaultProfile()
@@ -85,7 +95,7 @@ namespace MSFSPopoutPanelManager
 
             FileManager.WriteUserData(userData);
 
-            var profileName = FileManager.ReadPlaneProfileData().Find(x => x.ProfileId == _currentPlaneProfile.ProfileId).ProfileName;
+            var profileName = FileManager.ReadAllPlaneProfileData().Find(x => x.ProfileId == _currentPlaneProfile.ProfileId).ProfileName;
 
             Logger.LogStatus($"Profile '{profileName}' has been set as default.");
         }
@@ -138,12 +148,17 @@ namespace MSFSPopoutPanelManager
 
             var hasExistingData = _currentPlaneProfile.PanelSettings.PanelDestinationList.Count > 0;
 
+            _currentPlaneProfile.PanelSettings.PanelDestinationList.ForEach(x => x.IsOpened = false);
+
             foreach (var panel in panels)
             {
-                if (hasExistingData)
+                var index = _currentPlaneProfile.PanelSettings.PanelDestinationList.FindIndex(x => x.PanelName == panel.Title);
+
+                if (index != -1)
                 {
-                    var index = _currentPlaneProfile.PanelSettings.PanelDestinationList.FindIndex(x => x.PanelName == panel.Title);
                     _currentPlaneProfile.PanelSettings.PanelDestinationList[index].PanelHandle = panel.Handle;
+                    _currentPlaneProfile.PanelSettings.PanelDestinationList[index].IsOpened = true;
+                    _currentPlaneProfile.PanelSettings.PanelDestinationList[index].PanelType = panel.WindowType;
                 }
                 else
                 {
@@ -157,13 +172,14 @@ namespace MSFSPopoutPanelManager
                         Left = rect.Left,
                         Top = rect.Top,
                         Width = rect.Right - rect.Left,
-                        Height = rect.Bottom - rect.Top
+                        Height = rect.Bottom - rect.Top,
+                        IsOpened = true,
+                        PanelType = panel.WindowType
                     };
 
                     _currentPlaneProfile.PanelSettings.PanelDestinationList.Add(panelDestinationInfo);
                 }
             }
-
 
             OnAnalysisCompleted?.Invoke(this, null);
 
@@ -226,10 +242,11 @@ namespace MSFSPopoutPanelManager
 
                 if (panelDestinationInfo == null)
                 {
-                    panelDestinationInfo = new PanelDestinationInfo() { PanelName = panel.Title };
+                    panelDestinationInfo = new PanelDestinationInfo();
                     _currentPlaneProfile.PanelSettings.PanelDestinationList.Add(panelDestinationInfo);
                 }
 
+                panelDestinationInfo.PanelName = panel.Title;
                 panelDestinationInfo.Left = rect.Left;
                 panelDestinationInfo.Top = rect.Top;
                 panelDestinationInfo.Width = rect.Right - rect.Left;
@@ -256,6 +273,71 @@ namespace MSFSPopoutPanelManager
         public void UpdatePanelLocationUI()
         {
             _panelLocationSelectionModule.UpdatePanelLocationUI();
+        }
+
+        public int AddUserProfile(string profileName, string analysisTemplateName)
+        {
+            var userPlaneProfiles = FileManager.ReadCustomPlaneProfileData();
+
+            int nextProfileId = 1000;
+
+            if (userPlaneProfiles.Count > 0)
+                nextProfileId = userPlaneProfiles.Max(x => x.ProfileId) + 1;
+
+            profileName = $"User - {profileName}";
+
+            var newPlaneProfile = new PlaneProfile()
+            {
+                ProfileId = nextProfileId,
+                ProfileName = profileName,
+                AnalysisTemplateName = analysisTemplateName == "New" ? profileName : analysisTemplateName,
+                IsUserProfile = true
+            };
+
+            userPlaneProfiles.Add(newPlaneProfile);
+
+            FileManager.WriteCustomPlaneProfileData(userPlaneProfiles);
+
+            return nextProfileId;
+        }
+
+        public void DeleteUserProfile(PlaneProfile planeProfile)
+        {
+            if (planeProfile.IsUserProfile)
+            {
+                // Remove custom plane profile data
+                var profiles = FileManager.ReadCustomPlaneProfileData();
+                profiles.RemoveAll(x => x.ProfileId == planeProfile.ProfileId);
+                FileManager.WriteCustomPlaneProfileData(profiles);
+
+                // Remove analysis template data
+                if (!profiles.Exists(x => x.AnalysisTemplateName == planeProfile.AnalysisTemplateName))
+                {
+                    FileManager.RemoveCustomAnalysisTemplate(planeProfile.AnalysisTemplateName);
+                    var templates = FileManager.ReadCustomAnalysisTemplateData();
+                    templates.RemoveAll(x => x.TemplateName == planeProfile.AnalysisTemplateName);
+                    FileManager.WriteCustomAnalysisTemplateData(templates);
+                }
+
+                // Remove profile from user data
+                var userData = FileManager.ReadUserData();
+                userData.Profiles.RemoveAll(x => x.ProfileId == planeProfile.ProfileId);
+                FileManager.WriteUserData(userData);
+            }
+            else
+            {
+                // Remove plane profile data
+                var profiles = FileManager.ReadBuiltInPlaneProfileData();
+                profiles.RemoveAll(x => x.ProfileId == planeProfile.ProfileId);
+                FileManager.WriteBuiltInPlaneProfileData(profiles);
+
+                // Remove profile from user data
+                var userData = FileManager.ReadUserData();
+                userData.Profiles.RemoveAll(x => x.ProfileId == planeProfile.ProfileId);
+                FileManager.WriteUserData(userData);
+            }
+
+            _currentPlaneProfile = null;
         }
     }
 }

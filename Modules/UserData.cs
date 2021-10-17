@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace MSFSPopoutPanelManager
 {
@@ -60,10 +60,7 @@ namespace MSFSPopoutPanelManager
     public class PanelDestinationInfo
     {
         public string PanelName { get; set; }
-
-        [JsonIgnore]
-        public IntPtr PanelHandle { get; set; }
-
+        
         public int Top { get; set; }
 
         public int Left { get; set; }
@@ -71,5 +68,13 @@ namespace MSFSPopoutPanelManager
         public int Width { get; set; }
 
         public int Height { get; set; }
+
+        public WindowType PanelType { get; set; }
+
+        [JsonIgnore]
+        public IntPtr PanelHandle { get; set; }
+
+        [JsonIgnore]
+        public bool IsOpened { get; set; }
     }
 }

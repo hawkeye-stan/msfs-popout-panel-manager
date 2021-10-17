@@ -1,6 +1,11 @@
 # Version History
 <hr/>
 
+## Vesion 2.1.0.0
+* Added ability to delete built-in profile.
+* Added ability to create and delete custom user profile.
+* Improved image recognition algorithm using SUSAN Corner block matching algorithm.
+
 ## Vesion 2.0.3.0
 * Fixed a crash bug when splitting out panel when trying to analyze the last split panel.
 * Added PMS50.com GTN750 mod configuration

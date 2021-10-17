@@ -23,7 +23,8 @@ namespace MSFSPopoutPanelManager
             panelManager.PanelLocationSelection.OnSelectionCompleted += PanelLocationSelection_OnSelectionCompleted;
             panelManager.PanelLocationSelection.OnLocationListChanged += PanelLocationSelection_OnLocationListChanged;
 
-            SetProfileDropDown();
+            var defaultProfileId = FileManager.ReadUserData().DefaultProfileId;
+            SetProfileDropDown(defaultProfileId);
         }
 
         public event EventHandler<EventArgs<bool>> OnAnalyzeAvailabilityChanged;
@@ -49,7 +50,7 @@ namespace MSFSPopoutPanelManager
         {
             var sb = new StringBuilder();
 
-            if (PanelManager.CurrentPanelProfile.PanelSourceCoordinates.Count == 0)
+            if (PanelManager.CurrentPanelProfile == null || PanelManager.CurrentPanelProfile.PanelSourceCoordinates.Count == 0)
             {
                 textBoxPanelLocations.Text = null;
             }
@@ -57,7 +58,7 @@ namespace MSFSPopoutPanelManager
             {
                 foreach (var coor in PanelManager.CurrentPanelProfile.PanelSourceCoordinates)
                 {
-                    sb.Append($"Panel: {coor.PanelIndex,-7} X-Pos: {coor.X,-10} Y-Pos: {coor.Y,-10}");
+                    sb.Append($"Panel: {coor.PanelIndex,-5} X-Pos: {coor.X,-8} Y-Pos: {coor.Y,-8}");
                     sb.Append(Environment.NewLine);
                 }
 
@@ -65,17 +66,19 @@ namespace MSFSPopoutPanelManager
             }
         }
 
-        public void SetProfileDropDown()
+        public void SetProfileDropDown(int? defaultProfileId)
         {
             try
             {
-                var defaultProfileId = FileManager.ReadUserData().DefaultProfileId;
-
-                var profileData = FileManager.ReadPlaneProfileData();
+                var allProfiles = FileManager.ReadAllPlaneProfileData();
                 comboBoxProfile.DisplayMember = "ProfileName";
                 comboBoxProfile.ValueMember = "ProfileId";
-                comboBoxProfile.DataSource = profileData.OrderBy(x => x.ProfileName).ToList();
-                comboBoxProfile.SelectedValue = defaultProfileId;
+                comboBoxProfile.DataSource = allProfiles.OrderBy(x => x.ProfileName).ToList();
+
+                if (allProfiles.Exists(x => x.ProfileId == defaultProfileId))
+                    comboBoxProfile.SelectedValue = defaultProfileId;
+                else
+                    comboBoxProfile.SelectedIndex = -1;
             }
             catch (Exception ex)
             {
@@ -103,7 +106,10 @@ namespace MSFSPopoutPanelManager
         private void comboBoxProfile_SelectedIndexChanged(object sender, EventArgs e)
         {
             PanelManager.PlaneProfileChanged(Convert.ToInt32(comboBoxProfile.SelectedValue), checkBoxShowPanelLocation.Checked);
-            buttonPanelSelection.Enabled = true;
+            buttonPanelSelection.Enabled = comboBoxProfile.SelectedValue != null;
+            buttonSetDefault.Enabled = comboBoxProfile.SelectedValue != null;
+            buttonDeleteProfile.Enabled = comboBoxProfile.SelectedValue != null;
+            buttonAnalyze.Enabled = !String.IsNullOrEmpty(textBoxPanelLocations.Text);
         }
 
         private void checkBoxShowPanelLocation_CheckedChanged(object sender, EventArgs e)
@@ -128,7 +134,33 @@ namespace MSFSPopoutPanelManager
 
         private void buttonSetDefault_Click(object sender, EventArgs e)
         {
-            PanelManager.SetDefaultProfile();
+            if(comboBoxProfile.SelectedValue != null)
+                PanelManager.SetDefaultProfile();
+        }
+
+        private void buttonAddProfile_Click(object sender, EventArgs e)
+        {
+            AddProfileForm addProfileForm = new AddProfileForm(PanelManager);
+            addProfileForm.StartPosition = FormStartPosition.CenterParent;
+            addProfileForm.OnAddProfile += (soruce, e) => { SetProfileDropDown(e.Value); };
+            addProfileForm.ShowDialog();
+        }
+
+        private void buttonDeleteProfile_Click(object sender, EventArgs e)
+        {
+            var dialogResult = MessageBox.Show("Are you sure you want to delete the selected profile?", "Confirm Delete", MessageBoxButtons.YesNo);
+            if(dialogResult == DialogResult.Yes)
+            {
+                var selectedProfile = (PlaneProfile)comboBoxProfile.SelectedItem;
+                PanelManager.DeleteUserProfile(selectedProfile);
+
+                SetProfileDropDown(null);
+                PanelManager.PlaneProfileChanged(null, checkBoxShowPanelLocation.Checked);
+                buttonPanelSelection.Enabled = comboBoxProfile.SelectedValue != null;
+                buttonSetDefault.Enabled = comboBoxProfile.SelectedValue != null;
+                buttonDeleteProfile.Enabled = comboBoxProfile.SelectedValue != null;
+                buttonAnalyze.Enabled = !String.IsNullOrEmpty(textBoxPanelLocations.Text);
+            }
         }
     }
 }

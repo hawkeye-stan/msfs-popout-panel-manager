@@ -1,6 +1,7 @@
 ﻿[
   {
-    "templateName": "G1000",
+    "templateName": "Built-in G1000",
+    "IsUserTemplate": false,
     "templates": [
       {
         "popoutId": 1,
@@ -15,7 +16,8 @@
     ]
   },
   {
-    "templateName": "WT-G1000NXi",
+    "templateName": "Built-in WT-G1000NXi",
+    "IsUserTemplate": false,
     "templates": [
       {
         "popoutId": 1,
@@ -30,7 +32,8 @@
     ]
   },
   {
-    "templateName": "G3000-KINGAIR",
+    "templateName": "Built-in G3000-KINGAIR",
+    "IsUserTemplate": false,
     "templates": [
       {
         "popoutId": 1,
@@ -50,7 +53,8 @@
     ]
   },
   {
-    "templateName": "G3000",
+    "templateName": "Built-in G3000",
+    "IsUserTemplate": false,
     "templates": [
       {
         "popoutId": 1,
@@ -80,7 +84,8 @@
     ]
   },
   {
-    "templateName": "FBW-A32NX",
+    "templateName": "Built-in FBW-A32NX",
+    "IsUserTemplate": false,
     "templates": [
       {
         "popoutId": 1,
@@ -120,7 +125,8 @@
     ]
   },
   {
-    "templateName": "CJ4",
+    "templateName": "Built-in CJ4",
+    "IsUserTemplate": false,
     "templates": [
       {
         "popoutId": 1,
@@ -145,7 +151,8 @@
     ]
   },
   {
-    "templateName": "pms50-gtn750",
+    "templateName": "Built-in PMS50-GTN750",
+    "IsUserTemplate": false,
     "templates": [
       {
         "popoutId": 1,

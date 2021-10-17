@@ -11,6 +11,8 @@ namespace MSFSPopoutPanelManager
 
         public IntPtr Handle { get; set; }
 
+        public int PanelId { get; set; }
+
         public string Title { get; set; }
 
         public string ClassName { get; set; }

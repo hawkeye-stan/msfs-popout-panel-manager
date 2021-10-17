@@ -73,10 +73,45 @@ Move your screen down a little bit by holding Right-Click in flight simulator un
 
 10. Since the initial pop out positions may be different from plane to plane even when they are using the same instrumentation system, you can easily add new profiles in a configuration file and points it to the same analysisTemplateName. You can edit the configuration file [planeprofile.json](Config/planeprofile.json) in the **config** folder of the application to add additional profile. Look for profileId 1 and 2 in the file as example where both Cessna 172 and DA62 both uses Working Title G1000 NXi. 
 
-## Image Recognition Concept and Application Configurability
+## Add or Delete Plane Profile
 
-To-Do
+The ability to add or delete plane profile is added starting in version 2.1 of the application.
 
+<p align="center">
+<img src="images/doc/screenshot9.png" width="600" hspace="10"/>
+</p>
+
+* For any existing built-in profile, you can delete them if they're not being used to reduce clutter. You can recreate them later by adding a new profile and selecting a built-in predefined image analysis template for the instrumentation set for that plane.
+
+* To add a new profile for plane either by using built-in image recognition data for predefined instrumentation set or create a new one, please click "Add profile" button.
+
+<p align="center">
+<img src="images/doc/screenshot8.png" width="600" hspace="10"/>
+</p>
+
+1. Please specify a profile name and use alphanumeric characters only. The profile name will also be used to create windows folder for image recognition data.
+
+2. Select either predefined image recognition analysis template or "New" for custom template. By selecting "New", the application will create custom image recognition data from the pop out panels.
+
+3. Select "OK" when done. You should see the new profile displayed in the application. Now perform the same procedure to select pop out panel location in the game and click "Analyze".
+
+4. Once analysis is completed, you should see the following if using a "New" template. The panel name will be generic such as "Panel 1", "Panel 2", and so forth. They work the same as built-in predefined templates. Continue to move pop out panels to their final screen locations and click "Save Settings".
+
+<p align="center">
+<img src="images/doc/screenshot10.png" width="600" hspace="10"/>
+</p>
+
+5. On next flight, your custom user profile will be available for selection.
+
+## User Plane Profile Data
+
+The user created plane profile and associate image recognition data are stored in the following folders in the application.
+
+* Config/customplaneprofile.json - the list of user created plane profile.
+
+* Config/AnalysisData/customanalysisconfig.json - define the location for custom plane profile image recognition data.
+
+* Config/AnalsysData/User - XXXXXX - folders where custom image recognition data is stored for user created plane profile.
  
 ## Common Problem Resolution
 

@@ -30,6 +30,8 @@ namespace MSFSPopoutPanelManager
         private void InitializeComponent()
         {
             this.panel1 = new System.Windows.Forms.Panel();
+            this.buttonDeleteProfile = new System.Windows.Forms.Button();
+            this.buttonAddProfile = new System.Windows.Forms.Button();
             this.buttonSetDefault = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.comboBoxProfile = new System.Windows.Forms.ComboBox();
@@ -54,21 +56,51 @@ namespace MSFSPopoutPanelManager
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.buttonDeleteProfile);
+            this.panel1.Controls.Add(this.buttonAddProfile);
             this.panel1.Controls.Add(this.buttonSetDefault);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.comboBoxProfile);
             this.panel1.ForeColor = System.Drawing.Color.White;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(516, 79);
+            this.panel1.Size = new System.Drawing.Size(571, 118);
             this.panel1.TabIndex = 0;
+            // 
+            // buttonDeleteProfile
+            // 
+            this.buttonDeleteProfile.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(158)))), ((int)(((byte)(218)))));
+            this.buttonDeleteProfile.Enabled = false;
+            this.buttonDeleteProfile.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.buttonDeleteProfile.ForeColor = System.Drawing.Color.White;
+            this.buttonDeleteProfile.Location = new System.Drawing.Point(289, 76);
+            this.buttonDeleteProfile.Name = "buttonDeleteProfile";
+            this.buttonDeleteProfile.Size = new System.Drawing.Size(118, 35);
+            this.buttonDeleteProfile.TabIndex = 21;
+            this.buttonDeleteProfile.Text = "Delete Profile";
+            this.buttonDeleteProfile.UseVisualStyleBackColor = false;
+            this.buttonDeleteProfile.Click += new System.EventHandler(this.buttonDeleteProfile_Click);
+            // 
+            // buttonAddProfile
+            // 
+            this.buttonAddProfile.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(158)))), ((int)(((byte)(218)))));
+            this.buttonAddProfile.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.buttonAddProfile.ForeColor = System.Drawing.Color.White;
+            this.buttonAddProfile.Location = new System.Drawing.Point(158, 76);
+            this.buttonAddProfile.Name = "buttonAddProfile";
+            this.buttonAddProfile.Size = new System.Drawing.Size(115, 35);
+            this.buttonAddProfile.TabIndex = 20;
+            this.buttonAddProfile.Text = "Add Profile";
+            this.buttonAddProfile.UseVisualStyleBackColor = false;
+            this.buttonAddProfile.Click += new System.EventHandler(this.buttonAddProfile_Click);
             // 
             // buttonSetDefault
             // 
             this.buttonSetDefault.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(158)))), ((int)(((byte)(218)))));
+            this.buttonSetDefault.Enabled = false;
             this.buttonSetDefault.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.buttonSetDefault.ForeColor = System.Drawing.Color.White;
-            this.buttonSetDefault.Location = new System.Drawing.Point(406, 37);
+            this.buttonSetDefault.Location = new System.Drawing.Point(32, 76);
             this.buttonSetDefault.Name = "buttonSetDefault";
             this.buttonSetDefault.Size = new System.Drawing.Size(107, 35);
             this.buttonSetDefault.TabIndex = 19;
@@ -95,7 +127,7 @@ namespace MSFSPopoutPanelManager
             this.comboBoxProfile.FormattingEnabled = true;
             this.comboBoxProfile.Location = new System.Drawing.Point(35, 41);
             this.comboBoxProfile.Name = "comboBoxProfile";
-            this.comboBoxProfile.Size = new System.Drawing.Size(365, 28);
+            this.comboBoxProfile.Size = new System.Drawing.Size(445, 28);
             this.comboBoxProfile.TabIndex = 5;
             this.comboBoxProfile.SelectedIndexChanged += new System.EventHandler(this.comboBoxProfile_SelectedIndexChanged);
             // 
@@ -106,9 +138,9 @@ namespace MSFSPopoutPanelManager
             this.panel2.Controls.Add(this.label4);
             this.panel2.Controls.Add(this.buttonPanelSelection);
             this.panel2.Controls.Add(this.label3);
-            this.panel2.Location = new System.Drawing.Point(0, 80);
+            this.panel2.Location = new System.Drawing.Point(0, 117);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(516, 227);
+            this.panel2.Size = new System.Drawing.Size(571, 191);
             this.panel2.TabIndex = 8;
             // 
             // label1
@@ -116,7 +148,7 @@ namespace MSFSPopoutPanelManager
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.label1.ForeColor = System.Drawing.Color.White;
-            this.label1.Location = new System.Drawing.Point(35, 86);
+            this.label1.Location = new System.Drawing.Point(35, 55);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(213, 20);
             this.label1.TabIndex = 12;
@@ -127,7 +159,7 @@ namespace MSFSPopoutPanelManager
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.label5.ForeColor = System.Drawing.Color.White;
-            this.label5.Location = new System.Drawing.Point(35, 146);
+            this.label5.Location = new System.Drawing.Point(35, 115);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(372, 20);
             this.label5.TabIndex = 11;
@@ -138,7 +170,7 @@ namespace MSFSPopoutPanelManager
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.label4.ForeColor = System.Drawing.Color.White;
-            this.label4.Location = new System.Drawing.Point(35, 115);
+            this.label4.Location = new System.Drawing.Point(35, 84);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(418, 20);
             this.label4.TabIndex = 10;
@@ -147,9 +179,10 @@ namespace MSFSPopoutPanelManager
             // buttonPanelSelection
             // 
             this.buttonPanelSelection.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(158)))), ((int)(((byte)(218)))));
+            this.buttonPanelSelection.Enabled = false;
             this.buttonPanelSelection.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.buttonPanelSelection.ForeColor = System.Drawing.Color.White;
-            this.buttonPanelSelection.Location = new System.Drawing.Point(35, 177);
+            this.buttonPanelSelection.Location = new System.Drawing.Point(35, 146);
             this.buttonPanelSelection.Name = "buttonPanelSelection";
             this.buttonPanelSelection.Size = new System.Drawing.Size(170, 35);
             this.buttonPanelSelection.TabIndex = 9;
@@ -161,9 +194,9 @@ namespace MSFSPopoutPanelManager
             // 
             this.label3.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.label3.ForeColor = System.Drawing.Color.White;
-            this.label3.Location = new System.Drawing.Point(20, 10);
+            this.label3.Location = new System.Drawing.Point(20, 4);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(488, 63);
+            this.label3.Size = new System.Drawing.Size(563, 47);
             this.label3.TabIndex = 7;
             this.label3.Text = "2. Identify the pop out panels in the game by clicking on them. Their locations w" +
     "ill be saved and for use on future flights. (You only need to do this once per p" +
@@ -174,7 +207,7 @@ namespace MSFSPopoutPanelManager
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.label6.ForeColor = System.Drawing.Color.White;
-            this.label6.Location = new System.Drawing.Point(103, 11);
+            this.label6.Location = new System.Drawing.Point(88, 10);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(111, 20);
             this.label6.TabIndex = 11;
@@ -184,11 +217,11 @@ namespace MSFSPopoutPanelManager
             // 
             this.textBoxPanelLocations.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.textBoxPanelLocations.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.textBoxPanelLocations.Location = new System.Drawing.Point(21, 41);
+            this.textBoxPanelLocations.Location = new System.Drawing.Point(6, 41);
             this.textBoxPanelLocations.Multiline = true;
             this.textBoxPanelLocations.Name = "textBoxPanelLocations";
             this.textBoxPanelLocations.ReadOnly = true;
-            this.textBoxPanelLocations.Size = new System.Drawing.Size(301, 277);
+            this.textBoxPanelLocations.Size = new System.Drawing.Size(271, 277);
             this.textBoxPanelLocations.TabIndex = 12;
             // 
             // panel4
@@ -196,9 +229,9 @@ namespace MSFSPopoutPanelManager
             this.panel4.Controls.Add(this.checkBoxShowPanelLocation);
             this.panel4.Controls.Add(this.textBoxPanelLocations);
             this.panel4.Controls.Add(this.label6);
-            this.panel4.Location = new System.Drawing.Point(522, 0);
+            this.panel4.Location = new System.Drawing.Point(569, 0);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(335, 403);
+            this.panel4.Size = new System.Drawing.Size(288, 403);
             this.panel4.TabIndex = 13;
             // 
             // checkBoxShowPanelLocation
@@ -208,7 +241,7 @@ namespace MSFSPopoutPanelManager
             this.checkBoxShowPanelLocation.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxShowPanelLocation.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.checkBoxShowPanelLocation.ForeColor = System.Drawing.Color.White;
-            this.checkBoxShowPanelLocation.Location = new System.Drawing.Point(61, 337);
+            this.checkBoxShowPanelLocation.Location = new System.Drawing.Point(35, 337);
             this.checkBoxShowPanelLocation.Name = "checkBoxShowPanelLocation";
             this.checkBoxShowPanelLocation.Size = new System.Drawing.Size(213, 24);
             this.checkBoxShowPanelLocation.TabIndex = 17;
@@ -219,6 +252,7 @@ namespace MSFSPopoutPanelManager
             // buttonAnalyze
             // 
             this.buttonAnalyze.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(158)))), ((int)(((byte)(218)))));
+            this.buttonAnalyze.Enabled = false;
             this.buttonAnalyze.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.buttonAnalyze.ForeColor = System.Drawing.Color.White;
             this.buttonAnalyze.Location = new System.Drawing.Point(32, 41);
@@ -235,9 +269,9 @@ namespace MSFSPopoutPanelManager
             this.panel3.Controls.Add(this.label7);
             this.panel3.Enabled = false;
             this.panel3.ForeColor = System.Drawing.Color.White;
-            this.panel3.Location = new System.Drawing.Point(3, 309);
+            this.panel3.Location = new System.Drawing.Point(0, 309);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(513, 94);
+            this.panel3.Size = new System.Drawing.Size(571, 94);
             this.panel3.TabIndex = 14;
             // 
             // label7
@@ -294,5 +328,7 @@ namespace MSFSPopoutPanelManager
         private System.Windows.Forms.Button buttonAnalyze;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button buttonSetDefault;
+        private System.Windows.Forms.Button buttonAddProfile;
+        private System.Windows.Forms.Button buttonDeleteProfile;
     }
 }

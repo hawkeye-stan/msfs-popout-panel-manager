@@ -5,12 +5,12 @@
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <Platforms>x64</Platforms>
-    <Version>2.0.2</Version>
+    <Version>2.1</Version>
     <AssemblyName>MSFSPopoutPanelManager</AssemblyName>
     <RootNamespace>MSFSPopoutPanelManager</RootNamespace>
     <ApplicationIcon>WindowManager.ico</ApplicationIcon>
     <Authors>Stanley Kwok</Authors>
-    <Product>MSFS 2020 Popout Window Manager</Product>
+    <Product>MSFS 2020 Popout Panel Manager</Product>
     <PackageId>MSFS 2020 Popout Panel Manager</PackageId>
 	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>

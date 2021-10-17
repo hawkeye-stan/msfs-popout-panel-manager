@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Drawing.Imaging;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace MSFSPopoutPanelManager
 {
@@ -339,14 +340,20 @@ namespace MSFSPopoutPanelManager
 
         private void AnalyzePopoutWindows(WindowProcess simulatorProcess, int profileId)
         {
-            List<PanelScore> panelScores = new List<PanelScore>();
+            var panelScores = new List<PanelScore>();
 
             // Get analysis template data for the profile
-            var planeProfile = FileManager.ReadPlaneProfileData().Find(x => x.ProfileId == profileId);
-            var templateData = FileManager.ReadAnalysisTemplateData().Find(x => x.TemplateName == planeProfile.AnalysisTemplateName);
+            var planeProfile = FileManager.ReadAllPlaneProfileData().Find(x => x.ProfileId == profileId);
+            var templateData = FileManager.ReadAllAnalysisTemplateData().Find(x => x.TemplateName == planeProfile.AnalysisTemplateName);
+
+            if(templateData == null)
+            {
+                CreateNewAnalysisTemplate(simulatorProcess, profileId);
+                return;
+            }
 
             // Load the template images for the selected profile
-            List<KeyValuePair<string, Bitmap>> templates = new List<KeyValuePair<string, Bitmap>>();
+            var templates = new List<KeyValuePair<string, Bitmap>>();
             foreach (var template in templateData.Templates)
             {
                 foreach (var imagePath in template.ImagePaths)
@@ -394,6 +401,62 @@ namespace MSFSPopoutPanelManager
                 simulatorProcess.ChildWindows.Find(x => x.Handle == panel.WindowHandle).Title = title;
                 PInvoke.SetWindowText(panel.WindowHandle, title);
             }
+        }
+
+        private void CreateNewAnalysisTemplate(WindowProcess simulatorProcess, int profileId)
+        {
+            var planeProfile = FileManager.ReadAllPlaneProfileData().Find(x => x.ProfileId == profileId);
+
+            var popouts = simulatorProcess.ChildWindows.FindAll(x => x.WindowType == WindowType.Undetermined);
+            var images = new List<Bitmap>();
+            
+
+            foreach (var popout in popouts)
+            {
+                popout.WindowType = WindowType.Custom_Popout;
+
+                // Resize all untitled pop out panels to 800x600 and set it to foreground
+                PInvoke.MoveWindow(popout.Handle, 0, 0, 800, 600, true);
+                PInvoke.SetForegroundWindow(popout.Handle);
+
+                Thread.Sleep(300);      // ** this delay is important to allow the window to go into focus before screenshot is taken
+
+                var screenshot = ImageOperation.TakeScreenShot(popout.Handle, false);
+                images.Add(screenshot);
+            }
+
+            var customAnalysisDataList = FileManager.ReadCustomAnalysisTemplateData();
+
+            AnalysisData analysisData = new AnalysisData();
+            analysisData.TemplateName = planeProfile.ProfileName;
+            analysisData.IsUserTemplate = true;
+
+            for (var i = 0; i < popouts.Count; i++)
+            {
+                var panelName = "Panel" + (i + 1);
+                var imageName = @$"{panelName}.png";
+                var imagePath = analysisData.TemplateImagePath;
+
+                using (var memoryStream = new MemoryStream())
+                {
+                    images[i].Save(memoryStream, ImageFormat.Png);
+                    FileManager.SaveFile(FilePathType.AnalysisData, imagePath, imageName, memoryStream);
+                }
+
+                analysisData.Templates.Add(new Template()
+                {
+                    PopoutId = i + 1,
+                    PopoutName = panelName,
+                    ImagePaths = new List<string>() { @$"{imagePath}/{imageName}" } 
+                });
+
+                var panelTitle = $"{panelName} (Custom)";
+                simulatorProcess.ChildWindows.Find(x => x.Handle == popouts[i].Handle).Title = panelTitle;
+                PInvoke.SetWindowText(popouts[i].Handle, panelTitle);
+            }
+
+            customAnalysisDataList.Add(analysisData);
+            FileManager.WriteCustomAnalysisTemplateData(customAnalysisDataList);
         }
 
         private Bitmap CloneImage(Bitmap srcImage)

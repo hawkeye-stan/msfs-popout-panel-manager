@@ -58,7 +58,7 @@ namespace MSFSPopoutPanelManager
                     Application.OpenForms[i].Close();
             }
 
-            if (PlaneProfile.PanelSourceCoordinates != null && PlaneProfile.PanelSourceCoordinates.Count > 0)
+            if (PlaneProfile != null && PlaneProfile.PanelSourceCoordinates != null && PlaneProfile.PanelSourceCoordinates.Count > 0)
             {
                 foreach (var coor in PlaneProfile.PanelSourceCoordinates)
                     WindowManager.AddPanelLocationSelectionOverlay(coor.PanelIndex.ToString(), coor.X, coor.Y);
