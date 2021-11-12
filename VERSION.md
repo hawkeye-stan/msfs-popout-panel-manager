@@ -1,6 +1,9 @@
 # Version History
 <hr/>
 
+## Vesion 2.1.1.0
+* Fixed panel separation issue for super ultrawide monitor (for example: 3840x1080)
+
 ## Vesion 2.1.0.0
 * Added ability to delete built-in profile.
 * Added ability to create and delete custom user profile.

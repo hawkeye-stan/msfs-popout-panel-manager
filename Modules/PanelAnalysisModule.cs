@@ -268,7 +268,7 @@ namespace MSFSPopoutPanelManager
             // Get a snippet of 1 pixel wide vertical strip of windows. We will choose the strip left of center.
             // This is to determine when the actual panel's vertical pixel starts in the window. This will allow accurate sizing of the template image
             var clientWindowHeight = rect.Bottom - rect.Top;
-            var left = Convert.ToInt32((rect.Right - rect.Left) * 0.25);  // look at around 25% from the left
+            var left = Convert.ToInt32((rect.Right - rect.Left) * 0.48);  // look at around 48% from the left
             var top = sourceImage.Height  - clientWindowHeight;
 
             if (top < 0 || left < 0)
