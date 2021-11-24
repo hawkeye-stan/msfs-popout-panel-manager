@@ -22,9 +22,10 @@ namespace MSFSPopoutPanelManager
             return new Bitmap(new MemoryStream(bytes));
         }
 
-        public static Bitmap ResizeImage(Bitmap sourceImage, float width, float height)
+        public static Bitmap ResizeImage(Bitmap sourceImage, double width, double height)
         {
-            return new ResizeBilinear(Convert.ToInt32(width), Convert.ToInt32(height)).Apply(sourceImage);
+            var bmp = new ResizeBilinear(Convert.ToInt32(width), Convert.ToInt32(height)).Apply(sourceImage);
+            return ImageOperation.ConvertToFormat(bmp, PixelFormat.Format24bppRgb);
         }
 
         public static Bitmap CropImage(Bitmap sourceImage, int x, int y, int width, int height)
@@ -36,7 +37,8 @@ namespace MSFSPopoutPanelManager
             {
                 gr.DrawImage(sourceImage, new Rectangle(0, 0, bmp.Width, bmp.Height), crop, GraphicsUnit.Pixel);
             }
-            return bmp;
+
+            return ImageOperation.ConvertToFormat(bmp, PixelFormat.Format24bppRgb);
         }
 
         public static Bitmap ConvertToFormat(Bitmap image, PixelFormat format)
@@ -46,6 +48,7 @@ namespace MSFSPopoutPanelManager
             {
                 gr.DrawImage(image, new Rectangle(0, 0, copy.Width, copy.Height));
             }
+
             return copy;
         }
 
@@ -70,14 +73,14 @@ namespace MSFSPopoutPanelManager
             var bottom = rect.Bottom;
 
             var bounds = new Rectangle(left, top, right - left, bottom - top);
-            var bitmap = new Bitmap(bounds.Width, bounds.Height);
+            var bmp = new Bitmap(bounds.Width, bounds.Height);
 
-            using (Graphics g = Graphics.FromImage(bitmap))
+            using (Graphics g = Graphics.FromImage(bmp))
             {
                 g.CopyFromScreen(new Point(bounds.Left, bounds.Top), Point.Empty, bounds.Size);
             }
 
-            return bitmap;
+            return ImageOperation.ConvertToFormat(bmp, PixelFormat.Format24bppRgb);
         }
 
         public static Bitmap HighLightMatchedPattern(Bitmap sourceImage, List<Rect> rectBoxes)
@@ -95,6 +98,13 @@ namespace MSFSPopoutPanelManager
             sourceImage.Save(@".\debug.png");
 
             return sourceImage;
+        }
+        public static Bitmap GetExpandButtonImage(int windowHeight)
+        {
+            var image = new Bitmap(FileManager.LoadAsStream(FilePathType.PreprocessingData, "separation_button.png"));
+            double template_image_ratio = Convert.ToDouble(windowHeight) / 1440;      // expand button image was created on 1440p resolution
+
+            return ImageOperation.ResizeImage(image, Convert.ToInt32(image.Width * template_image_ratio), Convert.ToInt32(image.Height * template_image_ratio));
         }
     }
 }

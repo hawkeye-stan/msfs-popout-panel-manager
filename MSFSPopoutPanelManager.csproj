@@ -4,8 +4,8 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
-    <Platforms>x64</Platforms>
-    <Version>2.1.1.0</Version>
+    <Platforms>x64;AnyCPU</Platforms>
+    <Version>2.2.0.0</Version>
     <AssemblyName>MSFSPopoutPanelManager</AssemblyName>
     <RootNamespace>MSFSPopoutPanelManager</RootNamespace>
     <ApplicationIcon>WindowManager.ico</ApplicationIcon>
@@ -13,8 +13,10 @@
     <Product>MSFS 2020 Popout Panel Manager</Product>
     <PackageId>MSFS 2020 Popout Panel Manager</PackageId>
 	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-	<AssemblyVersion>2.1.1.0</AssemblyVersion>
-	<FileVersion>2.1.1.0</FileVersion>
+	<AssemblyVersion>2.2.0.0</AssemblyVersion>
+	<FileVersion>2.2.0.0</FileVersion>
+	<DebugType>None</DebugType>
+	<DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
 
   <ItemGroup>
@@ -40,6 +42,9 @@
     <None Remove="C:\Users\hawkeye\.nuget\packages\tesseract\4.1.1\build\\..\x86\tesseract41.dll" />
     <None Remove="Config\AnalysisData\analysisconfig.json" />
     <None Remove="Config\planeprofile.json" />
+    <None Remove="LICENSE" />
+    <None Remove="README.md" />
+    <None Remove="VERSION.md" />
   </ItemGroup>
 
   <ItemGroup>
@@ -48,6 +53,7 @@
     <PackageReference Include="DarkUI" Version="2.0.2" />
     <PackageReference Include="MouseKeyHook" Version="5.6.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -63,6 +69,15 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Config\AnalysisData\analysisconfig.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="LICENSE">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="README.md">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="VERSION.md">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -206,10 +221,13 @@
     <None Update="Config\AnalysisData\g1000nxi\g1000nxi_pfd.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Config\preprocessingdata\separation_button.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Config\PreprocessingData\separation_button_qhd.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Config\PreprocessingData\separation_button_uhd.png">
+    <None Update="Config\preprocessingdata\test.svg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="config\preprocess\blockmatch_wqhd1.png">
@@ -236,25 +254,13 @@
     <None Update="config\preprocess\g1000_pfd_wqhd.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Config\PreprocessingData\separation_button_hd.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="config\preprocessingdata\separation_button_wqhd.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="images\transparent.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="LICENSE">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="VERSION.md">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="Vesion.md">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="README.md">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -269,10 +275,6 @@
 
   <ItemGroup>
     <NativeLibs Remove="Logger.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <NativeLibs Remove="Config\PreprocessingData\separation_button_hd.png" />
   </ItemGroup>
 
   <ItemGroup>

@@ -188,7 +188,10 @@ namespace MSFSPopoutPanelManager
             else
                 Logger.LogStatus("No panel has been identified.");
 
-            ApplyPanelSettings();
+            if(hasExistingData)
+                ApplyPanelSettings();
+
+            PInvoke.SetForegroundWindow(_appForm.Handle);
         }
 
         public void ApplyPanelSettings()
@@ -225,6 +228,8 @@ namespace MSFSPopoutPanelManager
                 Logger.LogStatus("Please move the newly identified panels to their desire locations. Once everything is perfect, click 'Save Settings' and these settings will be used in future flights.");
             else
                 Logger.LogStatus("No panel has been found.");
+
+            PInvoke.SetForegroundWindow(_appForm.Handle);
         }
 
         public void SavePanelSettings()

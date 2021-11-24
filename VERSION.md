@@ -1,6 +1,14 @@
 # Version History
 <hr/>
 
+## Vesion 2.2.0.0
+* Disabled ability to launch multiple instances of the application.
+* Added autostart feature when MSFS starts. The application will create or modify exe.xml. A backup copy of exe.xml will be created.
+* Added better support for 4K display resolution and non-standard display resolution.
+* Windows OS display resolution and in-game display resolution no longer have to match. 
+* Improved panel pop out separation accuracy and performance.
+* Updated application packaging to single file executable to reduce file clutter.
+
 ## Vesion 2.1.1.0
 * Fixed panel separation issue for super ultrawide monitor (for example: 3840x1080)
 

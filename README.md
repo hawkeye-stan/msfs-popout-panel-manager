@@ -116,10 +116,9 @@ The user created plane profile and associate image recognition data are stored i
 ## Common Problem Resolution
 
  - Unable to pop out windows correctly - the predefined pop out panel coordinate may not line up correctly or movement of mouse is interfering with pop out execution. Please try to reposition the screen into pop out coordinates. Or you can close and restart the application, close all the opened pop outs, and try the analysis again.
- - Pop out windows are not recognized correctly - it is the current limitation of current implementation of image recognition algorithm. More sophisticated image recognition such as [SIFT](https://en.wikipedia.org/wiki/Scale-invariant_feature_transform) will be needed. This is to-do item on my list for future version of app. Also, the panel screen maybe blank which causes the image recognition engine to fail.
- -  Night time or different world location causes image recognition to fail - application has builtin redundancy image recognition data for this purpose (such as MFD recognition for G1000 where 75% of the screen is a map). But I may not have anticipate all the use cases yet. Please provide feedback and it will help me to improve the image recognition engine.
- - Running on non-native monitor resolution does not work - for example running 1080p window resolution on 1440p monitor will not work because of image scaling and calculation issue. But in-game resolution scaling will not get affected. This issue can only be fixed when using scale invariant algorithm or more advanced algorithm.
-
+ - Pop out windows are not recognized correctly - it is limitation of current implementation of image recognition algorithm. More sophisticated image recognition such as [SIFT](https://en.wikipedia.org/wiki/Scale-invariant_feature_transform) will be needed. This is to-do item on my list for future version of app. Also, the panel screen maybe blank which causes the image recognition engine to fail.
+ - Night time or different world location causes image recognition to fail - application has builtin redundancy image recognition data for this purpose (such as MFD recognition for G1000 where 75% of the screen is a map). But I may not have anticipate all the use cases yet. Please provide feedback and it will help me to improve the image recognition engine.
+ 
 
 ## Author
 Stanley Kwok

@@ -273,7 +273,7 @@ namespace MSFSPopoutPanelManager
             return files;
         }
 
-        private static string GetFilePathByType(FilePathType filePathType)
+        public static string GetFilePathByType(FilePathType filePathType)
         {
             switch (filePathType)
             {

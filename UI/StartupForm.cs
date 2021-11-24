@@ -1,6 +1,5 @@
 ﻿using DarkUI.Forms;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Threading;
@@ -41,6 +40,8 @@ namespace MSFSPopoutPanelManager
 
             _panelManager.OnAnalysisCompleted += (source, e) => { _ucPanelSelection.Visible = false; _ucApplySettings.Visible = true; };
             _panelManager.CheckSimulatorStarted();
+
+            checkBoxAutoStart.Checked = Autostart.CheckIsAutoStart();
         }
 
         private void Logger_OnStatusLogged(object sender, EventArgs<StatusMessage> e)
@@ -100,6 +101,14 @@ namespace MSFSPopoutPanelManager
             linkLabel1.LinkVisited = true;
 
             Process.Start(new ProcessStartInfo("https://github.com/hawkeye-stan/msfs-popout-panel-manager") { UseShellExecute = true });
+        }
+
+        private void checkBoxAutoStart_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxAutoStart.Checked)
+                Autostart.Activate();
+            else
+                Autostart.Deactivate();
         }
     }
 }

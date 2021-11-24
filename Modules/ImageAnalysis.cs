@@ -1,25 +1,43 @@
 ﻿using AForge.Imaging;
+using System;
 using System.Drawing;
 using System.Linq;
+
 namespace MSFSPopoutPanelManager
 {
     public class ImageAnalysis
     {
-        public static Point ExhaustiveTemplateMatchAnalysis(Bitmap sourceImage, Bitmap templateImage, int imageShrinkFactor, float similarityThreshHold)
+        public static Point ExhaustiveTemplateMatchAnalysisAsync(Bitmap sourceImage, Bitmap templateImage, float similarityThreshHold, int panelStartingTop, int panelStartingLeft)
+        {
+            var x = panelStartingLeft - Convert.ToInt32(templateImage.Width * 1.5);
+            var y = 0;
+            var width = Convert.ToInt32(templateImage.Width * 1.5);
+            var height = sourceImage.Height;
+
+            var searchZone = new Rectangle(x, y, width, height);
+
+            var point = AnalyzeExpandImageBitmap(sourceImage, templateImage, similarityThreshHold, searchZone);
+
+            if (point != Point.Empty)
+                point.Y += panelStartingTop;
+
+            return point;
+        }
+
+        public static Point AnalyzeExpandImageBitmap(Bitmap sourceImage, Bitmap templateImage, float similarityThreshHold, Rectangle searchZone)
         {
             // Full image pixel to pixel matching algorithm
             ExhaustiveTemplateMatching etm = new ExhaustiveTemplateMatching(similarityThreshHold);
-            TemplateMatch[] templateMatches = etm.ProcessImage(sourceImage, templateImage);
+            TemplateMatch[] templateMatches = etm.ProcessImage(sourceImage, templateImage, searchZone);
 
-            // Highlight the matchings that were found and saved a copy of the highlighted image
             if (templateMatches != null && templateMatches.Length > 0)
             {
-                var match = templateMatches.OrderByDescending(x => x.Similarity).First();  // Just look at the first match since only one operation can be accomplished at a time on MSFS side
+                var match = templateMatches.OrderByDescending(x => x.Similarity).First();  // Just look at the first match
 
-                var x = match.Rectangle.X * imageShrinkFactor + templateImage.Width * imageShrinkFactor / 4;
-                var y = match.Rectangle.Y * imageShrinkFactor + templateImage.Height * imageShrinkFactor / 4;
+                var xCoor = match.Rectangle.X + templateImage.Width / 12;
+                var yCoor = match.Rectangle.Y + templateImage.Height / 4;
 
-                return new Point(x, y);
+                return new Point(Convert.ToInt32(xCoor), Convert.ToInt32(yCoor));
             }
 
             return Point.Empty;
@@ -38,19 +56,6 @@ namespace MSFSPopoutPanelManager
             var templateMatches = bm.ProcessImage(sourceImage, points, templateImage);
 
             return templateMatches.Count;
-
-            // Full image pixel to pixel matching algorithm
-            //ExhaustiveTemplateMatching etm = new ExhaustiveTemplateMatching(similarityThreshHold);
-            //TemplateMatch[] templateMatches = etm.ProcessImage(sourceImage, templateImage);
-
-            //// Highlight the matchings that were found and saved a copy of the highlighted image
-            //if (templateMatches != null && templateMatches.Length > 0)
-            //{
-            //    var imageMatched = templateMatches.ToList().Max(x => x.Similarity);
-            //    return imageMatched;
-            //}
-
-            //return 0;
         }
     }
 }

@@ -37,7 +37,7 @@ namespace MSFSPopoutPanelManager
                 {
                     while (panelsToBeIdentified > 1)        // Do not have to separate the last panel
                     {
-                        var coordinate = AnalyzeMergedPopoutWindows(simulatorProcess.Handle, customPopout.Handle);
+                        var coordinate = AnalyzeMergedPopoutWindows(customPopout.Handle);
                         if (!coordinate.IsEmpty)
                             SeparateUntitledPanel(customPopout.Handle, coordinate.X, coordinate.Y);
 
@@ -55,7 +55,6 @@ namespace MSFSPopoutPanelManager
             // Analyze the content of the pop out panels
             AnalyzePopoutWindows(simulatorProcess, profileId);
         }
-
 
         private WindowProcess GetProcessZero()
         {
@@ -170,109 +169,55 @@ namespace MSFSPopoutPanelManager
             }
         }
 
-        public Point AnalyzeMergedPopoutWindows(IntPtr flightSimHandle, IntPtr windowHandle)
+        public Point AnalyzeMergedPopoutWindows(IntPtr windowHandle)
         {
-            var resolution = GetWindowResolution(flightSimHandle);
+            float EXHAUSTIVE_TEMPLATE_MATCHING_SIMILARITY_THRESHOLD = 0.86f;
 
-            int EXHAUSTIVE_TEMPLATE_MATCHING_SHRINK_FACTOR = 1;
-            float EXHAUSTIVE_TEMPLATE_MATCHING_SIMILARITY_THRESHOLD = 0.9f;
+            var sourceImage = ImageOperation.TakeScreenShot(windowHandle, true);
+            var templateImage = ImageOperation.GetExpandButtonImage(sourceImage.Height);
 
-            // This is to speed up pattern matching and still balance accuracy
-            switch (resolution)
-            {
-                case FlightSimResolution.HD:
-                    EXHAUSTIVE_TEMPLATE_MATCHING_SHRINK_FACTOR = 2;
-                    EXHAUSTIVE_TEMPLATE_MATCHING_SIMILARITY_THRESHOLD = 0.88f;
-                    break;
-                case FlightSimResolution.QHD:
-                case FlightSimResolution.WQHD:
-                case FlightSimResolution.UHD:
-                    EXHAUSTIVE_TEMPLATE_MATCHING_SHRINK_FACTOR = 3;
-                    EXHAUSTIVE_TEMPLATE_MATCHING_SIMILARITY_THRESHOLD = 0.85f;
-                    break;
-            }
-           
+            var panelsStartingTop = GetPanelsStartingTop(windowHandle, sourceImage);
 
-            var windowResolution = GetWindowResolution(flightSimHandle);
-            var templateFileName = $"separation_button_{windowResolution}.png";
-
-            var source = ImageOperation.ConvertToFormat(ImageOperation.TakeScreenShot(windowHandle, true), PixelFormat.Format24bppRgb);
-            var template = ImageOperation.ConvertToFormat(new Bitmap(FileManager.LoadAsStream(FilePathType.PreprocessingData, templateFileName)), PixelFormat.Format24bppRgb);
-
-            // Get the updated template image ratio based on how the initial window with all the popout panels in it are organized. This is used to resize the template image
-            var templateImageRatio = GetTemplateToPanelHeightRatio(windowHandle, source, windowResolution, 1);
-
-            if (templateImageRatio == -1)
-            {
+            if (panelsStartingTop > sourceImage.Height / 2)     // if usually the last panel occupied the entire window with no white menubar
                 return Point.Empty;
-            }
 
-            // Resize the source and template image to speed up exhaustive template matching analysis
-            var sourceWidth = source.Width / EXHAUSTIVE_TEMPLATE_MATCHING_SHRINK_FACTOR;
-            var sourceHeight = source.Height / EXHAUSTIVE_TEMPLATE_MATCHING_SHRINK_FACTOR;
-            var templateWidth = template.Width * templateImageRatio / EXHAUSTIVE_TEMPLATE_MATCHING_SHRINK_FACTOR;
-            var templateHeight = template.Height * templateImageRatio / EXHAUSTIVE_TEMPLATE_MATCHING_SHRINK_FACTOR;
+            var panelsStartingLeft = GetPanelsStartingLeft(windowHandle, sourceImage, panelsStartingTop + 5);
 
-            var resizedSource = ImageOperation.ResizeImage(source, sourceWidth, sourceHeight);
-            resizedSource = ImageOperation.ConvertToFormat(resizedSource, PixelFormat.Format24bppRgb);
+            var templateImageRatios = GetExpandButtonHeightRatio(windowHandle, sourceImage, 1);
+
+            var resizedSource = ImageOperation.CropImage(sourceImage, 0, panelsStartingTop, sourceImage.Width, sourceImage.Height / 12);  // add around 100px per 1440p resolution
+
+            resizedSource.Save(FileManager.GetFilePathByType(FilePathType.PreprocessingData) + "source.png");
+
+            var resizedTemplate = ImageOperation.ResizeImage(templateImage, templateImage.Width * templateImageRatios[0], templateImage.Height * templateImageRatios[0]);
+            var point = ImageAnalysis.ExhaustiveTemplateMatchAnalysisAsync(resizedSource, resizedTemplate, EXHAUSTIVE_TEMPLATE_MATCHING_SIMILARITY_THRESHOLD, panelsStartingTop, panelsStartingLeft);
             
-            var resizedTemplate = ImageOperation.ResizeImage(template, templateWidth, templateHeight);
-
-            var point = ImageAnalysis.ExhaustiveTemplateMatchAnalysis(resizedSource, resizedTemplate, EXHAUSTIVE_TEMPLATE_MATCHING_SHRINK_FACTOR, EXHAUSTIVE_TEMPLATE_MATCHING_SIMILARITY_THRESHOLD);
-
             if (point.IsEmpty)
             {
-                template = ImageOperation.ConvertToFormat(new Bitmap(FileManager.LoadAsStream(FilePathType.PreprocessingData, templateFileName)), PixelFormat.Format24bppRgb);
-                templateImageRatio = GetTemplateToPanelHeightRatio(windowHandle, source, windowResolution, 2);      // maybe there are 2 rows of panels in the merged pop out window
-                templateWidth = template.Width * templateImageRatio / EXHAUSTIVE_TEMPLATE_MATCHING_SHRINK_FACTOR;
-                templateHeight = template.Height * templateImageRatio / EXHAUSTIVE_TEMPLATE_MATCHING_SHRINK_FACTOR;
-                resizedTemplate = ImageOperation.ResizeImage(template, templateWidth, templateHeight);
-
-                point = ImageAnalysis.ExhaustiveTemplateMatchAnalysis(resizedSource, resizedTemplate, EXHAUSTIVE_TEMPLATE_MATCHING_SHRINK_FACTOR, EXHAUSTIVE_TEMPLATE_MATCHING_SIMILARITY_THRESHOLD);
+                resizedTemplate = ImageOperation.ResizeImage(templateImage, templateImage.Width * templateImageRatios[1], templateImage.Height * templateImageRatios[1]);
+                point = ImageAnalysis.ExhaustiveTemplateMatchAnalysisAsync(resizedSource, resizedTemplate, EXHAUSTIVE_TEMPLATE_MATCHING_SIMILARITY_THRESHOLD, panelsStartingTop, panelsStartingLeft);
             }
 
             return point;
         }
 
-        private FlightSimResolution GetWindowResolution(IntPtr windowHandle)
+        private List<double> GetExpandButtonHeightRatio(IntPtr windowHandle, Bitmap sourceImage, int numberOfRows, double percentFromLeft = 0.48)
         {
-            var rect = new Rect();
-            PInvoke.GetClientRect(windowHandle, out rect);
+            var ratios = new List<double>();
 
-            switch (rect.Bottom)
-            {
-                case 1009:
-                case 1080:
-                    return FlightSimResolution.HD;
-                case 1369:
-                case 1440:
-                    return FlightSimResolution.QHD;
-                case 2089:
-                case 2160:
-                    return FlightSimResolution.UHD;
-                default:
-                    return FlightSimResolution.HD;
-            }
-        }
-
-        private float GetTemplateToPanelHeightRatio(IntPtr windowHandle, Bitmap sourceImage, FlightSimResolution windowResolution, int numberOfRows)
-        {
             const int SW_MAXIMIZE = 3;
             PInvoke.ShowWindow(windowHandle, SW_MAXIMIZE);
             PInvoke.SetForegroundWindow(windowHandle);
-            Thread.Sleep(500);
+            Thread.Sleep(200);
 
             Rect rect = new Rect();
             PInvoke.GetClientRect(windowHandle, out rect);
 
             // Get a snippet of 1 pixel wide vertical strip of windows. We will choose the strip left of center.
-            // This is to determine when the actual panel's vertical pixel starts in the window. This will allow accurate sizing of the template image
+            // This is to determine when the actual panel's vertical pixel starts in the window. This will allow accurate sizing of the expand button image
             var clientWindowHeight = rect.Bottom - rect.Top;
-            var left = Convert.ToInt32((rect.Right - rect.Left) * 0.48);  // look at around 48% from the left
+            var left = Convert.ToInt32((rect.Right - rect.Left) * percentFromLeft);  // look at around 48% from the left
             var top = sourceImage.Height  - clientWindowHeight;
-
-            if (top < 0 || left < 0)
-                return -1;
 
             // Using much faster image LockBits instead of GetPixel method
             unsafe
@@ -284,9 +229,62 @@ namespace MSFSPopoutPanelManager
                 int widthInBytes = stripData.Width * bytesPerPixel;
                 byte* ptrFirstPixel = (byte*)stripData.Scan0;
 
-                // Find the first white pixel and have at least 4 more white pixels in a row (the panel title bar)
-                const int WHITE_PIXEL_TO_COUNT = 4;
-                int whitePixelCount = 0;
+                // Find the first white pixel (the panel title bar)
+                for (int y = 0; y < heightInPixels; y++)
+                {
+                    byte* currentLine = ptrFirstPixel + (y * stripData.Stride);
+                    for (int x = 0; x < widthInBytes; x = x + bytesPerPixel)
+                    {
+                        int red = currentLine[x + 2];
+                        int green = currentLine[x + 1];
+                        int blue = currentLine[x];
+
+                        if (red == 255 && green == 255 && blue == 255)
+                        {
+                            sourceImage.UnlockBits(stripData);
+
+                            var unpopPanelSize = (clientWindowHeight - (y * 2)) / Convert.ToDouble(numberOfRows);
+
+                            ratios.Add(unpopPanelSize / Convert.ToDouble(clientWindowHeight));      // 1 row of panel
+                            ratios.Add(unpopPanelSize / 2 / Convert.ToDouble(clientWindowHeight));  // 2 rows of panel
+                            return ratios;
+                        }
+                    }
+                }
+
+                sourceImage.UnlockBits(stripData);
+            }
+
+            return GetExpandButtonHeightRatio(windowHandle, sourceImage, numberOfRows, percentFromLeft - 0.01);
+        }
+
+        private int GetPanelsStartingTop(IntPtr windowHandle, Bitmap sourceImage, double percentFromLeft = 0.49)
+        {
+            const int SW_MAXIMIZE = 3;
+            PInvoke.ShowWindow(windowHandle, SW_MAXIMIZE);
+            PInvoke.SetForegroundWindow(windowHandle);
+            Thread.Sleep(250);
+
+            Rect rect = new Rect();
+            PInvoke.GetClientRect(windowHandle, out rect);
+
+            // Get a snippet of 1 pixel wide vertical strip of windows. We will choose the strip left of center.
+            // This is to determine when the actual panel's vertical pixel starts in the window. This will allow accurate sizing of the template image
+            var clientWindowHeight = rect.Bottom - rect.Top;
+            var left = Convert.ToInt32((rect.Right - rect.Left) * percentFromLeft);  // look at around 49% from the left
+            var top = sourceImage.Height - clientWindowHeight;
+
+            if (top < 0 || left < 0)
+                return -1;
+
+            unsafe
+            {
+                var stripData = sourceImage.LockBits(new Rectangle(left, top, 1, clientWindowHeight), ImageLockMode.ReadWrite, sourceImage.PixelFormat);
+
+                int bytesPerPixel = Bitmap.GetPixelFormatSize(stripData.PixelFormat) / 8;
+                int heightInPixels = stripData.Height;
+                int widthInBytes = stripData.Width * bytesPerPixel;
+                byte* ptrFirstPixel = (byte*)stripData.Scan0;
 
                 for (int y = 0; y < heightInPixels; y++)
                 {
@@ -299,19 +297,48 @@ namespace MSFSPopoutPanelManager
 
                         if (red == 255 && green == 255 && blue == 255)
                         {
-                            whitePixelCount++;
-
-                            if (whitePixelCount == WHITE_PIXEL_TO_COUNT)
-                            {
-                                sourceImage.UnlockBits(stripData);
-                                var unpopPanelSize = (clientWindowHeight - (y) * 2) / Convert.ToSingle(numberOfRows);
-                                var currentRatio = unpopPanelSize / Convert.ToSingle(clientWindowHeight);
-                                return currentRatio;
-                            }
+                            sourceImage.UnlockBits(stripData);
+                            return y + top;
                         }
-                        else
+                    }
+                }
+
+                sourceImage.UnlockBits(stripData);
+            }
+
+            return GetPanelsStartingTop(windowHandle, sourceImage, percentFromLeft - 0.01);
+        }
+
+        private int GetPanelsStartingLeft(IntPtr windowHandle, Bitmap sourceImage, int top)
+        {
+            Rect rect = new Rect();
+            PInvoke.GetClientRect(windowHandle, out rect);
+
+            // Get a snippet of 1 pixel wide horizontal strip of windows
+            var clientWindowWidth = rect.Right - rect.Left;
+
+            unsafe
+            {
+                var stripData = sourceImage.LockBits(new Rectangle(0, top, clientWindowWidth, 1), ImageLockMode.ReadWrite, sourceImage.PixelFormat);
+
+                int bytesPerPixel = Bitmap.GetPixelFormatSize(stripData.PixelFormat) / 8;
+                int widthInPixels = stripData.Width;
+                int heightInBytes = stripData.Height * bytesPerPixel;
+                byte* ptrFirstPixel = (byte*)stripData.Scan0;
+
+                for (int x = 0; x < widthInPixels; x++)
+                {
+                    byte* currentLine = ptrFirstPixel - (x * bytesPerPixel);
+                    for (int y = 0; y < heightInBytes; y = y + bytesPerPixel)
+                    {
+                        int red = currentLine[y + 2];
+                        int green = currentLine[y + 1];
+                        int blue = currentLine[y];
+
+                        if (red == 255 && green == 255 && blue == 255)
                         {
-                            whitePixelCount = 0;
+                            sourceImage.UnlockBits(stripData);
+                            return sourceImage.Width - x;
                         }
                     }
                 }
@@ -331,11 +358,13 @@ namespace MSFSPopoutPanelManager
             Cursor.Position = new Point(point.X, point.Y);
 
             // Wait for mouse to get into position
-            Thread.Sleep(1000);
+            Thread.Sleep(500);
 
             PInvoke.mouse_event(MOUSEEVENTF_LEFTDOWN, point.X, point.Y, 0, 0);
             Thread.Sleep(200);
             PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, point.X, point.Y, 0, 0);
+
+            Cursor.Position = new Point(point.X + 50, point.Y + 50);
         }
 
         private void AnalyzePopoutWindows(WindowProcess simulatorProcess, int profileId)
@@ -374,7 +403,7 @@ namespace MSFSPopoutPanelManager
 
                 Thread.Sleep(300);      // ** this delay is important to allow the window to go into focus before screenshot is taken
 
-                var srcImage = ImageOperation.ConvertToFormat(ImageOperation.TakeScreenShot(popout.Handle, false), PixelFormat.Format24bppRgb);
+                var srcImage = ImageOperation.TakeScreenShot(popout.Handle, false);
                 var srcImageBytes = ImageOperation.ImageToByte(srcImage);
 
                 Parallel.ForEach(templates, new ParallelOptions { MaxDegreeOfParallelism = Convert.ToInt32(Math.Ceiling((Environment.ProcessorCount * 0.75) * 1.0)) }, template =>

@@ -42,6 +42,7 @@ namespace MSFSPopoutPanelManager
             this.darkLabel2 = new DarkUI.Controls.DarkLabel();
             this.checkBoxMinimizeToTray = new DarkUI.Controls.DarkCheckBox();
             this.lblVersion = new DarkUI.Controls.DarkLabel();
+            this.checkBoxAutoStart = new DarkUI.Controls.DarkCheckBox();
             this.panelStatus.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -72,7 +73,7 @@ namespace MSFSPopoutPanelManager
             this.labelMsfsRunning.AutoSize = true;
             this.labelMsfsRunning.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.labelMsfsRunning.ForeColor = System.Drawing.Color.Red;
-            this.labelMsfsRunning.Location = new System.Drawing.Point(704, 553);
+            this.labelMsfsRunning.Location = new System.Drawing.Point(704, 546);
             this.labelMsfsRunning.Name = "labelMsfsRunning";
             this.labelMsfsRunning.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.labelMsfsRunning.Size = new System.Drawing.Size(143, 20);
@@ -147,7 +148,7 @@ namespace MSFSPopoutPanelManager
             // 
             this.checkBoxMinimizeToTray.AutoSize = true;
             this.checkBoxMinimizeToTray.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.checkBoxMinimizeToTray.Location = new System.Drawing.Point(13, 552);
+            this.checkBoxMinimizeToTray.Location = new System.Drawing.Point(13, 546);
             this.checkBoxMinimizeToTray.Name = "checkBoxMinimizeToTray";
             this.checkBoxMinimizeToTray.Size = new System.Drawing.Size(189, 24);
             this.checkBoxMinimizeToTray.TabIndex = 23;
@@ -157,17 +158,29 @@ namespace MSFSPopoutPanelManager
             // 
             this.lblVersion.AutoSize = true;
             this.lblVersion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.lblVersion.Location = new System.Drawing.Point(383, 561);
+            this.lblVersion.Location = new System.Drawing.Point(383, 572);
             this.lblVersion.Name = "lblVersion";
             this.lblVersion.Size = new System.Drawing.Size(48, 15);
             this.lblVersion.TabIndex = 24;
             this.lblVersion.Text = "Version ";
             // 
+            // checkBoxAutoStart
+            // 
+            this.checkBoxAutoStart.AutoSize = true;
+            this.checkBoxAutoStart.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.checkBoxAutoStart.Location = new System.Drawing.Point(222, 546);
+            this.checkBoxAutoStart.Name = "checkBoxAutoStart";
+            this.checkBoxAutoStart.Size = new System.Drawing.Size(95, 24);
+            this.checkBoxAutoStart.TabIndex = 25;
+            this.checkBoxAutoStart.Text = "Auto Start";
+            this.checkBoxAutoStart.CheckedChanged += new System.EventHandler(this.checkBoxAutoStart_CheckedChanged);
+            // 
             // StartupForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(859, 583);
+            this.ClientSize = new System.Drawing.Size(859, 591);
+            this.Controls.Add(this.checkBoxAutoStart);
             this.Controls.Add(this.lblVersion);
             this.Controls.Add(this.checkBoxMinimizeToTray);
             this.Controls.Add(this.darkLabel2);
@@ -205,5 +218,6 @@ namespace MSFSPopoutPanelManager
         private DarkUI.Controls.DarkCheckBox checkBoxMinimizeToTray;
         private DarkUI.Controls.DarkLabel lblVersion;
         private DarkUI.Controls.DarkLabel darkLabel3;
+        private DarkUI.Controls.DarkCheckBox checkBoxAutoStart;
     }
 }
