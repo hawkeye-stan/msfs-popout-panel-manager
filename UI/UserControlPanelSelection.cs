@@ -1,165 +1,163 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading;
+﻿using MSFSPopoutPanelManager.Shared;
+using MSFSPopoutPanelManager.UIController;
+using System;
 using System.Windows.Forms;
 
-namespace MSFSPopoutPanelManager
+namespace MSFSPopoutPanelManager.UI
 {
-    public partial class UserControlPanelSelection : UserControlCommon
+    public partial class UserControlPanelSelection : UserControl
     {
-        private SynchronizationContext _syncRoot;
+        private PanelSelectionController _controller;
 
-        public UserControlPanelSelection(PanelManager panelManager) : base(panelManager)
+        public UserControlPanelSelection()
         {
             InitializeComponent();
-            _syncRoot = SynchronizationContext.Current;
+            _controller = new PanelSelectionController();
 
-            panelManager.OnSimulatorStarted += (source, e) => { _syncRoot.Post((arg) => { panel3.Enabled = true; }, null); };
+            // Listen to controller event
+            _controller.OnUIStateChanged += HandleOnUIStateChanged;
+            _controller.Initialize();
 
-            panelManager.PanelLocationSelection.OnSelectionStarted += PanelLocationSelection_OnSelectionStarted;
-            panelManager.PanelLocationSelection.OnSelectionCompleted += PanelLocationSelection_OnSelectionCompleted;
-            panelManager.PanelLocationSelection.OnLocationListChanged += PanelLocationSelection_OnLocationListChanged;
+            // Set bindings
+            comboBoxProfile.DisplayMember = "ProfileName";
+            comboBoxProfile.ValueMember = "ProfileId";
+            comboBoxProfile.DataSource = _controller.PlaneProfileList;
+            comboBoxProfile.DataBindings.Add("SelectedValue", _controller, "SelectedProfileId");
+            comboBoxProfile.SelectedValue = -1;     // forced a default
+            comboBoxProfile.SelectedIndexChanged += HandleProfileChanged;
 
-            var defaultProfileId = FileManager.ReadUserData().DefaultProfileId;
-            SetProfileDropDown(defaultProfileId);
+            buttonAddProfile.Click += HandleAddProfile;
+            buttonDeleteProfile.Click += HandleDeleteProfile;
+            buttonSetDefault.Click += (source, e) => _controller.SetDefaultProfile();
+            buttonPanelSelection.Click += HandlePanelSelectionStarted;
+            buttonStartPopOut.Click += (source, e) => _controller.StartPopOut(ParentForm);
+
+            dataGridViewPanelCoor.AutoGenerateColumns = false;
+            dataGridViewPanelCoor.AutoSize = false;
+            dataGridViewPanelCoor.DataSource = _controller.PanelCoordinates;
+
+            checkBoxShowPanelLocation.DataBindings.Add("Checked", _controller, "ShowPanelLocationOverlay");
+            checkBoxShowPanelLocation.CheckedChanged += (source, e) => _controller.ShowPanelLocationOverlayChanged(checkBoxShowPanelLocation.Checked);
         }
 
-        public event EventHandler<EventArgs<bool>> OnAnalyzeAvailabilityChanged;
-
-        private void PanelLocationSelection_OnSelectionStarted(object sender, EventArgs e)
+        private void HandleAddProfile(object sender, EventArgs e)
         {
-            buttonPanelSelection.Enabled = false;
-            buttonAnalyze.Enabled = false;
-
-            OnAnalyzeAvailabilityChanged?.Invoke(this, new EventArgs<bool>(false));
-        }
-
-        private void PanelLocationSelection_OnSelectionCompleted(object sender, EventArgs e)
-        {
-            buttonPanelSelection.Enabled = true;
-            buttonAnalyze.Enabled = PanelManager.CurrentPanelProfile.PanelSourceCoordinates.Count > 0;
-
-            OnAnalyzeAvailabilityChanged?.Invoke(this, new EventArgs<bool>(true));
-            buttonAnalyze.Focus();
-        }
-
-        private void PanelLocationSelection_OnLocationListChanged(object sender, EventArgs e)
-        {
-            var sb = new StringBuilder();
-
-            if (PanelManager.CurrentPanelProfile == null || PanelManager.CurrentPanelProfile.PanelSourceCoordinates.Count == 0)
+            using(var form = new AddProfileForm { StartPosition = FormStartPosition.CenterParent })
             {
-                textBoxPanelLocations.Text = null;
-            }
-            else
-            {
-                foreach (var coor in PanelManager.CurrentPanelProfile.PanelSourceCoordinates)
+                var dialogResult = form.ShowDialog();
+
+                if(dialogResult == DialogResult.OK)
                 {
-                    sb.Append($"Panel: {coor.PanelIndex,-5} X-Pos: {coor.X,-8} Y-Pos: {coor.Y,-8}");
-                    sb.Append(Environment.NewLine);
+                    _controller.AddUserProfile(form.ProfileName);
+                }
+            }
+        }
+
+        private void HandleDeleteProfile(object sender, EventArgs e)
+        {
+            var title = "Confirm Delete";
+            var message = "Are you sure you want to delete the selected profile?";
+
+            using (var form = new ConfirmDialogForm(title, message) { StartPosition = FormStartPosition.CenterParent })
+            {
+                var dialogResult = form.ShowDialog();
+
+                if (dialogResult == DialogResult.Yes)
+                {
+                    _controller.DeleteProfile();
+                }
+            }
+        }
+
+        private void HandleProfileChanged(object sender, EventArgs e)
+        {
+            if(Convert.ToInt32(comboBoxProfile.SelectedValue) > 0)
+                _controller.ProfileChanged(Convert.ToInt32(comboBoxProfile.SelectedValue));
+        }
+
+        private void HandlePanelSelectionStarted(object sender, EventArgs e)
+        {
+            if (_controller.ActiveProfile != null)
+            {
+                if (_controller.ActiveProfile.PanelConfigs.Count > 0)
+                {
+                    var title = "Confirm Overwrite";
+                    var message = "Are you sure you want to overwrite existing saved panel locations and settings for this profile??";
+
+                    using (var form = new ConfirmDialogForm(title, message) { StartPosition = FormStartPosition.CenterParent })
+                    {
+                        var dialogResult = form.ShowDialog();
+
+                        if (dialogResult == DialogResult.No)
+                        {
+                            return;
+                        }
+                    }
                 }
 
-                textBoxPanelLocations.Text = sb.ToString();
+                _controller.StartPanelSelection(ParentForm);
             }
         }
 
-        public void SetProfileDropDown(int? defaultProfileId)
+        private void HandleOnUIStateChanged(object sender, EventArgs<PanelSelectionUIState> e)
         {
-            try
+            switch (e.Value)
             {
-                var allProfiles = FileManager.ReadAllPlaneProfileData();
-                comboBoxProfile.DisplayMember = "ProfileName";
-                comboBoxProfile.ValueMember = "ProfileId";
-                comboBoxProfile.DataSource = allProfiles.OrderBy(x => x.ProfileName).ToList();
-
-                if (allProfiles.Exists(x => x.ProfileId == defaultProfileId))
-                    comboBoxProfile.SelectedValue = defaultProfileId;
-                else
-                    comboBoxProfile.SelectedIndex = -1;
-            }
-            catch (Exception ex)
-            {
-                Logger.LogStatus(ex.Message);
-            }
-        }
-
-        private void buttonPanelSelection_Click(object sender, EventArgs e)
-        {
-            bool continued = true;
-
-            if (PanelManager.CurrentPanelProfile != null && PanelManager.CurrentPanelProfile.PanelSettings.PanelDestinationList.Count > 0)
-            {
-                var dialogResult = MessageBox.Show("Are you sure you want to overwrite existing saved panel locations and settings for this profile?", "Confirm Overwrite", MessageBoxButtons.YesNo);
-                continued = dialogResult == DialogResult.Yes;
-            }
-
-            if (continued)
-            {
-                PanelManager.PanelLocationSelection.Start();
-                checkBoxShowPanelLocation.Checked = true;
-            }
-        }
-
-        private void comboBoxProfile_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            PanelManager.PlaneProfileChanged(Convert.ToInt32(comboBoxProfile.SelectedValue), checkBoxShowPanelLocation.Checked);
-            buttonPanelSelection.Enabled = comboBoxProfile.SelectedValue != null;
-            buttonSetDefault.Enabled = comboBoxProfile.SelectedValue != null;
-            buttonDeleteProfile.Enabled = comboBoxProfile.SelectedValue != null;
-            buttonAnalyze.Enabled = !String.IsNullOrEmpty(textBoxPanelLocations.Text);
-        }
-
-        private void checkBoxShowPanelLocation_CheckedChanged(object sender, EventArgs e)
-        {
-            PanelManager.PanelLocationSelection.ShowPanelLocationOverlay(checkBoxShowPanelLocation.Checked);
-        }
-
-        private void buttonAnalyze_Click(object sender, EventArgs e)
-        {
-            Logger.LogStatus("Panel analysis in progress. Please wait...");
-
-            panel1.Enabled = false;
-            panel2.Enabled = false;
-            panel3.Enabled = false;
-
-            PanelManager.Analyze();
-
-            panel1.Enabled = true;
-            panel2.Enabled = true;
-            panel3.Enabled = true;
-        }
-
-        private void buttonSetDefault_Click(object sender, EventArgs e)
-        {
-            if(comboBoxProfile.SelectedValue != null)
-                PanelManager.SetDefaultProfile();
-        }
-
-        private void buttonAddProfile_Click(object sender, EventArgs e)
-        {
-            AddProfileForm addProfileForm = new AddProfileForm(PanelManager);
-            addProfileForm.StartPosition = FormStartPosition.CenterParent;
-            addProfileForm.OnAddProfile += (soruce, e) => { SetProfileDropDown(e.Value); };
-            addProfileForm.ShowDialog();
-        }
-
-        private void buttonDeleteProfile_Click(object sender, EventArgs e)
-        {
-            var dialogResult = MessageBox.Show("Are you sure you want to delete the selected profile?", "Confirm Delete", MessageBoxButtons.YesNo);
-            if(dialogResult == DialogResult.Yes)
-            {
-                var selectedProfile = (PlaneProfile)comboBoxProfile.SelectedItem;
-                PanelManager.DeleteUserProfile(selectedProfile);
-
-                SetProfileDropDown(null);
-                PanelManager.PlaneProfileChanged(null, checkBoxShowPanelLocation.Checked);
-                buttonPanelSelection.Enabled = comboBoxProfile.SelectedValue != null;
-                buttonSetDefault.Enabled = comboBoxProfile.SelectedValue != null;
-                buttonDeleteProfile.Enabled = comboBoxProfile.SelectedValue != null;
-                buttonAnalyze.Enabled = !String.IsNullOrEmpty(textBoxPanelLocations.Text);
+                case PanelSelectionUIState.NoProfileSelected:
+                    comboBoxProfile.Enabled = true;
+                    buttonAddProfile.Enabled = true;
+                    buttonDeleteProfile.Enabled = false;
+                    buttonSetDefault.Enabled = false;
+                    buttonPanelSelection.Enabled = false;
+                    checkBoxShowPanelLocation.Enabled = false;
+                    buttonStartPopOut.Enabled = false;
+                    break;
+                case PanelSelectionUIState.ProfileSelected:
+                    comboBoxProfile.Enabled = true;
+                    buttonAddProfile.Enabled = true;
+                    buttonDeleteProfile.Enabled = true;
+                    buttonSetDefault.Enabled = true;
+                    buttonPanelSelection.Enabled = true;
+                    checkBoxShowPanelLocation.Enabled = true;
+                    buttonStartPopOut.Enabled = false;
+                    break;
+                case PanelSelectionUIState.PanelSelectionStarted:
+                    comboBoxProfile.Enabled = true;
+                    buttonAddProfile.Enabled = false;
+                    buttonDeleteProfile.Enabled = false;
+                    buttonSetDefault.Enabled = false;
+                    buttonPanelSelection.Enabled = false;
+                    checkBoxShowPanelLocation.Enabled = false;
+                    buttonStartPopOut.Enabled = false;
+                    break;
+                case PanelSelectionUIState.PanelSelectionCompletedValid:
+                    comboBoxProfile.Enabled = true;
+                    buttonAddProfile.Enabled = true;
+                    buttonDeleteProfile.Enabled = true;
+                    buttonSetDefault.Enabled = true;
+                    buttonPanelSelection.Enabled = true;
+                    checkBoxShowPanelLocation.Enabled = true;
+                    buttonStartPopOut.Enabled = true;
+                    buttonStartPopOut.Focus();
+                    break;
+                case PanelSelectionUIState.PanelSelectionCompletedInvalid:
+                    comboBoxProfile.Enabled = true;
+                    buttonAddProfile.Enabled = true;
+                    buttonDeleteProfile.Enabled = true;
+                    buttonSetDefault.Enabled = true;
+                    buttonPanelSelection.Enabled = true;
+                    checkBoxShowPanelLocation.Enabled = true;
+                    buttonStartPopOut.Enabled = false;
+                    break;
+                case PanelSelectionUIState.PopoutStarted:
+                    comboBoxProfile.Enabled = false;
+                    buttonAddProfile.Enabled = false;
+                    buttonDeleteProfile.Enabled = false;
+                    buttonSetDefault.Enabled = false;
+                    buttonPanelSelection.Enabled = false;
+                    checkBoxShowPanelLocation.Enabled = false;
+                    buttonStartPopOut.Enabled = false;
+                    break;
             }
         }
     }

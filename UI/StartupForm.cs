@@ -1,67 +1,104 @@
 ﻿using DarkUI.Forms;
+using MSFSPopoutPanelManager.Shared;
+using MSFSPopoutPanelManager.UIController;
 using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace MSFSPopoutPanelManager
+namespace MSFSPopoutPanelManager.UI
 {
     public partial class StartupForm : DarkForm
     {
-        private SynchronizationContext _syncRoot;
-        private PanelManager _panelManager;
-        private UserControlPanelSelection _ucPanelSelection;
-        private UserControlApplySettings _ucApplySettings;
+        private Color ERROR_MESSAGE_COLOR = Color.FromArgb(1, 255, 71, 71);
+        private Color SUCCESS_MESSAGE_COLOR = Color.LightGreen;
+        private Color INFO_MESSAGE_COLOR = Color.White;
 
+        private SynchronizationContext _syncRoot;
+        private UserControlPanelSelection _ucPanelSelection;
+        private UserControlPanelConfiguration _ucPanelConfiguration;
+
+        private StartUpController _controller;
 
         public StartupForm()
         {
             InitializeComponent();
             _syncRoot = SynchronizationContext.Current;
+            _ucPanelSelection = new UserControlPanelSelection();
+            _ucPanelConfiguration = new UserControlPanelConfiguration();
+            panelSteps.Controls.Add(_ucPanelSelection);
+            panelSteps.Controls.Add(_ucPanelConfiguration);
 
             // Set version number
             lblVersion.Text += System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
+            _controller = new StartUpController(this);
+            _controller.OnSimConnectionChanged += HandleSimConnectionChanged;
+            _controller.OnPanelSelectionActivated += (source, e) => { _ucPanelSelection.Visible = true; _ucPanelConfiguration.Visible = false; };
+            _controller.OnPanelConfigurationActivated += (source, e) => { _ucPanelSelection.Visible = false; _ucPanelConfiguration.Visible = true; };
+            _controller.Initialize();
+
+            checkBoxMinimizeToTray.DataBindings.Add("Checked", _controller, "IsMinimizeToTray");
+            checkBoxMinimizeToTray.CheckedChanged += (source, e) => _controller.SetMinimizeToTray(checkBoxMinimizeToTray.Checked);
+
+            checkBoxAlwaysOnTop.DataBindings.Add("Checked", _controller, "IsAlwaysOnTop");
+            checkBoxAlwaysOnTop.CheckedChanged += (source, e) => _controller.SetAlwaysOnTop(checkBoxAlwaysOnTop.Checked);
+
+            checkBoxAutoStart.DataBindings.Add("Checked", _controller, "IsAutoStart");
+            checkBoxAutoStart.CheckedChanged += (source, e) => _controller.SetAutoStart(checkBoxAutoStart.Checked);
+
+            checkBoxAutoPanning.DataBindings.Add("Checked", _controller, "UseAutoPanning");
+            checkBoxAutoPanning.CheckedChanged += (source, e) => _controller.SetAutoPanning(checkBoxAutoPanning.Checked);
+
             Logger.OnStatusLogged += Logger_OnStatusLogged;
-            
-            _panelManager = new PanelManager(this);
-            _panelManager.OnSimulatorStarted += PanelManager_OnSimulatorStarted;
+            Logger.OnBackgroundStatusLogged += Logger_OnBackgroundStatusLogged;
+        }
 
-            _ucPanelSelection = new UserControlPanelSelection(_panelManager);
-            _ucPanelSelection.Visible = true;
-            
-            _ucApplySettings = new UserControlApplySettings(_panelManager);
-            _ucApplySettings.OnRestart += (source, e) => { _ucPanelSelection.Visible = true; _ucApplySettings.Visible = false; };
-            _ucApplySettings.Visible = false;
-
-            panelSteps.Controls.Add(_ucPanelSelection);
-            panelSteps.Controls.Add(_ucApplySettings);
-
-            _panelManager.OnAnalysisCompleted += (source, e) => { _ucPanelSelection.Visible = false; _ucApplySettings.Visible = true; };
-            _panelManager.CheckSimulatorStarted();
-
-            checkBoxAutoStart.Checked = Autostart.CheckIsAutoStart();
+        private void HandleSimConnectionChanged(object sender, EventArgs<bool> e)
+        {
+            _syncRoot.Post((arg) =>
+            {
+                var connected = Convert.ToBoolean(arg);
+                if (connected)
+                {
+                    labelMsfsConnection.ForeColor = SUCCESS_MESSAGE_COLOR;
+                    labelMsfsConnection.Text = "MSFS Connected";
+                }
+                else
+                {
+                    labelMsfsConnection.ForeColor = ERROR_MESSAGE_COLOR;
+                    labelMsfsConnection.Text = "MSFS Disconnected";
+                }
+            }, e.Value);
         }
 
         private void Logger_OnStatusLogged(object sender, EventArgs<StatusMessage> e)
         {
-            _syncRoot.Post((arg) =>
+            if (e != null)
             {
-                var msg = arg as string;
-                if (msg != null)
-                    txtBoxStatus.Text = msg;
-            }, e.Value.Message);
+                txtBoxStatus.ForeColor = e.Value.MessageType == StatusMessageType.Info ? INFO_MESSAGE_COLOR : ERROR_MESSAGE_COLOR;
+                txtBoxStatus.Text = e.Value.Message;
+            }
+
+            if (e.Value.MessageType == StatusMessageType.Error)
+                PInvoke.SetForegroundWindow(Handle);
         }
 
-        private void PanelManager_OnSimulatorStarted(object sender, EventArgs e)
+        private void Logger_OnBackgroundStatusLogged(object sender, EventArgs<StatusMessage> e)
         {
             _syncRoot.Post((arg) =>
             {
-                panelStatus.Enabled = true;
-                labelMsfsRunning.Text = "MSFS is running";
-                labelMsfsRunning.ForeColor = Color.LightGreen;
-            }, null);
+                var statusMessage = arg as StatusMessage;
+                if (statusMessage != null)
+                {
+                    txtBoxStatus.ForeColor = statusMessage.MessageType == StatusMessageType.Info ? INFO_MESSAGE_COLOR : ERROR_MESSAGE_COLOR;
+                    txtBoxStatus.Text = statusMessage.Message;
+                }
+
+                if (e.Value.MessageType == StatusMessageType.Error)
+                    PInvoke.SetForegroundWindow(Handle);
+            }, e.Value);
         }
 
         private void StartupForm_Load(object sender, EventArgs e)
@@ -83,12 +120,6 @@ namespace MSFSPopoutPanelManager
             }
         }
 
-        private void StartupForm_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            // Put all panels popout back to original state
-            //_windowManager.RestorePanelTitleBar();
-        }
-
         private void notifyIcon1_DoubleClick(object sender, EventArgs e)
         {
             ShowInTaskbar = true;
@@ -102,15 +133,5 @@ namespace MSFSPopoutPanelManager
 
             Process.Start(new ProcessStartInfo("https://github.com/hawkeye-stan/msfs-popout-panel-manager") { UseShellExecute = true });
         }
-
-        private void checkBoxAutoStart_CheckedChanged(object sender, EventArgs e)
-        {
-            if (checkBoxAutoStart.Checked)
-                Autostart.Activate();
-            else
-                Autostart.Deactivate();
-        }
     }
 }
-
-

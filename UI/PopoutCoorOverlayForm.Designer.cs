@@ -1,5 +1,5 @@
 ﻿
-namespace MSFSPopoutPanelManager
+namespace MSFSPopoutPanelManager.UI
 {
     partial class PopoutCoorOverlayForm
     {
@@ -37,13 +37,13 @@ namespace MSFSPopoutPanelManager
             // 
             this.lblPanelIndex.BackColor = System.Drawing.Color.Transparent;
             this.lblPanelIndex.CausesValidation = false;
-            this.lblPanelIndex.Font = new System.Drawing.Font("Segoe UI", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lblPanelIndex.Font = new System.Drawing.Font("Segoe UI", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.lblPanelIndex.ForeColor = System.Drawing.Color.WhiteSmoke;
             this.lblPanelIndex.Image = ((System.Drawing.Image)(resources.GetObject("lblPanelIndex.Image")));
             this.lblPanelIndex.Location = new System.Drawing.Point(0, 0);
             this.lblPanelIndex.Margin = new System.Windows.Forms.Padding(0);
             this.lblPanelIndex.Name = "lblPanelIndex";
-            this.lblPanelIndex.Size = new System.Drawing.Size(62, 44);
+            this.lblPanelIndex.Size = new System.Drawing.Size(55, 46);
             this.lblPanelIndex.TabIndex = 0;
             this.lblPanelIndex.Text = "1";
             this.lblPanelIndex.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -53,7 +53,7 @@ namespace MSFSPopoutPanelManager
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CausesValidation = false;
-            this.ClientSize = new System.Drawing.Size(62, 44);
+            this.ClientSize = new System.Drawing.Size(55, 46);
             this.ControlBox = false;
             this.Controls.Add(this.lblPanelIndex);
             this.DoubleBuffered = true;

@@ -1,6 +1,16 @@
 # Version History
 <hr/>
 
+## Version 3.0.0.0
+* Provided 2X pop out and panel separation performance.
+* Better support for all screen resolutions.
+* Added Cold Start feature. Panels can be popped out and recalled later even when they're not turned on.
+* Added Auto Panning feature. Application remembers the cockpit camera angle when you first define the pop out panels. It will automatically move the cockpit view for you when popping out panel.
+* Added fine-grain control in positioning panels down to pixel level. 
+* Added Always on Top feature for application.
+* Added realtime readout during panel positioning.
+* Added exception tracing to help troubleshoot application issue.
+
 ## Vesion 2.2.0.0
 * Disabled ability to launch multiple instances of the application.
 * Added autostart feature when MSFS starts. The application will create or modify exe.xml. A backup copy of exe.xml will be created.

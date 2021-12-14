@@ -1,27 +1,34 @@
 # MSFS Pop Out Panel Manager
-MSFS Pop Out Panel Manager is an application for MSFS 2020 which helps pop out, save and re-position pop out panels such as PDF and MFD to be used by applications such as Sim Innovations Air Manager's overlay. This is a **PROOF OF CONCEPT** application (to also be used by experimental feature in my other github development project - MSFS Touch Panel). I welcome any feedback to help improve the accuracy and usefulness of this application. You are welcome to take a copy of this code to further enhance it and use within anything you created. But please abide by licensing and make it open source:)
+MSFS Pop Out Panel Manager is an application for MSFS 2020 which helps pop out, save and re-position pop out panels to be used by applications such as Sim Innovations Air Manager or to place pop out panels onto another monitor automatically.
 
-## Pop Out Panel Positioning Annoyance
-In MSFS, by holding **RIGHT ALT** + **LEFT CLICKING** some instrumentation panels, these panels will pop out as floating windows that can be moved to a different monitor. But this needs to be done every time you start a new flight, ALT-RIGHT clicking, split out child windows, move these windows to final location, rinse and repeat. For predefined toolbar menu windows such as ATC, Checklist, VFR Map, their positions can be saved easily and reposition at the start of each new flight using 3rd party windows positioning tool because these windows have a **TITLE** in the title bar when they are popped out. But panels such as PFD and MFD on G1000 or the multi control panel on G3000 or panels on A320/CJ4 do not have window title. This makes remembering their last used position more difficult and it seems very annoying to resize and readjust their positions to be used by Air Manager or other overlay tool on each new flight.
+[FlightSimulator.com forum thread regarding this project](https://forums.flightsimulator.com/t/msfs-pop-out-panel-manager-automatically-pop-out-and-save-panel-position/460613)
+
+### IMPORTANT! Version 3.0 file format is not compatible with previous version user profile data format since additional information has been added and updated to support new features. Please continue to use version 2.2 of the application if it works for you and you do not need the new features. If you're technical, please see User Profile Data Files below to do a manual data transfer.
+
+## Version 3.0 NEW FEATURES!
+
+* Provided 2X pop out and panel separation performance.
+* Display resolution independent. Tested on 1080p/1440p/4k display.
+* New Cold Start feature. Panels can be popped out and recalled later even when they're not turned on.
+* New Auto Panning feature remembers the cockpit camera angle when you first define the pop out panels. You can now pan, zoom in, and zoom out to identify offscreen panels and the camera angle will be saved and reused. This feature requires the use of Ctrl-Alt-0 and Alt-0 keyboard binding to save custom camera view per plane configuration. If the keyboard binding is currently being used. The auto-panning feature will overwrite the saved camera view if enabled.
+* New fine-grain control in positioning panels down to pixel level. 
+* New user friendly features such as Always on Top, realtime readout as you position panels, a more intuitive user interface and status messages.
+* Technical: Rewritten code base to improve code structure and performance.
+
+
+## History: Pop Out Panel Positioning Annoyance
+In MSFS, by holding **RIGHT ALT** + **LEFT CLICKING** some instrumentation panels, these panels will pop out as floating windows that can be moved to a different monitor. But this needs to be done every time you start a new flight, ALT-RIGHT clicking, split out child windows, move these windows to final location, rinse and repeat. For predefined toolbar menu windows such as ATC, Checklist, VFR Map, their positions can be saved easily and reposition at the start of each new flight using 3rd party windows positioning tool because these windows have a **TITLE** in the title bar when they are popped out. But any custom popouts such as PFD and MFD do not have window title. This makes remembering their last used position more difficult and it seems very annoying to resize and re-adjust their positions to be used by Air Manager or other overlay tool on each new flight.
 
 ## Concepts of the Application
-What if you can do the setup once by defining on screen where the pop out windows will be, click a button, and the application will figure out everything for you. Then you just need to drag these pop out windows to their final desire location (again doing it once) on screen and it will save their final positions. Next time when you start a flight, you just re-position your initial game screen pop out coordinates and click a button and Viola, everything will be done for you. No ALT-Right clicking, no splitting windows manually (imaging you just pop out 7 windows for A32NX), no re-positioning windows to their final destination on screen. The pop outs will even have a title for you to use if you prefer using PowerToys fancy zone to position the windows yourself.
+What if you can do the setup once by defining on screen where the pop out panels will be, click a button, and the application will pop these panels out and separate them for you. Then you just need to move these panels to their final positions. Next time when you start a flight, with a single button click, your panels will automatically pop out for you and move to their preconfigured positions. Easy peasy!
 
-Version 1.0 of this application uses OCR (text recognition) technology to try to determine what pop out window is what. It works for some windows but not others. As one of the user in Flightsimulator.com forum asked, can the application pop out windows from A32NX where some of the windows have no text. Also, this version does not do auto pop out. So I scraped that idea of improving OCR and think about using something else instead.
+Before v3.0 of the application, heavy image recognition was used to figure out how to pop out and separate the panels, figure out which panel is which by plane type and configure them accordingly. Although, the image recognition is reasonably accurate, there is lot to be desired. Especially on Cold Start, image recognition will not work at all because all panels are black to start with.
 
-Version 2.0 uses image recognition and it seems to do a pretty decent job in popping out panels and figure out what window is what. I setup very simple image recognition data (aka. mostly non-scale image match for now) for most planes in MSFS and tested it mainly on 3440x1440 and 1920x1080 resolution. Regular 1440p should work as expected. 4K resolution may or may not work since I don't have a 4K screen to test but I scaled up some of the image recognition data for 4K so it may work! The image recognition uses a confident score to determine what the pop out window most likely to be.
+With v3.0, redesign from the ground up about how to pop out and separate the panels and navigate around many of Asobo's bug, many of the image recognition code is now removed and replaced by pixel calculation algorithm to figure out how to separate panels accurately when they're being popped out in all display resolutions. Also, there is no longer the need to identify what panel is what since everything is done by pop out sequence. 
 
-The v2.0 application concept is as follow:
 
-1. First allow user to define where all the 'ALT-Right Click' panels on the screen will be for a given plane profile and save these information.
-2. Using image recognition, the application figures out how to pop out these panels and also do the clicking for you.
-3. Once the pop out panels are split out, the application will start image recognition to determine the type and content for each panel. It also add title bar to these pop out window. Built-in toolbar panel such as ATC, VFR Map will work too.
-4. After pop out panels are analyzed, the user will move these panels to their desire locations. An UI will also allow the user to resize and position these windows to pixel perfect location.
-5. User will then save these data and start flying.
-6. On subsequent flight, user will just need to reposition the definition of the 'ALT-Right Click' panels and the application will do the rest.
- 
 ## How to Use?
-[Here](images/doc/userguide.mp4) is a video of what the app will do.
+[Here](images/doc/userguide.mp4) is a video of what the app will do. TBD: will get update to show v3.0.
 
  1. Start the application **MSFSPopoutPanelManager.exe** and it will automatically connect when MSFS starts. You maybe prompt to download .NET framework 5.0. Please see the screenshot below to download and install x64 desktop version of the framework.
 
@@ -29,104 +36,92 @@ The v2.0 application concept is as follow:
 <img src="images/doc/frameworkdownload.png" width="1000" hspace="10"/>
 </p>
 
- 2. Once the game starts and you're at the beginning of flight, first select a plane profile (for example A32NX by FlybyWire)
- 3. You then click "START PANEL SELECTION" to define where the pop out panels will be using LEFT CLICK and CTRL-LEFT CLICK when done to save these information.
+ 2. First create a new plane profile (for example A32NX by FlybyWire)
  
 <p align="center">
-<img src="images/doc/screenshot2.png" width="1000" hspace="10"/>
+<img src="images/doc/v3.0/s5.png" width="600" hspace="10"/>
 </p>
 
- 4. Make sure all panels are ON and active. The application's image recognition engine will not be able to analyze and distinguish blank panel screens.
- 5. Now, click "ANALYZE". **!!!IMPORTANT, please make sure there are no other window obstructing pop out coordinates (where the numbers with circle are). Also, please DO NOT move your mouse during this time since the application is simulating mouse movements.** At last, please be patient (even using multi-thread, the execution of mouse movement will still take some time). The application will start popping out windows one by one and you will see a lot of windows movement on the screen. If something goes wrong, just close all the pop outs and try do "ANALYZE" again.
+ 3. Once the game has started and you're at the beginning of flight, please click "Start Panel Selection" to define where the pop out panels will be using LEFT CLICK. Use CTRL-LEFT CLICK when done to complete the selection.
  
 <p align="center">
-<img src="images/doc/seperation_analysis.png" width="1000" hspace="10"/>
+<img src="images/doc/v3.0/s1.png" width="1000" hspace="10"/>
 </p>
 
- 6. Once analysis is completed, you will see a list of panels that have successfully processed by the application. 
+ 4. Now, click "Start Pop Out". At this point, please be patient. The application will start popping out and separating panels one by one and you will see a lot of movement on the screen. If something goes wrong, just follow the instruction in the status message and try again.
+ 
+ 5. Once the process is done, you will see a list of panels line up in the upper left corner of the screen. All the panels are give a default name. You can name them anything you want if desire. Please go ahead and click "Save Profile". This will save the initial pop out configuration for this profile.
  
 <p align="center">
-<img src="images/doc/screenshot6.png" width="1000" hspace="10"/>
+<img src="images/doc/v3.0/s2.png" width="1000" hspace="10"/>
 </p>
 
- 7. Please go ahead and drag the pop out panels into their final positions. You can also directly type in coordinates for these panels to move and resize them and then click "APPLY SETTINGS". Please click "SAVE SETTINGS" to update the grid data if you use the mouse to drag the panels. Here is an example when panels are dragged to a secondary monitor and click "SAVE SETTINGS".
+ 6. Now, start the panel configruation by dragging the pop out panels into their final position. You can also type value directly into the data grid to move and resize a panel. The +/- pixel buttons by the lower left corner of the grid allow you to change panel position at the chosen increment/decrement by selecting the datagrid cell (X-Pos, Y-Pos, Width, Height). You can also select "Always on top" and "Hide titlebar" if desire. Once all the panels are at their final position, just click "Save Profile" again.
  
 <p align="center">
-<img src="images/doc/screenshot7.png" width="1000" hspace="10"/>
+<img src="images/doc/v3.0/s3.png" width="600" hspace="10"/>
 </p>
- 
- 7. You can also select "Panels always on top" and/or "Hide panel title bar" if desire. !! IMPORTANT, panels without title bar cannot be moved. Please just unchecked "Hide panel title bar" then "Apply Settings" to get the panel's title bar back to move them.
- 
- 8. Once all the panels are at their final positions, click "SAVE SETTINGS" again and you're done. You can now close or minimize the application. 
- 
- 9. On subsequent flight, just reposition the pop out position for the selected plane profile and click "ANALYZE" and see the magic happens. Screenshots below used FBW A32NX as example since some of the pop outs were hidden when the flight starts.
+
+<p align="center">
+<img src="images/doc/v3.0/s4.png" width="1000" hspace="10"/>
+</p>
+
+  7. To test if everything is working. Once the profile is saved, please click "Restart". This will close all the pop out (except the main menu bar ones) and you're back to the start of the application. Now click "Start Pop Out" and see the magic happens!
+
+8. With auto panning feature enabled, you do not have to line up the circles that identified the panels in order for the panels to be popped out. But if you would like to do it manually without auto-panning, on next start of the flight, just  line up the panels before clicking "Start Pop Out".
 
 <p align="center">
 <img src="images/doc/screenshot3.png" width="1000" hspace="10"/>
 </p>
 
-Move your screen down a little bit by holding Right-Click in flight simulator until everything lines up. You can then click "ANALYZE".
-
 <p align="center">
 <img src="images/doc/screenshot4.png" width="1000" hspace="10"/>
 </p>
 
-10. Since the initial pop out positions may be different from plane to plane even when they are using the same instrumentation system, you can easily add new profiles in a configuration file and points it to the same analysisTemplateName. You can edit the configuration file [planeprofile.json](Config/planeprofile.json) in the **config** folder of the application to add additional profile. Look for profileId 1 and 2 in the file as example where both Cessna 172 and DA62 both uses Working Title G1000 NXi. 
 
-## Add or Delete Plane Profile
+## User Profile Data Files
 
-The ability to add or delete plane profile is added starting in version 2.1 of the application.
+The user plane profile data and application settings data are stored as JSON files under the following folder path.
 
-<p align="center">
-<img src="images/doc/screenshot9.png" width="600" hspace="10"/>
-</p>
+* userdata/userprofiledata.json
+* userdata/appsettingdata.json
 
-* For any existing built-in profile, you can delete them if they're not being used to reduce clutter. You can recreate them later by adding a new profile and selecting a built-in predefined image analysis template for the instrumentation set for that plane.
+Note for technical user. If you would like to transfer existing profile data into v3.0 file format, you can first create a new profile in v3.0 of the app with the same panels and save it. Then you can open previous version of the configuration in config/userdata.json. You can match the old JSON attribute of "PanelDestinationList" of (Top, Left, Width, Height) for each panel and tranfer it over to the new file JSON attribute of "PanelConfigs". Please edit at your own risk.
 
-* To add a new profile for plane either by using built-in image recognition data for predefined instrumentation set or create a new one, please click "Add profile" button.
 
-<p align="center">
-<img src="images/doc/screenshot8.png" width="600" hspace="10"/>
-</p>
+## Current Known Issue
 
-1. Please specify a profile name and use alphanumeric characters only. The profile name will also be used to create windows folder for image recognition data.
+* You may encounter a bug with MSFS where a pop out panel is not Right-Alt clickable or the same panel is able to be popped out twice. This causes the application to not function properly. A new MSFS bug introduced since SU7 which I haven't encountered before?
+* Sometimes when using the auto-panning feature, the keyboard combination of Ctrl-Alt-0 and Alt-0 do not work to save and load panel panning coordiates. First try to restart the flightsim and it usually fixes the problem. Otherwise, the only way to fix this is to redo the profile if you want the auto-panning feature since the camera angle is only being saved during the initial creation of the profile. The is another MSFS bug.
+* If running the game in windows mode on your non-primary monitor in a multi-monitor setup with differnt display resolution, panel identification and separation may not work correctly. 
+* Current application package size is bigger than previous version of the application because it is not a single EXE file package. With added feature of  exception logging and stack trace to support user feedback and troubleshooting, a Single EXE package in .NET 5.0 as well as .NET 6.0 has a bug that stack trace information is not complete. Hopefully, Microsoft will be fixing this problem. 
 
-2. Select either predefined image recognition analysis template or "New" for custom template. By selecting "New", the application will create custom image recognition data from the pop out panels.
-
-3. Select "OK" when done. You should see the new profile displayed in the application. Now perform the same procedure to select pop out panel location in the game and click "Analyze".
-
-4. Once analysis is completed, you should see the following if using a "New" template. The panel name will be generic such as "Panel 1", "Panel 2", and so forth. They work the same as built-in predefined templates. Continue to move pop out panels to their final screen locations and click "Save Settings".
-
-<p align="center">
-<img src="images/doc/screenshot10.png" width="600" hspace="10"/>
-</p>
-
-5. On next flight, your custom user profile will be available for selection.
-
-## User Plane Profile Data
-
-The user created plane profile and associate image recognition data are stored in the following folders in the application.
-
-* Config/customplaneprofile.json - the list of user created plane profile.
-
-* Config/AnalysisData/customanalysisconfig.json - define the location for custom plane profile image recognition data.
-
-* Config/AnalsysData/User - XXXXXX - folders where custom image recognition data is stored for user created plane profile.
  
 ## Common Problem Resolution
 
- - Unable to pop out windows correctly - the predefined pop out panel coordinate may not line up correctly or movement of mouse is interfering with pop out execution. Please try to reposition the screen into pop out coordinates. Or you can close and restart the application, close all the opened pop outs, and try the analysis again.
- - Pop out windows are not recognized correctly - it is limitation of current implementation of image recognition algorithm. More sophisticated image recognition such as [SIFT](https://en.wikipedia.org/wiki/Scale-invariant_feature_transform) will be needed. This is to-do item on my list for future version of app. Also, the panel screen maybe blank which causes the image recognition engine to fail.
- - Night time or different world location causes image recognition to fail - application has builtin redundancy image recognition data for this purpose (such as MFD recognition for G1000 where 75% of the screen is a map). But I may not have anticipate all the use cases yet. Please provide feedback and it will help me to improve the image recognition engine.
+* Unable to pop out panels when creating a profile for the first time with error such as "Unabled to pop out panel #X". If the panel is not being obstructed, by changing the sequence of the pop out when defining the profile may help solve the issue. Currently there are some panels in certain plane configuration that does not follow predefined MSFS pop out rule.
+
+* Unable to pop out panels on subsequent flight. Please follow status message instruction. Also, if using auto-panning, Ctrl-Alt-0 may not have been saved correctly during profile creation. You will be able to fix thie by manually line up the panel circles identifier and do a force save view by pressing Ctrl-Alt-0.
+
+* Unable to pop out ALL panels. This may indicate a potential miscount of selected panels (circles) and the number of actual panels that got popped out. You may have duplicate panels in your selection or panels that cannot be popped out.
+
+* If you encounter application crashes or unknown error, please help attach the file **error.log** in the application folder and open a ticket issue in the github repo for this project. This is going to help me troubleshoot the issue and provide hotfixes.
  
 
 ## Author
 Stanley Kwok
 [hawkeyesk@outlook.com](mailto:hawkeyesk@outlook.com) 
 
+I welcome feedback to help improve the accuracy and usefulness of this application. You are welcome to take a copy of this code to further enhance it and use within your own project. But please abide by licensing terms and keep it open source:)
+
 ## Credits
 [Tesseract](https://github.com/charlesw/tesseract/) by Charles Weld - .NET wrapper for Tesseract OCR package. For version 1.x of application.
 
-[AForge.NET](http://www.aforgenet.com/framework/) Image recognition library.
+[AForge.NET](http://www.aforgenet.com/framework/) Image recognition library. For version 2.x of the application.
 
 [DarkUI](http://www.darkui.com/) by Robin Perria
+
+[MouseKeyHook](https://github.com/gmamaladze/globalmousekeyhook) by George Mamaladze
+
+[Fody](https://github.com/Fody/Fody) .NET assemblies weaver by Fody
+

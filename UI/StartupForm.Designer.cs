@@ -1,5 +1,5 @@
 ﻿
-namespace MSFSPopoutPanelManager
+namespace MSFSPopoutPanelManager.UI
 {
     partial class StartupForm
     {
@@ -33,7 +33,7 @@ namespace MSFSPopoutPanelManager
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(StartupForm));
             this.panelSteps = new System.Windows.Forms.Panel();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
-            this.labelMsfsRunning = new System.Windows.Forms.Label();
+            this.labelMsfsConnection = new System.Windows.Forms.Label();
             this.panelStatus = new System.Windows.Forms.Panel();
             this.darkLabel3 = new DarkUI.Controls.DarkLabel();
             this.txtBoxStatus = new DarkUI.Controls.DarkTextBox();
@@ -43,6 +43,8 @@ namespace MSFSPopoutPanelManager
             this.checkBoxMinimizeToTray = new DarkUI.Controls.DarkCheckBox();
             this.lblVersion = new DarkUI.Controls.DarkLabel();
             this.checkBoxAutoStart = new DarkUI.Controls.DarkCheckBox();
+            this.checkBoxAutoPanning = new DarkUI.Controls.DarkCheckBox();
+            this.checkBoxAlwaysOnTop = new DarkUI.Controls.DarkCheckBox();
             this.panelStatus.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -51,7 +53,7 @@ namespace MSFSPopoutPanelManager
             this.panelSteps.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(61)))), ((int)(((byte)(101)))), ((int)(((byte)(171)))));
             this.panelSteps.Location = new System.Drawing.Point(0, 64);
             this.panelSteps.Name = "panelSteps";
-            this.panelSteps.Size = new System.Drawing.Size(862, 405);
+            this.panelSteps.Size = new System.Drawing.Size(915, 405);
             this.panelSteps.TabIndex = 0;
             // 
             // linkLabel1
@@ -68,27 +70,29 @@ namespace MSFSPopoutPanelManager
             this.linkLabel1.VisitedLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
             this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 
-            // labelMsfsRunning
+            // labelMsfsConnection
             // 
-            this.labelMsfsRunning.AutoSize = true;
-            this.labelMsfsRunning.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.labelMsfsRunning.ForeColor = System.Drawing.Color.Red;
-            this.labelMsfsRunning.Location = new System.Drawing.Point(704, 546);
-            this.labelMsfsRunning.Name = "labelMsfsRunning";
-            this.labelMsfsRunning.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.labelMsfsRunning.Size = new System.Drawing.Size(143, 20);
-            this.labelMsfsRunning.TabIndex = 10;
-            this.labelMsfsRunning.Text = "MSFS is not Running";
-            this.labelMsfsRunning.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.labelMsfsConnection.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelMsfsConnection.AutoSize = true;
+            this.labelMsfsConnection.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.labelMsfsConnection.ForeColor = System.Drawing.Color.Red;
+            this.labelMsfsConnection.Location = new System.Drawing.Point(766, 546);
+            this.labelMsfsConnection.Name = "labelMsfsConnection";
+            this.labelMsfsConnection.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.labelMsfsConnection.Size = new System.Drawing.Size(33, 20);
+            this.labelMsfsConnection.TabIndex = 10;
+            this.labelMsfsConnection.Text = "      ";
+            this.labelMsfsConnection.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // panelStatus
             // 
             this.panelStatus.Controls.Add(this.darkLabel3);
             this.panelStatus.Controls.Add(this.txtBoxStatus);
-            this.panelStatus.Enabled = false;
             this.panelStatus.Location = new System.Drawing.Point(0, 469);
             this.panelStatus.Name = "panelStatus";
-            this.panelStatus.Size = new System.Drawing.Size(860, 74);
+            this.panelStatus.Size = new System.Drawing.Size(915, 74);
             this.panelStatus.TabIndex = 20;
             // 
             // darkLabel3
@@ -112,7 +116,7 @@ namespace MSFSPopoutPanelManager
             this.txtBoxStatus.Multiline = true;
             this.txtBoxStatus.Name = "txtBoxStatus";
             this.txtBoxStatus.ReadOnly = true;
-            this.txtBoxStatus.Size = new System.Drawing.Size(780, 46);
+            this.txtBoxStatus.Size = new System.Drawing.Size(835, 46);
             this.txtBoxStatus.TabIndex = 23;
             // 
             // notifyIcon1
@@ -148,7 +152,7 @@ namespace MSFSPopoutPanelManager
             // 
             this.checkBoxMinimizeToTray.AutoSize = true;
             this.checkBoxMinimizeToTray.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.checkBoxMinimizeToTray.Location = new System.Drawing.Point(13, 546);
+            this.checkBoxMinimizeToTray.Location = new System.Drawing.Point(13, 545);
             this.checkBoxMinimizeToTray.Name = "checkBoxMinimizeToTray";
             this.checkBoxMinimizeToTray.Size = new System.Drawing.Size(189, 24);
             this.checkBoxMinimizeToTray.TabIndex = 23;
@@ -158,7 +162,7 @@ namespace MSFSPopoutPanelManager
             // 
             this.lblVersion.AutoSize = true;
             this.lblVersion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.lblVersion.Location = new System.Drawing.Point(383, 572);
+            this.lblVersion.Location = new System.Drawing.Point(423, 591);
             this.lblVersion.Name = "lblVersion";
             this.lblVersion.Size = new System.Drawing.Size(48, 15);
             this.lblVersion.TabIndex = 24;
@@ -168,25 +172,46 @@ namespace MSFSPopoutPanelManager
             // 
             this.checkBoxAutoStart.AutoSize = true;
             this.checkBoxAutoStart.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.checkBoxAutoStart.Location = new System.Drawing.Point(222, 546);
+            this.checkBoxAutoStart.Location = new System.Drawing.Point(210, 545);
             this.checkBoxAutoStart.Name = "checkBoxAutoStart";
             this.checkBoxAutoStart.Size = new System.Drawing.Size(95, 24);
             this.checkBoxAutoStart.TabIndex = 25;
             this.checkBoxAutoStart.Text = "Auto Start";
-            this.checkBoxAutoStart.CheckedChanged += new System.EventHandler(this.checkBoxAutoStart_CheckedChanged);
+            // 
+            // checkBoxAutoPanning
+            // 
+            this.checkBoxAutoPanning.AutoSize = true;
+            this.checkBoxAutoPanning.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.checkBoxAutoPanning.Location = new System.Drawing.Point(441, 545);
+            this.checkBoxAutoPanning.Name = "checkBoxAutoPanning";
+            this.checkBoxAutoPanning.Size = new System.Drawing.Size(116, 24);
+            this.checkBoxAutoPanning.TabIndex = 27;
+            this.checkBoxAutoPanning.Text = "Auto Panning";
+            // 
+            // checkBoxAlwaysOnTop
+            // 
+            this.checkBoxAlwaysOnTop.AutoSize = true;
+            this.checkBoxAlwaysOnTop.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.checkBoxAlwaysOnTop.Location = new System.Drawing.Point(311, 545);
+            this.checkBoxAlwaysOnTop.Name = "checkBoxAlwaysOnTop";
+            this.checkBoxAlwaysOnTop.Size = new System.Drawing.Size(124, 24);
+            this.checkBoxAlwaysOnTop.TabIndex = 28;
+            this.checkBoxAlwaysOnTop.Text = "Always on Top";
             // 
             // StartupForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(859, 591);
+            this.ClientSize = new System.Drawing.Size(914, 611);
+            this.Controls.Add(this.checkBoxAlwaysOnTop);
+            this.Controls.Add(this.checkBoxAutoPanning);
             this.Controls.Add(this.checkBoxAutoStart);
             this.Controls.Add(this.lblVersion);
             this.Controls.Add(this.checkBoxMinimizeToTray);
             this.Controls.Add(this.darkLabel2);
             this.Controls.Add(this.darkLabel1);
             this.Controls.Add(this.linkLabel1);
-            this.Controls.Add(this.labelMsfsRunning);
+            this.Controls.Add(this.labelMsfsConnection);
             this.Controls.Add(this.panelStatus);
             this.Controls.Add(this.panelSteps);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -195,7 +220,6 @@ namespace MSFSPopoutPanelManager
             this.Name = "StartupForm";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "MSFS Pop Out Panel Manager";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.StartupForm_FormClosing);
             this.Load += new System.EventHandler(this.StartupForm_Load);
             this.Resize += new System.EventHandler(this.StartupForm_Resize);
             this.panelStatus.ResumeLayout(false);
@@ -208,7 +232,7 @@ namespace MSFSPopoutPanelManager
         #endregion
 
         private System.Windows.Forms.Panel panelSteps;
-        private System.Windows.Forms.Label labelMsfsRunning;
+        private System.Windows.Forms.Label labelMsfsConnection;
         private System.Windows.Forms.Panel panelStatus;
         private System.Windows.Forms.NotifyIcon notifyIcon1;
         private System.Windows.Forms.LinkLabel linkLabel1;
@@ -219,5 +243,7 @@ namespace MSFSPopoutPanelManager
         private DarkUI.Controls.DarkLabel lblVersion;
         private DarkUI.Controls.DarkLabel darkLabel3;
         private DarkUI.Controls.DarkCheckBox checkBoxAutoStart;
+        private DarkUI.Controls.DarkCheckBox checkBoxAutoPanning;
+        private DarkUI.Controls.DarkCheckBox checkBoxAlwaysOnTop;
     }
 }
