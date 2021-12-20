@@ -31,7 +31,7 @@ namespace MSFSPopoutPanelManager.UI
             panelSteps.Controls.Add(_ucPanelConfiguration);
 
             // Set version number
-            lblVersion.Text += System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            lblVersion.Text += $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Major}.{System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Minor}.{System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Build}";
 
             _controller = new StartUpController(this);
             _controller.OnSimConnectionChanged += HandleSimConnectionChanged;

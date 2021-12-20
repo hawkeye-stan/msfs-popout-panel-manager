@@ -149,6 +149,12 @@ namespace MSFSPopoutPanelManager.Provider
                 // Add the built-in pop outs (ie. ATC, VFR Map) to the panel list
                 PInvoke.EnumWindows(new PInvoke.CallBack(EnumBuiltinPopoutCallBack), _profile.PanelSourceCoordinates.Count + 1);
 
+                // Add the MSFS Touch Panel (My other github project) windows to the panel list
+                PInvoke.EnumWindows(new PInvoke.CallBack(EnumMSFSTouchPanelPopoutCallBack), _profile.PanelSourceCoordinates.Count + 1);
+
+                if (_panels.Count == 0)
+                    throw new PopoutManagerException("No panels have been found. Please select or open at least one in-game panel or MSFS Touch Panel App's panel.");
+
                 // Line up all the panels and fill in meta data
                 for (var i = _panels.Count - 1; i >= 0; i--)
                 {
@@ -158,7 +164,7 @@ namespace MSFSPopoutPanelManager.Provider
                     _panels[i].Width = 800;
                     _panels[i].Height = 600;
 
-                    PInvoke.MoveWindow(_panels[i].PanelHandle, -8 + _panels[i].Top, _panels[i].Left, _panels[i].Width, _panels[i].Height, true);
+                    PInvoke.MoveWindow(_panels[i].PanelHandle, _panels[i].Top, _panels[i].Left, _panels[i].Width, _panels[i].Height, true);
                     PInvoke.SetForegroundWindow(_panels[i].PanelHandle);
                     Thread.Sleep(200);
                 }
@@ -295,6 +301,22 @@ namespace MSFSPopoutPanelManager.Provider
             return true;
         }
 
+        public bool EnumMSFSTouchPanelPopoutCallBack(IntPtr hwnd, int index)
+        {
+            var panelInfo = GetPanelWindowInfo(hwnd);
+
+            if (panelInfo != null && panelInfo.PanelType == PanelType.MSFSTouchPanel)
+            {
+                if (!_panels.Exists(x => x.PanelHandle == hwnd))
+                {
+                    panelInfo.PanelIndex = index;
+                    _panels.Add(panelInfo);
+                }
+            }
+
+            return true;
+        }
+
         private PanelConfig GetPanelWindowInfo(IntPtr hwnd)
         {
             var className = PInvoke.GetClassName(hwnd);
@@ -315,6 +337,22 @@ namespace MSFSPopoutPanelManager.Provider
                     panelInfo.PanelType = PanelType.BuiltInPopout;
 
                 return panelInfo;
+            }
+            else  // For MSFS Touch Panel window
+            {
+                var caption = PInvoke.GetWindowText(hwnd);
+
+                var panelInfo = new PanelConfig();
+                panelInfo.PanelHandle = hwnd;
+                panelInfo.PanelName = caption;
+
+                if (caption.IndexOf("MSFS Touch Panel |") > -1)
+                {
+                    panelInfo.PanelType = PanelType.MSFSTouchPanel;
+                    return panelInfo;
+                }
+                else
+                    return null;
             }
 
             return null;

@@ -4,6 +4,7 @@
     {
         FlightSimMainWindow,
         BuiltInPopout,
-        CustomPopout
+        CustomPopout,
+        MSFSTouchPanel
     }
 }

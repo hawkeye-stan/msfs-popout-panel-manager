@@ -140,10 +140,10 @@ namespace MSFSPopoutPanelManager.UIController
                 _panelSelectionManager.ShowPanelLocationOverlay(false);
                 ShowPanelLocationOverlay = false;
 
-                if (PanelCoordinates.Count == 0)
-                    OnUIStateChanged?.Invoke(this, new EventArgs<PanelSelectionUIState>(PanelSelectionUIState.ProfileSelected));
-                else
-                    OnUIStateChanged?.Invoke(this, new EventArgs<PanelSelectionUIState>(PanelSelectionUIState.PanelSelectionCompletedValid));
+                //if (PanelCoordinates.Count == 0)
+                //    OnUIStateChanged?.Invoke(this, new EventArgs<PanelSelectionUIState>(PanelSelectionUIState.ProfileSelected));
+                //else
+                OnUIStateChanged?.Invoke(this, new EventArgs<PanelSelectionUIState>(PanelSelectionUIState.PanelSelectionCompletedValid));
             }
         }
 
@@ -255,13 +255,13 @@ namespace MSFSPopoutPanelManager.UIController
             if (_parentForm != null)
                 _parentForm.WindowState = FormWindowState.Normal;
 
-            if (PanelCoordinates.Count > 0)
-            {
+            //if (PanelCoordinates.Count > 0)
+            //{
                 ActiveUserPlaneProfile.PanelSourceCoordinates = PanelCoordinates.ToList();
                 OnUIStateChanged?.Invoke(this, new EventArgs<PanelSelectionUIState>(PanelSelectionUIState.PanelSelectionCompletedValid));
-            }
-            else
-                OnUIStateChanged?.Invoke(this, new EventArgs<PanelSelectionUIState>(PanelSelectionUIState.PanelSelectionCompletedInvalid));
+            //}
+            //else
+            //    OnUIStateChanged?.Invoke(this, new EventArgs<PanelSelectionUIState>(PanelSelectionUIState.PanelSelectionCompletedInvalid));
 
             ShowPanelLocationOverlay = true;
 

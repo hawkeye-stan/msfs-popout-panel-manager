@@ -22,7 +22,7 @@ namespace MSFSPopoutPanelManager.UI
             dataGridViewPanels.DataSource = _controller.PanelConfigs;
             dataGridViewPanels.CellBeginEdit += HandleCellBeginEdit;
             dataGridViewPanels.CellValidating += HandleCellValidating;
-            dataGridViewPanels.CellValueChanged += HandleCellValueChanged;
+            dataGridViewPanels.CellEndEdit += HandleCellValueChanged;
             dataGridViewPanels.CellContentClick += HandleCellValueChanged;
 
             buttonSaveSettings.Click += (source, e) => { dataGridViewPanels.EndEdit(); _controller.SaveSettings(); };

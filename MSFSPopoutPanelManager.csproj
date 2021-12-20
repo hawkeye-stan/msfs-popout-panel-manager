@@ -5,7 +5,7 @@
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <Platforms>x64;AnyCPU</Platforms>
-    <Version>3.0</Version>
+    <Version>3.0.1</Version>
     <AssemblyName>MSFSPopoutPanelManager</AssemblyName>
     <RootNamespace>MSFSPopoutPanelManager</RootNamespace>
     <ApplicationIcon>WindowManager.ico</ApplicationIcon>
@@ -13,8 +13,8 @@
     <Product>MSFS 2020 Popout Panel Manager</Product>
     <PackageId>MSFS 2020 Popout Panel Manager</PackageId>
 	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-	<AssemblyVersion>3.0.0.0</AssemblyVersion>
-	<FileVersion>3.0.0.0</FileVersion>
+	<AssemblyVersion>3.0.1.0</AssemblyVersion>
+	<FileVersion>3.0.1.0</FileVersion>
 	<WeaverConfiguration>
 		<Weavers>
 			<PropertyChanged />
