@@ -12,20 +12,17 @@ namespace MSFSPopoutPanelManager.Provider
     {
         private IKeyboardMouseEvents _mouseHook;
         private int _panelIndex;
+        private Form _appForm;
 
-        public event EventHandler OnSelectionStarted;
         public event EventHandler OnSelectionCompleted;
-        public event EventHandler<EventArgs<PanelSourceCoordinate>> OnPanelAdded;
-        public event EventHandler OnPanelSubtracted;
 
         public List<PanelSourceCoordinate> PanelCoordinates { get; set; }
 
-        public PanelSelectionManager()
+        public PanelSelectionManager(Form form) 
         {
             PanelCoordinates = new List<PanelSourceCoordinate>();
+            _appForm = form;
         }
-
-        public Form AppForm { get; set; }
 
         public void Start()
         {
@@ -36,72 +33,29 @@ namespace MSFSPopoutPanelManager.Provider
             }
 
             _panelIndex = 1;
-
-            PanelCoordinates = new List<PanelSourceCoordinate>();
-            
             ShowPanelLocationOverlay(true);
-            OnSelectionStarted?.Invoke(this, null);
-
-            DrawPanelLocationOverlay();
-
-            Logger.Status("Panels selection has started.", StatusMessageType.Info);
         }
 
         public void Reset()
         {
-            PanelCoordinates = new List<PanelSourceCoordinate>();
             _panelIndex = 1;
-
-            DrawPanelLocationOverlay();
+            ShowPanelLocationOverlay(false);
         }
 
-        public void DrawPanelLocationOverlay()
+        public void ShowPanelLocationOverlay(bool show)
         {
+            // close all overlays
             for (int i = Application.OpenForms.Count - 1; i >= 0; i--)
             {
                 if (Application.OpenForms[i].GetType() == typeof(PopoutCoorOverlayForm))
                     Application.OpenForms[i].Close();
             }
 
-            if (PanelCoordinates.Count > 0)
+            if (show && PanelCoordinates.Count > 0)
             {
                 foreach (var coor in PanelCoordinates)
                     WindowManager.AddPanelLocationSelectionOverlay(coor.PanelIndex.ToString(), coor.X, coor.Y);
             }
-        }
-
-        public void ShowPanelLocationOverlay(bool show)
-        {
-            for (int i = 0; i < Application.OpenForms.Count; i++)
-            {
-                if (Application.OpenForms[i].GetType() == typeof(PopoutCoorOverlayForm))
-                    Application.OpenForms[i].Visible = show;
-            }
-        }
-
-        private void Stop()
-        {
-            if (_mouseHook != null)
-            {
-                _mouseHook.MouseDownExt -= HandleMouseHookMouseDownExt;
-                _mouseHook.Dispose();
-                _mouseHook = null;
-            }
-
-            // If enable, save the current viewport into custom view by Ctrl-Alt-0
-            if (FileManager.ReadAppSettingData().UseAutoPanning)
-            {
-                var simualatorProcess = WindowManager.GetSimulatorProcess();
-                if (simualatorProcess != null)
-                {
-                    InputEmulationManager.SaveCustomViewZero(simualatorProcess.Handle);
-                    Thread.Sleep(500);
-                }
-            }
-
-            OnSelectionCompleted?.Invoke(this, null);
-
-            DrawPanelLocationOverlay();
         }
 
         private void HandleMouseHookMouseDownExt(object sender, MouseEventExtArgs e)
@@ -113,44 +67,40 @@ namespace MSFSPopoutPanelManager.Provider
 
                 if (ctrlPressed)
                 {
-                    Stop();
+                    if (_mouseHook != null)
+                    {
+                        _mouseHook.MouseDownExt -= HandleMouseHookMouseDownExt;
+                        _mouseHook.Dispose();
+                        _mouseHook = null;
+                    }
 
-                    if (PanelCoordinates.Count > 0)
-                        Logger.Status("Panels selection is completed. Please click 'Start Pop Out' to start popping out these panels.", StatusMessageType.Info);
-                    else
-                        Logger.Status("Panels selection is completed. No panel has been selected.", StatusMessageType.Info);
-
-                    // Bring app windows back to top
-                    PInvoke.SetForegroundWindow(AppForm.Handle);
+                    OnSelectionCompleted?.Invoke(this, null);
                 }
                 else if (shiftPressed && Application.OpenForms.Count >= 1)
                 {
-                    // Remove last drawn overlay 
-                    Application.OpenForms[Application.OpenForms.Count - 1].Close();
-                    PanelCoordinates.RemoveAt(PanelCoordinates.Count - 1);
-                    OnPanelSubtracted?.Invoke(this, e);
-                    _panelIndex--;
-
-                    DrawPanelLocationOverlay();
+                    if (Application.OpenForms[Application.OpenForms.Count - 1].GetType() == typeof(PopoutCoorOverlayForm))
+                    {
+                        // Remove last drawn overlay 
+                        Application.OpenForms[Application.OpenForms.Count - 1].Close();
+                        PanelCoordinates.RemoveAt(PanelCoordinates.Count - 1);
+                        _panelIndex--;
+                    }
                 }
                 else if (!shiftPressed)
                 {
-                    var minX = AppForm.Location.X;
-                    var minY = AppForm.Location.Y;
-                    var maxX = AppForm.Location.X + AppForm.Width;
-                    var maxY = AppForm.Location.Y + AppForm.Height;
+                    var minX = _appForm.Location.X;
+                    var minY = _appForm.Location.Y;
+                    var maxX = _appForm.Location.X + _appForm.Width;
+                    var maxY = _appForm.Location.Y + _appForm.Height;
 
                     if (e.X < minX || e.X > maxX || e.Y < minY || e.Y > maxY)
                     {
                         var newPanelCoordinates = new PanelSourceCoordinate() { PanelIndex = _panelIndex, X = e.X, Y = e.Y };
                         PanelCoordinates.Add(newPanelCoordinates);
-                        OnPanelAdded?.Invoke(this, new EventArgs<PanelSourceCoordinate>(newPanelCoordinates));
 
                         WindowManager.AddPanelLocationSelectionOverlay(_panelIndex.ToString(), e.X, e.Y);
                         _panelIndex++;
                     }
-
-                    DrawPanelLocationOverlay();
                 }
             }
         }

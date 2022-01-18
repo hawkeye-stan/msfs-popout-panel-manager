@@ -53,20 +53,16 @@ namespace MSFSPopoutPanelManager.Provider
                 else
                 {
                     _profile.PanelConfigs = popoutReslts;
-                    Logger.Status("Panels have been popped out succesfully. Please click 'Save Profile' once you're done making adjustment to the panels.", StatusMessageType.Info);
+                    Logger.Status("Panels have been popped out succesfully.", StatusMessageType.Info);
                 }
 
-                // If enable, center the view port by Ctrl-Space
-                if (FileManager.ReadAppSettingData().UseAutoPanning)
+                // Recenter the view port by Ctrl-Space
+                var simualatorProcess = WindowManager.GetSimulatorProcess();
+                if (simualatorProcess != null)
                 {
-                    var simualatorProcess = WindowManager.GetSimulatorProcess();
-                    if (simualatorProcess != null)
-                    {
-                        InputEmulationManager.CenterView(simualatorProcess.Handle);
-                        Thread.Sleep(500);
-                    }
+                    InputEmulationManager.CenterView(simualatorProcess.Handle);
                 }
-
+              
                 return true;
             }
 
@@ -106,8 +102,8 @@ namespace MSFSPopoutPanelManager.Provider
                             else
                             {
                                 var panel = GetCustomPopoutPanelByIndex(i);
-                                panel.PanelName = $"Panel{i + 1} (Custom)";
-                                PInvoke.SetWindowText(panel.PanelHandle, panel.PanelName);
+                                panel.PanelName = $"Panel{i + 1}";
+                                PInvoke.SetWindowText(panel.PanelHandle, panel.PanelName + " (Custom)");
                                 break;
                             }
                         }
@@ -131,8 +127,8 @@ namespace MSFSPopoutPanelManager.Provider
                                 var panel = GetCustomPopoutPanelByIndex(i);
 
                                 PInvoke.MoveWindow(panel.PanelHandle, 0, 0, 800, 600, true);
-                                panel.PanelName = $"Panel{i + 1} (Custom)";
-                                PInvoke.SetWindowText(panel.PanelHandle, panel.PanelName);
+                                panel.PanelName = $"Panel{i + 1}";
+                                PInvoke.SetWindowText(panel.PanelHandle, panel.PanelName + " (Custom)");
                                 break;
                             }
                         }
@@ -204,7 +200,8 @@ namespace MSFSPopoutPanelManager.Provider
 
             });
 
-            _profile.PanelConfigs.RemoveAll(x => x.PanelHandle == IntPtr.Zero && x.PanelType == PanelType.BuiltInPopout);
+            //_profile.PanelConfigs.RemoveAll(x => x.PanelHandle == IntPtr.Zero && x.PanelType == PanelType.BuiltInPopout);
+            _profile.PanelConfigs.RemoveAll(x => x.PanelHandle == IntPtr.Zero);
 
             //_profile.PanelSettings.ForEach(panel =>
             Parallel.ForEach(_profile.PanelConfigs, panel =>
@@ -214,7 +211,11 @@ namespace MSFSPopoutPanelManager.Provider
                     // Apply panel name
                     if (panel.PanelType == PanelType.CustomPopout)
                     {
-                        PInvoke.SetWindowText(panel.PanelHandle, panel.PanelName);
+                        var name = panel.PanelName;
+                        if (name.IndexOf("(Custom)") == -1)
+                            name = name + " (Custom)";
+
+                        PInvoke.SetWindowText(panel.PanelHandle, name);
                         Thread.Sleep(500);
                     }
 
@@ -234,6 +235,8 @@ namespace MSFSPopoutPanelManager.Provider
                     {
                         WindowManager.ApplyHidePanelTitleBar(panel.PanelHandle, true);
                     }
+
+                    PInvoke.ShowWindow(panel.PanelHandle, PInvokeConstant.SW_RESTORE);
                 }
             });
         }

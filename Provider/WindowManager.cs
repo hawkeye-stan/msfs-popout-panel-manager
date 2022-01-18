@@ -9,21 +9,6 @@ namespace MSFSPopoutPanelManager.Provider
 {
     public class WindowManager
     {
-        private const int SWP_NOMOVE = 0x0002;
-        private const int SWP_NOSIZE = 0x0001;
-        private const int SWP_ALWAYS_ON_TOP = SWP_NOMOVE | SWP_NOSIZE;
-
-        private const int GWL_STYLE = -16;
-        private const int WS_SIZEBOX = 0x00040000;
-        private const int WS_BORDER = 0x00800000;
-        private const int WS_DLGFRAME = 0x00400000;
-        private const int WS_CAPTION = WS_BORDER | WS_DLGFRAME;
-
-        private const int HWND_TOPMOST = -1;
-        private const int HWND_NOTOPMOST = -2;
-
-        private const uint WM_CLOSE = 0x0010;
-
         public static void AddPanelLocationSelectionOverlay(string text, int x, int y)
         {
             PopoutCoorOverlayForm frm = new PopoutCoorOverlayForm();
@@ -35,25 +20,32 @@ namespace MSFSPopoutPanelManager.Provider
 
         public static void ApplyHidePanelTitleBar(IntPtr handle, bool hideTitleBar)
         {
-            var currentStyle = PInvoke.GetWindowLong(handle, GWL_STYLE).ToInt64();
+            var currentStyle = PInvoke.GetWindowLong(handle, PInvokeConstant.GWL_STYLE).ToInt64();
 
             if (hideTitleBar)
-                PInvoke.SetWindowLong(handle, GWL_STYLE, (uint)(currentStyle & ~(WS_CAPTION | WS_SIZEBOX)));
+                PInvoke.SetWindowLong(handle, PInvokeConstant.GWL_STYLE, (uint)(currentStyle & ~(PInvokeConstant.WS_CAPTION | PInvokeConstant.WS_SIZEBOX)));
             else
-                PInvoke.SetWindowLong(handle, GWL_STYLE, (uint)(currentStyle | (WS_CAPTION | WS_SIZEBOX)));
+                PInvoke.SetWindowLong(handle, PInvokeConstant.GWL_STYLE, (uint)(currentStyle | (PInvokeConstant.WS_CAPTION | PInvokeConstant.WS_SIZEBOX)));
         }
 
         public static void ApplyAlwaysOnTop(IntPtr handle, bool alwaysOnTop, Rectangle panelRectangle)
         {
             if (alwaysOnTop)
-                PInvoke.SetWindowPos(handle, HWND_TOPMOST, panelRectangle.Left, panelRectangle.Top, panelRectangle.Width, panelRectangle.Height, SWP_ALWAYS_ON_TOP);
+                PInvoke.SetWindowPos(handle, PInvokeConstant.HWND_TOPMOST, panelRectangle.Left, panelRectangle.Top, panelRectangle.Width, panelRectangle.Height, PInvokeConstant.SWP_ALWAYS_ON_TOP);
             else
-                PInvoke.SetWindowPos(handle, HWND_NOTOPMOST, panelRectangle.Left, panelRectangle.Top, panelRectangle.Width, panelRectangle.Height, 0);
+                PInvoke.SetWindowPos(handle, PInvokeConstant.HWND_NOTOPMOST, panelRectangle.Left, panelRectangle.Top, panelRectangle.Width, panelRectangle.Height, 0);
         }
 
         public static void CloseWindow(IntPtr handle)
         {
-            PInvoke.SendMessage(handle, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+            PInvoke.SendMessage(handle, PInvokeConstant.WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+        }
+
+        public static void MoveWindow(IntPtr handle, int x, int y)
+        {
+            Rectangle rectangle;
+            PInvoke.GetClientRect(handle, out rectangle);
+            PInvoke.MoveWindow(handle, x, y, rectangle.Width, rectangle.Height, false);
         }
 
         public static WindowProcess GetSimulatorProcess()
@@ -82,6 +74,28 @@ namespace MSFSPopoutPanelManager.Provider
             }
 
             return null;
+        }
+
+        public static void CloseAllCustomPopoutPanels()
+        {
+            PInvoke.EnumWindows(new PInvoke.CallBack(EnumAllCustomPopoutPanels), 1);
+        }
+
+        private static bool EnumAllCustomPopoutPanels(IntPtr hwnd, int index)
+        {
+            var className = PInvoke.GetClassName(hwnd);
+            var caption = PInvoke.GetWindowText(hwnd);
+
+            if (className == "AceApp" && (caption.IndexOf("(Custom)") > -1 || caption == String.Empty))      // Only close non-builtin pop out panels
+            {
+                WindowManager.CloseWindow(hwnd);
+            }
+            else if (className == "AceApp")     // for builtin pop out  (ATC, VFR Map, ect)
+            {
+                WindowManager.MoveWindow(hwnd, 0, 0);
+            }
+
+            return true;
         }
     }
 }

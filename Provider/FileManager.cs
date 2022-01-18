@@ -63,7 +63,11 @@ namespace MSFSPopoutPanelManager.Provider
             }
             catch (Exception ex)
             {
-                return new AppSettingData();
+                // if file does not exist, write default data
+                var appSettings = new AppSettingData();
+                WriteAppSettingData(appSettings);
+
+                return appSettings;
             }
         }
 

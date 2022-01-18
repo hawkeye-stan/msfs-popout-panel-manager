@@ -10,6 +10,7 @@ namespace MSFSPopoutPanelManager.Shared
         {
             PanelSourceCoordinates = new List<PanelSourceCoordinate>();
             PanelConfigs = new List<PanelConfig>();
+            IsLocked = false;
         }
 
         public int ProfileId { get; set; }
@@ -18,9 +19,18 @@ namespace MSFSPopoutPanelManager.Shared
 
         public bool IsDefaultProfile { get; set; }
 
+        public bool IsLocked { get; set; }
+
         public List<PanelSourceCoordinate> PanelSourceCoordinates;
 
         public List<PanelConfig> PanelConfigs { get; set; }
+
+        public void Reset()
+        {
+            PanelSourceCoordinates.Clear();
+            PanelConfigs.Clear();
+            IsLocked = false;
+        }
     }
 
     public class PanelSourceCoordinate

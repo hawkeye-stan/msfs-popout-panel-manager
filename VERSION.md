@@ -1,10 +1,20 @@
 # Version History
 <hr/>
 
+## Version 3.1.0
+* Updated UI to use menu bar to control most application settings.
+* Added long awaited auto save feature. Application no longer requires user to manually save profile after each panel change. All panel adjustments are automatically save.
+* Added panel lock feature to complement autosave feature. When panels are lock and are being moved or resize, their new location information will not get save. Also, for instrumentation pop out panels, when panels are locked, any accidental movement of the panels will return them to previously saved locations. For built-in panels such as ATC, VFR Map, etc, they can still be moved but their saved location will not get change.
+* Added keyboard shortcuts for commonly used function. The buttons for -10px, -1px, +1px, and +10px now has keyboard shortcut of 'Ctrl -', 'Ctrl [', 'Ctrl ]', and 'Ctrl +' respectively.
+* Added miminize all panels feature. This allows user to temporary see what is behind all open pop out panels. (This is an user requested feature with Github ticket #6).
+* Various smaller bug fixes and usability enhancements.
+ 
+
+
 ## Version 3.0.1
-* Added workaround for MSFS pop out panel adjustment bug so using the position data grid to adjust width and height will work as expected. 
+* Added workaround for MSFS pop out panel adjustment bug when using the position data grid to adjust width and height will work as expected. 
 	- In MSFS, when changing height or width of a pop out panel (2nd time for same panel and onward), there is an MSFS bug that will unexpectedly shifted the panel by 8px to the left for each adjustment.
-* Improved realtime feedback of panel's current coordiates as you move panels around or adjust the top, left, height and width of panel.
+* Improved real-time feedback of panel's current coordinates as you move panels around or adjust top, left, height and width of panel.
 * Fixed always on top issue when moving panel around for placement inside other overlay or bezel.
 * Added support to create profile just to save locations of built-in panels only (VFR, ATC, etc). 
 * Added support to save locations for web panels from my other github project "MSFS Touch Panel".

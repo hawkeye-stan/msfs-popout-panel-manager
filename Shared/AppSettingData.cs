@@ -1,4 +1,6 @@
-﻿namespace MSFSPopoutPanelManager.Shared
+﻿using Newtonsoft.Json;
+
+namespace MSFSPopoutPanelManager.Shared
 {
     public class AppSettingData
     {
@@ -15,5 +17,8 @@
         public bool AlwaysOnTop { get; set; }
 
         public bool UseAutoPanning { get; set; }
+
+        [JsonIgnore]
+        public bool AutoStart { get; set; }
     }
 }

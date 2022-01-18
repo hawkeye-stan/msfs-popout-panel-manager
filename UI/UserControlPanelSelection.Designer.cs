@@ -29,14 +29,14 @@ namespace MSFSPopoutPanelManager.UI
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle14 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle15 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle16 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle13 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dataGridViewPanelCoor = new System.Windows.Forms.DataGridView();
             this.PanelIndex = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.X = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -51,7 +51,7 @@ namespace MSFSPopoutPanelManager.UI
             this.label1 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
-            this.buttonPanelSelection = new System.Windows.Forms.Button();
+            this.buttonStartPanelSelection = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.panel4 = new System.Windows.Forms.Panel();
@@ -72,48 +72,48 @@ namespace MSFSPopoutPanelManager.UI
             this.dataGridViewPanelCoor.AllowUserToDeleteRows = false;
             this.dataGridViewPanelCoor.AllowUserToResizeColumns = false;
             this.dataGridViewPanelCoor.AllowUserToResizeRows = false;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.Black;
-            this.dataGridViewPanelCoor.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle9.ForeColor = System.Drawing.Color.Black;
+            this.dataGridViewPanelCoor.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle9;
             this.dataGridViewPanelCoor.CausesValidation = false;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.Padding = new System.Windows.Forms.Padding(18, 3, 3, 3);
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridViewPanelCoor.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle10.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle10.Padding = new System.Windows.Forms.Padding(18, 3, 3, 3);
+            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridViewPanelCoor.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle10;
             this.dataGridViewPanelCoor.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewPanelCoor.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.PanelIndex,
             this.X,
             this.Y});
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridViewPanelCoor.DefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle14.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle14.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle14.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            dataGridViewCellStyle14.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle14.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle14.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle14.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridViewPanelCoor.DefaultCellStyle = dataGridViewCellStyle14;
             this.dataGridViewPanelCoor.Location = new System.Drawing.Point(18, 42);
             this.dataGridViewPanelCoor.MultiSelect = false;
             this.dataGridViewPanelCoor.Name = "dataGridViewPanelCoor";
             this.dataGridViewPanelCoor.ReadOnly = true;
-            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle7.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle7.Padding = new System.Windows.Forms.Padding(3);
-            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridViewPanelCoor.RowHeadersDefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle15.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle15.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle15.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            dataGridViewCellStyle15.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle15.Padding = new System.Windows.Forms.Padding(3);
+            dataGridViewCellStyle15.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle15.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle15.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridViewPanelCoor.RowHeadersDefaultCellStyle = dataGridViewCellStyle15;
             this.dataGridViewPanelCoor.RowHeadersVisible = false;
-            dataGridViewCellStyle8.Padding = new System.Windows.Forms.Padding(3);
-            this.dataGridViewPanelCoor.RowsDefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle16.Padding = new System.Windows.Forms.Padding(3);
+            this.dataGridViewPanelCoor.RowsDefaultCellStyle = dataGridViewCellStyle16;
             this.dataGridViewPanelCoor.RowTemplate.Height = 25;
             this.dataGridViewPanelCoor.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.dataGridViewPanelCoor.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
@@ -121,15 +121,15 @@ namespace MSFSPopoutPanelManager.UI
             this.dataGridViewPanelCoor.ShowCellToolTips = false;
             this.dataGridViewPanelCoor.ShowEditingIcon = false;
             this.dataGridViewPanelCoor.ShowRowErrors = false;
-            this.dataGridViewPanelCoor.Size = new System.Drawing.Size(303, 309);
+            this.dataGridViewPanelCoor.Size = new System.Drawing.Size(303, 286);
             this.dataGridViewPanelCoor.TabIndex = 18;
             // 
             // PanelIndex
             // 
             this.PanelIndex.DataPropertyName = "PanelIndex";
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle3.ForeColor = System.Drawing.Color.Black;
-            this.PanelIndex.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle11.ForeColor = System.Drawing.Color.Black;
+            this.PanelIndex.DefaultCellStyle = dataGridViewCellStyle11;
             this.PanelIndex.HeaderText = "Panel";
             this.PanelIndex.Name = "PanelIndex";
             this.PanelIndex.ReadOnly = true;
@@ -137,9 +137,9 @@ namespace MSFSPopoutPanelManager.UI
             // X
             // 
             this.X.DataPropertyName = "X";
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle4.ForeColor = System.Drawing.Color.Black;
-            this.X.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle12.ForeColor = System.Drawing.Color.Black;
+            this.X.DefaultCellStyle = dataGridViewCellStyle12;
             this.X.HeaderText = "X-Pos";
             this.X.Name = "X";
             this.X.ReadOnly = true;
@@ -147,9 +147,9 @@ namespace MSFSPopoutPanelManager.UI
             // Y
             // 
             this.Y.DataPropertyName = "Y";
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle5.ForeColor = System.Drawing.Color.Black;
-            this.Y.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle13.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle13.ForeColor = System.Drawing.Color.Black;
+            this.Y.DefaultCellStyle = dataGridViewCellStyle13;
             this.Y.HeaderText = "Y-Pos";
             this.Y.Name = "Y";
             this.Y.ReadOnly = true;
@@ -230,11 +230,11 @@ namespace MSFSPopoutPanelManager.UI
             this.panel2.Controls.Add(this.label1);
             this.panel2.Controls.Add(this.label5);
             this.panel2.Controls.Add(this.label4);
-            this.panel2.Controls.Add(this.buttonPanelSelection);
+            this.panel2.Controls.Add(this.buttonStartPanelSelection);
             this.panel2.Controls.Add(this.label3);
             this.panel2.Location = new System.Drawing.Point(0, 117);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(579, 191);
+            this.panel2.Size = new System.Drawing.Size(579, 172);
             this.panel2.TabIndex = 8;
             // 
             // label1
@@ -242,7 +242,7 @@ namespace MSFSPopoutPanelManager.UI
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.label1.ForeColor = System.Drawing.Color.White;
-            this.label1.Location = new System.Drawing.Point(35, 55);
+            this.label1.Location = new System.Drawing.Point(35, 37);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(213, 20);
             this.label1.TabIndex = 12;
@@ -253,34 +253,34 @@ namespace MSFSPopoutPanelManager.UI
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.label5.ForeColor = System.Drawing.Color.White;
-            this.label5.Location = new System.Drawing.Point(35, 115);
+            this.label5.Location = new System.Drawing.Point(35, 97);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(517, 20);
+            this.label5.Size = new System.Drawing.Size(523, 20);
             this.label5.TabIndex = 11;
-            this.label5.Text = "CTRL + LEFT CLICK when all panels have been selected or to cancel selection.";
+            this.label5.Text = "CTRL + LEFT CLICK when all panels have been selected or to cancel selections.";
             // 
             // label4
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.label4.ForeColor = System.Drawing.Color.White;
-            this.label4.Location = new System.Drawing.Point(35, 84);
+            this.label4.Location = new System.Drawing.Point(35, 66);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(418, 20);
             this.label4.TabIndex = 10;
             this.label4.Text = "SHIFT + LEFT CLICK to remove the most recently added panel.";
             // 
-            // buttonPanelSelection
+            // buttonStartPanelSelection
             // 
-            this.buttonPanelSelection.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(158)))), ((int)(((byte)(218)))));
-            this.buttonPanelSelection.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.buttonPanelSelection.ForeColor = System.Drawing.Color.White;
-            this.buttonPanelSelection.Location = new System.Drawing.Point(32, 142);
-            this.buttonPanelSelection.Name = "buttonPanelSelection";
-            this.buttonPanelSelection.Size = new System.Drawing.Size(170, 35);
-            this.buttonPanelSelection.TabIndex = 9;
-            this.buttonPanelSelection.Text = "Start Panel Selection";
-            this.buttonPanelSelection.UseVisualStyleBackColor = false;
+            this.buttonStartPanelSelection.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(158)))), ((int)(((byte)(218)))));
+            this.buttonStartPanelSelection.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.buttonStartPanelSelection.ForeColor = System.Drawing.Color.White;
+            this.buttonStartPanelSelection.Location = new System.Drawing.Point(32, 127);
+            this.buttonStartPanelSelection.Name = "buttonStartPanelSelection";
+            this.buttonStartPanelSelection.Size = new System.Drawing.Size(170, 35);
+            this.buttonStartPanelSelection.TabIndex = 9;
+            this.buttonStartPanelSelection.Text = "Start Panel Selection";
+            this.buttonStartPanelSelection.UseVisualStyleBackColor = false;
             // 
             // label3
             // 
@@ -288,11 +288,9 @@ namespace MSFSPopoutPanelManager.UI
             this.label3.ForeColor = System.Drawing.Color.White;
             this.label3.Location = new System.Drawing.Point(20, 4);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(551, 47);
+            this.label3.Size = new System.Drawing.Size(551, 27);
             this.label3.TabIndex = 7;
-            this.label3.Text = "2. Identify the pop out panels in the game by clicking on them. Their locations w" +
-    "ill be saved for use on future flights. (You only need to do this once per profi" +
-    "le)";
+            this.label3.Text = "2. Identify pop out panel locations in the game by clicking on them.";
             // 
             // label6
             // 
@@ -320,7 +318,7 @@ namespace MSFSPopoutPanelManager.UI
             this.checkBoxShowPanelLocation.AutoSize = true;
             this.checkBoxShowPanelLocation.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.checkBoxShowPanelLocation.ForeColor = System.Drawing.Color.White;
-            this.checkBoxShowPanelLocation.Location = new System.Drawing.Point(67, 361);
+            this.checkBoxShowPanelLocation.Location = new System.Drawing.Point(67, 342);
             this.checkBoxShowPanelLocation.Name = "checkBoxShowPanelLocation";
             this.checkBoxShowPanelLocation.Size = new System.Drawing.Size(213, 24);
             this.checkBoxShowPanelLocation.TabIndex = 17;
@@ -344,9 +342,9 @@ namespace MSFSPopoutPanelManager.UI
             this.panel3.Controls.Add(this.buttonStartPopOut);
             this.panel3.Controls.Add(this.label7);
             this.panel3.ForeColor = System.Drawing.Color.White;
-            this.panel3.Location = new System.Drawing.Point(0, 309);
+            this.panel3.Location = new System.Drawing.Point(0, 290);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(579, 94);
+            this.panel3.Size = new System.Drawing.Size(579, 113);
             this.panel3.TabIndex = 14;
             // 
             // label7
@@ -356,9 +354,9 @@ namespace MSFSPopoutPanelManager.UI
             this.label7.ForeColor = System.Drawing.Color.White;
             this.label7.Location = new System.Drawing.Point(20, 10);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(348, 20);
+            this.label7.Size = new System.Drawing.Size(323, 20);
             this.label7.TabIndex = 7;
-            this.label7.Text = "3. Start the pop out process for the selected panels.";
+            this.label7.Text = "3. Start the pop out process for selected panels.";
             // 
             // UserControlPanelSelection
             // 
@@ -391,7 +389,7 @@ namespace MSFSPopoutPanelManager.UI
         private System.Windows.Forms.ComboBox comboBoxProfile;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Button buttonPanelSelection;
+        private System.Windows.Forms.Button buttonStartPanelSelection;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label1;

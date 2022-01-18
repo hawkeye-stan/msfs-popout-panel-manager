@@ -9,72 +9,59 @@ using System.Windows.Forms;
 
 namespace MSFSPopoutPanelManager.UIController
 {
-    public class PanelSelectionController : BaseController
+    public class PanelSelectionController
     {
         private PanelSelectionManager _panelSelectionManager;
-        private Form _parentForm;
+        private IPanelSelectionView _view;
 
-        public PanelSelectionController() 
+        public PanelSelectionController(IPanelSelectionView view, DataStore dataStore) 
         {
-            _panelSelectionManager = new PanelSelectionManager();
-            _panelSelectionManager.OnSelectionStarted += PanelSelectionManager_OnPanelSelectionStarted;
-            _panelSelectionManager.OnSelectionCompleted += PanelSelectionManager_OnPanelSelectionCompleted;
-            _panelSelectionManager.OnPanelAdded += PanelSelectionManager_OnPanelAdded;
-            _panelSelectionManager.OnPanelSubtracted += PanelSelectionManager_OnPanelSubtracted;
+            _view = view;
+            DataStore = dataStore;
 
-            BaseController.OnRestart += HandleOnRestart;
-
-            PanelCoordinates = new BindingList<PanelSourceCoordinate>();
+            _panelSelectionManager = new PanelSelectionManager(_view.Form);
+            _panelSelectionManager.OnSelectionCompleted += HandleOnPanelSelectionCompleted;
         }
+
+        public DataStore DataStore { get; set; }
 
         public event EventHandler<EventArgs<PanelSelectionUIState>> OnUIStateChanged;
 
-        public int SelectedProfileId { get; set; }
-
-        public UserProfileData ActiveProfile { get { return BaseController.ActiveUserPlaneProfile; } }
-
-        public BindingList<UserProfileData> PlaneProfileList { get; set; }
-
-        public BindingList<PanelSourceCoordinate> PanelCoordinates { get; set; }
-
-        public bool HasActiveProfile { get { return true; } }
-
-        public bool ShowPanelLocationOverlay { get; set; }
+        public event EventHandler OnPopOutCompleted;
 
         public void Initialize()
         {
-            // Setup Defaults
-            LoadPlaneProfileList();
-            PanelCoordinates.Clear();
+            _view.ShowPanelLocationOverlay = false;
+
+            DataStore.UserProfiles = new BindingList<UserProfileData>(FileManager.ReadUserProfileData().OrderBy(x => x.ProfileName).ToList());
+            DataStore.ActiveProfilePanelCoordinates = new BindingList<PanelSourceCoordinate>(DataStore.ActiveUserProfile == null ? new List<PanelSourceCoordinate>() : DataStore.ActiveUserProfile.PanelSourceCoordinates);
 
             var defaultProfile = FileManager.ReadUserProfileData().Find(x => x.IsDefaultProfile);
-            SelectedProfileId = defaultProfile == null ? 0 : defaultProfile.ProfileId;
-            ActiveUserPlaneProfile = defaultProfile;
-            ShowPanelLocationOverlay = false;
 
-            if (SelectedProfileId < 1)
+            if(defaultProfile == null)
+            {
+                DataStore.ActiveUserProfileId= -1;
                 OnUIStateChanged?.Invoke(this, new EventArgs<PanelSelectionUIState>(PanelSelectionUIState.NoProfileSelected));
+            }
             else
+            {
+                DataStore.ActiveUserProfileId = defaultProfile.ProfileId;
                 OnUIStateChanged?.Invoke(this, new EventArgs<PanelSelectionUIState>(PanelSelectionUIState.ProfileSelected));
+            }   
         }
 
-        public void AddUserProfile(string profileName)
+        public void AddProfile(string profileName)
         {
-            var profileId = PlaneProfileList.Count > 0 ? PlaneProfileList.Max(x => x.ProfileId) + 1 : 1;
+            var newProfileId = DataStore.UserProfiles.Count > 0 ? DataStore.UserProfiles.Max(x => x.ProfileId) + 1 : 1;
+            var newPlaneProfile = new UserProfileData() { ProfileId = newProfileId, ProfileName = profileName };
 
-            var newPlaneProfile = new UserProfileData() { ProfileId = profileId, ProfileName = profileName };
+            var tmpList = DataStore.UserProfiles.ToList();
+            tmpList.Add(newPlaneProfile);
+            var index = tmpList.OrderBy(x => x.ProfileName).ToList().FindIndex(x => x.ProfileId == newProfileId);
+            DataStore.UserProfiles.Insert(index, newPlaneProfile);
+            FileManager.WriteUserProfileData(DataStore.UserProfiles.ToList());  // save the backing list data
 
-            // Find insert index for new profile into list in ascending order
-            var list = PlaneProfileList.ToList();
-            list.Add(newPlaneProfile);
-            var index = list.OrderBy(x => x.ProfileName).ToList().FindIndex(x => x.ProfileId == profileId);
-            PlaneProfileList.Insert(index, newPlaneProfile);
-            FileManager.WriteUserProfileData(PlaneProfileList.ToList());
-
-            SelectedProfileId = profileId;
-            ActiveUserPlaneProfile = newPlaneProfile;
-
-            PanelCoordinates.Clear();
+            DataStore.ActiveUserProfileId = newProfileId;
 
             OnUIStateChanged?.Invoke(this, new EventArgs<PanelSelectionUIState>(PanelSelectionUIState.ProfileSelected));
             Logger.Status($"Profile '{newPlaneProfile.ProfileName}' has been added successfully.", StatusMessageType.Info);
@@ -82,16 +69,14 @@ namespace MSFSPopoutPanelManager.UIController
 
         public void DeleteProfile()
         {
-            if (SelectedProfileId != 0)
+            if (DataStore.ActiveUserProfileId != -1)
             {
-                var profileToRemove = PlaneProfileList.First(x => x.ProfileId == SelectedProfileId);
+                var profileToRemove = DataStore.UserProfiles.First(x => x.ProfileId == DataStore.ActiveUserProfileId);
+                DataStore.UserProfiles.Remove(profileToRemove);
+                FileManager.WriteUserProfileData(DataStore.UserProfiles.ToList());
 
-                PlaneProfileList.Remove(profileToRemove);
-                FileManager.WriteUserProfileData(PlaneProfileList.ToList());
-
-                PanelCoordinates.Clear();
                 _panelSelectionManager.Reset();
-                SelectedProfileId = -1;
+                DataStore.ActiveUserProfileId= -1;
 
                 OnUIStateChanged?.Invoke(this, new EventArgs<PanelSelectionUIState>(PanelSelectionUIState.NoProfileSelected));
 
@@ -101,18 +86,18 @@ namespace MSFSPopoutPanelManager.UIController
 
         public void SetDefaultProfile()
         {
-            if (SelectedProfileId < 1)
+            if (DataStore.ActiveUserProfileId== -1)
                 return;
 
-            var profile = PlaneProfileList.First(x => x.ProfileId == SelectedProfileId);
+            var profile = DataStore.UserProfiles.First(x => x.ProfileId == DataStore.ActiveUserProfileId);
 
             profile.IsDefaultProfile = true;
-            foreach (var p in PlaneProfileList)
+            foreach (var p in DataStore.UserProfiles)
             {
-                if (p.ProfileId != SelectedProfileId)
+                if (p.ProfileId != DataStore.ActiveUserProfileId)
                     p.IsDefaultProfile = false;
             }
-            FileManager.WriteUserProfileData(PlaneProfileList.ToList());
+            FileManager.WriteUserProfileData(DataStore.UserProfiles.ToList());
 
             Logger.Status($"Profile '{profile.ProfileName}' has been set as default.", StatusMessageType.Info);
         }
@@ -121,66 +106,102 @@ namespace MSFSPopoutPanelManager.UIController
         {
             Logger.ClearStatus();
 
-            PanelCoordinates.Clear();
-
-            SelectedProfileId = profileId;
-
-            if (SelectedProfileId < 1)
+            if (profileId == -1)
             {
-                ActiveUserPlaneProfile = null;
+                DataStore.ActiveUserProfileId= -1;
                 OnUIStateChanged?.Invoke(this, new EventArgs<PanelSelectionUIState>(PanelSelectionUIState.NoProfileSelected));
             }
             else
             {
-                ActiveUserPlaneProfile = PlaneProfileList.First(x => x.ProfileId == SelectedProfileId);
-                ActiveUserPlaneProfile.PanelSourceCoordinates.ForEach(c => PanelCoordinates.Add(c));
-
-                _panelSelectionManager.PanelCoordinates = PanelCoordinates.ToList();
-                _panelSelectionManager.DrawPanelLocationOverlay();
-                _panelSelectionManager.ShowPanelLocationOverlay(false);
-                ShowPanelLocationOverlay = false;
-
-                //if (PanelCoordinates.Count == 0)
-                //    OnUIStateChanged?.Invoke(this, new EventArgs<PanelSelectionUIState>(PanelSelectionUIState.ProfileSelected));
-                //else
+                DataStore.ActiveUserProfileId = profileId;
+                _panelSelectionManager.Reset();
+                _view.ShowPanelLocationOverlay = false;
                 OnUIStateChanged?.Invoke(this, new EventArgs<PanelSelectionUIState>(PanelSelectionUIState.PanelSelectionCompletedValid));
             }
         }
 
-        public void StartPanelSelection(Form appForm)
+        public bool HasExistingPanelCoordinates
         {
-            _parentForm = appForm;
+            get
+            {
+                return DataStore.ActiveUserProfile != null && DataStore.ActiveUserProfile.PanelSourceCoordinates.Count > 0;
+            }
+        }
 
-            if (WindowManager.GetApplicationProcess() == null)
-                return;
-            
-            // Temporary make app go to background
-            WindowManager.ApplyAlwaysOnTop(_parentForm.Handle, false, _parentForm.Bounds);
+        public void StartPanelSelection()
+        {
+            DataStore.ActiveUserProfile.Reset();
 
-            ActiveUserPlaneProfile.PanelConfigs = new List<PanelConfig>();
+            _panelSelectionManager.PanelCoordinates = DataStore.ActiveUserProfile.PanelSourceCoordinates;
 
-            _panelSelectionManager.AppForm = appForm;
+            OnUIStateChanged?.Invoke(this, new EventArgs<PanelSelectionUIState>(PanelSelectionUIState.PanelSelectionStarted));
+
+            // Temporary minimize the app during panel selection
+            if (_view.Form != null)
+                _view.Form.WindowState = FormWindowState.Minimized;
+
+            // Set MSFS to foreground for panel selection
+            var simulatorProcess = WindowManager.GetSimulatorProcess();
+            if (simulatorProcess != null)
+                PInvoke.SetForegroundWindow(simulatorProcess.Handle);
+
             _panelSelectionManager.Start();
+
+            Logger.Status("Panels selection has started.", StatusMessageType.Info);
         }
 
-        public void ShowPanelLocationOverlayChanged(bool show)
+        private void HandleOnPanelSelectionCompleted(object sender, EventArgs e)
         {
-            ShowPanelLocationOverlay = show;
-            _panelSelectionManager.ShowPanelLocationOverlay(show);
+            // If enable, save the current viewport into custom view by Ctrl-Alt-0
+            if (FileManager.ReadAppSettingData().UseAutoPanning)
+            {
+                var simualatorProcess = WindowManager.GetSimulatorProcess();
+                if (simualatorProcess != null)
+                {
+                    InputEmulationManager.SaveCustomViewZero(simualatorProcess.Handle);
+                }
+            }
+
+            if (_view.Form != null)
+                _view.Form.WindowState = FormWindowState.Normal;
+
+            PInvoke.SetForegroundWindow(_view.Form.Handle);
+
+            DataStore.ActiveProfilePanelCoordinates.Clear();
+            DataStore.ActiveUserProfile.PanelSourceCoordinates.ForEach(c => DataStore.ActiveProfilePanelCoordinates.Add(c));
+
+            FileManager.WriteUserProfileData(DataStore.UserProfiles.ToList());
+
+            OnUIStateChanged?.Invoke(this, new EventArgs<PanelSelectionUIState>(PanelSelectionUIState.PanelSelectionCompletedValid));
+
+            _view.ShowPanelLocationOverlay = true;
+
+            if (DataStore.ActiveUserProfile.PanelSourceCoordinates.Count > 0)
+                Logger.Status("Panels selection is completed. Please click 'Start Pop Out' to start popping out these panels.", StatusMessageType.Info);
+            else
+                Logger.Status("Panels selection is completed. No panel has been selected.", StatusMessageType.Info);
         }
 
-        public void StartPopOut(Form appForm)
+        public void SetPanelLocationOverlayChanged()
+        {
+            _panelSelectionManager.PanelCoordinates = DataStore.ActiveProfilePanelCoordinates.ToList();
+            _panelSelectionManager.ShowPanelLocationOverlay(_view.ShowPanelLocationOverlay);
+        }
+
+        public void StartPopOut()
         {
             if (WindowManager.GetApplicationProcess() == null) 
                 return;
             
             OnUIStateChanged?.Invoke(this, new EventArgs<PanelSelectionUIState>(PanelSelectionUIState.PopoutStarted));
             Logger.Status("Panel pop out and separation in progress. Please wait......", StatusMessageType.Info);
-            
+
+            WindowManager.CloseAllCustomPopoutPanels();
+
             Thread.Sleep(1000);     // allow time for the mouse to be stopped moving by the user
 
             _panelSelectionManager.ShowPanelLocationOverlay(false);
-            ShowPanelLocationOverlay = false;
+            _view.ShowPanelLocationOverlay = false;
 
             var simulatorProcess = WindowManager.GetSimulatorProcess();
             if(simulatorProcess == null)
@@ -190,90 +211,31 @@ namespace MSFSPopoutPanelManager.UIController
                 return;
             }
 
-            PopoutSeparationManager popoutSeparationManager = new PopoutSeparationManager(simulatorProcess.Handle, ActiveUserPlaneProfile);
+            PopoutSeparationManager popoutSeparationManager = new PopoutSeparationManager(simulatorProcess.Handle, DataStore.ActiveUserProfile);
 
             // Temporary make app go to background before pop out process
-            WindowManager.ApplyAlwaysOnTop(appForm.Handle, false, appForm.Bounds);
+            WindowManager.ApplyAlwaysOnTop(_view.Form.Handle, false, _view.Form.Bounds);
 
             var result = popoutSeparationManager.StartPopout();
 
-            WindowManager.ApplyAlwaysOnTop(appForm.Handle, true, appForm.Bounds);
+            WindowManager.ApplyAlwaysOnTop(_view.Form.Handle, true, _view.Form.Bounds);
 
             if (result)
             {
-                PopOutCompleted();
-                PInvoke.SetForegroundWindow(appForm.Handle);
+                OnPopOutCompleted?.Invoke(this, null);
+
+                // Save data
+                FileManager.WriteUserProfileData(DataStore.UserProfiles.ToList());
+
+                PInvoke.SetForegroundWindow(_view.Form.Handle);
             }
             else
             {
                 _panelSelectionManager.ShowPanelLocationOverlay(true);
-                ShowPanelLocationOverlay = true;
+                _view.ShowPanelLocationOverlay = true;
             }
 
             OnUIStateChanged?.Invoke(this, new EventArgs<PanelSelectionUIState>(PanelSelectionUIState.PanelSelectionCompletedValid));
-        }
-
-        private void LoadPlaneProfileList()
-        {
-            if (PlaneProfileList != null)
-                PlaneProfileList.Clear();
-            else
-                PlaneProfileList = new BindingList<UserProfileData>();
-
-            var dataList = FileManager.ReadUserProfileData().OrderBy(x => x.ProfileName);
-
-            foreach (var profile in dataList)
-                PlaneProfileList.Add(profile);
-        }
-
-        private void PanelSelectionManager_OnPanelSelectionStarted(object sender, EventArgs e)
-        {
-            PanelCoordinates.Clear();
-            OnUIStateChanged?.Invoke(this, new EventArgs<PanelSelectionUIState>(PanelSelectionUIState.PanelSelectionStarted));
-
-            if(_parentForm != null)
-                _parentForm.WindowState = FormWindowState.Minimized;
-
-            var simulatorProcess = WindowManager.GetSimulatorProcess();
-            if(simulatorProcess != null)
-                PInvoke.SetForegroundWindow(simulatorProcess.Handle);
-        }
-
-        private void PanelSelectionManager_OnPanelAdded(object sender, EventArgs<PanelSourceCoordinate> e)
-        {
-            PanelCoordinates.Add(e.Value);
-        }
-
-        private void PanelSelectionManager_OnPanelSubtracted(object sender, EventArgs e)
-        {
-            if (PanelCoordinates.Count > 0)
-                PanelCoordinates.RemoveAt(PanelCoordinates.Count - 1);
-        }
-
-        private void PanelSelectionManager_OnPanelSelectionCompleted(object sender, EventArgs e)
-        {
-            if (_parentForm != null)
-                _parentForm.WindowState = FormWindowState.Normal;
-
-            //if (PanelCoordinates.Count > 0)
-            //{
-                ActiveUserPlaneProfile.PanelSourceCoordinates = PanelCoordinates.ToList();
-                OnUIStateChanged?.Invoke(this, new EventArgs<PanelSelectionUIState>(PanelSelectionUIState.PanelSelectionCompletedValid));
-            //}
-            //else
-            //    OnUIStateChanged?.Invoke(this, new EventArgs<PanelSelectionUIState>(PanelSelectionUIState.PanelSelectionCompletedInvalid));
-
-            ShowPanelLocationOverlay = true;
-
-            var simulatorProcess = WindowManager.GetSimulatorProcess();
-            if (simulatorProcess != null)
-                PInvoke.SetForegroundWindow(simulatorProcess.Handle);
-        }
-
-        private void HandleOnRestart(object sender, EventArgs e)
-        {
-            Initialize();
-            ProfileChanged(SelectedProfileId);
         }
     }
 

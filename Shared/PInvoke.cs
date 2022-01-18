@@ -5,6 +5,35 @@ using System.Text;
 
 namespace MSFSPopoutPanelManager.Shared
 {
+    public static class PInvokeConstant
+    {
+        public const int SW_SHOWNORMAL = 1;
+        public const int SW_SHOWMINIMIZED = 2;
+        public const int SW_SHOWMAXIMIZED = 3;
+        public const int SW_NORMAL = 1;
+        public const int SW_MINIMIZE = 6;
+        public const int SW_RESTORE = 9;
+
+        public const uint EVENT_SYSTEM_MOVESIZEEND = 0x000B;
+        public const uint EVENT_OBJECT_LOCATIONCHANGE = 0x800B;
+
+        public const int SWP_NOMOVE = 0x0002;
+        public const int SWP_NOSIZE = 0x0001;
+        public const int SWP_ALWAYS_ON_TOP = SWP_NOMOVE | SWP_NOSIZE;
+
+        public const int GWL_STYLE = -16;
+        public const int WS_SIZEBOX = 0x00040000;
+        public const int WS_BORDER = 0x00800000;
+        public const int WS_DLGFRAME = 0x00400000;
+        public const int WS_CAPTION = WS_BORDER | WS_DLGFRAME;
+
+        public const int HWND_TOPMOST = -1;
+        public const int HWND_NOTOPMOST = -2;
+
+        public const uint WM_CLOSE = 0x0010;
+        public const int WINEVENT_OUTOFCONTEXT = 0;
+    }
+    
     public class PInvoke
     {
         [DllImport("user32")]
@@ -29,6 +58,10 @@ namespace MSFSPopoutPanelManager.Shared
 
         [DllImport("user32.dll")]
         public static extern IntPtr GetWindowLong(IntPtr hWnd, int nIndex);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool GetWindowPlacement(IntPtr hWnd, ref WINDOWPLACEMENT lpwndpl);
 
         [DllImport("user32.dll")]
         public static extern int GetWindowRect(IntPtr hwnd, out Rectangle lpRect);
@@ -75,12 +108,27 @@ namespace MSFSPopoutPanelManager.Shared
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern IntPtr SetWinEventHook(uint eventMin, uint eventMax, IntPtr hmodWinEventProc, WinEventProc lpfnWinEventProc, int idProcess, int idThread, uint dwflags);
-        
+
+        [DllImport("user32.dll")]
+        public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
         [DllImport("user32.dll")]
         public static extern int UnhookWinEvent(IntPtr hWinEventHook);
 
         public delegate bool CallBack(IntPtr hwnd, int lParam);
 
         public delegate void WinEventProc(IntPtr hWinEventHook, uint iEvent, IntPtr hWnd, int idObject, int idChild, int dwEventThread, int dwmsEventTime);
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct WINDOWPLACEMENT
+    {
+        public int length;
+        public int flags;
+        public int showCmd;
+        public Point ptMinPosition;
+        public Point ptMaxPosition;
+        public Rectangle rcNormalPosition;
+        public Rectangle rcDevice;
     }
 }

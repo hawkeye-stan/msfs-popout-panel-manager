@@ -5,50 +5,67 @@ using System.Windows.Forms;
 
 namespace MSFSPopoutPanelManager.UI
 {
-    public partial class UserControlPanelSelection : UserControl
+    public partial class UserControlPanelSelection : UserControl, IPanelSelectionView
     {
         private PanelSelectionController _controller;
+
+        #region Implement view interface
+
+        public Form Form { get => ParentForm; }
+
+        public bool ShowPanelLocationOverlay { get => checkBoxShowPanelLocation.Checked; set => checkBoxShowPanelLocation.Checked = value; }
+
+        #endregion
 
         public UserControlPanelSelection()
         {
             InitializeComponent();
-            _controller = new PanelSelectionController();
+        }
 
-            // Listen to controller event
+        public void Initialize(PanelSelectionController controller)
+        {
+            _controller = controller;
             _controller.OnUIStateChanged += HandleOnUIStateChanged;
             _controller.Initialize();
 
             // Set bindings
             comboBoxProfile.DisplayMember = "ProfileName";
             comboBoxProfile.ValueMember = "ProfileId";
-            comboBoxProfile.DataSource = _controller.PlaneProfileList;
-            comboBoxProfile.DataBindings.Add("SelectedValue", _controller, "SelectedProfileId");
+            comboBoxProfile.DataSource = _controller.DataStore.UserProfiles;
+            comboBoxProfile.DataBindings.Add("SelectedValue", _controller.DataStore, "ActiveUserProfileId");
+
             comboBoxProfile.SelectedValue = -1;     // forced a default
             comboBoxProfile.SelectedIndexChanged += HandleProfileChanged;
 
             buttonAddProfile.Click += HandleAddProfile;
             buttonDeleteProfile.Click += HandleDeleteProfile;
             buttonSetDefault.Click += (source, e) => _controller.SetDefaultProfile();
-            buttonPanelSelection.Click += HandlePanelSelectionStarted;
-            buttonStartPopOut.Click += (source, e) => _controller.StartPopOut(ParentForm);
+            buttonStartPanelSelection.Click += HandleStartPanelSelection;
+            buttonStartPopOut.Click += (source, e) => _controller.StartPopOut();
 
             dataGridViewPanelCoor.AutoGenerateColumns = false;
             dataGridViewPanelCoor.AutoSize = false;
-            dataGridViewPanelCoor.DataSource = _controller.PanelCoordinates;
+            dataGridViewPanelCoor.DataSource = _controller.DataStore.ActiveProfilePanelCoordinates;
 
-            checkBoxShowPanelLocation.DataBindings.Add("Checked", _controller, "ShowPanelLocationOverlay");
-            checkBoxShowPanelLocation.CheckedChanged += (source, e) => _controller.ShowPanelLocationOverlayChanged(checkBoxShowPanelLocation.Checked);
+            checkBoxShowPanelLocation.CheckedChanged += (source, e) => _controller.SetPanelLocationOverlayChanged();
+        }
+
+
+        private void HandleProfileChanged(object sender, EventArgs e)
+        {
+            if(Convert.ToInt32(comboBoxProfile.SelectedValue) > 0)
+                _controller.ProfileChanged(Convert.ToInt32(comboBoxProfile.SelectedValue));
         }
 
         private void HandleAddProfile(object sender, EventArgs e)
         {
-            using(var form = new AddProfileForm { StartPosition = FormStartPosition.CenterParent })
+            using (var form = new AddProfileForm { StartPosition = FormStartPosition.CenterParent })
             {
                 var dialogResult = form.ShowDialog();
 
-                if(dialogResult == DialogResult.OK)
+                if (dialogResult == DialogResult.OK)
                 {
-                    _controller.AddUserProfile(form.ProfileName);
+                    _controller.AddProfile(form.ProfileName);
                 }
             }
         }
@@ -60,42 +77,27 @@ namespace MSFSPopoutPanelManager.UI
 
             using (var form = new ConfirmDialogForm(title, message) { StartPosition = FormStartPosition.CenterParent })
             {
-                var dialogResult = form.ShowDialog();
-
-                if (dialogResult == DialogResult.Yes)
-                {
+                if (form.ShowDialog() == DialogResult.Yes)
                     _controller.DeleteProfile();
-                }
             }
         }
 
-        private void HandleProfileChanged(object sender, EventArgs e)
+        private void HandleStartPanelSelection(object sender, EventArgs e)
         {
-            if(Convert.ToInt32(comboBoxProfile.SelectedValue) > 0)
-                _controller.ProfileChanged(Convert.ToInt32(comboBoxProfile.SelectedValue));
-        }
-
-        private void HandlePanelSelectionStarted(object sender, EventArgs e)
-        {
-            if (_controller.ActiveProfile != null)
+            if (!_controller.HasExistingPanelCoordinates)
             {
-                if (_controller.ActiveProfile.PanelConfigs.Count > 0)
+                _controller.StartPanelSelection();
+            }
+            else
+            {
+                var title = "Confirm Overwrite";
+                var message = "WARNING! Are you sure you want to overwrite existing saved panel locations and ALL settings for this profile?";
+
+                using (var form = new ConfirmDialogForm(title, message) { StartPosition = FormStartPosition.CenterParent })
                 {
-                    var title = "Confirm Overwrite";
-                    var message = "Are you sure you want to overwrite existing saved panel locations and settings for this profile??";
-
-                    using (var form = new ConfirmDialogForm(title, message) { StartPosition = FormStartPosition.CenterParent })
-                    {
-                        var dialogResult = form.ShowDialog();
-
-                        if (dialogResult == DialogResult.No)
-                        {
-                            return;
-                        }
-                    }
+                    if (form.ShowDialog() == DialogResult.Yes)
+                        _controller.StartPanelSelection();
                 }
-
-                _controller.StartPanelSelection(ParentForm);
             }
         }
 
@@ -108,7 +110,7 @@ namespace MSFSPopoutPanelManager.UI
                     buttonAddProfile.Enabled = true;
                     buttonDeleteProfile.Enabled = false;
                     buttonSetDefault.Enabled = false;
-                    buttonPanelSelection.Enabled = false;
+                    buttonStartPanelSelection.Enabled = false;
                     checkBoxShowPanelLocation.Enabled = false;
                     buttonStartPopOut.Enabled = false;
                     break;
@@ -117,7 +119,7 @@ namespace MSFSPopoutPanelManager.UI
                     buttonAddProfile.Enabled = true;
                     buttonDeleteProfile.Enabled = true;
                     buttonSetDefault.Enabled = true;
-                    buttonPanelSelection.Enabled = true;
+                    buttonStartPanelSelection.Enabled = true;
                     checkBoxShowPanelLocation.Enabled = true;
                     buttonStartPopOut.Enabled = false;
                     break;
@@ -126,7 +128,7 @@ namespace MSFSPopoutPanelManager.UI
                     buttonAddProfile.Enabled = false;
                     buttonDeleteProfile.Enabled = false;
                     buttonSetDefault.Enabled = false;
-                    buttonPanelSelection.Enabled = false;
+                    buttonStartPanelSelection.Enabled = false;
                     checkBoxShowPanelLocation.Enabled = false;
                     buttonStartPopOut.Enabled = false;
                     break;
@@ -135,7 +137,7 @@ namespace MSFSPopoutPanelManager.UI
                     buttonAddProfile.Enabled = true;
                     buttonDeleteProfile.Enabled = true;
                     buttonSetDefault.Enabled = true;
-                    buttonPanelSelection.Enabled = true;
+                    buttonStartPanelSelection.Enabled = true;
                     checkBoxShowPanelLocation.Enabled = true;
                     buttonStartPopOut.Enabled = true;
                     buttonStartPopOut.Focus();
@@ -145,7 +147,7 @@ namespace MSFSPopoutPanelManager.UI
                     buttonAddProfile.Enabled = true;
                     buttonDeleteProfile.Enabled = true;
                     buttonSetDefault.Enabled = true;
-                    buttonPanelSelection.Enabled = true;
+                    buttonStartPanelSelection.Enabled = true;
                     checkBoxShowPanelLocation.Enabled = true;
                     buttonStartPopOut.Enabled = false;
                     break;
@@ -154,7 +156,7 @@ namespace MSFSPopoutPanelManager.UI
                     buttonAddProfile.Enabled = false;
                     buttonDeleteProfile.Enabled = false;
                     buttonSetDefault.Enabled = false;
-                    buttonPanelSelection.Enabled = false;
+                    buttonStartPanelSelection.Enabled = false;
                     checkBoxShowPanelLocation.Enabled = false;
                     buttonStartPopOut.Enabled = false;
                     break;
