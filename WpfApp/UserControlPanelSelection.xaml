@@ -1,0 +1,133 @@
+﻿<UserControl x:Class="MSFSPopoutPanelManager.WpfApp.UserControlPanelSelection"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
+             xmlns:local="clr-namespace:MSFSPopoutPanelManager.WpfApp"
+             xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+             xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+             mc:Ignorable="d" 
+             Height="505"
+             Width="920"
+             Background="#FF323A64"
+             Loaded="UserControl_Loaded">
+    <UserControl.Resources>
+        <CollectionViewSource x:Key="UserProfilesViewSource" Source="{Binding Path=DataStore.UserProfiles, Mode=OneWay}">
+            <CollectionViewSource.SortDescriptions>
+                <scm:SortDescription PropertyName="ProfileName" />
+            </CollectionViewSource.SortDescriptions>
+        </CollectionViewSource>
+        <Style x:Key="ProfileSelectedDependency" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="IsEnabled" Value="False"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Path=DataStore.HasActiveUserProfileId, Mode=OneWay}" Value="True">
+                    <Setter Property="IsEnabled" Value="True"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="ProfileAddPlaneBindingDependency" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Content" Value="Add Binding"/>
+            <Setter Property="Width" Value="130"/>
+            <Setter Property="IsEnabled" Value="False"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{c:Binding Path='DataStore.HasActiveUserProfileId and DataStore.HasCurrentMsfsPlaneTitle and DataStore.ActiveUserProfile.BindingPlaneTitle != DataStore.CurrentMsfsPlaneTitle', Mode=OneWay}" Value="True">
+                    <Setter Property="IsEnabled" Value="True"/>
+                </DataTrigger>
+                <DataTrigger Binding="{c:Binding Path='DataStore.ActiveUserProfile.HasBindingPlaneTitle and DataStore.ActiveUserProfile.BindingPlaneTitle != DataStore.CurrentMsfsPlaneTitle', Mode=OneWay}" Value="True">
+                    <Setter Property="Content" Value="Replace Binding"/>
+                    <Setter Property="Width" Value="130"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="ProfileDeletePlaneBindingDependency" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="IsEnabled" Value="False"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{c:Binding Path='DataStore.HasActiveUserProfileId and DataStore.ActiveUserProfile.HasBindingPlaneTitle', Mode=OneWay}" Value="True">
+                    <Setter Property="IsEnabled" Value="True"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <DockPanel>
+            <WrapPanel DockPanel.Dock="Left" Orientation="Vertical" Margin="15,10,0,0" Width="585" HorizontalAlignment="Left">
+                <Label Content="1. Please select a profile you would like to use." HorizontalAlignment="Left" />
+                <ComboBox HorizontalAlignment="Left" 
+                          Margin="20,0,0,0" 
+                          VerticalAlignment="Top" 
+                          Width="485"
+                          ItemsSource="{Binding Source={StaticResource UserProfilesViewSource}}" 
+                          SelectedValue="{Binding Path=DataStore.ActiveUserProfileId}" 
+                          DisplayMemberPath="ProfileName"
+                          SelectedValuePath="ProfileId"/>
+                <WrapPanel Orientation="Horizontal" Margin="20,10,0,0" HorizontalAlignment="Left">
+                    <Button Content="Add Profile" HorizontalAlignment="Left" Width="130" Click="AddProfile_Click"/>
+                    <Button Content="Delete Profile" HorizontalAlignment="Left" Margin="20,0,0,0" Width="130" Click="DeleteProfile_Click" Style="{StaticResource ProfileSelectedDependency}"/>
+                    <Button Content="Set Default" HorizontalAlignment="Left" Margin="20,0,0,0" Width="130" Command="{Binding Path=SetDefaultProfileCommand}" Style="{StaticResource ProfileSelectedDependency}"/>
+                </WrapPanel>
+                <WrapPanel Orientation="Horizontal" Margin="15,10,0,0" HorizontalAlignment="Left">
+                    <Label Content="Binding:" HorizontalAlignment="Left"/>
+                    <Label Content="{c:Binding Path='(DataStore.ActiveUserProfile.HasBindingPlaneTitle ? DataStore.ActiveUserProfile.BindingPlaneTitle : &quot;None&quot;)'}" HorizontalContentAlignment="Left" HorizontalAlignment="Left" FontStyle="Italic" Foreground="LightGreen" />
+                </WrapPanel>
+                <WrapPanel Orientation="Horizontal" Margin="20,5,0,0" HorizontalAlignment="Left">
+                    <Button HorizontalAlignment="Left" Click="AddBinding_Click" Style="{StaticResource ProfileAddPlaneBindingDependency}"/>
+                    <Button Content="Delete Binding" HorizontalAlignment="Left" Margin="20,0,0,0" Width="130" Click="DeleteBinding_Click" Style="{StaticResource ProfileDeletePlaneBindingDependency}"/>
+                    <CheckBox Margin="40,0,0,0" IsChecked="{Binding Path=DataStore.ActiveUserProfile.PowerOnRequiredForColdStart}" IsEnabled="{Binding Path=DataStore.HasActiveUserProfileId}" Command="{Binding Path=SetPowerOnRequiredCommand}">
+                        <TextBlock Text="Power on required to pop out panels on cold start" TextWrapping="Wrap" Width="200" Margin="5,0,0,3"/>
+                    </CheckBox>
+                </WrapPanel>
+                <Label Content="2. Identify pop out panel locations in the game by clicking on them." Margin="0,15,0,0" />
+                <WrapPanel Orientation="Vertical" Margin="20,0,0,0" HorizontalAlignment="Left">
+                    <Label Content="LEFT CLICK to add a new panel."/>
+                    <Label Content="CTRL + LEFT CLICK when all panels have been selected or to cancel selections." />
+                    <Label Content="SHIFT + LEFT CLICK to remove the most recently added panel."/>
+                    <WrapPanel Orientation="Horizontal" Margin="0,10,0,0" HorizontalAlignment="Left">
+                        <Button Content="Start Panel Selection" HorizontalAlignment="Left" Margin="0,0,0,0" Width="165" Click="StartPanelSelection_Click" Style="{StaticResource ProfileSelectedDependency}"/>
+                        <Button Content="Save Auto Panning Camera" HorizontalAlignment="Left" Margin="20,0,0,0" IsEnabled="{c:Binding Path='DataStore.HasActiveUserProfileId and DataStore.IsFlightActive'}" Width="215" Click="SaveAutoPanningCamera_Click" Style="{StaticResource ProfileSelectedDependency}"/>
+                    </WrapPanel>
+                </WrapPanel>
+                <Label Content="3. Start the pop out process for selected panels." Margin="0,15,0,0" />
+                <Button Content="Start Pop Out" HorizontalAlignment="Left" Margin="20,10,0,0" Width="130" IsEnabled="{c:Binding Path='DataStore.HasActiveUserProfileId and DataStore.IsFlightActive'}" Command="{Binding Path=StartPopOutCommand}" Style="{StaticResource ProfileSelectedDependency}"/>
+            </WrapPanel>
+            <DockPanel DockPanel.Dock="Right" Width="325" HorizontalAlignment="Center">
+                <Label DockPanel.Dock="Top" Content="Panel Locations" HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                <DataGrid DockPanel.Dock="Top" HorizontalAlignment="Center" Width="290" Height="395" AutoGenerateColumns="False" CanUserResizeColumns="False" HorizontalScrollBarVisibility="Disabled" 
+                          CanUserReorderColumns="False" CanUserResizeRows="False" IsReadOnly="True" HorizontalGridLinesBrush="#B9B9B9" VerticalGridLinesBrush="#B9B9B9" GridLinesVisibility="Horizontal" BorderThickness="1" 
+                          CanUserAddRows="False" CanUserSortColumns="False" ItemsSource="{Binding Path=DataStore.ActiveProfilePanelCoordinates}">
+                    <DataGrid.CellStyle>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="TextBlock.TextAlignment" Value="Center" />
+                            <Setter Property="BorderThickness" Value="0" />
+                            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                            <Setter Property="Focusable" Value="False" />
+                            <Setter Property="IsTabStop" Value="False" />
+                            <Setter Property="IsHitTestVisible" Value="False" />
+                            <Setter Property="Margin" Value="5, 5, 5, 0" />
+                            <Setter Property="Height" Value="28" />
+                        </Style>
+                    </DataGrid.CellStyle>
+                    <DataGrid.ColumnHeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="TextBlock.TextAlignment" Value="Center" />
+                            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                            <Setter Property="controls:ControlsHelper.ContentCharacterCasing" Value="Normal"/>
+                            <Setter Property="FontWeight" Value="Normal"/>
+                            <Setter Property="Height" Value="30"/>
+                            <Setter Property="Background" Value="#FF576573"/>
+                            <Setter Property="BorderThickness" Value="1"/>
+                            <Setter Property="BorderBrush" Value="#FFB9B9B9"/>
+                            <Setter Property="Padding" Value="5,0,5,0"/>
+                        </Style>
+                    </DataGrid.ColumnHeaderStyle>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Panel" Width="97" Binding="{Binding PanelIndex}"/>
+                        <DataGridTextColumn Header="X-Pos" Width="97" Binding="{Binding X}"/>
+                        <DataGridTextColumn Header="Y-Pos" Width="97" Binding="{Binding Y}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <CheckBox DockPanel.Dock="Bottom" Content="Show/Edit Panel Location Overlay" HorizontalAlignment="Center" Command="{Binding Path=EditPanelCoorOverlayCommand}" IsChecked="{Binding Path=IsEditingPanelCoorOverlay, Mode=TwoWay}"/>
+            </DockPanel>
+        </DockPanel>
+    </Grid>
+</UserControl>

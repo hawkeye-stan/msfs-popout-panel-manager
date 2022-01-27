@@ -1,0 +1,116 @@
+﻿<mah:MetroWindow x:Class="MSFSPopoutPanelManager.WpfApp.ApplicationWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:tb="http://www.hardcodet.net/taskbar"
+        xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
+        xmlns:local="clr-namespace:MSFSPopoutPanelManager.WpfApp"
+        xmlns:shared="clr-namespace:MSFSPopoutPanelManager.Shared;assembly=Shared"
+        mc:Ignorable="d"
+        Title="MSFS Pop Out Panel Manager" 
+        Height="670" 
+        Width="920"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="CanMinimize" 
+        Icon="logo.ico"
+        StateChanged="Window_StateChanged"
+        WindowState="{Binding InitialWindowState, Mode=OneWay}"
+        Loaded="Window_Loaded"
+        Closing="Window_Closing">
+     <Window.InputBindings>
+        <KeyBinding Command="{Binding Path=MinimizeAllPanelsCommand}" Modifiers="Ctrl" Key="M" />
+    </Window.InputBindings>
+    <Grid>
+        <tb:TaskbarIcon Name="notifyIcon"
+                    ToolTipText="MSFS Pop Out Panel Manager"
+                    IconSource="logo.ico"
+                    MenuActivation="RightClick"
+                    Visibility="Visible">
+            <tb:TaskbarIcon.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Profiles" ItemsSource="{Binding DataStore.UserProfiles}">
+                        <MenuItem.ItemContainerStyle>
+                            <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
+                                <Setter Property="MenuItem.Header" Value="{Binding Path=ProfileName}" />
+                                <Setter Property="MenuItem.IsChecked" Value="{Binding Path=IsActive}" />
+                                <Setter Property="MenuItem.Command" Value="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}, Path=DataContext.UserProfileSelectCommand}" />
+                                <Setter Property="MenuItem.CommandParameter" Value="{Binding Path=ProfileId}" />
+                            </Style>
+                        </MenuItem.ItemContainerStyle>
+                    </MenuItem>
+                    <MenuItem Header="Show Panel Location Overlay" IsChecked="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}, Path=DataContext.PanelSelectionViewModel.IsShownPanelCoorOverlay}" Command="{Binding Path=ShowPanelCoorOverlayCommand}"></MenuItem>
+                    <MenuItem Header="Start Pop Out" Command="{Binding Path=StartPopOutCommand}" InputGestureText="Ctrl+Alt+P"></MenuItem>
+                    <Separator></Separator>
+                    <MenuItem Header="Exit" Command="{Binding Path=ExitCommand}" ></MenuItem>
+                </ContextMenu>
+            </tb:TaskbarIcon.ContextMenu>
+        </tb:TaskbarIcon>
+        <DockPanel Grid.ColumnSpan="4">
+            <DockPanel DockPanel.Dock="Top">
+                <Menu Width="870" Background="#FF252525">
+                    <MenuItem Header="File">
+                        <MenuItem Name="menuItem_Restart" Header="Restart" Command="{Binding Path=RestartCommand}" IsEnabled="{Binding Path=IsShownPanelConfigurationScreen}"/>
+                        <Separator />
+                        <MenuItem Header="Preferences">
+                            <MenuItem Name="menuItem_AlwaysOnTop" Header="Always on Top" IsChecked="{Binding Path=DataStore.AppSetting.AlwaysOnTop, Mode=TwoWay}" IsCheckable="True"/>
+                            <MenuItem Name="menuItem_AutoPanning" Header="Auto Panning" IsChecked="{Binding Path=DataStore.AppSetting.UseAutoPanning, Mode=TwoWay}" IsCheckable="True"/>
+                            <MenuItem Name="menuItem_AutoPopOutPanels" Header="Auto Pop Out Panels" IsChecked="{Binding Path=DataStore.AppSetting.AutoPopOutPanels, Mode=TwoWay}" IsCheckable="True"/>
+                            <MenuItem Name="menuItem_AutoStart" Header="Auto Start" IsChecked="{Binding Path=DataStore.AppSetting.AutoStart, Mode=TwoWay}" IsCheckable="True"/>
+                            <MenuItem Name="menuItem_IncludeBuiltInPanel" Header="Include Built-in Panels" IsChecked="{Binding Path=DataStore.AppSetting.IncludeBuiltInPanel, Mode=TwoWay}" IsCheckable="True"/>
+                            <MenuItem Name="menuItem_MinimizeToTray" Header="Minimize to Tray" IsChecked="{Binding Path=DataStore.AppSetting.MinimizeToTray, Mode=TwoWay}" IsCheckable="True"/>
+                            <MenuItem Name="menuItem_StartMinimized" Header="Start Minimized" IsChecked="{Binding Path=DataStore.AppSetting.StartMinimized, Mode=TwoWay}" IsCheckable="True"/>
+                        </MenuItem>
+                        <Separator />
+                        <MenuItem Name="menuItem_Exit" Header="Exit" Command="{Binding Path=ExitCommand}"/>
+                    </MenuItem>
+                    <MenuItem Header="View">
+                        <MenuItem Name="menuItem_MinimizeAllPanels" Header="Minimize All Panels    "  InputGestureText="Ctrl+M" Command="{Binding Path=MinimizeAllPanelsCommand}" IsChecked="{Binding Path=IsMinimizedAllPanels, Mode=TwoWay}" IsEnabled="{c:Binding Path='IsShownPanelConfigurationScreen'}"/>
+                    </MenuItem>
+                    <MenuItem Header="Help">
+                        <MenuItem Name="menuItem_UserGuide" Header="User Guide" Command="{Binding Path=UserGuideCommand}"/>
+                        <MenuItem Name="menuItem_DownloadLatestRelease" Header="Download Latest Release" Command="{Binding Path=DownloadLatestReleaseCommand}"/>
+                    </MenuItem>
+                </Menu>
+                <Image Width="20" ToolTip="{Binding Path=DataStore.CurrentMsfsPlaneTitle}">
+                    <Image.Style>
+                        <Style TargetType="Image">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=DataStore.IsSimulatorStarted , Mode=OneWay}" Value="True">
+                                    <Setter Property="Source" Value="Resources/msfsconnected.png"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Path=DataStore.IsSimulatorStarted , Mode=OneWay}" Value="False">
+                                    <Setter Property="Source" Value="Resources/msfsdisconnected.png"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Image.Style>
+                </Image>
+            </DockPanel>
+            <DockPanel>
+                <StackPanel Name="panelSteps" DockPanel.Dock="Top" Height="505" Background="#FF323C64">
+                </StackPanel>
+                <WrapPanel DockPanel.Dock="Top" Orientation="Horizontal" Height="70" Background="#FF252523">
+                    <Label Content="Status" Margin="5, 10, 5, 5"/>
+                    <TextBox Name="txtStatus" Margin="5, 10, 5, 5" Height="55" TextWrapping="Wrap" IsReadOnly="True" Width="835" Background="#FF45494A" Text="{Binding Path=StatusMessage.Message, Mode=OneWay}">
+                        <TextBox.Style>
+                            <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Path=StatusMessage.MessageType, Mode=OneWay}" Value="{x:Static shared:StatusMessageType.Error}">
+                                        <Setter Property="Foreground" Value="#FFFF6262"></Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
+                </WrapPanel>
+                <WrapPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Background="#FF252525" Height="45">
+                    <Label Margin="425, 0, 0, 5" FontSize="14" Content="Version" />
+                    <Label Name="lblVersion" Margin="0, 0, 0, 5" FontSize="14" Content="{Binding Path = ApplicationVersion, Mode=OneWay}" />
+                </WrapPanel>
+            </DockPanel>
+
+        </DockPanel>
+    </Grid>
+</mah:MetroWindow>

@@ -1,0 +1,63 @@
+﻿<Application x:Class="MSFSPopoutPanelManager.WpfApp.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:local="clr-namespace:MSFSPopoutPanelManager.WpfApp"
+             StartupUri="ApplicationWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- MahApps.Metro resource dictionaries. Make sure that all file names are Case Sensitive! -->
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
+                <!-- Theme setting -->
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Dark.Steel.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <Style BasedOn="{StaticResource MahApps.Styles.MenuItem}" TargetType="MenuItem">
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="FontFamily" Value="Segoe UI"/>
+                <Setter Property="FontWeight" Value="Normal"/>
+                <Setter Property="controls:ControlsHelper.ContentCharacterCasing" Value="Normal"/>
+                <Setter Property="Margin" Value="5, 0"/>
+            </Style>
+            <Style BasedOn="{StaticResource MahApps.Styles.Button}" TargetType="Button">
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="FontFamily" Value="Segoe UI"/>
+                <Setter Property="FontWeight" Value="Normal"/>
+                <Setter Property="controls:ControlsHelper.ContentCharacterCasing" Value="Normal"/>
+                <Setter Property="Height" Value="36"/>
+            </Style>
+            <Style BasedOn="{StaticResource MahApps.Styles.Label}" TargetType="Label">
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="FontFamily" Value="Segoe UI"/>
+                <Setter Property="FontWeight" Value="Normal"/>
+            </Style>
+            <Style BasedOn="{StaticResource MahApps.Styles.TextBox}" TargetType="TextBox">
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="FontFamily" Value="Segoe UI"/>
+                <Setter Property="FontWeight" Value="Normal"/>
+            </Style>
+            <Style BasedOn="{StaticResource MahApps.Styles.TextBlock}" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="FontFamily" Value="Segoe UI"/>
+                <Setter Property="FontWeight" Value="Normal"/>
+            </Style>
+            <Style BasedOn="{StaticResource MahApps.Styles.CheckBox}" TargetType="CheckBox">
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="FontFamily" Value="Segoe UI"/>
+                <Setter Property="FontWeight" Value="Normal"/>
+            </Style>
+            <Style BasedOn="{StaticResource MahApps.Styles.ComboBox}" TargetType="ComboBox">
+                <Setter Property="Padding" Value="10, 5, 10, 5" />
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="FontFamily" Value="Segoe UI"/>
+                <Setter Property="FontWeight" Value="Normal"/>
+            </Style>
+            <Style BasedOn="{StaticResource MahApps.Styles.DataGrid}" TargetType="DataGrid">
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="FontFamily" Value="Segoe UI"/>
+                <Setter Property="FontWeight" Value="Normal"/>
+            </Style>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

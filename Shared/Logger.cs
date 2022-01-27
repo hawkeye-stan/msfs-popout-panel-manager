@@ -5,9 +5,8 @@ namespace MSFSPopoutPanelManager.Shared
     public class Logger
     {
         public static event EventHandler<EventArgs<StatusMessage>> OnStatusLogged;
-        public static event EventHandler<EventArgs<StatusMessage>> OnBackgroundStatusLogged;
 
-        public static void Status(string message, StatusMessageType MessageType)
+        public static void LogStatus(string message, StatusMessageType MessageType)
         {
             var statusMessage = new StatusMessage() { Message = message, MessageType = MessageType };
             OnStatusLogged?.Invoke(null, new EventArgs<StatusMessage>(statusMessage));
@@ -15,18 +14,7 @@ namespace MSFSPopoutPanelManager.Shared
 
         public static void ClearStatus()
         {
-            Status(String.Empty, StatusMessageType.Info);
-        }
-
-        public static void BackgroundStatus(string message, StatusMessageType MessageType)
-        {
-            var statusMessage = new StatusMessage() { Message = message, MessageType = MessageType };
-            OnBackgroundStatusLogged?.Invoke(null, new EventArgs<StatusMessage>(statusMessage));
-        }
-
-        public static void ClearBackgroundStatus()
-        {
-            BackgroundStatus(String.Empty, StatusMessageType.Info);
+            LogStatus(String.Empty, StatusMessageType.Info);
         }
     }
 
@@ -43,7 +31,7 @@ namespace MSFSPopoutPanelManager.Shared
         Error
     }
 
-    public class PopoutManagerException : Exception 
+    public class PopoutManagerException : Exception
     {
         public PopoutManagerException(string message) : base(message) { }
     }

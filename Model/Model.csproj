@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	<TargetFramework>net5.0-windows</TargetFramework>
+    <RootNamespace>MSFSPopoutPanelManager.Model</RootNamespace>
+    <AssemblyName>Model</AssemblyName>
+    <PackageId>MSFS 2020 Popout Panel Manager Model</PackageId>
+    <Version>3.2.0</Version>
+    <Authors>Stanley Kwok</Authors>
+    <Company>Stanley Kwok</Company>
+    <Copyright>Stanley Kwok 2021</Copyright>
+    <Product>MSFS 2020 Popout Panel Manager Model</Product>
+    <PackageProjectUrl>https://github.com/hawkeye-stan/msfs-popout-panel-manager</PackageProjectUrl>
+    <Platforms>x64;AnyCPU</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Fody" Version="6.6.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="PropertyChanged.Fody" Version="3.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Shared\Shared.csproj" />
+  </ItemGroup>
+
+</Project>

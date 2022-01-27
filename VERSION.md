@@ -1,15 +1,28 @@
 # Version History
 <hr/>
 
-## Version 3.1.0
-* Updated UI to use menu bar to control most application settings.
-* Added long awaited auto save feature. Application no longer requires user to manually save profile after each panel change. All panel adjustments are automatically save.
-* Added panel lock feature to complement autosave feature. When panels are lock and are being moved or resize, their new location information will not get save. Also, for instrumentation pop out panels, when panels are locked, any accidental movement of the panels will return them to previously saved locations. For built-in panels such as ATC, VFR Map, etc, they can still be moved but their saved location will not get change.
-* Added keyboard shortcuts for commonly used function. The buttons for -10px, -1px, +1px, and +10px now has keyboard shortcut of 'Ctrl -', 'Ctrl [', 'Ctrl ]', and 'Ctrl +' respectively.
-* Added miminize all panels feature. This allows user to temporary see what is behind all open pop out panels. (This is an user requested feature with Github ticket #6).
-* Various smaller bug fixes and usability enhancements.
- 
 
+## Version 3.2.0 (Beta)
+* Added per monitor DPI-awareness support. The application should run and display correctly when using combination of mixed monitor (with high-DPI and low-DPI) resolutions and scaling.
+* Added system tray icon access. Application can start minimize or minimize to system tray. System tray icon features a context menu to allow quick access to application functions.
+* Added user requested feature to provide keyboard shortcut (Ctrl-Alt-P) to start panel pop out with either an active profile or a default profile selected.
+* New copy profile feature. You can reuse your defined panel settings for another plane or plane/livery combination.
+* Added quick panel location selection adjustment feature. You can now adjust panel locations without redoing the entire profile. 
+* Added Save Auto Panning Camera Angle function if you need to adjust the in-game camera angle during panel selection.
+* New logo icon for the app.
+* New dark theme for the entire UI.
+* Technical Note - Application is ported and rewritten with .NET WPF framework instead of WinForms.
+## 
+## Version 3.1.0.2 (Hotfix)
+* Change application DPI mode to use DPIPerMonitor and added DPI aware setting to application to fix user configuration of using a 4K high DPI monitor (with windows scaling of greater than 100%) in conjunction of one or more lower DPI monitors such as 1440P or 1080P. With this configuration, the application rendering, panel selection and pop out panel adjustments and do not work correctly.
+
+## Version 3.1.0
+* Updated and streamlined UI to have a menu bar to control most application settings.
+* Added long awaited auto save feature. Application no longer requires user to manually save profile after each panel change. All panel adjustments are saved automatically.
+* Added panel lock feature to complement autosave feature. When panels are locked and are being moved or resized, their new location information will not get save. Also, for instrumentation pop out panels, when panels are locked, any accidental movement of the panels will return them to previously saved locations. For built-in panels such as ATC, VFR Map, etc, they can still be moved but their saved location will not get change.
+* Added keyboard shortcuts for commonly use function. The buttons for -10px, -1px, +1px, and +10px now has keyboard shortcut of ‘Ctrl -’, ‘Ctrl [’, ‘Ctrl ]’, and ‘Ctrl +’ respectively.
+* Added minimize all panels feature. This allows user to temporary see what is behind all open pop out panels. (This is a user requested feature with Github ticket [#6](https://github.com/hawkeye-stan/msfs-popout-panel-manager/issues/6)).
+* Various small bug fixes and usability enhancements.
 
 ## Version 3.0.1
 * Added workaround for MSFS pop out panel adjustment bug when using the position data grid to adjust width and height will work as expected. 

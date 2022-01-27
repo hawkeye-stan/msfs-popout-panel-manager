@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	<TargetFramework>net5.0-windows</TargetFramework>
+    <RootNamespace>MSFSPopoutPanelManager.Shared</RootNamespace>
+    <PackageId>MSFS 2020 Popout Panel Manager Shared</PackageId>
+    <Product>MSFS 2020 Popout Panel Manager Shared</Product>
+    <Authors>Stanley Kwok</Authors>
+    <Company>Stanley Kwok</Company>
+    <Copyright>Stanley Kwok 2021</Copyright>
+    <PackageProjectUrl>https://github.com/hawkeye-stan/msfs-popout-panel-manager</PackageProjectUrl>
+    <Version>3.2.0</Version>
+    <Platforms>AnyCPU;x64</Platforms>
+	<UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Toolkit" Version="7.1.2" />
+  </ItemGroup>
+
+</Project>

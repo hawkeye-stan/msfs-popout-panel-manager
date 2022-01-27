@@ -1,23 +1,12 @@
 ﻿using MSFSPopoutPanelManager.Shared;
-using MSFSPopoutPanelManager.UI;
 using System;
-using System.Diagnostics;
 using System.Drawing;
-using System.Windows.Forms;
+using System.Runtime.InteropServices;
 
 namespace MSFSPopoutPanelManager.Provider
 {
     public class WindowManager
     {
-        public static void AddPanelLocationSelectionOverlay(string text, int x, int y)
-        {
-            PopoutCoorOverlayForm frm = new PopoutCoorOverlayForm();
-            frm.Location = new Point(x - frm.Width / 2, y - frm.Height / 2);
-            frm.StartPosition = FormStartPosition.Manual;
-            ((Label)frm.Controls.Find("lblPanelIndex", true)[0]).Text = text;
-            frm.Show();
-        }
-
         public static void ApplyHidePanelTitleBar(IntPtr handle, bool hideTitleBar)
         {
             var currentStyle = PInvoke.GetWindowLong(handle, PInvokeConstant.GWL_STYLE).ToInt64();
@@ -31,9 +20,20 @@ namespace MSFSPopoutPanelManager.Provider
         public static void ApplyAlwaysOnTop(IntPtr handle, bool alwaysOnTop, Rectangle panelRectangle)
         {
             if (alwaysOnTop)
-                PInvoke.SetWindowPos(handle, PInvokeConstant.HWND_TOPMOST, panelRectangle.Left, panelRectangle.Top, panelRectangle.Width, panelRectangle.Height, PInvokeConstant.SWP_ALWAYS_ON_TOP);
+                PInvoke.SetWindowPos(handle, new IntPtr(PInvokeConstant.HWND_TOPMOST), panelRectangle.Left, panelRectangle.Top, panelRectangle.Width, panelRectangle.Height, PInvokeConstant.SWP_ALWAYS_ON_TOP);
             else
-                PInvoke.SetWindowPos(handle, PInvokeConstant.HWND_NOTOPMOST, panelRectangle.Left, panelRectangle.Top, panelRectangle.Width, panelRectangle.Height, 0);
+                PInvoke.SetWindowPos(handle, new IntPtr(PInvokeConstant.HWND_NOTOPMOST), panelRectangle.Left, panelRectangle.Top, panelRectangle.Width, panelRectangle.Height, 0);
+        }
+
+        public static void ApplyAlwaysOnTop(IntPtr handle, bool alwaysOnTop)
+        {
+            Rectangle rect;
+            PInvoke.GetWindowRect(handle, out rect);
+
+            Rectangle clientRectangle;
+            PInvoke.GetClientRect(handle, out clientRectangle);
+
+            ApplyAlwaysOnTop(handle, alwaysOnTop, new Rectangle(rect.X, rect.Y, clientRectangle.Width, clientRectangle.Height));
         }
 
         public static void CloseWindow(IntPtr handle)
@@ -48,37 +48,48 @@ namespace MSFSPopoutPanelManager.Provider
             PInvoke.MoveWindow(handle, x, y, rectangle.Width, rectangle.Height, false);
         }
 
-        public static WindowProcess GetSimulatorProcess()
+        public static void MinimizeWindow(IntPtr handle)
         {
-            return GetProcess("FlightSimulator");
+            PInvoke.ShowWindow(handle, PInvokeConstant.SW_MINIMIZE);
         }
 
-        public static WindowProcess GetApplicationProcess()
+        public static void BringWindowToForeground(IntPtr handle)
         {
-            return GetProcess("MSFSPopoutPanelManager");
-        }
-
-        private static WindowProcess GetProcess(string processName)
-        {
-            foreach (var process in Process.GetProcesses())
-            {
-                if (process.ProcessName == processName)
-                {
-                    return new WindowProcess()
-                    {
-                        ProcessId = process.Id,
-                        ProcessName = process.ProcessName,
-                        Handle = process.MainWindowHandle
-                    };
-                }
-            }
-
-            return null;
+            PInvoke.ShowWindowAsync(new HandleRef(null, handle), PInvokeConstant.SW_RESTORE);
+            PInvoke.SetForegroundWindow(handle);
         }
 
         public static void CloseAllCustomPopoutPanels()
         {
             PInvoke.EnumWindows(new PInvoke.CallBack(EnumAllCustomPopoutPanels), 1);
+        }
+
+        public static void MinimizeAllPopoutPanels(bool active)
+        {
+            if (active)
+            {
+                PInvoke.EnumWindows(new PInvoke.CallBack(EnumToMinimizePopoutPanels), 0);
+            }
+            else
+            {
+                PInvoke.EnumWindows(new PInvoke.CallBack(EnumToMinimizePopoutPanels), 1);
+            }
+        }
+
+        private static bool EnumToMinimizePopoutPanels(IntPtr hwnd, int index)
+        {
+            var className = PInvoke.GetClassName(hwnd);
+            var caption = PInvoke.GetWindowText(hwnd);
+
+            if (className == "AceApp" && caption.IndexOf("Microsoft Flight Simulator") == -1)      // MSFS windows designation
+            {
+                if (index == 0)
+                    PInvoke.ShowWindow(hwnd, PInvokeConstant.SW_MINIMIZE);
+                else
+                    PInvoke.ShowWindow(hwnd, PInvokeConstant.SW_RESTORE);
+            }
+
+            return true;
         }
 
         private static bool EnumAllCustomPopoutPanels(IntPtr hwnd, int index)
@@ -90,7 +101,7 @@ namespace MSFSPopoutPanelManager.Provider
             {
                 WindowManager.CloseWindow(hwnd);
             }
-            else if (className == "AceApp")     // for builtin pop out  (ATC, VFR Map, ect)
+            else if (className == "AceApp" && caption.IndexOf("Microsoft Flight Simulator") == -1)    // for builtin pop out  (ATC, VFR Map, ect)
             {
                 WindowManager.MoveWindow(hwnd, 0, 0);
             }

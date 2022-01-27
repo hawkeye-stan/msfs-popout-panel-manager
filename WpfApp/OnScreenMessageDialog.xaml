@@ -1,0 +1,43 @@
+﻿<mah:MetroWindow x:Class="MSFSPopoutPanelManager.WpfApp.OnScreenMessageDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:local="clr-namespace:MSFSPopoutPanelManager.WpfApp"
+        mc:Ignorable="d"
+        Height="Auto" 
+        Width="Auto"
+        SizeToContent="WidthAndHeight"
+        Title="MSFS Pop Out Panel Manager"
+        WindowStartupLocation="CenterOwner"
+        Opacity="0.7"
+        ResizeMode="NoResize"
+        WindowStyle="None">
+    <Grid>
+        <DockPanel>
+            <WrapPanel DockPanel.Dock="Top" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="30,25,30,25" Height="75">
+                <Image Width="40" Height="40" HorizontalAlignment="Left">
+                    <Image.Style>
+                        <Style TargetType="Image">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=MessageIcon, Mode=OneWay}" Value="{x:Static local:MessageIcon.Success}">
+                                    <Setter Property="Source" Value="Resources/check.png"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Path=MessageIcon, Mode=OneWay}" Value="{x:Static local:MessageIcon.Failed}">
+                                    <Setter Property="Source" Value="Resources/cross.png"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Path=MessageIcon, Mode=OneWay}" Value="{x:Static local:MessageIcon.Info}">
+                                    <Setter Property="Source" Value="Resources/info.png"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Image.Style>
+                </Image>
+                <Grid Height="75" VerticalAlignment="Center" Margin="10, 0, 0, 0" Width="Auto">
+                    <TextBlock Name="txtMessage" Width="Auto" Text="Message" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                </Grid>
+            </WrapPanel>
+        </DockPanel>
+    </Grid>
+</mah:MetroWindow>

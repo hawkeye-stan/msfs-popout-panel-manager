@@ -1,0 +1,22 @@
+﻿<Window x:Class="MSFSPopoutPanelManager.WpfApp.PanelCoorOverlay"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MSFSPopoutPanelManager.WpfApp"
+        mc:Ignorable="d"
+        Title="PanelCoorOverlay"
+        ResizeMode="NoResize"
+        WindowStyle="None"
+        Height="46" 
+        Width="55" 
+        SizeToContent="WidthAndHeight"
+        Background="#01F0F0FF"
+        AllowsTransparency="True"
+        Topmost="True"
+        MouseMove="Window_MouseMove">
+    <Grid>
+        <Label Name="lblPanelIndex" Content="1" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Image Height="46" Width="55" HorizontalAlignment="Left" VerticalAlignment="Top" Opacity="1" Source="resources/transparent.png"/>
+    </Grid>
+</Window>
