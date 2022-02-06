@@ -77,19 +77,19 @@ With v3.0, redesign from the ground up about how to pop out and separate the pan
  2. First start the game and start a flight. Then, in the app, create a new profile (for example: Cessna 172 G1000)
  
 <p align="center">
-<img src="images/doc/v3.2/screenshot1.png" width="600" hspace="10"/>
+<img src="images/doc/v3.2/screenshot_1.png" width="600" hspace="10"/>
 </p>
 
  3. If you want to associate the profile to the current plane to use the Auto Pop Out feature, click "Add Binding".
 
  <p align="center">
-<img src="images/doc/v3.2/screenshot2.png" width="600" hspace="10"/>
+<img src="images/doc/v3.2/screenshot_2.png" width="600" hspace="10"/>
 </p>
  
  3. Now you're ready to select the panels you want to pop out. Please click "Start Panel Selection" to define where the pop out panels will be using LEFT CLICK. Use CTRL-LEFT CLICK when done to complete the selection. You can also move the number circles at this point to do final adjustment.
  
 <p align="center">
-<img src="images/doc/v3.2/screenshot3.png" width="1000" hspace="10"/>
+<img src="images/doc/v3.2/screenshot_3.png" width="1000" hspace="10"/>
 </p>
 
  4. Now, click "Start Pop Out". At this point, please be patient. The application will start popping out and separating panels one by one and you will see a lot of movements on screen. If something goes wrong, just follow the instruction in the status message and try again.
@@ -97,13 +97,13 @@ With v3.0, redesign from the ground up about how to pop out and separate the pan
  5. Once the process is done, you will see a list of panels line up in the upper left corner of the screen. All the panels are given a default name. You can name them anything you want if desire.
  
 <p align="center">
-<img src="images/doc/v3.2/screenshot4.png" width="1000" hspace="10"/>
+<img src="images/doc/v3.2/screenshot_4.png" width="1000" hspace="10"/>
 </p>
 
  6. Now, start the panel configuration by dragging the pop out panels into their final position (to your main monitor or other monitors). You can also type value directly into the data grid to move and resize a panel. The +/- pixel buttons by the lower left corner of the grid allow you to change panel position at the chosen increment/decrement by selecting the datagrid cell (X-Pos, Y-Pos, Width, Height). You can also select "Always on Top" and "Hide Titlebar" if desire. Once all the panels are at their final position, just click "Lock Panel" to prevent further panel changes.
  
 <p align="center">
-<img src="images/doc/v3.2/screenshot5.png" width="600" hspace="10"/>
+<img src="images/doc/v3.2/screenshot_5.png" width="600" hspace="10"/>
 </p>
 
 7. To test if everything is working. Once the profile is saved, please click "Restart" in the File menu. This will close all pop outs, except the built-in ones from the game main menu bar, and you're back to the start of the application. Now click "Start Pop Out" and see the magic happens!
