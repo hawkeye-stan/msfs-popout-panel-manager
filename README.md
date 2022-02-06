@@ -157,7 +157,15 @@ The user plane profile data and application settings data are stored as JSON fil
 Stanley Kwok
 [hawkeyesk@outlook.com](mailto:hawkeyesk@outlook.com) 
 
-I welcome feedback to help improve the accuracy and usefulness of this application. You are welcome to take a copy of this code to further enhance it and use within your own project. But please abide by licensing terms and keep it open source:)
+I welcome feedback to help improve the usefulness of this application. You are welcome to take a copy of this code to further enhance it and use within your own project. But please abide by licensing terms and keep it open source:)
+
+## Donation
+
+[<img src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif"
+     alt="Markdown Monster icon"
+     style="float: left; margin-right: 10px;" />](https://www.paypal.com/donate/?business=NBJ7SZR7MUDE6&no_recurring=0&item_name=Thank+you+for+your+kind+support+of+MSFS+Pop+Out+Panel+Manager%21&currency_code=USD)
+
+Thank you for your super kind support of this app!
 
 ## Credits
 [AForge.NET](http://www.aforgenet.com/framework/) Image recognition library. For version 2.x of the application.
