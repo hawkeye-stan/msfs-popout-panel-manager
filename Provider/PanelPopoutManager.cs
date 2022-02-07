@@ -3,6 +3,7 @@ using MSFSPopoutPanelManager.Shared;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
@@ -111,61 +112,39 @@ namespace MSFSPopoutPanelManager.Provider
             _panels.Clear();
 
             if(_simulatorHandle != IntPtr.Zero)
-             PInvoke.SetForegroundWindow(_simulatorHandle);
+            PInvoke.SetForegroundWindow(_simulatorHandle);
 
             try
             {
-                for (var i = 0; i < UserProfile.PanelSourceCoordinates.Count; i++)
+                // PanelIndex starts at 1
+                for (var i = 1; i <= UserProfile.PanelSourceCoordinates.Count; i++)
                 {
-                    PopoutPanel(UserProfile.PanelSourceCoordinates[i].X, UserProfile.PanelSourceCoordinates[i].Y);
+                    PopoutPanel(UserProfile.PanelSourceCoordinates[i - 1].X, UserProfile.PanelSourceCoordinates[i - 1].Y);
 
-                    if (i == 0)
+                    if (i > 1)
                     {
-                        int retry = 0;
-                        while (retry < RETRY_COUNT)
-                        {
-                            PInvoke.EnumWindows(new PInvoke.CallBack(EnumCustomPopoutCallBack), 0);
-
-                            if (GetPopoutPanelCountByType(PanelType.CustomPopout) == 0)
-                                retry += 1;
-                            else
-                            {
-                                var panel = GetCustomPopoutPanelByIndex(i);
-                                panel.PanelName = $"Panel{i + 1}";
-                                PInvoke.SetWindowText(panel.PanelHandle, panel.PanelName + " (Custom)");
-                                break;
-                            }
-                        }
-
-                        if (GetPopoutPanelCountByType(PanelType.CustomPopout) != i + 1)
-                            throw new PopoutManagerException("Unable to pop out the first panel. Please check the first panel's number circle is positioned inside the panel, check for panel obstruction, and check if panel can be popped out. Pop out process stopped.");
+                        SeparatePanel(i - 1, _panels[0].PanelHandle);       // The joined panel is always the first panel that got popped out
                     }
-                    if (i >= 1)     // only separate with 2 or more panels
-                    {
-                        int retry = 0;
-                        while (retry < RETRY_COUNT)
-                        {
-                            SeparatePanel(i, _panels[0].PanelHandle);   // The joined panel is always the first panel that got popped out
-                            PInvoke.EnumWindows(new PInvoke.CallBack(EnumCustomPopoutCallBack), i);
 
-                            if (GetPopoutPanelCountByType(PanelType.CustomPopout) != i + 1)
-                                retry += 1;
-                            else
-                            {
-                                // Panel has successfully popped out
-                                var panel = GetCustomPopoutPanelByIndex(i);
+                    var handle = PInvoke.FindWindow("AceApp", String.Empty);
 
-                                PInvoke.MoveWindow(panel.PanelHandle, 0, 0, 800, 600, true);
-                                panel.PanelName = $"Panel{i + 1}";
-                                PInvoke.SetWindowText(panel.PanelHandle, panel.PanelName + " (Custom)");
-                                break;
-                            }
-                        }
+                    if(handle == IntPtr.Zero && i == 1)
+                        throw new PopoutManagerException("Unable to pop out the first panel. Please check the first panel's number circle is positioned inside the panel, check for panel obstruction, and check if panel can be popped out. Pop out process stopped.");
+                    else if(handle == IntPtr.Zero)
+                        throw new PopoutManagerException($"Unable to pop out panel number {i}. Please check panel's number circle is positioned inside the panel, check for panel obstruction, and check if panel can be popped out. Pop out process stopped.");
 
-                        if (GetPopoutPanelCountByType(PanelType.CustomPopout) != i + 1)
-                            throw new PopoutManagerException($"Unable to pop out panel number {i + 1}. Please check panel's number circle is positioned inside the panel, check for panel obstruction, and check if panel can be popped out. Pop out process stopped.");
-                    }
+                    var panelInfo = GetPanelWindowInfo(handle);
+                    panelInfo.PanelIndex = i;       
+                    panelInfo.PanelName = $"Panel{i}";
+                    _panels.Add(panelInfo);
+
+                    PInvoke.SetWindowText(panelInfo.PanelHandle, panelInfo.PanelName + " (Custom)");
+                    
+                    if (i > 1)
+                        PInvoke.MoveWindow(panelInfo.PanelHandle, 0, 0, 800, 600, true);
                 }
+
+                _currentPanelIndex = _panels.Count;
 
                 // Performance validation, make sure the number of pop out panels is equal to the number of selected panel
                 if (GetPopoutPanelCountByType(PanelType.CustomPopout) != UserProfile.PanelSourceCoordinates.Count)
@@ -293,8 +272,6 @@ namespace MSFSPopoutPanelManager.Provider
 
         private void PopoutPanel(int x, int y)
         {
-            InputEmulationManager.LeftClick(x, y);
-            Thread.Sleep(200);
             InputEmulationManager.PopOutPanel(x, y);
         }
 
@@ -309,13 +286,10 @@ namespace MSFSPopoutPanelManager.Provider
             // Find the magnifying glass coordinate    
             var point = AnalyzeMergedWindows(hwnd);
 
-            if (point.Y <= 39)      // false positive
-                return;
-
             InputEmulationManager.LeftClick(point.X, point.Y);
         }
 
-        public bool EnumCustomPopoutCallBack(IntPtr hwnd, int index)
+        public bool EnumCustomPopoutCallBack(IntPtr hwnd, int lParam)
         {
             var panelInfo = GetPanelWindowInfo(hwnd);
 
@@ -324,7 +298,7 @@ namespace MSFSPopoutPanelManager.Provider
                 if (!_panels.Exists(x => x.PanelHandle == hwnd))
                 {
                     Interlocked.Increment(ref _currentPanelIndex);
-                    panelInfo.PanelIndex = _currentPanelIndex;       // PanelIndex starts at 1
+                    panelInfo.PanelIndex = _currentPanelIndex;      
                     _panels.Add(panelInfo);
                 }
             }
@@ -332,7 +306,7 @@ namespace MSFSPopoutPanelManager.Provider
             return true;
         }
 
-        public bool EnumBuiltinPopoutCallBack(IntPtr hwnd, int index)
+        public bool EnumBuiltinPopoutCallBack(IntPtr hwnd, int lParam)
         {
             var panelInfo = GetPanelWindowInfo(hwnd);
 
@@ -360,6 +334,9 @@ namespace MSFSPopoutPanelManager.Provider
                     Interlocked.Increment(ref _currentPanelIndex);
                     panelInfo.PanelIndex = _currentPanelIndex;
                     _panels.Add(panelInfo);
+
+                    // Apply always on top to these panels
+                    WindowManager.ApplyAlwaysOnTop(panelInfo.PanelHandle, true);
                 }
             }
 
@@ -374,9 +351,16 @@ namespace MSFSPopoutPanelManager.Provider
             {
                 var caption = PInvoke.GetWindowText(hwnd);
 
+                Rectangle rectangle;
+                PInvoke.GetWindowRect(hwnd, out rectangle);
+
                 var panelInfo = new PanelConfig();
                 panelInfo.PanelHandle = hwnd;
                 panelInfo.PanelName = caption;
+                panelInfo.Top = rectangle.Top;
+                panelInfo.Left = rectangle.Left;
+                panelInfo.Width = rectangle.Width;
+                panelInfo.Height = rectangle.Height;
 
                 if (String.IsNullOrEmpty(caption) || caption.IndexOf("Custom") > -1)
                     panelInfo.PanelType = PanelType.CustomPopout;
@@ -410,6 +394,9 @@ namespace MSFSPopoutPanelManager.Provider
         private Point AnalyzeMergedWindows(IntPtr hwnd)
         {
             var sourceImage = ImageOperation.TakeScreenShot(hwnd);
+
+            if (sourceImage == null)
+                return new Point(0, 0);
 
             Rectangle rectangle;
             PInvoke.GetClientRect(hwnd, out rectangle);

@@ -38,7 +38,7 @@ namespace MSFSPopoutPanelManager.Provider
 
         public static void EndHook()
         {
-            if (_mouseHook == null)
+            if (_mouseHook != null)
             {
                 _mouseHook.MouseDownExt -= HandleMouseHookMouseDownExt;
                 _mouseHook.Dispose();

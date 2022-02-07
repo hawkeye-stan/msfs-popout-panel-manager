@@ -137,6 +137,8 @@ The user plane profile data and application settings data are stored as JSON fil
 
 ## Current Known Issue
 
+* Automatic power on for Auto Pop Out Panel feature will not work if you're using any flight control hardware (such as Honeycomb Alpha or Bravo) that permanently binds the master battery switch or master avionics switch. If the hardware control switch  is in the off position, pop out manager won't be able to temporary turn on the instrumentation panels to pop them out. This seems to be a bug on Asobo side and only affects the G1000 instrumentation at the moment.
+
 * Sometimes when using the auto-panning feature, the keyboard combination of Ctrl-Alt-0 and Alt-0 do not work to save and load panel panning coordinates. First try to restart the flightsim and it usually fixes the problem. Otherwise, the only way to fix this is to redo the profile if you want the auto-panning feature since the camera angle is only being saved during the initial creation of the profile. The is another MSFS bug.
 
 * Current application package size is bigger than previous version of the application because it is not a single EXE file package. With added feature of exception logging and stack trace to support user feedback and troubleshooting, a Single EXE package in .NET 5.0 as well as .NET 6.0 has a bug that stack trace information is not complete. Hopefully, Microsoft will be fixing this problem. 
@@ -179,4 +181,6 @@ Thank you for your super kind support of this app!
 [Hardcodet NotifyIcon](https://github.com/hardcodet/wpf-notifyicon) by Philipp Sumi, Robin Krom, Jan Karger
 
 [WPF CalcBinding](https://github.com/Alex141/CalcBinding) by Alexander Zinchenko
+
+[AutoUpdater.NET](https://github.com/ravibpatel/AutoUpdater.NET) by Ravi Patel
 

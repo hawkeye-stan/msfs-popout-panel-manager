@@ -1,0 +1,17 @@
+- Added per monitor DPI-awareness support. The application should run and display correctly when using combination of mixed monitor (with high-DPI and low-DPI) resolutions and scaling.
+
+- Added system tray icon access. Application can start minimize or minimize to system tray. System tray icon features a context menu to allow quick access to application functions.
+
+- Added user requested feature to provide keyboard shortcut (Ctrl-Alt-P) to start panel pop out with either an active profile or a default profile selected.
+
+- New copy profile feature. You can reuse your defined panel settings for another plane or plane/livery combination.
+
+- Added quick panel location selection adjustment feature. You can now adjust panel locations without redoing the entire profile. 
+
+- Added Save Auto Panning Camera Angle function if you need to adjust the in-game camera angle during panel selection.
+
+- Added application auto update feature.
+
+- New logo icon for the app.
+
+- New dark theme for the entire UI.

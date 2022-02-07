@@ -125,7 +125,7 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
                 return;
             }
 
-            if (DataStore.ActiveUserProfile.PanelSourceCoordinates.Count > 0)
+            if (DataStore.ActiveUserProfile != null && DataStore.ActiveUserProfile.PanelSourceCoordinates.Count > 0)
             {
                 Logger.LogStatus("Panels pop out in progress.....", StatusMessageType.Info);
 

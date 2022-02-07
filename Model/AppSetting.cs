@@ -141,7 +141,7 @@ namespace MSFSPopoutPanelManager.Model
     {
         public AutoPopOutPanelsWaitDelay()
         {
-            ReadyToFlyButton = 2;
+            ReadyToFlyButton = 4;
             InitialCockpitView = 2;
             InstrumentationPowerOn = 2;
         }

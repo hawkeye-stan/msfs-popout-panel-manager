@@ -16,6 +16,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{15FC98CD-0A69-437B-A5E5-67D025DB5CDC}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		autoupdate.xml = autoupdate.xml
+		latestreleasenotes.txt = latestreleasenotes.txt
 		LICENSE = LICENSE
 		README.md = README.md
 		VERSION.md = VERSION.md

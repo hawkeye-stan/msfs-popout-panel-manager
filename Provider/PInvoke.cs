@@ -39,10 +39,14 @@ namespace MSFSPopoutPanelManager.Provider
     public class PInvoke
     {
         [DllImport("user32")]
-        public static extern int EnumWindows(CallBack x, int y);
+        public static extern int EnumWindows(CallBack callback, int lParam);
 
         [DllImport("user32")]
-        private static extern bool EnumChildWindows(IntPtr window, CallBack callback, IntPtr lParam);
+        public static extern bool EnumChildWindows(IntPtr window, CallBack callback, IntPtr lParam);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         private static extern int GetClassName(IntPtr hWnd, StringBuilder strPtrClassName, Int32 nMaxCount);
@@ -80,6 +84,10 @@ namespace MSFSPopoutPanelManager.Provider
             GetWindowText(hwnd, sb, sb.Capacity);
             return sb.ToString();
         }
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool IsWindow(IntPtr hWnd);
 
         [DllImport("user32.dll")]
         public static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, int dwExtraInfo);

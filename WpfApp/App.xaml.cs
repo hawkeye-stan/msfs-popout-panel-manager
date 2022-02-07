@@ -76,7 +76,6 @@ namespace MSFSPopoutPanelManager.WpfApp
             var messageBoxMessage = "Application has encountered a critical error and will be closed.\nPlease see the file 'error.log' for information.";
             var messageBoxButtons = MessageBoxButton.OK;
 
-            // Let the user decide if the app should die or not (if applicable).
             if (MessageBox.Show(messageBoxMessage, messageBoxTitle, messageBoxButtons) == MessageBoxResult.OK)
             {
                 Application.Current.Shutdown();

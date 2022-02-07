@@ -2,7 +2,13 @@
 <hr/>
 
 
+## Version 3.2.0 (Release)
+* Added application auto update support. By installing this version of the app, auto update functionality will be available for all future versions of the application.
+* Disabled panel adjustments when Hide Title Bar is checked for a panel. This is to fix an issue where panel adjustments (X-Pos, Y-Pos, Width, and Height) will behave erratically when Hide Title Bar is checked.
+* Increased default delay for auto-clicking "Ready to Fly" button from 2 seconds to 4 seconds in regard to Auto Pop Out Panels feature . [Fixed Issue #9](https://github.com/hawkeye-stan/msfs-popout-panel-manager/issues/9)
+
 ## Version 3.2.0 (Beta)
+* Added new Auto Pop Out Panels when flight start feature. Now the app will match a profile to the plane you're flying and perform all the pop outs for you, even help you to click the "ready to fly" button when a flying session is about to start!
 * Added per monitor DPI-awareness support. The application should run and display correctly when using combination of mixed monitor (with high-DPI and low-DPI) resolutions and scaling.
 * Added system tray icon access. Application can start minimize or minimize to system tray. System tray icon features a context menu to allow quick access to application functions.
 * Added user requested feature to provide keyboard shortcut (Ctrl-Alt-P) to start panel pop out with either an active profile or a default profile selected.

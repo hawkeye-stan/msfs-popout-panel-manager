@@ -1,10 +1,11 @@
-﻿using MSFSPopoutPanelManager.FsConnector;
+﻿using AutoUpdaterDotNET;
 using MSFSPopoutPanelManager.Model;
 using MSFSPopoutPanelManager.Provider;
 using MSFSPopoutPanelManager.Shared;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows;
@@ -92,7 +93,6 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
             PanelConfigurationViewModel = new PanelConfigurationViewModel(DataStore, _userProfileManager);
 
             InputHookManager.OnStartPopout += (source, e) => { OnStartPopOut(null); };
-            InputHookManager.StartHook();
         }
 
         public void Initialize()
@@ -109,6 +109,8 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
                 else
                     DeativateAutoPanelPopOut();
             };
+
+            CheckForAutoUpdate();
 
             // Set application version
             ApplicationVersion = DiagnosticManager.GetApplicationVersion();
@@ -128,6 +130,8 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
             ShowPanelSelection(true);
 
             IsMinimizedAllPanels = false;
+
+            InputHookManager.StartHook();
         }
 
         private void OnRestart(object commandParameter)
@@ -273,6 +277,18 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
         private void HandleOnFlightStopped(object sender, EventArgs e)
         {
             DataStore.IsEnteredFlight = false;
+        }
+
+        private void CheckForAutoUpdate()
+        {
+            string jsonPath = Path.Combine(Path.Combine(FileIo.GetUserDataFilePath(), "autoupdate.json"));
+            AutoUpdater.PersistenceProvider = new JsonFilePersistenceProvider(jsonPath);
+            AutoUpdater.Synchronous = true;
+            AutoUpdater.AppTitle = "MSFS Pop Out Panel Manager";
+            AutoUpdater.RunUpdateAsAdmin = false;
+            AutoUpdater.UpdateFormSize = new System.Drawing.Size(930, 675);
+            //AutoUpdater.Start("https://raw.githubusercontent.com/hawkeye-stan/msfs-popout-panel-manager/master/autoupdate.xml");
+            AutoUpdater.Start("https://raw.githubusercontent.com/hawkeye-stan/AutoUpdateTest/main/autoupdate.xml");
         }
     }
 }

@@ -61,10 +61,18 @@ namespace MSFSPopoutPanelManager.Provider
                         break;
                     case PanelConfigPropertyName.Left:
                     case PanelConfigPropertyName.Top:
+                        // Do not allow changes to panel if title bar is hidden. This will cause the panel to resize incorrectly
+                        if (panelConfig.HideTitlebar)
+                            return;
+
                         PInvoke.MoveWindow(panelConfig.PanelHandle, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height, true);
                         break;
                     case PanelConfigPropertyName.Width:
                     case PanelConfigPropertyName.Height:
+                        // Do not allow changes to panel if title bar is hidden. This will cause the panel to resize incorrectly
+                        if (panelConfig.HideTitlebar)
+                            return;
+
                         int orignalLeft = panelConfig.Left;
                         PInvoke.MoveWindow(panelConfig.PanelHandle, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height, true);
                         MSFSBugPanelShiftWorkaround(panelConfig.PanelHandle, orignalLeft, panelConfig.Top, panelConfig.Width, panelConfig.Height);
@@ -91,6 +99,10 @@ namespace MSFSPopoutPanelManager.Provider
             if (index > -1)
             {
                 var panelConfig = UserProfile.PanelConfigs[index];
+
+                // Do not allow changes to panel if title bar is hidden. This will cause the panel to resize incorrectly
+                if (panelConfig.HideTitlebar)
+                    return;
 
                 int orignalLeft = panelConfig.Left;
 
