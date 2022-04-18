@@ -101,7 +101,7 @@
                 <WrapPanel Orientation="Vertical" Width="Auto" Visibility="{Binding Path=AutoPopOutSettingsVisibility, Mode=TwoWay}">
                     <CheckBox IsChecked="{Binding Path=AppSetting.AutoPopOutPanels, Mode=TwoWay}" Content="Enable Auto Pop Out Panels"></CheckBox>
                     <TextBlock Style="{StaticResource TextBlockDescription}">
-                        Automatic pop out panels when an aircraft livery is binded to a profile. The following steps will be performed.
+                        Automatic pop out panels when an aircraft livery is bound to a profile. The following steps will be performed.
                     </TextBlock>
                     <TextBlock Style="{StaticResource TextBlockDescription}">
                         1. Detect flight start signal using SimConnect.

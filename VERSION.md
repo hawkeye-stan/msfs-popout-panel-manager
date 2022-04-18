@@ -2,10 +2,26 @@
 <hr/>
 
 
-## Version 3.2.0.1 (v3.2 Release)
-* Added application auto update support. By installing this version of the app, auto update functionality will be available for all future versions of the application.
-* Disabled panel adjustments when Hide Title Bar is checked for a panel. This is to fix an issue where panel adjustments (X-Pos, Y-Pos, Width, and Height) will behave erratically when Hide Title Bar is checked.
-* Increased default delay for auto-clicking "Ready to Fly" button from 2 seconds to 4 seconds in regard to Auto Pop Out Panels feature . [Fixed Issue #9](https://github.com/hawkeye-stan/msfs-popout-panel-manager/issues/9)
+## Version 3.3.0
+* Pop out panel without a title bar can now be moved and resized.
+* Added full screen mode capability to panel. This emulates MSFS Alt-Enter keystroke activation. To configure, just move the pop out panel to your desire monitor and select "Full Screen Mode" in the configuration grid for the panel. [Issue #13](https://github.com/hawkeye-stan/msfs-popout-panel-manager/issues/13)
+* Added automatic activation of profile when launching a flight session when a aircraft livery is bound to the profile.
+* Multiple aircraft liveries can now be bound to a profile. An aircraft livery can only bind to a single profile. [Issue #16](https://github.com/hawkeye-stan/msfs-popout-panel-manager/issues/16)
+* Removed 'Set Default' profile function.
+* Last used profile will be loaded when application starts.
+* Added preference configuration to set Auto Panning custom view key binding. It is now possible to define key binding from Ctrl-Alt-0 through Ctrl-Alt-9 when saving cockpit custom camera view. [Issue #15](https://github.com/hawkeye-stan/msfs-popout-panel-manager/issues/15)
+* Added configuration to adjust delay for each of the auto pop out panel steps. 
+* Added separate preference settings screen.
+* Added auto update feature for future version of the application.
+
+Bug Fixes:
+* Application will go back to home screen correctly when a flight session ends.
+* Application should reconnect to MSFS correctly when MSFS gracefully quits and restarts.
+
+Known Issues:
+* If a panel is in Full Screen Mode, using manual keystroke to return the panel to non-full screen mode will make the panel configuration data becomes out of sync. Restart and re-execute the pop out profile will solve the problem.
+* Activating full screen mode, either through panel configuration grid or using manual Alt-Enter keystroke can only be done once per panel. This is a limitation on MSFS side. Subsequent Alt-Enter will only maximize the panel to full screen without stretching the content. Restart and re-execute the pop out profile will solve the problem.
+* Hide Title Bar and Always on Top may not work if Full Screen Mode has been previously activated for a panel. This is a limitation on MSFS side on how windows are being handled.
 
 ## Version 3.2.0 (Beta)
 * Added new Auto Pop Out Panels when flight start feature. Now the app will match a profile to the plane you're flying and perform all the pop outs for you, even help you to click the "ready to fly" button when a flying session is about to start!

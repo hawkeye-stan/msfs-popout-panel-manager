@@ -117,7 +117,7 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
             get { return !String.IsNullOrEmpty(CurrentMsfsPlaneTitle); }
         }
 
-        public bool IsAircraftBindedToProfile
+        public bool IsAircraftBoundToProfile
         {
             get
             {

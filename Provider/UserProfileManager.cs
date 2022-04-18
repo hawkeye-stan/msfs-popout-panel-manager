@@ -53,10 +53,10 @@ namespace MSFSPopoutPanelManager.Provider
 
         public void AddProfileBinding(string planeTitle, int activeProfileId)
         {
-            var bindedProfile = UserProfiles.FirstOrDefault(p => p.BindingAircraftLiveries.ToList().Exists(p => p == planeTitle));
-            if (bindedProfile != null)
+            var boundProfile = UserProfiles.FirstOrDefault(p => p.BindingAircraftLiveries.ToList().Exists(p => p == planeTitle));
+            if (boundProfile != null)
             {
-                Logger.LogStatus($"Unable to add binding to the profile because '{planeTitle}' was already bound to profile '{bindedProfile.ProfileName}'.", StatusMessageType.Error);
+                Logger.LogStatus($"Unable to add binding to the profile because '{planeTitle}' was already bound to profile '{boundProfile.ProfileName}'.", StatusMessageType.Error);
                 return;
             }
 

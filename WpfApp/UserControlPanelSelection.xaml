@@ -74,15 +74,15 @@
                             <Label.Style>
                                 <Style TargetType="{x:Type Label}">
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{c:Binding Path='DataStore.IsAircraftBindedToProfile'}" Value="True">
+                                        <DataTrigger Binding="{c:Binding Path='DataStore.IsAircraftBoundToProfile'}" Value="True">
                                             <Setter Property="Foreground" Value="LightGreen" ></Setter>
                                         </DataTrigger>
-                                        <DataTrigger Binding="{c:Binding Path='DataStore.IsAircraftBindedToProfile'}" Value="False">
+                                        <DataTrigger Binding="{c:Binding Path='DataStore.IsAircraftBoundToProfile'}" Value="False">
                                             <Setter Property="Foreground" Value="AntiqueWhite" ></Setter>
                                         </DataTrigger>
                                         <DataTrigger Binding="{c:Binding Path='!DataStore.IsAllowedAddAircraftBinding and !DataStore.IsAllowedDeleteAircraftBinding'}" Value="True">
                                             <Setter Property="Foreground" Value="Red" ></Setter>
-                                            <Setter Property="ToolTip" Value="Aircraft Livery is currently binded to another profile"></Setter>
+                                            <Setter Property="ToolTip" Value="Aircraft Livery is currently bound to another profile"></Setter>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>

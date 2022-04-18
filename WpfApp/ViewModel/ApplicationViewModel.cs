@@ -292,7 +292,7 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
             AutoUpdater.PersistenceProvider = new JsonFilePersistenceProvider(jsonPath);
             AutoUpdater.Synchronous = true;
             AutoUpdater.AppTitle = "MSFS Pop Out Panel Manager";
-            //AutoUpdater.RunUpdateAsAdmin = false;
+            AutoUpdater.RunUpdateAsAdmin = false;
             AutoUpdater.UpdateFormSize = new System.Drawing.Size(930, 675);
             AutoUpdater.Start("https://raw.githubusercontent.com/hawkeye-stan/msfs-popout-panel-manager/master/autoupdate.xml");
             //AutoUpdater.Start("https://raw.githubusercontent.com/hawkeye-stan/AutoUpdateTest/main/autoupdate.xml");
