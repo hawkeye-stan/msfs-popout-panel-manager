@@ -27,23 +27,18 @@
             </Style.Triggers>
         </Style>
         <Style x:Key="ProfileAddPlaneBindingDependency" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-            <Setter Property="Content" Value="Add Binding"/>
             <Setter Property="Width" Value="130"/>
             <Setter Property="IsEnabled" Value="False"/>
             <Style.Triggers>
-                <DataTrigger Binding="{c:Binding Path='DataStore.HasActiveUserProfileId and DataStore.HasCurrentMsfsPlaneTitle and DataStore.ActiveUserProfile.BindingPlaneTitle != DataStore.CurrentMsfsPlaneTitle', Mode=OneWay}" Value="True">
+                <DataTrigger Binding="{c:Binding Path='DataStore.HasActiveUserProfileId and DataStore.HasCurrentMsfsPlaneTitle and DataStore.IsAllowedAddAircraftBinding', Mode=OneWay}" Value="True">
                     <Setter Property="IsEnabled" Value="True"/>
-                </DataTrigger>
-                <DataTrigger Binding="{c:Binding Path='DataStore.ActiveUserProfile.HasBindingPlaneTitle and DataStore.ActiveUserProfile.BindingPlaneTitle != DataStore.CurrentMsfsPlaneTitle', Mode=OneWay}" Value="True">
-                    <Setter Property="Content" Value="Replace Binding"/>
-                    <Setter Property="Width" Value="130"/>
                 </DataTrigger>
             </Style.Triggers>
         </Style>
         <Style x:Key="ProfileDeletePlaneBindingDependency" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
             <Setter Property="IsEnabled" Value="False"/>
             <Style.Triggers>
-                <DataTrigger Binding="{c:Binding Path='DataStore.HasActiveUserProfileId and DataStore.ActiveUserProfile.HasBindingPlaneTitle', Mode=OneWay}" Value="True">
+                <DataTrigger Binding="{c:Binding Path='DataStore.HasActiveUserProfileId and DataStore.ActiveUserProfile.HasBindingPlaneTitle and DataStore.IsAllowedDeleteAircraftBinding', Mode=OneWay}" Value="True">
                     <Setter Property="IsEnabled" Value="True"/>
                 </DataTrigger>
             </Style.Triggers>
@@ -53,42 +48,71 @@
         <DockPanel>
             <WrapPanel DockPanel.Dock="Left" Orientation="Vertical" Margin="15,10,0,0" Width="585" HorizontalAlignment="Left">
                 <Label Content="1. Please select a profile you would like to use." HorizontalAlignment="Left" />
-                <ComboBox HorizontalAlignment="Left" 
-                          Margin="20,0,0,0" 
-                          VerticalAlignment="Top" 
-                          Width="485"
+                <WrapPanel Orientation="Horizontal" Margin="20,5,0,0" HorizontalAlignment="Left">
+                    <ComboBox HorizontalAlignment="Left" 
+                          VerticalAlignment="Center" 
+                          Width="450"
                           ItemsSource="{Binding Source={StaticResource UserProfilesViewSource}}" 
                           SelectedValue="{Binding Path=DataStore.ActiveUserProfileId}" 
                           DisplayMemberPath="ProfileName"
                           SelectedValuePath="ProfileId"/>
-                <WrapPanel Orientation="Horizontal" Margin="20,10,0,0" HorizontalAlignment="Left">
-                    <Button Content="Add Profile" HorizontalAlignment="Left" Width="130" Click="AddProfile_Click"/>
-                    <Button Content="Delete Profile" HorizontalAlignment="Left" Margin="20,0,0,0" Width="130" Click="DeleteProfile_Click" Style="{StaticResource ProfileSelectedDependency}"/>
-                    <Button Content="Set Default" HorizontalAlignment="Left" Margin="20,0,0,0" Width="130" Command="{Binding Path=SetDefaultProfileCommand}" Style="{StaticResource ProfileSelectedDependency}"/>
+                    <Button Content="+" ToolTip="Add Profile" HorizontalAlignment="Left" Margin="10,0,0,0" Width="40" Click="AddProfile_Click" />
+                    <Button Content="-" ToolTip="Delete Profile" HorizontalAlignment="Left" Margin="10,0,0,0" Width="40" Click="DeleteProfile_Click" Style="{StaticResource ProfileSelectedDependency}"/>
+                    <!--<Button Content="D" ToolTip="Set Default Profile" HorizontalAlignment="Left" Margin="10,0,0,0" Width="40" Command="{Binding Path=SetDefaultProfileCommand}" Style="{StaticResource ProfileSelectedDependency}"/>-->
                 </WrapPanel>
-                <WrapPanel Orientation="Horizontal" Margin="15,10,0,0" HorizontalAlignment="Left">
-                    <Label Content="Binding:" HorizontalAlignment="Left"/>
-                    <Label Content="{c:Binding Path='(DataStore.ActiveUserProfile.HasBindingPlaneTitle ? DataStore.ActiveUserProfile.BindingPlaneTitle : &quot;None&quot;)'}" HorizontalContentAlignment="Left" HorizontalAlignment="Left" FontStyle="Italic" Foreground="LightGreen" />
-                </WrapPanel>
-                <WrapPanel Orientation="Horizontal" Margin="20,5,0,0" HorizontalAlignment="Left">
-                    <Button HorizontalAlignment="Left" Click="AddBinding_Click" Style="{StaticResource ProfileAddPlaneBindingDependency}"/>
-                    <Button Content="Delete Binding" HorizontalAlignment="Left" Margin="20,0,0,0" Width="130" Click="DeleteBinding_Click" Style="{StaticResource ProfileDeletePlaneBindingDependency}"/>
-                    <CheckBox Margin="40,0,0,0" IsChecked="{Binding Path=DataStore.ActiveUserProfile.PowerOnRequiredForColdStart}" IsEnabled="{Binding Path=DataStore.HasActiveUserProfileId}" Command="{Binding Path=SetPowerOnRequiredCommand}">
-                        <TextBlock Text="Power on required to pop out panels on cold start" TextWrapping="Wrap" Width="200" Margin="5,0,0,3"/>
+                <Separator Margin="5,10,5,10"/>
+                <Label Content="2. Optional: Bind active aircraft livery to profile to automatically pop out panels." HorizontalAlignment="Left" Margin="0,0,0,0" />
+                <WrapPanel Orientation="Vertical" Margin="15,0,0,0" HorizontalAlignment="Left">
+                    <WrapPanel Orientation="Horizontal" Margin="5,5,0,0" HorizontalAlignment="Left">
+                        <Label Content="{c:Binding Path='DataStore.CurrentMsfsPlaneTitle == null ? &quot;Active aircraft livery is unavailable&quot; : DataStore.CurrentMsfsPlaneTitle'}" HorizontalContentAlignment="Left" HorizontalAlignment="Left" FontStyle="Italic" Width="450">
+                            <Label.Style>
+                                <Style TargetType="{x:Type Label}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{c:Binding Path='DataStore.IsAircraftBindedToProfile'}" Value="True">
+                                            <Setter Property="Foreground" Value="LightGreen" ></Setter>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{c:Binding Path='DataStore.IsAircraftBindedToProfile'}" Value="False">
+                                            <Setter Property="Foreground" Value="AntiqueWhite" ></Setter>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{c:Binding Path='!DataStore.IsAllowedAddAircraftBinding and !DataStore.IsAllowedDeleteAircraftBinding'}" Value="True">
+                                            <Setter Property="Foreground" Value="Red" ></Setter>
+                                            <Setter Property="ToolTip" Value="Aircraft Livery is currently binded to another profile"></Setter>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Label.Style>
+                        </Label>
+                        <Button Content="+" ToolTip="Add Bidning" Margin="10,0,0,0" Width="40" Click="AddBinding_Click" Style="{StaticResource ProfileAddPlaneBindingDependency}"/>
+                        <Button Content="-" ToolTip="Delete Binding"  Margin="10,0,0,0" Width="40" Click="DeleteBinding_Click" Style="{StaticResource ProfileDeletePlaneBindingDependency}"/>
+                    </WrapPanel>
+                    <CheckBox Margin="10,5,0,0" IsChecked="{Binding Path=DataStore.ActiveUserProfile.PowerOnRequiredForColdStart}" IsEnabled="{Binding Path=DataStore.HasActiveUserProfileId}" Command="{Binding Path=SetPowerOnRequiredCommand}">
+                        <TextBlock Text="Power on required to pop out panels on cold start" TextWrapping="Wrap"  Margin="5,0,0,3"/>
                     </CheckBox>
                 </WrapPanel>
-                <Label Content="2. Identify pop out panel locations in the game by clicking on them." Margin="0,15,0,0" />
+                <Separator Margin="5,10,5,10"/>
+                <Label Content="3. Identify pop out panel locations in the game by clicking on them." Margin="0,0,0,0" />
                 <WrapPanel Orientation="Vertical" Margin="20,0,0,0" HorizontalAlignment="Left">
-                    <Label Content="LEFT CLICK to add a new panel."/>
-                    <Label Content="CTRL + LEFT CLICK when all panels have been selected or to cancel selections." />
-                    <Label Content="SHIFT + LEFT CLICK to remove the most recently added panel."/>
-                    <WrapPanel Orientation="Horizontal" Margin="0,10,0,0" HorizontalAlignment="Left">
+                    <WrapPanel Orientation="Horizontal">
+                        <Label Content="LEFT CLICK" Foreground="AntiqueWhite"/>
+                        <Label Content="to add a new panel."/>
+                    </WrapPanel>
+
+                    <WrapPanel Orientation="Horizontal">
+                        <Label Content="CTRL + LEFT CLICK" Foreground="AntiqueWhite" />
+                        <Label Content="when all panels have been selected or to cancel selections." />
+                    </WrapPanel>
+                    <WrapPanel Orientation="Horizontal">
+                        <Label Content="SHIFT + LEFT CLICK" Foreground="AntiqueWhite" />
+                        <Label Content="to remove the most recently added panel."/>
+                    </WrapPanel>
+                    <WrapPanel Orientation="Horizontal" Margin="0,5,0,0" HorizontalAlignment="Left">
                         <Button Content="Start Panel Selection" HorizontalAlignment="Left" Margin="0,0,0,0" Width="165" Click="StartPanelSelection_Click" Style="{StaticResource ProfileSelectedDependency}"/>
                         <Button Content="Save Auto Panning Camera" HorizontalAlignment="Left" Margin="20,0,0,0" IsEnabled="{c:Binding Path='DataStore.HasActiveUserProfileId and DataStore.IsFlightActive'}" Width="215" Click="SaveAutoPanningCamera_Click" Style="{StaticResource ProfileSelectedDependency}"/>
                     </WrapPanel>
                 </WrapPanel>
-                <Label Content="3. Start the pop out process for selected panels." Margin="0,15,0,0" />
-                <Button Content="Start Pop Out" HorizontalAlignment="Left" Margin="20,10,0,0" Width="130" IsEnabled="{c:Binding Path='DataStore.HasActiveUserProfileId and DataStore.IsFlightActive'}" Command="{Binding Path=StartPopOutCommand}" Style="{StaticResource ProfileSelectedDependency}"/>
+                <Separator Margin="5,10,5,10"/>
+                <Label Content="4. Start the pop out process for selected panels." Margin="0,0,0,0" />
+                <Button Content="Start Pop Out" HorizontalAlignment="Left" Margin="20,5,0,0" Width="130" IsEnabled="{c:Binding Path='DataStore.HasActiveUserProfileId and DataStore.IsFlightActive'}" Command="{Binding Path=StartPopOutCommand}" Style="{StaticResource ProfileSelectedDependency}"/>
             </WrapPanel>
             <DockPanel DockPanel.Dock="Right" Width="325" HorizontalAlignment="Center">
                 <Label DockPanel.Dock="Top" Content="Panel Locations" HorizontalAlignment="Center" Margin="0,10,0,0"/>

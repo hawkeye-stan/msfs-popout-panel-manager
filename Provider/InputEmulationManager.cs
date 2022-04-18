@@ -60,8 +60,10 @@ namespace MSFSPopoutPanelManager.Provider
             Thread.Sleep(200);
         }
 
-        public static void SaveCustomViewZero(IntPtr hwnd)
+        public static void SaveCustomView(IntPtr hwnd, string keybinding)
         {
+            uint customViewKey = (uint) (Convert.ToInt32(keybinding) + KEY_0);
+
             PInvoke.SetForegroundWindow(hwnd);
             Thread.Sleep(500);
 
@@ -71,15 +73,17 @@ namespace MSFSPopoutPanelManager.Provider
             // Set view using Ctrl-Alt-0
             PInvoke.keybd_event(Convert.ToByte(VK_LCONTROL), 0, KEYEVENTF_KEYDOWN, 0);
             PInvoke.keybd_event(Convert.ToByte(VK_LMENU), 0, KEYEVENTF_KEYDOWN, 0);
-            PInvoke.keybd_event(Convert.ToByte(KEY_0), 0, KEYEVENTF_KEYDOWN, 0);
+            PInvoke.keybd_event(Convert.ToByte(customViewKey), 0, KEYEVENTF_KEYDOWN, 0);
             Thread.Sleep(200);
-            PInvoke.keybd_event(Convert.ToByte(KEY_0), 0, KEYEVENTF_KEYUP, 0);
+            PInvoke.keybd_event(Convert.ToByte(customViewKey), 0, KEYEVENTF_KEYUP, 0);
             PInvoke.keybd_event(Convert.ToByte(VK_LMENU), 0, KEYEVENTF_KEYUP, 0);
             PInvoke.keybd_event(Convert.ToByte(VK_LCONTROL), 0, KEYEVENTF_KEYUP, 0);
         }
 
-        public static void LoadCustomViewZero(IntPtr hwnd)
+        public static void LoadCustomView(IntPtr hwnd, string keybinding)
         {
+            uint customViewKey = (uint)(Convert.ToInt32(keybinding) + KEY_0);
+
             PInvoke.SetForegroundWindow(hwnd);
             Thread.Sleep(500);
 
@@ -96,9 +100,9 @@ namespace MSFSPopoutPanelManager.Provider
 
             // Then load view using Alt-0
             PInvoke.keybd_event(Convert.ToByte(VK_LMENU), 0, KEYEVENTF_KEYDOWN, 0);
-            PInvoke.keybd_event(Convert.ToByte(KEY_0), 0, KEYEVENTF_KEYDOWN, 0);
+            PInvoke.keybd_event(Convert.ToByte(customViewKey), 0, KEYEVENTF_KEYDOWN, 0);
             Thread.Sleep(200);
-            PInvoke.keybd_event(Convert.ToByte(KEY_0), 0, KEYEVENTF_KEYUP, 0);
+            PInvoke.keybd_event(Convert.ToByte(customViewKey), 0, KEYEVENTF_KEYUP, 0);
             PInvoke.keybd_event(Convert.ToByte(VK_LMENU), 0, KEYEVENTF_KEYUP, 0);
         }
 

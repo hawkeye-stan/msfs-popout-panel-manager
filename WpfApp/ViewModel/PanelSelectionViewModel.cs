@@ -97,12 +97,24 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
 
         private void OnAddProfileBinding(object commandParameter)
         {
+            var index = DataStore.ActiveUserProfileId;
+
             _userProfileManager.AddProfileBinding(DataStore.CurrentMsfsPlaneTitle, DataStore.ActiveUserProfileId);
+
+            // force profile refresh
+            DataStore.ActiveUserProfileId = -1;
+            DataStore.ActiveUserProfileId = index;
         }
 
         private void OnDeleteProfileBinding(object commandParameter)
         {
-            _userProfileManager.DeleteProfileBinding(DataStore.ActiveUserProfileId);
+            var index = DataStore.ActiveUserProfileId;
+
+            _userProfileManager.DeleteProfileBinding(DataStore.CurrentMsfsPlaneTitle, DataStore.ActiveUserProfileId);
+
+            // force profile refresh
+            DataStore.ActiveUserProfileId = -1;
+            DataStore.ActiveUserProfileId = index;
         }
 
         private void OnStartPanelSelection(object commandParameter)
@@ -150,7 +162,7 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
             var simualatorProcess = DiagnosticManager.GetSimulatorProcess();
             if (simualatorProcess != null && DataStore.IsFlightActive)
             {
-                InputEmulationManager.SaveCustomViewZero(simualatorProcess.Handle);
+                InputEmulationManager.SaveCustomView(simualatorProcess.Handle, DataStore.AppSetting.AutoPanningKeyBinding);
                 Logger.LogStatus("Auto Panning Camera has been saved succesfully.", StatusMessageType.Info);
             }
         }

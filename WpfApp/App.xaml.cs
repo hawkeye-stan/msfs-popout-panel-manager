@@ -124,7 +124,7 @@ namespace MSFSPopoutPanelManager.WpfApp
             var process = DiagnosticManager.GetApplicationProcess();
             PROCESS_DPI_AWARENESS outValue;
             GetProcessDpiAwareness(process.Handle, out outValue);
-            log4net.Info($"DPI Awareness is set to: {outValue}");
+            //log4net.Info($"DPI Awareness is set to: {outValue}");
         }
 
         [DllImport("User32.dll")]

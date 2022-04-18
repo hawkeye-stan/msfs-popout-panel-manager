@@ -99,5 +99,15 @@ namespace MSFSPopoutPanelManager.WpfApp
         {
             _viewModel.ExitCommand.Execute(null);
         }
+
+        private void EditPreferences_Click(object sender, RoutedEventArgs e)
+        {
+            PreferencesDialog dialog = new PreferencesDialog(_viewModel.DataStore.AppSetting);
+            dialog.Owner = Application.Current.MainWindow;
+            dialog.Topmost = true;
+            dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+
+            dialog.ShowDialog();
+        }
     }
 }

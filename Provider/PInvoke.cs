@@ -21,13 +21,20 @@ namespace MSFSPopoutPanelManager.Provider
 
         public const int SWP_NOMOVE = 0x0002;
         public const int SWP_NOSIZE = 0x0001;
+        public const int SWP_FRAMECHANGED = 0x0020;
+        public const int SWP_NOREDRAW = 0x0008;
+        public const int SWP_ASYNCWINDOWPOS = 0x4000;
         public const int SWP_ALWAYS_ON_TOP = SWP_NOMOVE | SWP_NOSIZE;
 
         public const int GWL_STYLE = -16;
-        public const int WS_SIZEBOX = 0x00040000;
-        public const int WS_BORDER = 0x00800000;
-        public const int WS_DLGFRAME = 0x00400000;
-        public const int WS_CAPTION = WS_BORDER | WS_DLGFRAME;
+        public const int GWL_EXSTYLE = -20;
+        public const uint WS_SIZEBOX = 0x00040000;
+        public const uint WS_BORDER = 0x00800000;
+        public const uint WS_DLGFRAME = 0x00400000;
+        public const uint WS_CAPTION = WS_BORDER | WS_DLGFRAME;
+        public const uint WS_POPUP = 0x80000000;
+        public const uint WS_EX_DLGMODALFRAME = 0x00000001;
+        public const uint WS_THICKFRAME = 0x00040000;
 
         public const int HWND_TOPMOST = -1;
         public const int HWND_NOTOPMOST = -2;

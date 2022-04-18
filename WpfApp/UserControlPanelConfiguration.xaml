@@ -121,7 +121,7 @@
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBox Name="Left" Width="100" BorderThickness="0" Text="{Binding Path=Left, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=LostFocus}" 
-                                             SourceUpdated="GridData_SourceUpdated" Style="{StaticResource TextBoxColumnFocus}" IsReadOnly="{c:Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path='DataContext.DataStore.ActiveUserProfile.IsLocked or !DataContext.DataStore.AllowEdit'}" IsEnabled="{c:Binding Path='!HideTitlebar', Mode=TwoWay}" />
+                                             SourceUpdated="GridData_SourceUpdated" Style="{StaticResource TextBoxColumnFocus}" IsReadOnly="{c:Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path='DataContext.DataStore.ActiveUserProfile.IsLocked or !DataContext.DataStore.AllowEdit'}" />
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -129,7 +129,7 @@
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBox Name="Top" Width="100" BorderThickness="0" Text="{Binding Path=Top, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=LostFocus}" 
-                                             SourceUpdated="GridData_SourceUpdated" Style="{StaticResource TextBoxColumnFocus}" IsReadOnly="{c:Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path='DataContext.DataStore.ActiveUserProfile.IsLocked or !DataContext.DataStore.AllowEdit'}" IsEnabled="{c:Binding Path='!HideTitlebar', Mode=TwoWay}" />
+                                             SourceUpdated="GridData_SourceUpdated" Style="{StaticResource TextBoxColumnFocus}" IsReadOnly="{c:Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path='DataContext.DataStore.ActiveUserProfile.IsLocked or !DataContext.DataStore.AllowEdit'}" />
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -137,7 +137,7 @@
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBox Name="Width" Width="100" BorderThickness="0" Text="{Binding Path=Width, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=LostFocus}" 
-                                             SourceUpdated="GridData_SourceUpdated" Style="{StaticResource TextBoxColumnFocus}" IsReadOnly="{c:Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path='DataContext.DataStore.ActiveUserProfile.IsLocked or !DataContext.DataStore.AllowEdit'}" IsEnabled="{c:Binding Path='!HideTitlebar', Mode=TwoWay}" />
+                                             SourceUpdated="GridData_SourceUpdated" Style="{StaticResource TextBoxColumnFocus}" IsReadOnly="{c:Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path='DataContext.DataStore.ActiveUserProfile.IsLocked or !DataContext.DataStore.AllowEdit'}" />
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -145,7 +145,7 @@
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBox Name="Height" Width="100" BorderThickness="0" Text="{Binding Path=Height, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=LostFocus}" 
-                                             SourceUpdated="GridData_SourceUpdated" Style="{StaticResource TextBoxColumnFocus}" IsReadOnly="{c:Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path='DataContext.DataStore.ActiveUserProfile.IsLocked or !DataContext.DataStore.AllowEdit'}" IsEnabled="{c:Binding Path='!HideTitlebar', Mode=TwoWay}" />
+                                             SourceUpdated="GridData_SourceUpdated" Style="{StaticResource TextBoxColumnFocus}" IsReadOnly="{c:Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path='DataContext.DataStore.ActiveUserProfile.IsLocked or !DataContext.DataStore.AllowEdit'}" />
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -157,7 +157,7 @@
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-                        <DataGridTemplateColumn Header="Hide Titlebar" Width="100">
+                        <DataGridTemplateColumn Header="Hide Title Bar" Width="100">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <CheckBox Name="HideTitlebar" Width="100" Margin="40 0 0 0" IsChecked="{Binding Path=HideTitlebar, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}" 

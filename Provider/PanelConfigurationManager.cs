@@ -61,21 +61,20 @@ namespace MSFSPopoutPanelManager.Provider
                         break;
                     case PanelConfigPropertyName.Left:
                     case PanelConfigPropertyName.Top:
-                        // Do not allow changes to panel if title bar is hidden. This will cause the panel to resize incorrectly
-                        if (panelConfig.HideTitlebar)
-                            return;
-
                         PInvoke.MoveWindow(panelConfig.PanelHandle, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height, true);
                         break;
                     case PanelConfigPropertyName.Width:
                     case PanelConfigPropertyName.Height:
-                        // Do not allow changes to panel if title bar is hidden. This will cause the panel to resize incorrectly
                         if (panelConfig.HideTitlebar)
-                            return;
+                            WindowManager.ApplyHidePanelTitleBar(panelConfig.PanelHandle, false);
 
                         int orignalLeft = panelConfig.Left;
                         PInvoke.MoveWindow(panelConfig.PanelHandle, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height, true);
                         MSFSBugPanelShiftWorkaround(panelConfig.PanelHandle, orignalLeft, panelConfig.Top, panelConfig.Width, panelConfig.Height);
+
+                        if (panelConfig.HideTitlebar)
+                            WindowManager.ApplyHidePanelTitleBar(panelConfig.PanelHandle, true);
+
                         break;
                     case PanelConfigPropertyName.AlwaysOnTop:
                         WindowManager.ApplyAlwaysOnTop(panelConfig.PanelHandle, panelConfig.AlwaysOnTop, new Rectangle(panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height));
@@ -99,32 +98,43 @@ namespace MSFSPopoutPanelManager.Provider
             if (index > -1)
             {
                 var panelConfig = UserProfile.PanelConfigs[index];
-
-                // Do not allow changes to panel if title bar is hidden. This will cause the panel to resize incorrectly
-                if (panelConfig.HideTitlebar)
-                    return;
-
                 int orignalLeft = panelConfig.Left;
 
                 switch (panelConfigItem.PanelConfigProperty)
                 {
                     case PanelConfigPropertyName.Left:
-                        PInvoke.MoveWindow(panelConfig.PanelHandle, panelConfig.Left + changeAmount, panelConfig.Top, panelConfig.Width, panelConfig.Height, false);
                         panelConfig.Left += changeAmount;
+                        PInvoke.MoveWindow(panelConfig.PanelHandle, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height, false);
                         break;
                     case PanelConfigPropertyName.Top:
-                        PInvoke.MoveWindow(panelConfig.PanelHandle, panelConfig.Left, panelConfig.Top + changeAmount, panelConfig.Width, panelConfig.Height, false);
                         panelConfig.Top += changeAmount;
+                        PInvoke.MoveWindow(panelConfig.PanelHandle, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height, false);
                         break;
                     case PanelConfigPropertyName.Width:
-                        PInvoke.MoveWindow(panelConfig.PanelHandle, panelConfig.Left, panelConfig.Top, panelConfig.Width + changeAmount, panelConfig.Height, false);
-                        MSFSBugPanelShiftWorkaround(panelConfig.PanelHandle, orignalLeft, panelConfig.Top, panelConfig.Width + changeAmount, panelConfig.Height);
                         panelConfig.Width += changeAmount;
+
+                        if (panelConfig.HideTitlebar)
+                            WindowManager.ApplyHidePanelTitleBar(panelConfig.PanelHandle, false);
+
+                        PInvoke.MoveWindow(panelConfig.PanelHandle, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height, false);
+                        MSFSBugPanelShiftWorkaround(panelConfig.PanelHandle, orignalLeft, panelConfig.Top, panelConfig.Width, panelConfig.Height);
+
+                        if (panelConfig.HideTitlebar)
+                            WindowManager.ApplyHidePanelTitleBar(panelConfig.PanelHandle, true);
+
                         break;
                     case PanelConfigPropertyName.Height:
-                        PInvoke.MoveWindow(panelConfig.PanelHandle, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height + changeAmount, false);
-                        MSFSBugPanelShiftWorkaround(panelConfig.PanelHandle, orignalLeft, panelConfig.Top, panelConfig.Width, panelConfig.Height + changeAmount);
                         panelConfig.Height += changeAmount;
+
+                        if (panelConfig.HideTitlebar)
+                            WindowManager.ApplyHidePanelTitleBar(panelConfig.PanelHandle, false);
+
+                        PInvoke.MoveWindow(panelConfig.PanelHandle, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height, false);
+                        MSFSBugPanelShiftWorkaround(panelConfig.PanelHandle, orignalLeft, panelConfig.Top, panelConfig.Width, panelConfig.Height);
+
+                        if (panelConfig.HideTitlebar)
+                            WindowManager.ApplyHidePanelTitleBar(panelConfig.PanelHandle, true);
+
                         break;
                     default:
                         return;
@@ -211,9 +221,18 @@ namespace MSFSPopoutPanelManager.Provider
 
                         panelConfig.Left = winRectangle.Left;
                         panelConfig.Top = winRectangle.Top;
-                        panelConfig.Width = clientRectangle.Width + 16;
-                        panelConfig.Height = clientRectangle.Height + 39;
-                       
+
+                        if (panelConfig.HideTitlebar)
+                        {
+                            panelConfig.Width = clientRectangle.Width;
+                            panelConfig.Height = clientRectangle.Height;
+                        }
+                        else
+                        {
+                            panelConfig.Width = clientRectangle.Width + 16;
+                            panelConfig.Height = clientRectangle.Height + 39;
+                        }
+
                         // Detect if window is maximized, if so, save settings
                         WINDOWPLACEMENT wp = new WINDOWPLACEMENT();
                         wp.length = System.Runtime.InteropServices.Marshal.SizeOf(wp);

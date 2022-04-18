@@ -2,7 +2,7 @@
 <hr/>
 
 
-## Version 3.2.0 (Release)
+## Version 3.2.0.1 (v3.2 Release)
 * Added application auto update support. By installing this version of the app, auto update functionality will be available for all future versions of the application.
 * Disabled panel adjustments when Hide Title Bar is checked for a panel. This is to fix an issue where panel adjustments (X-Pos, Y-Pos, Width, and Height) will behave erratically when Hide Title Bar is checked.
 * Increased default delay for auto-clicking "Ready to Fly" button from 2 seconds to 4 seconds in regard to Auto Pop Out Panels feature . [Fixed Issue #9](https://github.com/hawkeye-stan/msfs-popout-panel-manager/issues/9)

@@ -86,7 +86,7 @@ namespace MSFSPopoutPanelManager.Provider
                 var simualatorProcess = DiagnosticManager.GetSimulatorProcess();
                 if (simualatorProcess != null)
                 {
-                    InputEmulationManager.SaveCustomViewZero(simualatorProcess.Handle);
+                    InputEmulationManager.SaveCustomView(simualatorProcess.Handle, AppSetting.AutoPanningKeyBinding);
                 }
             }
 

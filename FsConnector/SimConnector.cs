@@ -19,7 +19,7 @@ namespace MSFSPopoutPanelManager.FsConnector
         public event EventHandler<EventArgs<dynamic>> OnReceivedData;
         public event EventHandler OnConnected;
         public event EventHandler OnDisconnected;
-        public event EventHandler<EventArgs<SimConnectSystemEvent>> OnReceiveSystemEvent;
+        public event EventHandler<EventArgs<Tuple<SimConnectSystemEvent, uint>>> OnReceiveSystemEvent;
 
         public dynamic SimData { get; set; }
 
@@ -45,7 +45,7 @@ namespace MSFSPopoutPanelManager.FsConnector
                         _simConnect.SubscribeToSystemEvent(SimConnectSystemEvent.SIMSTART, "SimStart");
                         _simConnect.SubscribeToSystemEvent(SimConnectSystemEvent.SIMSTOP, "SimStop");
                         _simConnect.SubscribeToSystemEvent(SimConnectSystemEvent.VIEW, "View");
-
+                        
                         // Setup SimConnect data structure definition using SimConnectStruct and SimConnect data definitions
                         var definitions = DataDefinition.GetDefinition();
                         foreach (var (PropName, SimConnectName, SimConnectUnit, SimConnectDataType, ObjectType) in definitions)
@@ -183,12 +183,9 @@ namespace MSFSPopoutPanelManager.FsConnector
         private void HandleOnReceiveEvent(SimConnect sender, SIMCONNECT_RECV_EVENT data)
         {
             var systemEvent = ((SimConnectSystemEvent)data.uEventID);
+            var tuple = new Tuple<SimConnectSystemEvent, uint>(systemEvent, data.uEventID);
 
-            // Only look at VIEW for cockpit view during loading of flight (dwData = 2)
-            if (systemEvent == SimConnectSystemEvent.VIEW && data.dwData != 2)
-                return;
-
-            OnReceiveSystemEvent?.Invoke(this, new EventArgs<SimConnectSystemEvent>(systemEvent));
+            OnReceiveSystemEvent?.Invoke(this, new EventArgs<Tuple<SimConnectSystemEvent, uint>>(tuple));
         }
     }
 }

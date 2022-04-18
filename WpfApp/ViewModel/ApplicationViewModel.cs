@@ -63,7 +63,13 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
             _simConnectManager = new SimConnectManager();
             _simConnectManager.OnSimConnectDataRefreshed += (sender, e) =>  
             {  
-                DataStore.CurrentMsfsPlaneTitle = e.Value.Title;
+                // Automatic switching of active profile when SimConnect active aircraft livery changes
+                if(DataStore.CurrentMsfsPlaneTitle != e.Value.Title)
+                {
+                    DataStore.CurrentMsfsPlaneTitle = e.Value.Title;
+                    AutoSwitchProfile(e.Value.Title);
+                }
+                
                 DataStore.ElectricalMasterBatteryStatus = e.Value.ElectricalMasterBattery;
             };
             _simConnectManager.OnConnected += (sender, e) => { DataStore.IsSimulatorStarted = true; };
@@ -242,41 +248,43 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
         {
             Debug.WriteLine("Flight Started");
 
-            DataStore.IsEnteredFlight = true;
-            ShowPanelSelection(true);
-
-            // find the profile with the matching binding plane title
-            var profile = DataStore.UserProfiles.FirstOrDefault(p => p.BindingPlaneTitle == DataStore.CurrentMsfsPlaneTitle);
-
-            if (profile != null)
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                Thread.Sleep(DataStore.AppSetting.AutoPopOutPanelsWaitDelay.ReadyToFlyButton * 1000);         // Wait for the ready to fly button
-                
+                AutoSwitchProfile(DataStore.CurrentMsfsPlaneTitle);
+
+                DataStore.IsEnteredFlight = true;
+                ShowPanelSelection(true);
+
+                // find the profile with the matching binding plane title
+                var profile = DataStore.UserProfiles.FirstOrDefault(p => p.BindingPlaneTitle.ToList().Exists(p => p == DataStore.CurrentMsfsPlaneTitle));
+
+                if (profile == null || profile.PanelSourceCoordinates.Count == 0)
+                    return;
+
+                var messageDialog = new OnScreenMessageDialog($"Automatic pop out is starting for profile:\n{profile.ProfileName}", DataStore.AppSetting.AutoPopOutPanelsWaitDelay.ReadyToFlyButton);      // Wait for the ready to fly button
+                messageDialog.ShowDialog();
                 InputEmulationManager.LeftClickReadyToFly();
 
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    var messageDialog = new OnScreenMessageDialog($"Panel pop out in progress for profile:\n{profile.ProfileName}", DataStore.AppSetting.AutoPopOutPanelsWaitDelay.InitialCockpitView);
-                    messageDialog.ShowDialog();
+                Thread.Sleep(DataStore.AppSetting.AutoPopOutPanelsWaitDelay.InitialCockpitView * 1000);         // Wait for the initial cockpit view
 
-                    // Turn on power if required to pop out panels
-                    _simConnectManager.TurnOnPower(profile.PowerOnRequiredForColdStart);
-                    Thread.Sleep(DataStore.AppSetting.AutoPopOutPanelsWaitDelay.InstrumentationPowerOn * 1000);     // Wait for battery to be turned on
+                // Turn on power if required to pop out panels
+                _simConnectManager.TurnOnPower(profile.PowerOnRequiredForColdStart);
+                Thread.Sleep(DataStore.AppSetting.AutoPopOutPanelsWaitDelay.InstrumentationPowerOn * 1000);     // Wait for battery to be turned on
 
-                    DataStore.ActiveUserProfileId = profile.ProfileId;
-                    _panelPopoutManager.UserProfile = profile;
-                    _panelPopoutManager.AppSetting = DataStore.AppSetting;
-                    _panelPopoutManager.StartPopout();
+                DataStore.ActiveUserProfileId = profile.ProfileId;
+                _panelPopoutManager.UserProfile = profile;
+                _panelPopoutManager.AppSetting = DataStore.AppSetting;
+                _panelPopoutManager.StartPopout();
 
-                    // Turn off power if needed after pop out
-                    _simConnectManager.TurnOffpower();
-                });
-            }
+                // Turn off power if needed after pop out
+                _simConnectManager.TurnOffpower();
+            });
         }
 
         private void HandleOnFlightStopped(object sender, EventArgs e)
         {
             DataStore.IsEnteredFlight = false;
+            OnRestart(null);
         }
 
         private void CheckForAutoUpdate()
@@ -285,10 +293,21 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
             AutoUpdater.PersistenceProvider = new JsonFilePersistenceProvider(jsonPath);
             AutoUpdater.Synchronous = true;
             AutoUpdater.AppTitle = "MSFS Pop Out Panel Manager";
-            AutoUpdater.RunUpdateAsAdmin = false;
+            //AutoUpdater.RunUpdateAsAdmin = false;
             AutoUpdater.UpdateFormSize = new System.Drawing.Size(930, 675);
-            //AutoUpdater.Start("https://raw.githubusercontent.com/hawkeye-stan/msfs-popout-panel-manager/master/autoupdate.xml");
-            AutoUpdater.Start("https://raw.githubusercontent.com/hawkeye-stan/AutoUpdateTest/main/autoupdate.xml");
+            AutoUpdater.Start("https://raw.githubusercontent.com/hawkeye-stan/msfs-popout-panel-manager/master/autoupdate.xml");
+            //AutoUpdater.Start("https://raw.githubusercontent.com/hawkeye-stan/AutoUpdateTest/main/autoupdate.xml");
+        }
+
+        private void AutoSwitchProfile(string activeAircraftTitle)
+        {
+            // Automatic switching of active profile when SimConnect active aircraft livery changes
+            if (DataStore.UserProfiles != null)
+            {
+                var matchedProfile = DataStore.UserProfiles.ToList().Find(p => p.BindingPlaneTitle.ToList().Exists(t => t == activeAircraftTitle));
+                if (matchedProfile != null)
+                    DataStore.ActiveUserProfileId = matchedProfile.ProfileId;
+            }
         }
     }
 }

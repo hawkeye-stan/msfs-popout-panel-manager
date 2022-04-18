@@ -30,7 +30,7 @@ namespace MSFSPopoutPanelManager.Provider
 
             var copiedProfile = matchedProfile.Copy<UserProfile>();     // Using Shared/ObjectExtensions.cs extension method
             copiedProfile.IsDefaultProfile = false;
-            copiedProfile.BindingPlaneTitle = null;
+            copiedProfile.BindingPlaneTitle = new ObservableCollection<string>();
 
             return AddProfile(copiedProfile, newProfileName);
         }
@@ -83,21 +83,22 @@ namespace MSFSPopoutPanelManager.Provider
 
         public void AddProfileBinding(string planeTitle, int activeProfileId)
         {
-            var bindedProfile = UserProfiles.FirstOrDefault(p => p.BindingPlaneTitle == planeTitle);
+            var bindedProfile = UserProfiles.FirstOrDefault(p => p.BindingPlaneTitle.ToList().Exists(p => p == planeTitle));
             if (bindedProfile != null)
             {
                 Logger.LogStatus($"Unable to add binding to the profile because '{planeTitle}' was already bound to profile '{bindedProfile.ProfileName}'.", StatusMessageType.Error);
                 return;
             }
 
-            UserProfiles.First(p => p.ProfileId == activeProfileId).BindingPlaneTitle = planeTitle;
+            UserProfiles.First(p => p.ProfileId == activeProfileId).BindingPlaneTitle.Add(planeTitle);
             WriteUserProfiles();
+
             Logger.LogStatus($"Binding for the profile has been added successfully.", StatusMessageType.Info);
         }
 
-        public void DeleteProfileBinding(int activeProfileId)
+        public void DeleteProfileBinding(string planeTitle, int activeProfileId)
         {
-            UserProfiles.First(p => p.ProfileId == activeProfileId).BindingPlaneTitle = null;
+            UserProfiles.First(p => p.ProfileId == activeProfileId).BindingPlaneTitle.Remove(planeTitle);
             WriteUserProfiles();
             Logger.LogStatus($"Binding for the profile has been deleted successfully.", StatusMessageType.Info);
         }
@@ -111,7 +112,7 @@ namespace MSFSPopoutPanelManager.Provider
                     UserProfiles = new ObservableCollection<UserProfile>(JsonConvert.DeserializeObject<List<UserProfile>>(reader.ReadToEnd()));
                 }
             }
-            catch
+            catch(Exception ex)
             {
                 UserProfiles = new ObservableCollection<UserProfile>(new List<UserProfile>());
             }

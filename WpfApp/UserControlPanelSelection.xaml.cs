@@ -88,7 +88,7 @@ namespace MSFSPopoutPanelManager.WpfApp
 
         private void AddBinding_Click(object sender, RoutedEventArgs e)
         {
-            ConfirmationDialog dialog = new ConfirmationDialog("Confirm Add Binding", $"Are you sure you want to bind the selected profile to the following plane? \n{_panelSelectionViewModel.DataStore.CurrentMsfsPlaneTitle}");
+            ConfirmationDialog dialog = new ConfirmationDialog("Confirm Add Binding", $"Are you sure you want to bind the aircraft livery below to the active profile? \n{_panelSelectionViewModel.DataStore.CurrentMsfsPlaneTitle}");
             dialog.Owner = Application.Current.MainWindow;
             dialog.Topmost = true;
             dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
@@ -101,7 +101,7 @@ namespace MSFSPopoutPanelManager.WpfApp
 
         private void DeleteBinding_Click(object sender, RoutedEventArgs e)
         {
-            ConfirmationDialog dialog = new ConfirmationDialog("Confirm Delete Binding", $"Are you sure you want to delete the following binding for the selected profile? \n{_panelSelectionViewModel.DataStore.ActiveUserProfile.BindingPlaneTitle}");
+            ConfirmationDialog dialog = new ConfirmationDialog("Confirm Delete Binding", $"Are you sure you want to delete aircraft livery binding below from the active profile? \n{_panelSelectionViewModel.DataStore.CurrentMsfsPlaneTitle}");
             dialog.Owner = Application.Current.MainWindow;
             dialog.Topmost = true;
             dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;

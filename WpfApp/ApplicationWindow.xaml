@@ -53,15 +53,7 @@
                     <MenuItem Header="File">
                         <MenuItem Name="menuItem_Restart" Header="Restart" Command="{Binding Path=RestartCommand}" IsEnabled="{Binding Path=IsShownPanelConfigurationScreen}"/>
                         <Separator />
-                        <MenuItem Header="Preferences">
-                            <MenuItem Name="menuItem_AlwaysOnTop" Header="Always on Top" IsChecked="{Binding Path=DataStore.AppSetting.AlwaysOnTop, Mode=TwoWay}" IsCheckable="True"/>
-                            <MenuItem Name="menuItem_AutoPanning" Header="Auto Panning" IsChecked="{Binding Path=DataStore.AppSetting.UseAutoPanning, Mode=TwoWay}" IsCheckable="True"/>
-                            <MenuItem Name="menuItem_AutoPopOutPanels" Header="Auto Pop Out Panels" IsChecked="{Binding Path=DataStore.AppSetting.AutoPopOutPanels, Mode=TwoWay}" IsCheckable="True"/>
-                            <MenuItem Name="menuItem_AutoStart" Header="Auto Start" IsChecked="{Binding Path=DataStore.AppSetting.AutoStart, Mode=TwoWay}" IsCheckable="True"/>
-                            <MenuItem Name="menuItem_IncludeBuiltInPanel" Header="Include Built-in Panels" IsChecked="{Binding Path=DataStore.AppSetting.IncludeBuiltInPanel, Mode=TwoWay}" IsCheckable="True"/>
-                            <MenuItem Name="menuItem_MinimizeToTray" Header="Minimize to Tray" IsChecked="{Binding Path=DataStore.AppSetting.MinimizeToTray, Mode=TwoWay}" IsCheckable="True"/>
-                            <MenuItem Name="menuItem_StartMinimized" Header="Start Minimized" IsChecked="{Binding Path=DataStore.AppSetting.StartMinimized, Mode=TwoWay}" IsCheckable="True"/>
-                        </MenuItem>
+                        <MenuItem Header="Preferences" Click="EditPreferences_Click" />
                         <Separator />
                         <MenuItem Name="menuItem_Exit" Header="Exit" Command="{Binding Path=ExitCommand}"/>
                     </MenuItem>

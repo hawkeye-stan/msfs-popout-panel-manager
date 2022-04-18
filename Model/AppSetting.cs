@@ -24,10 +24,12 @@ namespace MSFSPopoutPanelManager.Model
             MinimizeToTray = false;
             AlwaysOnTop = true;
             UseAutoPanning = true;
+            AutoPanningKeyBinding = "0";
             StartMinimized = false;
             IncludeBuiltInPanel = false;
             AutoPopOutPanels = false;
             AutoPopOutPanelsWaitDelay = new AutoPopOutPanelsWaitDelay();
+            
         }
 
         public void Load()
@@ -36,10 +38,12 @@ namespace MSFSPopoutPanelManager.Model
             this.MinimizeToTray = appSetting.MinimizeToTray;
             this.AlwaysOnTop = appSetting.AlwaysOnTop;
             this.UseAutoPanning = appSetting.UseAutoPanning;
+            this.AutoPanningKeyBinding = appSetting.AutoPanningKeyBinding;
             this.StartMinimized = appSetting.StartMinimized;
             this.IncludeBuiltInPanel = appSetting.IncludeBuiltInPanel;
             this.AutoPopOutPanels = appSetting.AutoPopOutPanels;
             this.AutoPopOutPanelsWaitDelay = appSetting.AutoPopOutPanelsWaitDelay;
+            AutoPopOutPanelsWaitDelay.DataChanged += (e, source) => WriteAppSetting(this);
 
             _saveEnabled = true;
         }
@@ -61,18 +65,13 @@ namespace MSFSPopoutPanelManager.Model
             }
         }
 
-        //[OnDeserialized]
-        //private void OnDeserialized(StreamingContext context)
-        //{
-        //    // Allow save data
-        //    _saveEnabled = true;
-        //}
-
         public bool MinimizeToTray { get; set; }
 
         public bool AlwaysOnTop { get; set; }
 
         public bool UseAutoPanning { get; set; }
+
+        public string AutoPanningKeyBinding { get; set; }
 
         public bool StartMinimized { get; set; }
 
@@ -130,18 +129,23 @@ namespace MSFSPopoutPanelManager.Model
                     serializer.Serialize(file, appSetting);
                 }
             }
-            catch
+            catch(Exception ex)
             {
                 Logger.LogStatus($"Unable to write app setting data file: {APP_SETTING_DATA_FILENAME}", StatusMessageType.Error);
             }
         }
     }
 
-    public class AutoPopOutPanelsWaitDelay
+    public class AutoPopOutPanelsWaitDelay : INotifyPropertyChanged
     {
+        // Using PropertyChanged.Fody
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public event EventHandler DataChanged;
+
         public AutoPopOutPanelsWaitDelay()
         {
-            ReadyToFlyButton = 4;
+            ReadyToFlyButton = 6;
             InitialCockpitView = 2;
             InstrumentationPowerOn = 2;
         }
@@ -151,5 +155,10 @@ namespace MSFSPopoutPanelManager.Model
         public int InitialCockpitView { get; set; }
 
         public int InstrumentationPowerOn { get; set; }
+
+        public void OnPropertyChanged(string propertyName, object before, object after)
+        {
+            DataChanged?.Invoke(this, null);
+        }
     }
 }

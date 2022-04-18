@@ -23,6 +23,7 @@ namespace MSFSPopoutPanelManager.FsConnector
         SIMSTOP,
         FLIGHTLOADED,
         VIEW,
-        PAUSED
+        PAUSED, 
+        NONE
     };
 }

@@ -1,5 +1,4 @@
-﻿using MSFSPopoutPanelManager.Shared;
-using System;
+﻿using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 
@@ -45,7 +44,7 @@ namespace MSFSPopoutPanelManager.Provider
         {
             Rectangle rectangle;
             PInvoke.GetClientRect(handle, out rectangle);
-            PInvoke.MoveWindow(handle, x, y, rectangle.Width, rectangle.Height, false);
+            PInvoke.MoveWindow(handle, x, y, rectangle.Width, rectangle.Height, true);
         }
 
         public static void MinimizeWindow(IntPtr handle)

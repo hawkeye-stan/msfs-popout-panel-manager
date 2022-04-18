@@ -153,6 +153,8 @@ The user plane profile data and application settings data are stored as JSON fil
 * Unable to pop out ALL panels. This may indicate a potential miscount of selected panels (circles) and the number of actual panels that got popped out. You may have duplicate panels in your selection or panels that cannot be popped out.
 
 * If you encounter application crashes or unknown error, please help my continuing development effort by attaching the file **error.log** in the application folder and open an issue ticket in github repo for this project. This is going to help me troubleshoot the issue and provide hotfixes.
+
+* If you encounter an issue with panels that are not restored back to your saved profile locations, please check if you have other apps such as Sizer or Windows PowerToys that may have conflict with Pop Out Manager.
  
 
 ## Author

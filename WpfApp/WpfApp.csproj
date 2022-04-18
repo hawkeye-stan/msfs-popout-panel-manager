@@ -4,7 +4,7 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
-    <Version>3.2.0.0</Version>
+    <Version>3.3.0.0</Version>
     <PackageId>MSFS 2020 Popout Panel Manager</PackageId>
     <Authors>Stanley Kwok</Authors>
     <Product>MSFS 2020 Popout Panel Manager</Product>
@@ -75,12 +75,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="PreferencesDialog.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="UserControlPanelConfiguration.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
 
   <ItemGroup>
+    <Page Update="PreferencesDialog.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="UserControlPanelConfiguration.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>

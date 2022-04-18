@@ -117,6 +117,47 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
             get { return !String.IsNullOrEmpty(CurrentMsfsPlaneTitle); }
         }
 
+        public bool IsAircraftBindedToProfile
+        {
+            get
+            {
+                if (ActiveUserProfile == null)
+                    return false;
+               
+                return ActiveUserProfile.BindingPlaneTitle.ToList().Exists(p => p == CurrentMsfsPlaneTitle);
+            }
+        }
+
+        public bool IsAllowedDeleteAircraftBinding
+        {
+            get
+            {
+                if (ActiveUserProfile == null || !HasCurrentMsfsPlaneTitle)
+                    return false;
+
+                var uProfile = UserProfiles.ToList().Find(u => u.BindingPlaneTitle.ToList().Exists(p => p == CurrentMsfsPlaneTitle));
+                if (uProfile != null && uProfile.ProfileId != ActiveUserProfileId)
+                    return false;
+
+                return ActiveUserProfile.BindingPlaneTitle.ToList().Exists(p => p == CurrentMsfsPlaneTitle);
+            }
+        }
+
+        public bool IsAllowedAddAircraftBinding
+        {
+            get
+            {
+                if (ActiveUserProfile == null || !HasCurrentMsfsPlaneTitle)
+                    return false;
+
+                var uProfile = UserProfiles.ToList().Find(u => u.BindingPlaneTitle.ToList().Exists(p => p == CurrentMsfsPlaneTitle));
+                if (uProfile != null && uProfile.ProfileId != ActiveUserProfileId)
+                    return false;
+
+                return !ActiveUserProfile.BindingPlaneTitle.ToList().Exists(p => p == CurrentMsfsPlaneTitle);
+            }
+        }
+
         public bool ElectricalMasterBatteryStatus { get; set; }
 
         public bool IsSimulatorStarted { get; set; }

@@ -31,22 +31,32 @@ namespace MSFSPopoutPanelManager.WpfApp
 
             this.Loaded += (sender, e) =>
             {
-                var dialogHandle = new WindowInteropHelper(Window.GetWindow(this)).Handle;
-                var simulatorProcessHandle = DiagnosticManager.GetSimulatorProcess().Handle;
+                var winObj = Window.GetWindow(this);
 
-                Rectangle rectangle;
-                PInvoke.GetWindowRect(DiagnosticManager.GetSimulatorProcess().Handle, out rectangle);
-                Rectangle clientRectangle;
-                PInvoke.GetClientRect(DiagnosticManager.GetSimulatorProcess().Handle, out clientRectangle);
+                if (winObj != null)
+                {
+                    var window = new WindowInteropHelper(winObj);
 
-                var x = Convert.ToInt32(rectangle.X + clientRectangle.Width / 2 - this.Width / 2);
-                var y = Convert.ToInt32(rectangle.Y + clientRectangle.Height / 2 - this.Height / 2);
+                    if (window != null)
+                    {
+                        var dialogHandle = window.Handle;
+                        var simulatorProcessHandle = DiagnosticManager.GetSimulatorProcess().Handle;
 
-                Debug.WriteLine($"Game Location: X:{rectangle.X} Y:{rectangle.Y}");
-                Debug.WriteLine($"Game Rectangle: Width:{clientRectangle.Width} Height:{clientRectangle.Height}");
-                Debug.WriteLine($"Message Dialog Location: X:{x} Y:{y}");
+                        Rectangle rectangle;
+                        PInvoke.GetWindowRect(DiagnosticManager.GetSimulatorProcess().Handle, out rectangle);
+                        Rectangle clientRectangle;
+                        PInvoke.GetClientRect(DiagnosticManager.GetSimulatorProcess().Handle, out clientRectangle);
 
-                PInvoke.MoveWindow(dialogHandle, x, y, Convert.ToInt32(this.Width), Convert.ToInt32(this.Height), false);
+                        var x = Convert.ToInt32(rectangle.X + clientRectangle.Width / 2 - this.Width / 2);
+                        var y = Convert.ToInt32(rectangle.Y + clientRectangle.Height / 2 - this.Height / 2);
+
+                        Debug.WriteLine($"Game Location: X:{rectangle.X} Y:{rectangle.Y}");
+                        Debug.WriteLine($"Game Rectangle: Width:{clientRectangle.Width} Height:{clientRectangle.Height}");
+                        Debug.WriteLine($"Message Dialog Location: X:{x} Y:{y}");
+
+                        PInvoke.MoveWindow(dialogHandle, x, y, Convert.ToInt32(this.Width), Convert.ToInt32(this.Height), false);
+                    }
+                }
             };
 
             System.Timers.Timer timer = new System.Timers.Timer();
