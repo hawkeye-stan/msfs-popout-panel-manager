@@ -21,6 +21,7 @@ namespace MSFSPopoutPanelManager.Model
         public AppSetting()
         {
             // Set defaults
+            LastUsedProfileId = -1;
             MinimizeToTray = false;
             AlwaysOnTop = true;
             UseAutoPanning = true;
@@ -29,12 +30,12 @@ namespace MSFSPopoutPanelManager.Model
             IncludeBuiltInPanel = false;
             AutoPopOutPanels = false;
             AutoPopOutPanelsWaitDelay = new AutoPopOutPanelsWaitDelay();
-            
         }
 
         public void Load()
         {
             var appSetting = ReadAppSetting();
+            this.LastUsedProfileId = appSetting.LastUsedProfileId;
             this.MinimizeToTray = appSetting.MinimizeToTray;
             this.AlwaysOnTop = appSetting.AlwaysOnTop;
             this.UseAutoPanning = appSetting.UseAutoPanning;
@@ -64,6 +65,8 @@ namespace MSFSPopoutPanelManager.Model
                     break;
             }
         }
+
+        public int LastUsedProfileId { get; set; }
 
         public bool MinimizeToTray { get; set; }
 
@@ -106,7 +109,7 @@ namespace MSFSPopoutPanelManager.Model
                     return JsonConvert.DeserializeObject<AppSetting>(reader.ReadToEnd());
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 // if file does not exist, write default data
                 var appSetting = new AppSetting();
@@ -129,7 +132,7 @@ namespace MSFSPopoutPanelManager.Model
                     serializer.Serialize(file, appSetting);
                 }
             }
-            catch(Exception ex)
+            catch
             {
                 Logger.LogStatus($"Unable to write app setting data file: {APP_SETTING_DATA_FILENAME}", StatusMessageType.Error);
             }

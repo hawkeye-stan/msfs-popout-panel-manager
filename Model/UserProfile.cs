@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
@@ -14,7 +13,7 @@ namespace MSFSPopoutPanelManager.Model
         {
             PanelSourceCoordinates = new ObservableCollection<PanelSourceCoordinate>();
             PanelConfigs = new ObservableCollection<PanelConfig>();
-            BindingPlaneTitle = new ObservableCollection<string>();
+            BindingAircraftLiveries = new ObservableCollection<string>();
             IsLocked = false;
         }
 
@@ -22,10 +21,8 @@ namespace MSFSPopoutPanelManager.Model
 
         public string ProfileName { get; set; }
 
-        public bool IsDefaultProfile { get; set; }
-
         [JsonConverter(typeof(SingleValueArrayConvertor<string>))]
-        public ObservableCollection<string> BindingPlaneTitle { get; set; }
+        public ObservableCollection<string> BindingAircraftLiveries { get; set; }
 
         public bool IsLocked { get; set; }
 
@@ -46,10 +43,21 @@ namespace MSFSPopoutPanelManager.Model
         public bool IsActive { get; set; }
 
         [JsonIgnore]
-        public bool HasBindingPlaneTitle
+        public bool HasBindingAircraftLiveries
         {
-            get { return BindingPlaneTitle.Count > 0; }
+            get { return BindingAircraftLiveries.Count > 0; }
         }
+
+        #region Legacy Properties
+
+        // Support pre-Version 3.3 tag for one time conversion
+        [JsonConverter(typeof(SingleValueArrayConvertor<string>))]
+        public ObservableCollection<string> BindingPlaneTitle
+        {
+            set { BindingAircraftLiveries = value; }
+        }
+
+        #endregion
     }
 
     public class SingleValueArrayConvertor<T> : JsonConverter

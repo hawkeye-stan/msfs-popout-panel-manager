@@ -34,8 +34,7 @@ namespace MSFSPopoutPanelManager.FsConnector
                 {
                     if (_simConnect == null)
                     {
-                        _simConnect = new SimConnect("MSFS Pop Out Panel Manager", Process.GetCurrentProcess().MainWindowHandle, WM_USER_SIMCONNECT, null, 0);
-                        
+                         _simConnect = new SimConnect("MSFS Pop Out Panel Manager", Process.GetCurrentProcess().MainWindowHandle, WM_USER_SIMCONNECT, null, 0);
 
                         _simConnect.OnRecvQuit += HandleOnRecvQuit;
                         _simConnect.OnRecvException += HandleOnRecvException;

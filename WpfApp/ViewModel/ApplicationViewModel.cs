@@ -256,7 +256,7 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
                 ShowPanelSelection(true);
 
                 // find the profile with the matching binding plane title
-                var profile = DataStore.UserProfiles.FirstOrDefault(p => p.BindingPlaneTitle.ToList().Exists(p => p == DataStore.CurrentMsfsPlaneTitle));
+                var profile = DataStore.UserProfiles.FirstOrDefault(p => p.BindingAircraftLiveries.ToList().Exists(p => p == DataStore.CurrentMsfsPlaneTitle));
 
                 if (profile == null || profile.PanelSourceCoordinates.Count == 0)
                     return;
@@ -304,7 +304,7 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
             // Automatic switching of active profile when SimConnect active aircraft livery changes
             if (DataStore.UserProfiles != null)
             {
-                var matchedProfile = DataStore.UserProfiles.ToList().Find(p => p.BindingPlaneTitle.ToList().Exists(t => t == activeAircraftTitle));
+                var matchedProfile = DataStore.UserProfiles.ToList().Find(p => p.BindingAircraftLiveries.ToList().Exists(t => t == activeAircraftTitle));
                 if (matchedProfile != null)
                     DataStore.ActiveUserProfileId = matchedProfile.ProfileId;
             }

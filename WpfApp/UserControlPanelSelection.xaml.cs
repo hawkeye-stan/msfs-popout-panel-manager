@@ -18,10 +18,11 @@ namespace MSFSPopoutPanelManager.WpfApp
             this.DataContext = panelSelectionViewModel;
         }
 
-
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            cmbProfile.SelectionChanged -= Profile_Changed;
             _panelSelectionViewModel.Initialize();
+            cmbProfile.SelectionChanged += Profile_Changed;
         }
 
         private void AddProfile_Click(object sender, RoutedEventArgs e)
@@ -48,6 +49,11 @@ namespace MSFSPopoutPanelManager.WpfApp
             {
                 _panelSelectionViewModel.DeleteProfileCommand.Execute(null);
             }
+        }
+
+        private void Profile_Changed(object sender, RoutedEventArgs e)
+        {
+            _panelSelectionViewModel.ChangeProfileCommand.Execute(null);
         }
 
         private void StartPanelSelection_Click(object sender, RoutedEventArgs e)

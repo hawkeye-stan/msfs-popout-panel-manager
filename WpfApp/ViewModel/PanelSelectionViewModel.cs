@@ -31,7 +31,7 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
 
         public DelegateCommand AddProfileCommand => new DelegateCommand(OnAddProfile, CanExecute);
         public DelegateCommand DeleteProfileCommand => new DelegateCommand(OnDeleteProfile, CanExecute);
-        public DelegateCommand SetDefaultProfileCommand => new DelegateCommand(OnSetDefaultProfile, CanExecute);
+        public DelegateCommand ChangeProfileCommand => new DelegateCommand(OnChangeProfile, CanExecute);
         public DelegateCommand AddProfileBindingCommand => new DelegateCommand(OnAddProfileBinding, CanExecute);
         public DelegateCommand DeleteProfileBindingCommand => new DelegateCommand(OnDeleteProfileBinding, CanExecute);
         public DelegateCommand SetPowerOnRequiredCommand => new DelegateCommand((e) => _userProfileManager.WriteUserProfiles(), CanExecute);
@@ -43,7 +43,10 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
         public PanelSelectionViewModel(DataStore dataStore, UserProfileManager userProfileManager, PanelPopOutManager panelPopoutManager, SimConnectManager simConnectManager)
         {
             DataStore = dataStore;
-            DataStore.OnActiveUserProfileChanged += (sender, e) => { IsEditingPanelCoorOverlay = false; RemoveAllPanelCoorOverlay(); };
+            DataStore.OnActiveUserProfileChanged += (sender, e) => { 
+                IsEditingPanelCoorOverlay = false; 
+                RemoveAllPanelCoorOverlay();
+            };
 
             _userProfileManager = userProfileManager;
             _simConnectManager = simConnectManager;
@@ -64,9 +67,7 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
         {
             _userProfileManager.ReadUserProfiles();
             DataStore.UserProfiles = _userProfileManager.UserProfiles;
-            
-            var defaultProfile = _userProfileManager.GetDefaultProfile();
-            DataStore.ActiveUserProfileId = defaultProfile == null ? -1 : defaultProfile.ProfileId;
+            DataStore.ActiveUserProfileId = DataStore.UserProfiles.ToList().Exists(p => p.ProfileId == DataStore.AppSetting.LastUsedProfileId) ? DataStore.AppSetting.LastUsedProfileId : -1;
 
             IsEditingPanelCoorOverlay = false;
 
@@ -81,6 +82,8 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
                 DataStore.ActiveUserProfileId = _userProfileManager.AddUserProfile(param.ProfileName);
             else
                 DataStore.ActiveUserProfileId = _userProfileManager.AddUserProfileByCopyingProfile(param.ProfileName, param.CopyProfileId);
+
+            DataStore.AppSetting.LastUsedProfileId = DataStore.ActiveUserProfileId;
         }
 
         private void OnDeleteProfile(object commandParameter)
@@ -89,9 +92,9 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
                 DataStore.ActiveUserProfileId = -1;
         }
 
-        private void OnSetDefaultProfile(object commandParameter)
+        private void OnChangeProfile(object commandParameter)
         {
-            _userProfileManager.SetDefaultUserProfile(DataStore.ActiveUserProfileId);
+            DataStore.AppSetting.LastUsedProfileId = DataStore.ActiveUserProfileId;
         }
 
         private void OnAddProfileBinding(object commandParameter)

@@ -124,7 +124,7 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
                 if (ActiveUserProfile == null)
                     return false;
                
-                return ActiveUserProfile.BindingPlaneTitle.ToList().Exists(p => p == CurrentMsfsPlaneTitle);
+                return ActiveUserProfile.BindingAircraftLiveries.ToList().Exists(p => p == CurrentMsfsPlaneTitle);
             }
         }
 
@@ -135,11 +135,11 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
                 if (ActiveUserProfile == null || !HasCurrentMsfsPlaneTitle)
                     return false;
 
-                var uProfile = UserProfiles.ToList().Find(u => u.BindingPlaneTitle.ToList().Exists(p => p == CurrentMsfsPlaneTitle));
+                var uProfile = UserProfiles.ToList().Find(u => u.BindingAircraftLiveries.ToList().Exists(p => p == CurrentMsfsPlaneTitle));
                 if (uProfile != null && uProfile.ProfileId != ActiveUserProfileId)
                     return false;
 
-                return ActiveUserProfile.BindingPlaneTitle.ToList().Exists(p => p == CurrentMsfsPlaneTitle);
+                return ActiveUserProfile.BindingAircraftLiveries.ToList().Exists(p => p == CurrentMsfsPlaneTitle);
             }
         }
 
@@ -150,11 +150,11 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
                 if (ActiveUserProfile == null || !HasCurrentMsfsPlaneTitle)
                     return false;
 
-                var uProfile = UserProfiles.ToList().Find(u => u.BindingPlaneTitle.ToList().Exists(p => p == CurrentMsfsPlaneTitle));
+                var uProfile = UserProfiles.ToList().Find(u => u.BindingAircraftLiveries.ToList().Exists(p => p == CurrentMsfsPlaneTitle));
                 if (uProfile != null && uProfile.ProfileId != ActiveUserProfileId)
                     return false;
 
-                return !ActiveUserProfile.BindingPlaneTitle.ToList().Exists(p => p == CurrentMsfsPlaneTitle);
+                return !ActiveUserProfile.BindingAircraftLiveries.ToList().Exists(p => p == CurrentMsfsPlaneTitle);
             }
         }
 

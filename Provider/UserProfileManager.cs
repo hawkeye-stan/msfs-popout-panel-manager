@@ -29,8 +29,7 @@ namespace MSFSPopoutPanelManager.Provider
             var matchedProfile = UserProfiles.FirstOrDefault(p => p.ProfileId == copyProfileId);
 
             var copiedProfile = matchedProfile.Copy<UserProfile>();     // Using Shared/ObjectExtensions.cs extension method
-            copiedProfile.IsDefaultProfile = false;
-            copiedProfile.BindingPlaneTitle = new ObservableCollection<string>();
+            copiedProfile.BindingAircraftLiveries = new ObservableCollection<string>();
 
             return AddProfile(copiedProfile, newProfileName);
         }
@@ -52,45 +51,16 @@ namespace MSFSPopoutPanelManager.Provider
             return true;
         }
 
-        public bool SetDefaultUserProfile(int profileId)
-        {
-            if (UserProfiles == null)
-                throw new Exception("User Profiles is null.");
-
-            if (profileId == -1)
-                return false;
-
-            var profile = UserProfiles.First(x => x.ProfileId == profileId);
-
-            profile.IsDefaultProfile = true;
-            foreach (var p in UserProfiles)
-            {
-                if (p.ProfileId != profileId)
-                    p.IsDefaultProfile = false;
-            }
-
-            WriteUserProfiles();
-
-            Logger.LogStatus($"Profile '{profile.ProfileName}' has been set as default.", StatusMessageType.Info);
-
-            return true;
-        }
-
-        public UserProfile GetDefaultProfile()
-        {
-            return UserProfiles.ToList().Find(x => x.IsDefaultProfile);
-        }
-
         public void AddProfileBinding(string planeTitle, int activeProfileId)
         {
-            var bindedProfile = UserProfiles.FirstOrDefault(p => p.BindingPlaneTitle.ToList().Exists(p => p == planeTitle));
+            var bindedProfile = UserProfiles.FirstOrDefault(p => p.BindingAircraftLiveries.ToList().Exists(p => p == planeTitle));
             if (bindedProfile != null)
             {
                 Logger.LogStatus($"Unable to add binding to the profile because '{planeTitle}' was already bound to profile '{bindedProfile.ProfileName}'.", StatusMessageType.Error);
                 return;
             }
 
-            UserProfiles.First(p => p.ProfileId == activeProfileId).BindingPlaneTitle.Add(planeTitle);
+            UserProfiles.First(p => p.ProfileId == activeProfileId).BindingAircraftLiveries.Add(planeTitle);
             WriteUserProfiles();
 
             Logger.LogStatus($"Binding for the profile has been added successfully.", StatusMessageType.Info);
@@ -98,7 +68,7 @@ namespace MSFSPopoutPanelManager.Provider
 
         public void DeleteProfileBinding(string planeTitle, int activeProfileId)
         {
-            UserProfiles.First(p => p.ProfileId == activeProfileId).BindingPlaneTitle.Remove(planeTitle);
+            UserProfiles.First(p => p.ProfileId == activeProfileId).BindingAircraftLiveries.Remove(planeTitle);
             WriteUserProfiles();
             Logger.LogStatus($"Binding for the profile has been deleted successfully.", StatusMessageType.Info);
         }
@@ -112,7 +82,7 @@ namespace MSFSPopoutPanelManager.Provider
                     UserProfiles = new ObservableCollection<UserProfile>(JsonConvert.DeserializeObject<List<UserProfile>>(reader.ReadToEnd()));
                 }
             }
-            catch(Exception ex)
+            catch
             {
                 UserProfiles = new ObservableCollection<UserProfile>(new List<UserProfile>());
             }

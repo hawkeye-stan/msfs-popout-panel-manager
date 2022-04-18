@@ -38,7 +38,7 @@
         <Style x:Key="ProfileDeletePlaneBindingDependency" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
             <Setter Property="IsEnabled" Value="False"/>
             <Style.Triggers>
-                <DataTrigger Binding="{c:Binding Path='DataStore.HasActiveUserProfileId and DataStore.ActiveUserProfile.HasBindingPlaneTitle and DataStore.IsAllowedDeleteAircraftBinding', Mode=OneWay}" Value="True">
+                <DataTrigger Binding="{c:Binding Path='DataStore.HasActiveUserProfileId and DataStore.ActiveUserProfile.HasBindingAircraftLiveries and DataStore.IsAllowedDeleteAircraftBinding', Mode=OneWay}" Value="True">
                     <Setter Property="IsEnabled" Value="True"/>
                 </DataTrigger>
             </Style.Triggers>
@@ -49,16 +49,18 @@
             <WrapPanel DockPanel.Dock="Left" Orientation="Vertical" Margin="15,10,0,0" Width="585" HorizontalAlignment="Left">
                 <Label Content="1. Please select a profile you would like to use." HorizontalAlignment="Left" />
                 <WrapPanel Orientation="Horizontal" Margin="20,5,0,0" HorizontalAlignment="Left">
-                    <ComboBox HorizontalAlignment="Left" 
-                          VerticalAlignment="Center" 
-                          Width="450"
-                          ItemsSource="{Binding Source={StaticResource UserProfilesViewSource}}" 
-                          SelectedValue="{Binding Path=DataStore.ActiveUserProfileId}" 
-                          DisplayMemberPath="ProfileName"
-                          SelectedValuePath="ProfileId"/>
+                    <ComboBox 
+                        x:Name="cmbProfile" 
+                        HorizontalAlignment="Left" 
+                        VerticalAlignment="Center" 
+                        Width="450"
+                        ItemsSource="{Binding Source={StaticResource UserProfilesViewSource}}" 
+                        SelectedValue="{Binding Path=DataStore.ActiveUserProfileId}" 
+                        DisplayMemberPath="ProfileName"
+                        SelectedValuePath="ProfileId"
+                        SelectionChanged="Profile_Changed"/>
                     <Button Content="+" ToolTip="Add Profile" HorizontalAlignment="Left" Margin="10,0,0,0" Width="40" Click="AddProfile_Click" />
                     <Button Content="-" ToolTip="Delete Profile" HorizontalAlignment="Left" Margin="10,0,0,0" Width="40" Click="DeleteProfile_Click" Style="{StaticResource ProfileSelectedDependency}"/>
-                    <!--<Button Content="D" ToolTip="Set Default Profile" HorizontalAlignment="Left" Margin="10,0,0,0" Width="40" Command="{Binding Path=SetDefaultProfileCommand}" Style="{StaticResource ProfileSelectedDependency}"/>-->
                 </WrapPanel>
                 <Separator Margin="5,10,5,10"/>
                 <Label Content="2. Optional: Bind active aircraft livery to profile to automatically pop out panels." HorizontalAlignment="Left" Margin="0,0,0,0" />

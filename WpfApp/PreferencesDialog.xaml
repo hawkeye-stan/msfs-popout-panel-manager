@@ -13,6 +13,19 @@
         Width="800"
         ResizeMode="NoResize" 
         Background="Transparent">
+    <Window.Resources>
+        <Style x:Key="TextBlockHeading" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="Width" Value="Auto"/>
+            <Setter Property="Margin" Value="24,5,0,10"/>
+        </Style>
+        <Style x:Key="TextBlockDescription" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="Width" Value="Auto"/>
+            <Setter Property="Margin" Value="24,5,0,10"/>
+        </Style>
+    </Window.Resources>
     <Grid>
         <DockPanel>
             <TreeView Width="250" VerticalAlignment="Stretch" DockPanel.Dock="Left">
@@ -26,7 +39,6 @@
                             <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="White"/>
                             <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey }" Color="Transparent"/>
                             <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey  }" Color="White"/>
-                            
                         </Style.Resources>
                     </Style>
                 </TreeView.ItemContainerStyle>
@@ -34,23 +46,37 @@
                 <TreeViewItem Header="Pop Out Settings" Selected="TreeViewItem_Selected" Margin="0,0,0,10"></TreeViewItem>
                 <TreeViewItem Header="Auto Pop Out Panel Settings" Selected="TreeViewItem_Selected" Margin="0,0,0,10"></TreeViewItem>
             </TreeView>
-            <WrapPanel Orientation="Vertical" DockPanel.Dock="Right" Margin="20,5,0,0" >
-                <WrapPanel Orientation="Vertical" Margin="0,10,0,0" Width="500" Visibility="{Binding Path=ApplicationSettingsVisibility, Mode=TwoWay}">
-                    <CheckBox Margin="0,0,0,0" IsChecked="{Binding Path=AppSetting.AlwaysOnTop, Mode=TwoWay}" Content="Always on Top"></CheckBox>
-                    <TextBlock Margin="24,5,0,10" Width="Auto" TextWrapping="Wrap" FontSize="14">Pin the application on top of all open windows.</TextBlock>
-                    <CheckBox Margin="0,0,0,0" IsChecked="{Binding Path=AppSetting.AutoStart, Mode=TwoWay}" Content="Auto Start"></CheckBox>
-                    <TextBlock Margin="24,5,0,10" Width="Auto" TextWrapping="Wrap" FontSize="14">Auto start the application when MSFS starts. This adds a XML config entry in EXE.xml file.</TextBlock>
+            <WrapPanel DockPanel.Dock="Right" Margin="20,15,20,0" Width="Auto" >
+                <WrapPanel Orientation="Vertical" Width="Auto" Visibility="{Binding Path=ApplicationSettingsVisibility, Mode=TwoWay}">
+                    <CheckBox IsChecked="{Binding Path=AppSetting.AlwaysOnTop, Mode=TwoWay}" Content="Always on Top"></CheckBox>
+                    <TextBlock Style="{StaticResource TextBlockDescription}">
+                        Pin the application on top of all open windows.
+                    </TextBlock>
+                    <CheckBox IsChecked="{Binding Path=AppSetting.AutoStart, Mode=TwoWay}" Content="Auto Start"></CheckBox>
+                    <TextBlock Style="{StaticResource TextBlockDescription}">
+                       Enable auto start the application when MSFS starts. This adds a XML config entry in EXE.xml file.
+                    </TextBlock>
                     <CheckBox IsChecked="{Binding Path=AppSetting.MinimizeToTray, Mode=TwoWay}" Content="Minimize to Tray"></CheckBox>
-                    <TextBlock Margin="24,5,0,10" Width="Auto" TextWrapping="Wrap" FontSize="14">Minimize the application to system tray.</TextBlock>
+                    <TextBlock Style="{StaticResource TextBlockDescription}">
+                        Minimize the application to system tray.
+                    </TextBlock>
                     <CheckBox IsChecked="{Binding Path=AppSetting.StartMinimized, Mode=TwoWay}" Content="Start Minimized"></CheckBox>
-                    <TextBlock Margin="24,5,0,10" Width="Auto" TextWrapping="Wrap" FontSize="14">Start the application in minimized mode in system tray.</TextBlock>
+                    <TextBlock Style="{StaticResource TextBlockDescription}">
+                        Start the application in minimized mode in system tray.
+                    </TextBlock>
                 </WrapPanel>
-                <WrapPanel Orientation="Vertical" Margin="0,10,0,0" Visibility="{Binding Path=PopOutSettingsVisibility, Mode=TwoWay}">
-                    <CheckBox IsChecked="{Binding Path=AppSetting.UseAutoPanning, Mode=TwoWay}" Content="Auto Panning"></CheckBox>
-                    <TextBlock Margin="24,5,0,10" Width="Auto" TextWrapping="Wrap" FontSize="14">Enable automatic panning of cockpit view when popping out panels. Auto Panning remembers the custom cockpit camera angle you used when defining the locations of pop out panel.</TextBlock>
-                    <TextBlock Margin="24,10,0,0" Width="Auto" TextWrapping="Wrap" >Key Binding</TextBlock>
-                    <TextBlock Margin="24,5,0,10" Width="Auto" TextWrapping="Wrap" FontSize="14">Configure key binding for saving and recalling of custom MSFS cockpit camera view when defining the locations of pop out panel. Default is Ctrl-Alt-0.</TextBlock>
-                    <WrapPanel Orientation="Horizontal" Margin="20,10,0,0">
+                <WrapPanel Orientation="Vertical" Width="Auto" Visibility="{Binding Path=PopOutSettingsVisibility, Mode=TwoWay}">
+                    <CheckBox IsChecked="{Binding Path=AppSetting.UseAutoPanning, Mode=TwoWay}" Content="Enable Auto Panning"></CheckBox>
+                    <TextBlock Style="{StaticResource TextBlockDescription}">
+                        Enable automatic panning of cockpit view when popping out panels. Auto Panning remembers the custom cockpit camera angle you used when defining the locations of pop out panel.
+                    </TextBlock>
+                    <TextBlock Style="{StaticResource TextBlockHeading}">
+                        Key Binding
+                    </TextBlock>
+                    <TextBlock Style="{StaticResource TextBlockDescription}">
+                        Configure key binding for saving and recalling of custom MSFS cockpit camera view when defining the locations of pop out panel.<LineBreak/>(Default: Ctrl-Alt-0).
+                    </TextBlock>
+                    <WrapPanel Orientation="Horizontal" Margin="20,10,0,15">
                         <Label Content="Ctrl-Alt-" FontSize="14"></Label>
                         <ComboBox HorizontalAlignment="Left" 
                               VerticalAlignment="Center" 
@@ -69,48 +95,47 @@
                             <ComboBoxItem Content="9" Tag="9"></ComboBoxItem>
                         </ComboBox>
                     </WrapPanel>
-                    <CheckBox Margin="0,15,0,0" IsChecked="{Binding Path=AppSetting.IncludeBuiltInPanel, Mode=TwoWay}" Content="Include Built-in Panels"></CheckBox>
-                    <TextBlock Margin="24,5,0,10" Width="Auto" TextWrapping="Wrap" FontSize="14">Enable saving and recalling of MSFS built-in panels (ie. ATC, VFR Map, Checklist, etc) as part of profile definition.</TextBlock>
+                    <CheckBox IsChecked="{Binding Path=AppSetting.IncludeBuiltInPanel, Mode=TwoWay}" Content="Include Built-in Panels"></CheckBox>
+                    <TextBlock Style="{StaticResource TextBlockDescription}">Enable saving and recalling of MSFS built-in panels (ie. ATC, VFR Map, Checklist, etc) as part of profile definition.</TextBlock>
                 </WrapPanel>
-                <WrapPanel Orientation="Vertical" Margin="0,10,0,0" Visibility="{Binding Path=AutoPopOutSettingsVisibility, Mode=TwoWay}">
-                    <CheckBox IsChecked="{Binding Path=AppSetting.AutoPopOutPanels, Mode=TwoWay}" Content="Auto Pop Out Panels"></CheckBox>
-                    <TextBlock Margin="24,5,0,0" Width="Auto" TextWrapping="Wrap" FontSize="14">
+                <WrapPanel Orientation="Vertical" Width="Auto" Visibility="{Binding Path=AutoPopOutSettingsVisibility, Mode=TwoWay}">
+                    <CheckBox IsChecked="{Binding Path=AppSetting.AutoPopOutPanels, Mode=TwoWay}" Content="Enable Auto Pop Out Panels"></CheckBox>
+                    <TextBlock Style="{StaticResource TextBlockDescription}">
                         Automatic pop out panels when an aircraft livery is binded to a profile. The following steps will be performed.
                     </TextBlock>
-                    <TextBlock Margin="24,5,5,0" Width="Auto" TextWrapping="Wrap" FontSize="14">
+                    <TextBlock Style="{StaticResource TextBlockDescription}">
                         1. Detect flight start signal using SimConnect.
                     </TextBlock>
-                    <TextBlock Margin="24,5,5,0" Width="Auto" TextWrapping="Wrap" FontSize="14">
+                    <TextBlock Style="{StaticResource TextBlockDescription}">
                         2. Wait for 'Ready to Fly' button to appear and simulate a left mouse click.
                     </TextBlock>
-                    <TextBlock Margin="24,5,5,0" Width="Auto" TextWrapping="Wrap" FontSize="14">
+                    <TextBlock Style="{StaticResource TextBlockDescription}">
                         3. Wait for cockpit view to appear before executing pop out panel sequence.
                     </TextBlock>
-                    <TextBlock Margin="24,5,5,0" Width="Auto" TextWrapping="Wrap" FontSize="14">
+                    <TextBlock Style="{StaticResource TextBlockDescription}">
                         4. If configured for a profile on cold start, wait for instrumentation power on before executing pop out panel sequence.
                     </TextBlock>
-                    <TextBlock Margin="24,20,0,10" Width="Auto" TextWrapping="Wrap" >Wait delay for each step during auto pop out process (in seconds)</TextBlock>
+                    <TextBlock Style="{StaticResource TextBlockHeading}">Wait delay for each step during auto pop out process (in seconds)</TextBlock>
                     <WrapPanel Orientation="Horizontal" Margin="24,0,0,0" >
-                        <mah:NumericUpDown Width="80" Minimum="1" Maximum="30" FontSize="16" Height="32" Value="{Binding Path=AppSetting.AutoPopOutPanelsWaitDelay.ReadyToFlyButton, Mode=TwoWay}"></mah:NumericUpDown>
+                        <mah:NumericUpDown Width="80" Minimum="1" Maximum="30" FontSize="16" Value="{Binding Path=AppSetting.AutoPopOutPanelsWaitDelay.ReadyToFlyButton, Mode=TwoWay}"></mah:NumericUpDown>
                         <Label Margin="10,0,0,0">Ready to Fly</Label>
                     </WrapPanel>
-                    <TextBlock Margin="119,0,10,10" Width="Auto" TextWrapping="Wrap" FontSize="14">Amount of time to wait for 'Ready to Fly' button to appear.<LineBreak/>(Default: 6 seconds)</TextBlock>
+                    <TextBlock Margin="119,0,10,10" Style="{StaticResource TextBlockDescription}">Amount of time to wait for 'Ready to Fly' button to appear.<LineBreak/>(Default: 6 seconds)</TextBlock>
                     <WrapPanel Orientation="Horizontal" Margin="24,0,0,0" >
-                        <mah:NumericUpDown Width="80" Minimum="1" Maximum="30" FontSize="16" Height="32" Value="{Binding Path=AppSetting.AutoPopOutPanelsWaitDelay.InitialCockpitView, Mode=TwoWay}"></mah:NumericUpDown>
-                        <Label Margin="10,0,0,0" >Initial Cockpit View</Label>
+                        <mah:NumericUpDown Width="80" Minimum="1" Maximum="30" FontSize="16" Value="{Binding Path=AppSetting.AutoPopOutPanelsWaitDelay.InitialCockpitView, Mode=TwoWay}"></mah:NumericUpDown>
+                        <Label Margin="10,0,0,0">Initial Cockpit View</Label>
                     </WrapPanel>
-                    <TextBlock Margin="119,0,10,10" Width="Auto" TextWrapping="Wrap" FontSize="14">Amount of time to wait for the cockpit to appear.<LineBreak/>(Default: 2 seconds)</TextBlock>
+                    <TextBlock Margin="119,0,10,10" Style="{StaticResource TextBlockDescription}">Amount of time to wait for the cockpit to appear.<LineBreak/>(Default: 2 seconds)</TextBlock>
                     <WrapPanel Orientation="Horizontal" Margin="24,0,0,00" >
-                        <mah:NumericUpDown Width="80" Minimum="1" Maximum="30" FontSize="16" Height="32" Value="{Binding Path=AppSetting.AutoPopOutPanelsWaitDelay.InstrumentationPowerOn, Mode=TwoWay}"></mah:NumericUpDown>
+                        <mah:NumericUpDown Width="80" Minimum="1" Maximum="30" FontSize="16" Value="{Binding Path=AppSetting.AutoPopOutPanelsWaitDelay.InstrumentationPowerOn, Mode=TwoWay}"></mah:NumericUpDown>
                         <Label Margin="10,0,0,0">Instrumentation Power On</Label>
                     </WrapPanel>
-                    <TextBlock Margin="119,0,10,10" Width="Auto" TextWrapping="Wrap" FontSize="14">Amount of time to wait for cold start instrumentation power on to complete.<LineBreak/>(Default: 2 seconds)</TextBlock>
+                    <TextBlock Margin="119,0,10,10" Style="{StaticResource TextBlockDescription}">Amount of time to wait for cold start instrumentation power on to complete.<LineBreak/>(Default: 2 seconds)</TextBlock>
                     <WrapPanel Orientation="Horizontal"></WrapPanel>
                 </WrapPanel>
                 <WrapPanel Orientation="Vertical" Visibility="Visible">
                 </WrapPanel>
             </WrapPanel>
-            
         </DockPanel>
     </Grid>
 </mah:MetroWindow>
