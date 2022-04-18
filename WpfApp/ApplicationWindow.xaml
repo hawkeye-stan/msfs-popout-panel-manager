@@ -65,7 +65,7 @@
                         <MenuItem Name="menuItem_DownloadLatestRelease" Header="Download Latest Release" Command="{Binding Path=DownloadLatestReleaseCommand}"/>
                     </MenuItem>
                 </Menu>
-                <Image Width="20" ToolTip="{Binding Path=DataStore.CurrentMsfsPlaneTitle}">
+                <Image Width="20">
                     <Image.Style>
                         <Style TargetType="Image">
                             <Style.Triggers>

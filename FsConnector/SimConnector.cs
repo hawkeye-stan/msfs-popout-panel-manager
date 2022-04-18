@@ -139,6 +139,7 @@ namespace MSFSPopoutPanelManager.FsConnector
         {
             OnDisconnected?.Invoke(this, null);
 
+            StopAndReconnect();
             // Try to reconnect again
             _timer.Enabled = true;
         }

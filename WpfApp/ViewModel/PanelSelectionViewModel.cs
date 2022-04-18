@@ -40,7 +40,6 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
         public DelegateCommand SaveAutoPanningCameraCommand => new DelegateCommand(OnSaveAutoPanningCamera, CanExecute);
         public DelegateCommand EditPanelCoorOverlayCommand => new DelegateCommand(OnEditPanelCoorOverlay, CanExecute);
 
-
         public PanelSelectionViewModel(DataStore dataStore, UserProfileManager userProfileManager, PanelPopOutManager panelPopoutManager, SimConnectManager simConnectManager)
         {
             DataStore = dataStore;

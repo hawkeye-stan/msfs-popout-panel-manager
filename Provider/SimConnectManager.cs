@@ -130,6 +130,7 @@ namespace MSFSPopoutPanelManager.Provider
             if (_lastSystemEvent == SimConnectSystemEvent.SIMSTART && systemEvent == SimConnectSystemEvent.VIEW && dwData == 4)
             {
                 _isSimActive = true;
+                _lastSystemEvent = SimConnectSystemEvent.NONE;
                 OnFlightStarted?.Invoke(this, null);
                 return;
             }

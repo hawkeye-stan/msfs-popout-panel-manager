@@ -1,13 +1,8 @@
 ﻿using MahApps.Metro.Controls;
 using MSFSPopoutPanelManager.Model;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 
 namespace MSFSPopoutPanelManager.WpfApp
 {
@@ -54,7 +49,7 @@ namespace MSFSPopoutPanelManager.WpfApp
             {
                 PopOutSettingsVisibility = Visibility.Visible;
             }
-            else if (treeViewItem.Header.ToString() == "Auto Pop Out Settings")
+            else if (treeViewItem.Header.ToString() == "Auto Pop Out Panel Settings")
             {
                 AutoPopOutSettingsVisibility = Visibility.Visible;
             }
