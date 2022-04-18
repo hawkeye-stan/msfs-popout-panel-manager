@@ -11,6 +11,7 @@ namespace MSFSPopoutPanelManager.Model
         Height,
         AlwaysOnTop,
         HideTitlebar,
+        FullScreen,
         Invalid
     }
 

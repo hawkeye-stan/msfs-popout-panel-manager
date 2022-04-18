@@ -62,8 +62,12 @@
                     <Button Content="+" ToolTip="Add Profile" HorizontalAlignment="Left" Margin="10,0,0,0" Width="40" Click="AddProfile_Click" />
                     <Button Content="-" ToolTip="Delete Profile" HorizontalAlignment="Left" Margin="10,0,0,0" Width="40" Click="DeleteProfile_Click" Style="{StaticResource ProfileSelectedDependency}"/>
                 </WrapPanel>
-                <Separator Margin="5,10,5,10"/>
-                <Label Content="2. Optional: Bind active aircraft livery to profile to automatically pop out panels." HorizontalAlignment="Left" Margin="0,0,0,0" />
+                <Separator Margin="5,10,5,5"/>
+                <Label HorizontalAlignment="Left" Margin="0,0,0,0" >
+                    <TextBlock TextWrapping="WrapWithOverflow">
+                        2. Bind active aircraft livery to the selected profile to automatically activate profile and to automatically pop out panels when a flight session starts.
+                    </TextBlock>
+                </Label>
                 <WrapPanel Orientation="Vertical" Margin="15,0,0,0" HorizontalAlignment="Left">
                     <WrapPanel Orientation="Horizontal" Margin="5,5,0,0" HorizontalAlignment="Left">
                         <Label Content="{c:Binding Path='DataStore.CurrentMsfsPlaneTitle == null ? &quot;Active aircraft livery is unavailable&quot; : DataStore.CurrentMsfsPlaneTitle'}" HorizontalContentAlignment="Left" HorizontalAlignment="Left" FontStyle="Italic" Width="450">
@@ -84,14 +88,14 @@
                                 </Style>
                             </Label.Style>
                         </Label>
-                        <Button Content="+" ToolTip="Add Bidning" Margin="10,0,0,0" Width="40" Click="AddBinding_Click" Style="{StaticResource ProfileAddPlaneBindingDependency}"/>
+                        <Button Content="+" ToolTip="Add Binding" Margin="10,0,0,0" Width="40" Click="AddBinding_Click" Style="{StaticResource ProfileAddPlaneBindingDependency}"/>
                         <Button Content="-" ToolTip="Delete Binding"  Margin="10,0,0,0" Width="40" Click="DeleteBinding_Click" Style="{StaticResource ProfileDeletePlaneBindingDependency}"/>
                     </WrapPanel>
                     <CheckBox Margin="10,5,0,0" IsChecked="{Binding Path=DataStore.ActiveUserProfile.PowerOnRequiredForColdStart}" IsEnabled="{Binding Path=DataStore.HasActiveUserProfileId}" Command="{Binding Path=SetPowerOnRequiredCommand}">
                         <TextBlock Text="Power on required to pop out panels on cold start" TextWrapping="Wrap"  Margin="5,0,0,3"/>
                     </CheckBox>
                 </WrapPanel>
-                <Separator Margin="5,10,5,10"/>
+                <Separator Margin="5,10,5,5"/>
                 <Label Content="3. Identify pop out panel locations in the game by clicking on them." Margin="0,0,0,0" />
                 <WrapPanel Orientation="Vertical" Margin="20,0,0,0" HorizontalAlignment="Left">
                     <WrapPanel Orientation="Horizontal">
@@ -112,7 +116,7 @@
                         <Button Content="Save Auto Panning Camera" HorizontalAlignment="Left" Margin="20,0,0,0" IsEnabled="{c:Binding Path='DataStore.HasActiveUserProfileId and DataStore.IsFlightActive'}" Width="215" Click="SaveAutoPanningCamera_Click" Style="{StaticResource ProfileSelectedDependency}"/>
                     </WrapPanel>
                 </WrapPanel>
-                <Separator Margin="5,10,5,10"/>
+                <Separator Margin="5,10,5,5"/>
                 <Label Content="4. Start the pop out process for selected panels." Margin="0,0,0,0" />
                 <Button Content="Start Pop Out" HorizontalAlignment="Left" Margin="20,5,0,0" Width="130" IsEnabled="{c:Binding Path='DataStore.HasActiveUserProfileId and DataStore.IsFlightActive'}" Command="{Binding Path=StartPopOutCommand}" Style="{StaticResource ProfileSelectedDependency}"/>
             </WrapPanel>

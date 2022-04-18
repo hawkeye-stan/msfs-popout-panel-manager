@@ -65,6 +65,9 @@ namespace MSFSPopoutPanelManager.WpfApp
                     case "Hide Titlebar":
                         selectedProperty = PanelConfigPropertyName.HideTitlebar;
                         break;
+                    case "Full Screen Mode":
+                        selectedProperty = PanelConfigPropertyName.FullScreen;
+                        break;
                 }
 
                  _panelConfigurationViewModel.SelectedPanelConfigItem = new PanelConfigItem() { PanelIndex = panelConfig.PanelIndex, PanelConfigProperty = selectedProperty };

@@ -3,7 +3,6 @@ using MSFSPopoutPanelManager.Shared;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
@@ -236,23 +235,34 @@ namespace MSFSPopoutPanelManager.Provider
                         Thread.Sleep(500);
                     }
 
-                    // Apply locations
-                    PInvoke.ShowWindow(panel.PanelHandle, PInvokeConstant.SW_RESTORE);
-                    Thread.Sleep(250);
-                    PInvoke.MoveWindow(panel.PanelHandle, panel.Left, panel.Top, panel.Width, panel.Height, false);
-                    Thread.Sleep(1000);
-
-                    // Apply always on top
-                    if (panel.AlwaysOnTop)
+                    // Apply full screen (cannot combine with always on top or hide title bar
+                    if (panel.FullScreen)
                     {
-                        WindowManager.ApplyAlwaysOnTop(panel.PanelHandle, true, new Rectangle(panel.Left, panel.Top, panel.Width, panel.Height));
+                        WindowManager.MoveWindow(panel.PanelHandle, panel.Left, panel.Top);
+                        Thread.Sleep(1000);
+                        InputEmulationManager.ToggleFullScreenPanel(panel.PanelHandle);
                         Thread.Sleep(1000);
                     }
-
-                    // Apply hide title bar
-                    if (panel.HideTitlebar)
+                    else 
                     {
-                        WindowManager.ApplyHidePanelTitleBar(panel.PanelHandle, true);
+                        // Apply locations
+                        PInvoke.ShowWindow(panel.PanelHandle, PInvokeConstant.SW_RESTORE);
+                        Thread.Sleep(250);
+                        PInvoke.MoveWindow(panel.PanelHandle, panel.Left, panel.Top, panel.Width, panel.Height, false);
+                        Thread.Sleep(1000);
+
+                        // Apply always on top
+                        if (panel.AlwaysOnTop)
+                        {
+                            WindowManager.ApplyAlwaysOnTop(panel.PanelHandle, true, new Rectangle(panel.Left, panel.Top, panel.Width, panel.Height));
+                            Thread.Sleep(1000);
+                        }
+
+                        // Apply hide title bar
+                        if (panel.HideTitlebar)
+                        {
+                            WindowManager.ApplyHidePanelTitleBar(panel.PanelHandle, true);
+                        }
                     }
 
                     PInvoke.ShowWindow(panel.PanelHandle, PInvokeConstant.SW_RESTORE);

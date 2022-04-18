@@ -1,6 +1,5 @@
 ﻿using MSFSPopoutPanelManager.Model;
 using System;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 
@@ -51,37 +50,47 @@ namespace MSFSPopoutPanelManager.Provider
 
             if (panelConfig != null)
             {
-                switch (panelConfigItem.PanelConfigProperty)
+                if (panelConfigItem.PanelConfigProperty == PanelConfigPropertyName.FullScreen)
                 {
-                    case PanelConfigPropertyName.PanelName:
-                        var name = panelConfig.PanelName;
-                        if (name.IndexOf("(Custom)") == -1)
-                            name = name + " (Custom)";
-                        PInvoke.SetWindowText(panelConfig.PanelHandle, name);
-                        break;
-                    case PanelConfigPropertyName.Left:
-                    case PanelConfigPropertyName.Top:
-                        PInvoke.MoveWindow(panelConfig.PanelHandle, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height, true);
-                        break;
-                    case PanelConfigPropertyName.Width:
-                    case PanelConfigPropertyName.Height:
-                        if (panelConfig.HideTitlebar)
-                            WindowManager.ApplyHidePanelTitleBar(panelConfig.PanelHandle, false);
+                    InputEmulationManager.ToggleFullScreenPanel(panelConfig.PanelHandle);
+                    panelConfig.HideTitlebar = false;
+                    panelConfig.AlwaysOnTop = false;
+                }
+                else if (panelConfigItem.PanelConfigProperty == PanelConfigPropertyName.PanelName)
+                {
+                    var name = panelConfig.PanelName;
+                    if (name.IndexOf("(Custom)") == -1)
+                        name = name + " (Custom)";
+                    PInvoke.SetWindowText(panelConfig.PanelHandle, name);
+                }
+                else if(!panelConfig.FullScreen)
+                {
+                    switch (panelConfigItem.PanelConfigProperty)
+                    {
+                        case PanelConfigPropertyName.Left:
+                        case PanelConfigPropertyName.Top:
+                            PInvoke.MoveWindow(panelConfig.PanelHandle, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height, true);
+                            break;
+                        case PanelConfigPropertyName.Width:
+                        case PanelConfigPropertyName.Height:
+                            if (panelConfig.HideTitlebar)
+                                WindowManager.ApplyHidePanelTitleBar(panelConfig.PanelHandle, false);
 
-                        int orignalLeft = panelConfig.Left;
-                        PInvoke.MoveWindow(panelConfig.PanelHandle, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height, true);
-                        MSFSBugPanelShiftWorkaround(panelConfig.PanelHandle, orignalLeft, panelConfig.Top, panelConfig.Width, panelConfig.Height);
+                            int orignalLeft = panelConfig.Left;
+                            PInvoke.MoveWindow(panelConfig.PanelHandle, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height, true);
+                            MSFSBugPanelShiftWorkaround(panelConfig.PanelHandle, orignalLeft, panelConfig.Top, panelConfig.Width, panelConfig.Height);
 
-                        if (panelConfig.HideTitlebar)
-                            WindowManager.ApplyHidePanelTitleBar(panelConfig.PanelHandle, true);
+                            if (panelConfig.HideTitlebar)
+                                WindowManager.ApplyHidePanelTitleBar(panelConfig.PanelHandle, true);
 
-                        break;
-                    case PanelConfigPropertyName.AlwaysOnTop:
-                        WindowManager.ApplyAlwaysOnTop(panelConfig.PanelHandle, panelConfig.AlwaysOnTop, new Rectangle(panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height));
-                        break;
-                    case PanelConfigPropertyName.HideTitlebar:
-                        WindowManager.ApplyHidePanelTitleBar(panelConfig.PanelHandle, panelConfig.HideTitlebar);
-                        break;
+                            break;
+                        case PanelConfigPropertyName.AlwaysOnTop:
+                            WindowManager.ApplyAlwaysOnTop(panelConfig.PanelHandle, panelConfig.AlwaysOnTop, new Rectangle(panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height));
+                            break;
+                        case PanelConfigPropertyName.HideTitlebar:
+                            WindowManager.ApplyHidePanelTitleBar(panelConfig.PanelHandle, panelConfig.HideTitlebar);
+                            break;
+                    }
                 }
 
                 _userProfileManager.WriteUserProfiles();
@@ -98,6 +107,11 @@ namespace MSFSPopoutPanelManager.Provider
             if (index > -1)
             {
                 var panelConfig = UserProfile.PanelConfigs[index];
+
+                // Cannot apply any other settings if panel is full screen mode
+                if (panelConfig.FullScreen)
+                    return;
+
                 int orignalLeft = panelConfig.Left;
 
                 switch (panelConfigItem.PanelConfigProperty)

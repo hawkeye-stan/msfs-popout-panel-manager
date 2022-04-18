@@ -19,6 +19,7 @@ namespace MSFSPopoutPanelManager.Provider
         const uint VK_LMENU = 0xA4;
         const uint VK_LCONTROL = 0xA2;
         const uint VK_SPACE = 0x20;
+        const uint VK_ENT = 0x0D;
         const uint KEY_0 = 0x30;
 
         public static void LeftClick(int x, int y)
@@ -106,6 +107,21 @@ namespace MSFSPopoutPanelManager.Provider
             PInvoke.keybd_event(Convert.ToByte(VK_LMENU), 0, KEYEVENTF_KEYUP, 0);
         }
 
+        public static void ToggleFullScreenPanel(IntPtr hwnd)
+        {
+            PInvoke.SetForegroundWindow(hwnd);
+            Thread.Sleep(500);
+
+            PInvoke.SetFocus(hwnd);
+            Thread.Sleep(300);
+
+            PInvoke.keybd_event(Convert.ToByte(VK_RMENU), 0, KEYEVENTF_KEYDOWN, 0);
+            PInvoke.keybd_event(Convert.ToByte(VK_ENT), 0, KEYEVENTF_KEYDOWN, 0);
+            Thread.Sleep(200);
+            PInvoke.keybd_event(Convert.ToByte(VK_ENT), 0, KEYEVENTF_KEYUP, 0);
+            PInvoke.keybd_event(Convert.ToByte(VK_RMENU), 0, KEYEVENTF_KEYUP, 0);
+        }
+
         public static void LeftClickReadyToFly()
         {
             var simualatorProcess = DiagnosticManager.GetSimulatorProcess();
@@ -132,8 +148,7 @@ namespace MSFSPopoutPanelManager.Provider
                 LeftClick(x, y);
                 Thread.Sleep(250);
 
-
-                Debug.WriteLine($"Windows Mode 'Ready to Fly' button coordinate: {x}, {y}");
+                //Debug.WriteLine($"Windows Mode 'Ready to Fly' button coordinate: {x}, {y}");
 
                 // For full screen mode
                 x = Convert.ToInt32(rectangle.X + (clientRectangle.Width) * 0.93);    
@@ -144,8 +159,7 @@ namespace MSFSPopoutPanelManager.Provider
                 LeftClick(x, y);
                 Thread.Sleep(250);
 
-                Debug.WriteLine($"Full Screen Mode 'Ready to Fly' button coordinate: {x} , {y}");
-
+                //Debug.WriteLine($"Full Screen Mode 'Ready to Fly' button coordinate: {x} , {y}");
             }
         }
     }

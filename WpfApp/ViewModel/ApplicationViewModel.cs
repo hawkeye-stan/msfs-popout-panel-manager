@@ -130,6 +130,7 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
                 OnAlwaysOnTopChanged(this, new EventArgs<bool>(DataStore.AppSetting.AlwaysOnTop));
 
             // Activate auto pop out panels
+            _simConnectManager.OnFlightStopped += HandleOnFlightStopped;
             if (DataStore.AppSetting.AutoPopOutPanels)
                 ActivateAutoPanelPopOut();
 
@@ -234,14 +235,12 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
         private void ActivateAutoPanelPopOut()
         {
             _simConnectManager.OnFlightStarted += HandleOnFlightStarted;
-            _simConnectManager.OnFlightStopped += HandleOnFlightStopped;
         }
 
         private void DeativateAutoPanelPopOut()
         {
             DataStore.IsEnteredFlight = false;
             _simConnectManager.OnFlightStarted -= HandleOnFlightStarted;
-            _simConnectManager.OnFlightStopped -= HandleOnFlightStopped;
         }
 
         private void HandleOnFlightStarted(object sender, EventArgs e)

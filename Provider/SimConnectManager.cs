@@ -69,11 +69,9 @@ namespace MSFSPopoutPanelManager.Provider
                 Thread.Sleep(100);
                 _simConnector.TransmitActionEvent(ActionEvent.KEY_ALTERNATOR_SET, 1);
                 Thread.Sleep(100);
-                _simConnector.TransmitActionEvent(ActionEvent.KEY_AVIONICS_MASTER_1_ON, 1);
-                Thread.Sleep(100);
-                _simConnector.TransmitActionEvent(ActionEvent.KEY_AVIONICS_MASTER_2_ON, 1);
-                Thread.Sleep(100);
                 _simConnector.TransmitActionEvent(ActionEvent.KEY_AVIONICS_MASTER_SET, 1);
+                Thread.Sleep(100);
+                _simConnector.TransmitActionEvent(ActionEvent.KEY_AVIONICS_MASTER_2_SET, 1);
             }
         }
 
@@ -81,9 +79,7 @@ namespace MSFSPopoutPanelManager.Provider
         {
             if(_isPowerOnForPopOut)
             {
-                _simConnector.TransmitActionEvent(ActionEvent.KEY_AVIONICS_MASTER_1_OFF, 1);
-                Thread.Sleep(100);
-                _simConnector.TransmitActionEvent(ActionEvent.KEY_AVIONICS_MASTER_2_OFF, 1);
+                _simConnector.TransmitActionEvent(ActionEvent.KEY_AVIONICS_MASTER_2_SET, 0);
                 Thread.Sleep(100);
                 _simConnector.TransmitActionEvent(ActionEvent.KEY_AVIONICS_MASTER_SET, 0);
                 Thread.Sleep(100);

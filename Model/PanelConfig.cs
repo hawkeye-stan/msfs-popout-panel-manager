@@ -26,6 +26,8 @@ namespace MSFSPopoutPanelManager.Model
 
         public bool HideTitlebar { get; set; }
 
+        public bool FullScreen { get; set; }
+
         [JsonIgnore]
         public bool IsCustomPopout { get { return PanelType == PanelType.CustomPopout; } }
 
