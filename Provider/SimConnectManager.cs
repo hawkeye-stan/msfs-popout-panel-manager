@@ -115,15 +115,14 @@ namespace MSFSPopoutPanelManager.Provider
             OnSimConnectDataRefreshed?.Invoke(this, new EventArgs<dynamic>(e.Value));
         }
 
-        private void HandleReceiveSystemEvent(object sender, EventArgs<Tuple<SimConnectSystemEvent, uint>> e)
+        private void HandleReceiveSystemEvent(object sender, EventArgs<SimConnectSystemEvent> e)
         {
-            var systemEvent = e.Value.Item1;
-            var dwData = e.Value.Item2;
+            var systemEvent = e.Value;
 
-            Debug.WriteLine($"SimConnectSystemEvent Received: {systemEvent}  dwData: {dwData}");
+            Debug.WriteLine($"SimConnectSystemEvent Received: {systemEvent}");
 
             // to detect flight start at the "Ready to Fly" screen, it has a SIMSTART follows by a VIEW event
-            if (_lastSystemEvent == SimConnectSystemEvent.SIMSTART && systemEvent == SimConnectSystemEvent.VIEW && dwData == 4)
+            if (_lastSystemEvent == SimConnectSystemEvent.SIMSTART && systemEvent == SimConnectSystemEvent.VIEW)
             {
                 _isSimActive = true;
                 _lastSystemEvent = SimConnectSystemEvent.NONE;
@@ -132,8 +131,8 @@ namespace MSFSPopoutPanelManager.Provider
             }
             
             // look for pair of events denoting sim ended after sim is active
-            if ((_isSimActive && _lastSystemEvent == SimConnectSystemEvent.SIMSTOP && systemEvent == SimConnectSystemEvent.VIEW && dwData == 4) ||
-                (_isSimActive && _lastSystemEvent == SimConnectSystemEvent.SIMSTOP && systemEvent == SimConnectSystemEvent.SIMSTART && dwData == 1))
+            if ((_isSimActive && _lastSystemEvent == SimConnectSystemEvent.SIMSTOP && systemEvent == SimConnectSystemEvent.VIEW) ||
+                (_isSimActive && _lastSystemEvent == SimConnectSystemEvent.SIMSTOP && systemEvent == SimConnectSystemEvent.SIMSTART))
             {
                 _isSimActive = false;
                 _lastSystemEvent = SimConnectSystemEvent.NONE;

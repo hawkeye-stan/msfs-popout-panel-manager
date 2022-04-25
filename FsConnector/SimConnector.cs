@@ -19,7 +19,7 @@ namespace MSFSPopoutPanelManager.FsConnector
         public event EventHandler<EventArgs<dynamic>> OnReceivedData;
         public event EventHandler OnConnected;
         public event EventHandler OnDisconnected;
-        public event EventHandler<EventArgs<Tuple<SimConnectSystemEvent, uint>>> OnReceiveSystemEvent;
+        public event EventHandler<EventArgs<SimConnectSystemEvent>> OnReceiveSystemEvent;
 
         public dynamic SimData { get; set; }
 
@@ -183,9 +183,7 @@ namespace MSFSPopoutPanelManager.FsConnector
         private void HandleOnReceiveEvent(SimConnect sender, SIMCONNECT_RECV_EVENT data)
         {
             var systemEvent = ((SimConnectSystemEvent)data.uEventID);
-            var tuple = new Tuple<SimConnectSystemEvent, uint>(systemEvent, data.uEventID);
-
-            OnReceiveSystemEvent?.Invoke(this, new EventArgs<Tuple<SimConnectSystemEvent, uint>>(tuple));
+            OnReceiveSystemEvent?.Invoke(this, new EventArgs<SimConnectSystemEvent>(systemEvent));
         }
     }
 }
