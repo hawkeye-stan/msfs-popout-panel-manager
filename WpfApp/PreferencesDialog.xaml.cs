@@ -23,6 +23,7 @@ namespace MSFSPopoutPanelManager.WpfApp
             ApplicationSettingsVisibility = Visibility.Visible;
             PopOutSettingsVisibility = Visibility.Collapsed;
             AutoPopOutSettingsVisibility = Visibility.Collapsed;
+            TrackIRSettingsVisibility = Visibility.Collapsed;
         }
 
         public AppSetting AppSetting { get; set; }
@@ -33,6 +34,8 @@ namespace MSFSPopoutPanelManager.WpfApp
 
         public Visibility AutoPopOutSettingsVisibility { get; set; }
 
+        public Visibility TrackIRSettingsVisibility { get; set; }
+
         private void TreeViewItem_Selected(object sender, RoutedEventArgs e)
         {
             var treeViewItem = (TreeViewItem)e.Source;
@@ -40,6 +43,7 @@ namespace MSFSPopoutPanelManager.WpfApp
             ApplicationSettingsVisibility = Visibility.Collapsed;
             PopOutSettingsVisibility = Visibility.Collapsed;
             AutoPopOutSettingsVisibility = Visibility.Collapsed;
+            TrackIRSettingsVisibility = Visibility.Collapsed;
 
             if (treeViewItem.Header.ToString() == "Application Settings")
             {
@@ -52,6 +56,10 @@ namespace MSFSPopoutPanelManager.WpfApp
             else if (treeViewItem.Header.ToString() == "Auto Pop Out Panel Settings")
             {
                 AutoPopOutSettingsVisibility = Visibility.Visible;
+            }
+            else if (treeViewItem.Header.ToString() == "Track IR Settings")
+            {
+                TrackIRSettingsVisibility = Visibility.Visible;
             }
         }
     }

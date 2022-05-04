@@ -21,6 +21,8 @@ namespace MSFSPopoutPanelManager.Model
         public AppSetting()
         {
             // Set defaults
+            AutoUpdaterUrl = "https://raw.githubusercontent.com/hawkeye-stan/msfs-popout-panel-manager/master/autoupdate.xml";
+            //AutoUpdaterUrl = "https://raw.githubusercontent.com/hawkeye-stan/AutoUpdateTest/main/autoupdate.xml";      // Test URL against test repo
             LastUsedProfileId = -1;
             MinimizeToTray = false;
             AlwaysOnTop = true;
@@ -28,6 +30,7 @@ namespace MSFSPopoutPanelManager.Model
             AutoPanningKeyBinding = "0";
             StartMinimized = false;
             IncludeBuiltInPanel = false;
+            AutoDisableTrackIR = true;
             AutoPopOutPanels = false;
             AutoPopOutPanelsWaitDelay = new AutoPopOutPanelsWaitDelay();
         }
@@ -35,6 +38,7 @@ namespace MSFSPopoutPanelManager.Model
         public void Load()
         {
             var appSetting = ReadAppSetting();
+            this.AutoUpdaterUrl = appSetting.AutoUpdaterUrl;
             this.LastUsedProfileId = appSetting.LastUsedProfileId;
             this.MinimizeToTray = appSetting.MinimizeToTray;
             this.AlwaysOnTop = appSetting.AlwaysOnTop;
@@ -42,6 +46,7 @@ namespace MSFSPopoutPanelManager.Model
             this.AutoPanningKeyBinding = appSetting.AutoPanningKeyBinding;
             this.StartMinimized = appSetting.StartMinimized;
             this.IncludeBuiltInPanel = appSetting.IncludeBuiltInPanel;
+            this.AutoDisableTrackIR = appSetting.AutoDisableTrackIR;
             this.AutoPopOutPanels = appSetting.AutoPopOutPanels;
             this.AutoPopOutPanelsWaitDelay = appSetting.AutoPopOutPanelsWaitDelay;
             AutoPopOutPanelsWaitDelay.DataChanged += (e, source) => WriteAppSetting(this);
@@ -66,6 +71,8 @@ namespace MSFSPopoutPanelManager.Model
             }
         }
 
+        public string AutoUpdaterUrl { get; set; }
+
         public int LastUsedProfileId { get; set; }
 
         public bool MinimizeToTray { get; set; }
@@ -81,6 +88,8 @@ namespace MSFSPopoutPanelManager.Model
         public bool IncludeBuiltInPanel { get; set; }
 
         public bool AutoPopOutPanels { get; set; }
+
+        public bool AutoDisableTrackIR { get; set; }
 
         public AutoPopOutPanelsWaitDelay AutoPopOutPanelsWaitDelay { get; set; }
 

@@ -11,14 +11,5 @@ namespace MSFSPopoutPanelManager.FsConnector
 
         public double Prop02;
         public double Prop03;
-        public double Prop04;
-        public double Prop05;
-        public double Prop06;
-        public double Prop07;
-        public double Prop08;
-        public double Prop09;
-        public double Prop10;
-
-        // Add more as DataDefinition grows
     }
 }

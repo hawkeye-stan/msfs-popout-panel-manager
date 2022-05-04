@@ -134,6 +134,21 @@ namespace MSFSPopoutPanelManager.FsConnector
             }
         }
 
+        public void SetDataObject(SimConnectStruct simConnectStruct)
+        {
+            if (_simConnect != null)
+            {
+                try
+                {
+                    _simConnect.SetDataOnSimObject(SimConnectDefinition.SimConnectDataStruct, SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_DATA_SET_FLAG.DEFAULT, simConnectStruct);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Unable to set SimConnect variable: {ex.Message}");
+                }
+            }
+        }
+
         private void HandleOnRecvQuit(SimConnect sender, SIMCONNECT_RECV data)
         {
             OnDisconnected?.Invoke(this, null);
@@ -147,9 +162,15 @@ namespace MSFSPopoutPanelManager.FsConnector
         {
             var exception = (SIMCONNECT_EXCEPTION)data.dwException;
 
-            if (exception != SIMCONNECT_EXCEPTION.NAME_UNRECOGNIZED && exception != SIMCONNECT_EXCEPTION.EVENT_ID_DUPLICATE)
+            switch(exception)
             {
-                Debug.WriteLine($"MSFS Error - {exception}");
+                case SIMCONNECT_EXCEPTION.DATA_ERROR:
+                case SIMCONNECT_EXCEPTION.NAME_UNRECOGNIZED:
+                case SIMCONNECT_EXCEPTION.EVENT_ID_DUPLICATE:
+                    return;
+                default:
+                    Debug.WriteLine($"MSFS Error - {exception}");
+                    break;
             }
         }
 

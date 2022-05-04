@@ -1,7 +1,6 @@
 ﻿using MSFSPopoutPanelManager.FsConnector;
 using MSFSPopoutPanelManager.Shared;
 using System;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading;
 using System.Timers;
@@ -19,6 +18,7 @@ namespace MSFSPopoutPanelManager.Provider
         private SimConnectSystemEvent _lastSystemEvent;
         private bool _isSimActive;
         private bool _isPowerOnForPopOut;
+        private bool _isTrackIRManaged;
 
         public event EventHandler OnConnected;
         public event EventHandler OnDisconnected;
@@ -89,6 +89,32 @@ namespace MSFSPopoutPanelManager.Provider
 
                 _isPowerOnForPopOut = false;
             }
+        }
+
+        public void TurnOffTrackIR()
+        {
+            if(_simData.TrackIREnable)
+            {
+                SetTrackIREnable(false);
+                _isTrackIRManaged = true;
+            }
+        }
+
+        public void TurnOnTrackIR()
+        {
+            if (_isTrackIRManaged && !_simData.TrackIREnable)
+            {
+                SetTrackIREnable(true);
+                _isTrackIRManaged = false;
+            }
+        }
+
+        private void SetTrackIREnable(bool enable)
+        {
+            // It is prop3 in SimConnectStruct (by DataDefinitions.cs)
+            SimConnectStruct simConnectStruct = new SimConnectStruct();
+            simConnectStruct.Prop03 = enable ? Convert.ToDouble(1): Convert.ToDouble(0);
+            _simConnector.SetDataObject(simConnectStruct);
         }
 
         private void HandleDataRequested(object sender, ElapsedEventArgs e)

@@ -121,6 +121,10 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
 
         private void OnStartPanelSelection(object commandParameter)
         {
+            // Turn off TrackIR if TrackIR is started
+            if (DataStore.AppSetting.AutoDisableTrackIR)
+                _simConnectManager.TurnOffTrackIR();
+
             WindowManager.MinimizeWindow(DataStore.ApplicationHandle);      // Window hide doesn't work when try to reshow window after selection completes. So need to use minimize.
             _panelSelectionManager.UserProfile = DataStore.ActiveUserProfile;
             _panelSelectionManager.AppSetting = DataStore.AppSetting;
@@ -171,6 +175,15 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
 
         private void OnEditPanelCoorOverlay(object commandParameter)
         {
+            // Turn off TrackIR if TrackIR is started
+            if (commandParameter == null && DataStore.AppSetting.AutoDisableTrackIR)
+            {
+                if(IsEditingPanelCoorOverlay)
+                    _simConnectManager.TurnOffTrackIR();
+                else
+                    _simConnectManager.TurnOnTrackIR();
+            }
+
             if (IsEditingPanelCoorOverlay)
             {
                 RemoveAllPanelCoorOverlay();
@@ -232,10 +245,14 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
         {
             // Hide panel coordinate overlays
             IsEditingPanelCoorOverlay = false;
-            OnEditPanelCoorOverlay(null);
+            OnEditPanelCoorOverlay(false);
 
             // Close all pop out panels
             WindowManager.CloseAllCustomPopoutPanels();
+
+            // Turn off TrackIR if TrackIR is started
+            if (DataStore.AppSetting.AutoDisableTrackIR)
+                _simConnectManager.TurnOffTrackIR();
 
             // Temporary minimize the app for pop out process
             _minimizeForPopOut = DataStore.ApplicationWindow.WindowState != WindowState.Minimized;
@@ -258,6 +275,10 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
             {
                 OnPopOutCompleted?.Invoke(this, null);
             }
+
+            // Turn off TrackIR if TrackIR is started
+            if (DataStore.AppSetting.AutoDisableTrackIR)
+                _simConnectManager.TurnOnTrackIR();
         }
 
         private void HandlePanelSelectionCompleted(object sender, EventArgs e)
@@ -272,6 +293,10 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
                 Logger.LogStatus("Panels selection is completed. Please click 'Start Pop Out' to start popping out these panels.", StatusMessageType.Info);
             else
                 Logger.LogStatus("Panels selection is completed. No panel has been selected.", StatusMessageType.Info);
+
+            // Turn off TrackIR if TrackIR is started
+            if (DataStore.AppSetting.AutoDisableTrackIR)
+                _simConnectManager.TurnOnTrackIR();
         }
 
         private bool CanExecute(object commandParameter)

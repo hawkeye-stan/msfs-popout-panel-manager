@@ -45,6 +45,7 @@
                 <TreeViewItem Header="Application Settings" Selected="TreeViewItem_Selected" Margin="0,15,0,10" IsSelected="True"></TreeViewItem>
                 <TreeViewItem Header="Pop Out Settings" Selected="TreeViewItem_Selected" Margin="0,0,0,10"></TreeViewItem>
                 <TreeViewItem Header="Auto Pop Out Panel Settings" Selected="TreeViewItem_Selected" Margin="0,0,0,10"></TreeViewItem>
+                <TreeViewItem Header="Track IR Settings" Selected="TreeViewItem_Selected" Margin="0,0,0,10"></TreeViewItem>
             </TreeView>
             <WrapPanel DockPanel.Dock="Right" Margin="20,15,20,0" Width="Auto" >
                 <WrapPanel Orientation="Vertical" Width="Auto" Visibility="{Binding Path=ApplicationSettingsVisibility, Mode=TwoWay}">
@@ -134,6 +135,12 @@
                     <WrapPanel Orientation="Horizontal"></WrapPanel>
                 </WrapPanel>
                 <WrapPanel Orientation="Vertical" Visibility="Visible">
+                </WrapPanel>
+                <WrapPanel Orientation="Vertical" Width="Auto" Visibility="{Binding Path=TrackIRSettingsVisibility, Mode=TwoWay}">
+                    <CheckBox IsChecked="{Binding Path=AppSetting.AutoDisableTrackIR, Mode=TwoWay}" Content="Auto Disable Track IR"></CheckBox>
+                    <TextBlock Style="{StaticResource TextBlockDescription}">
+                        Automactically disable Track IR during panel selections and pop out process. Track IR will be re-enable once these processes are completed.
+                    </TextBlock>
                 </WrapPanel>
             </WrapPanel>
         </DockPanel>

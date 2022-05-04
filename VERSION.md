@@ -1,6 +1,8 @@
 # Version History
 <hr/>
 
+## Version 3.3.1
+* Added support to automatic disable Track IR during panel selection and panel pop out process.
 
 ## Version 3.3.0
 * Pop out panel without a title bar can now be moved and resized.
