@@ -93,7 +93,7 @@ namespace MSFSPopoutPanelManager.Provider
 
         public void TurnOffTrackIR()
         {
-            if(_simData.TrackIREnable)
+            if(_simData != null && _simData.TrackIREnable)
             {
                 SetTrackIREnable(false);
                 _isTrackIRManaged = true;
@@ -102,7 +102,7 @@ namespace MSFSPopoutPanelManager.Provider
 
         public void TurnOnTrackIR()
         {
-            if (_isTrackIRManaged && !_simData.TrackIREnable)
+            if (_isTrackIRManaged && _simData != null && !_simData.TrackIREnable)
             {
                 SetTrackIREnable(true);
                 _isTrackIRManaged = false;
