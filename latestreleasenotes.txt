@@ -1,5 +1,11 @@
-Version 3.3.1
+Version 3.3.2
+
+Hotfixes:
+
+- Fixed application crash when performing panel selections when MSFS is not running.
 
 New Features:
 
 - Added support to automatic disable Track IR during panel selection and panel pop out process.
+
+
