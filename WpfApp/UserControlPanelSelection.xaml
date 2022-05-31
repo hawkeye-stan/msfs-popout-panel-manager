@@ -92,7 +92,7 @@
                         <Button Content="-" ToolTip="Delete Binding"  Margin="10,0,0,0" Width="40" Click="DeleteBinding_Click" Style="{StaticResource ProfileDeletePlaneBindingDependency}"/>
                     </WrapPanel>
                     <CheckBox Margin="10,5,0,0" IsChecked="{Binding Path=DataStore.ActiveUserProfile.PowerOnRequiredForColdStart}" IsEnabled="{Binding Path=DataStore.HasActiveUserProfileId}" Command="{Binding Path=SetPowerOnRequiredCommand}">
-                        <TextBlock Text="Power on required to pop out panels on cold start" TextWrapping="Wrap"  Margin="5,0,0,3"/>
+                        <TextBlock Text="Power on required to pop out panels on cold start (G1000 Only)" TextWrapping="Wrap"  Margin="5,0,0,3"/>
                     </CheckBox>
                 </WrapPanel>
                 <Separator Margin="5,10,5,5"/>

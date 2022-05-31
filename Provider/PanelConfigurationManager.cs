@@ -43,7 +43,7 @@ namespace MSFSPopoutPanelManager.Provider
 
         public void PanelConfigPropertyUpdated(PanelConfigItem panelConfigItem)
         {
-            if (!AllowEdit || UserProfile.IsLocked)
+            if (panelConfigItem == null || !AllowEdit || UserProfile.IsLocked)
                 return;
 
             var panelConfig = UserProfile.PanelConfigs.ToList().Find(p => p.PanelIndex == panelConfigItem.PanelIndex);
@@ -99,7 +99,7 @@ namespace MSFSPopoutPanelManager.Provider
 
         public void PanelConfigIncreaseDecrease(PanelConfigItem panelConfigItem, int changeAmount)
         {
-            if (!AllowEdit || UserProfile.IsLocked || UserProfile.PanelConfigs == null || UserProfile.PanelConfigs.Count == 0)
+            if (panelConfigItem == null || !AllowEdit || UserProfile.IsLocked || UserProfile.PanelConfigs == null || UserProfile.PanelConfigs.Count == 0)
                 return;
 
             var index = UserProfile.PanelConfigs.ToList().FindIndex(p => p.PanelIndex == panelConfigItem.PanelIndex);

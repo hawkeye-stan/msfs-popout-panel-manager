@@ -1,6 +1,10 @@
 # Version History
 <hr/>
 
+## Version 3.3.3
+* Fixed issue when clicking on "Show/Edit Panel Location Overlay" or setting auto TrackIR disabling option will cause PFD/MFD panels to be turned off when performing auto pop out in cold start for G1000 equipped planes.
+* Fixed issue where auto panning of cockpit view does not pan to previously saved camera view during pop out process.
+
 ## Version 3.3.2
 * Hotfix: Fixed application crash when performing panel selections when MSFS is not running.
 

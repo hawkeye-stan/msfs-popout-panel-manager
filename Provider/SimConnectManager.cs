@@ -113,7 +113,9 @@ namespace MSFSPopoutPanelManager.Provider
         {
             // It is prop3 in SimConnectStruct (by DataDefinitions.cs)
             SimConnectStruct simConnectStruct = new SimConnectStruct();
-            simConnectStruct.Prop03 = enable ? Convert.ToDouble(1): Convert.ToDouble(0);
+            simConnectStruct.Prop01 = _simData.Title;                                                                   // must set "Title" for TrackIR variable to write correctly
+            simConnectStruct.Prop02 = _simData.ElectricalMasterBattery ? Convert.ToDouble(1) : Convert.ToDouble(0);     // must set "ElectricalMasterBattery" for TrackIR variable to write correctly
+            simConnectStruct.Prop03 = enable ? Convert.ToDouble(1): Convert.ToDouble(0);                                // this is the TrackIR variable
             _simConnector.SetDataObject(simConnectStruct);
         }
 

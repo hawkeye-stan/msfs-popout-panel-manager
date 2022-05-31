@@ -47,8 +47,17 @@ namespace MSFSPopoutPanelManager.Provider
             PInvoke.keybd_event(Convert.ToByte(VK_RMENU), 0, KEYEVENTF_KEYUP, 0);
         }
 
-        public static void CenterView(IntPtr hwnd, int x, int y)
+        public static void CenterView(IntPtr hwnd)
         {
+            Rectangle rectangle;
+            PInvoke.GetWindowRect(hwnd, out rectangle);
+
+            Rectangle clientRectangle;
+            PInvoke.GetClientRect(hwnd, out clientRectangle);
+
+            var x = Convert.ToInt32(rectangle.X + (clientRectangle.Width) * 0.5); 
+            var y = Convert.ToInt32(rectangle.Y + (clientRectangle.Height) * 0.5);
+
             PInvoke.SetForegroundWindow(hwnd);
             LeftClick(x, y);
 
@@ -105,6 +114,7 @@ namespace MSFSPopoutPanelManager.Provider
             Thread.Sleep(200);
             PInvoke.keybd_event(Convert.ToByte(customViewKey), 0, KEYEVENTF_KEYUP, 0);
             PInvoke.keybd_event(Convert.ToByte(VK_LMENU), 0, KEYEVENTF_KEYUP, 0);
+
         }
 
         public static void ToggleFullScreenPanel(IntPtr hwnd)

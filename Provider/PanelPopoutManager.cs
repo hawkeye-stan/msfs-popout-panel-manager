@@ -51,6 +51,9 @@ namespace MSFSPopoutPanelManager.Provider
                 var simualatorProcess = DiagnosticManager.GetSimulatorProcess();
                 if (simualatorProcess != null)
                 {
+                    // First center view to make sure recalling custom camera works on the first press
+                    InputEmulationManager.CenterView(simualatorProcess.Handle);
+
                     InputEmulationManager.LoadCustomView(simualatorProcess.Handle, AppSetting.AutoPanningKeyBinding);
                     Thread.Sleep(500);
                 }
@@ -81,7 +84,7 @@ namespace MSFSPopoutPanelManager.Provider
                 var simualatorProcess = DiagnosticManager.GetSimulatorProcess();
                 if (simualatorProcess != null && UserProfile.PanelSourceCoordinates.Count > 0)
                 {
-                    InputEmulationManager.CenterView(simualatorProcess.Handle, UserProfile.PanelSourceCoordinates[0].X, UserProfile.PanelSourceCoordinates[0].Y);
+                    InputEmulationManager.CenterView(simualatorProcess.Handle);
                 }
 
                 _userProfileManager.WriteUserProfiles();
@@ -110,8 +113,8 @@ namespace MSFSPopoutPanelManager.Provider
 
             _panels.Clear();
 
-            if(_simulatorHandle != IntPtr.Zero)
-            PInvoke.SetForegroundWindow(_simulatorHandle);
+            if (_simulatorHandle != IntPtr.Zero)
+                PInvoke.SetForegroundWindow(_simulatorHandle);
 
             try
             {
@@ -127,18 +130,18 @@ namespace MSFSPopoutPanelManager.Provider
 
                     var handle = PInvoke.FindWindow("AceApp", String.Empty);
 
-                    if(handle == IntPtr.Zero && i == 1)
+                    if (handle == IntPtr.Zero && i == 1)
                         throw new PopoutManagerException("Unable to pop out the first panel. Please check the first panel's number circle is positioned inside the panel, check for panel obstruction, and check if panel can be popped out. Pop out process stopped.");
-                    else if(handle == IntPtr.Zero)
+                    else if (handle == IntPtr.Zero)
                         throw new PopoutManagerException($"Unable to pop out panel number {i}. Please check panel's number circle is positioned inside the panel, check for panel obstruction, and check if panel can be popped out. Pop out process stopped.");
 
                     var panelInfo = GetPanelWindowInfo(handle);
-                    panelInfo.PanelIndex = i;       
+                    panelInfo.PanelIndex = i;
                     panelInfo.PanelName = $"Panel{i}";
                     _panels.Add(panelInfo);
 
                     PInvoke.SetWindowText(panelInfo.PanelHandle, panelInfo.PanelName + " (Custom)");
-                    
+
                     if (i > 1)
                         PInvoke.MoveWindow(panelInfo.PanelHandle, 0, 0, 800, 600, true);
                 }
@@ -150,7 +153,7 @@ namespace MSFSPopoutPanelManager.Provider
                     throw new PopoutManagerException("Unable to pop out all panels. Please align all panel number circles with in-game panel locations.");
 
                 // Add the built-in pop outs (ie. ATC, VFR Map) to the panel list
-                if(AppSetting.IncludeBuiltInPanel)
+                if (AppSetting.IncludeBuiltInPanel)
                     PInvoke.EnumWindows(new PInvoke.CallBack(EnumBuiltinPopoutCallBack), 0);
 
                 // Add the MSFS Touch Panel (My other github project) windows to the panel list
@@ -416,7 +419,7 @@ namespace MSFSPopoutPanelManager.Provider
                 return Point.Empty;
 
             var panelMenubarBottom = GetPanelMenubarBottom(sourceImage, rectangle);
-            if (panelMenubarTop > sourceImage.Height)
+            if (panelMenubarBottom > sourceImage.Height)
                 return Point.Empty;
 
             var panelsStartingLeft = GetPanelMenubarStartingLeft(sourceImage, rectangle, panelMenubarTop + 5);
@@ -474,8 +477,8 @@ namespace MSFSPopoutPanelManager.Provider
 
         private int GetPanelMenubarBottom(Bitmap sourceImage, Rectangle rectangle)
         {
-            // Get a snippet of 1 pixel wide vertical strip of windows. We will choose the strip about 25% from the left of the window
-            var left = Convert.ToInt32((rectangle.Width) * 0.25);  // look at around 25% from the left
+            // Get a snippet of 1 pixel wide vertical strip of windows. We will choose the strip about 70% from the left of the window
+            var left = Convert.ToInt32((rectangle.Width) * 0.7);  // look at around 70% from the left
             var top = sourceImage.Height - rectangle.Height;
 
             if (top < 0 || left < 0)
@@ -501,7 +504,7 @@ namespace MSFSPopoutPanelManager.Provider
                         int green = currentLine[x + 1];
                         int blue = currentLine[x];
 
-                        if (red == 255 && green == 255 && blue == 255)
+                        if (red > 250 && green > 250 && blue > 250)     // allows the color to be a little off white (ie. Fenix A30 EFB)
                         {
                             // found the top of menu bar
                             menubarBottom = y + top;
@@ -540,7 +543,7 @@ namespace MSFSPopoutPanelManager.Provider
                         int green = currentLine[y + 1];
                         int blue = currentLine[y];
 
-                        if (red == 255 && green == 255 && blue == 255)
+                        if (red > 250 && green > 250 && blue > 250)     // allows the color to be a little off white (ie. Fenix A30 EFB)
                         {
                             sourceImage.UnlockBits(stripData);
                             return sourceImage.Width - x;
