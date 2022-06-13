@@ -12,6 +12,7 @@ namespace MSFSPopoutPanelManager.Model
         AlwaysOnTop,
         HideTitlebar,
         FullScreen,
+        TouchEnabled,
         Invalid
     }
 

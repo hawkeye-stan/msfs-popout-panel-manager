@@ -28,10 +28,45 @@ namespace MSFSPopoutPanelManager.Model
 
         public bool FullScreen { get; set; }
 
+        public bool TouchEnabled { get; set; }
+
         [JsonIgnore]
         public bool IsCustomPopout { get { return PanelType == PanelType.CustomPopout; } }
 
         [JsonIgnore]
         public IntPtr PanelHandle { get; set; }
+
+        [JsonIgnore]
+        public bool IsLockable
+        {
+            get
+            {
+                switch (PanelType)
+                {
+                    case PanelType.CustomPopout:
+                    case PanelType.BuiltInPopout:
+                    case PanelType.MSFSTouchPanel:
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        }
+
+        [JsonIgnore]
+        public bool HasTouchableEvent
+        {
+            get
+            {
+                switch (PanelType)
+                {
+                    case PanelType.CustomPopout:
+                    case PanelType.BuiltInPopout:
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        }
     }
 }

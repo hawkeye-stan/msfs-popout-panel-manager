@@ -215,13 +215,13 @@ namespace MSFSPopoutPanelManager.Provider
             });
 
             // Remove pop out that do not exist for this pop out iteration
-            foreach(var panelConfig in UserProfile.PanelConfigs.ToList())
-            {
-                if(panelConfig.PanelHandle == IntPtr.Zero)
-                {
-                    UserProfile.PanelConfigs.Remove(panelConfig);
-                }
-            }
+            //foreach(var panelConfig in UserProfile.PanelConfigs.ToList())
+            //{
+            //    if(panelConfig.PanelHandle == IntPtr.Zero)
+            //    {
+            //        UserProfile.PanelConfigs.Remove(panelConfig);
+            //    }
+            //}
 
             Parallel.ForEach(UserProfile.PanelConfigs, panel =>
             {
@@ -253,6 +253,14 @@ namespace MSFSPopoutPanelManager.Provider
                         Thread.Sleep(250);
                         PInvoke.MoveWindow(panel.PanelHandle, panel.Left, panel.Top, panel.Width, panel.Height, false);
                         Thread.Sleep(1000);
+
+                        // Built-in panels (ie. Checklist, ATC) needs another window resize since there is a bug where when move between
+                        // monitors, it changes its size
+                        if(panel.PanelType == PanelType.BuiltInPopout)
+                        {
+                            PInvoke.MoveWindow(panel.PanelHandle, panel.Left, panel.Top, panel.Width, panel.Height, false);
+                            Thread.Sleep(1000);
+                        }
 
                         // Apply always on top
                         if (panel.AlwaysOnTop)
