@@ -68,6 +68,9 @@ namespace MSFSPopoutPanelManager.WpfApp
                     case "Full Screen Mode":
                         selectedProperty = PanelConfigPropertyName.FullScreen;
                         break;
+                    case "Touch Enabled":
+                        selectedProperty = PanelConfigPropertyName.TouchEnabled;
+                        break;
                 }
 
                  _panelConfigurationViewModel.SelectedPanelConfigItem = new PanelConfigItem() { PanelIndex = panelConfig.PanelIndex, PanelConfigProperty = selectedProperty };

@@ -1,7 +1,10 @@
 ﻿using MSFSPopoutPanelManager.Model;
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MSFSPopoutPanelManager.Provider
 {
@@ -11,6 +14,8 @@ namespace MSFSPopoutPanelManager.Provider
         private IntPtr _winEventHook;
         private static PInvoke.WinEventProc _winEvent;      // keep this as static to prevent garbage collect or the app will crash
         private Rectangle _lastWindowRectangle;
+        private uint _prevWinEvent = PInvokeConstant.EVENT_SYSTEM_CAPTUREEND;
+        private int _winEventClickLock = 0;
 
         public UserProfile UserProfile { get; set; }
 
@@ -26,7 +31,7 @@ namespace MSFSPopoutPanelManager.Provider
         public void HookWinEvent()
         {
               // Setup panel config event hooks
-            _winEventHook = PInvoke.SetWinEventHook(PInvokeConstant.EVENT_SYSTEM_MOVESIZEEND, PInvokeConstant.EVENT_OBJECT_LOCATIONCHANGE, DiagnosticManager.GetApplicationProcess().Handle, _winEvent, 0, 0, PInvokeConstant.WINEVENT_OUTOFCONTEXT);
+            _winEventHook = PInvoke.SetWinEventHook(PInvokeConstant.EVENT_SYSTEM_CAPTURESTART, PInvokeConstant.EVENT_OBJECT_LOCATIONCHANGE, DiagnosticManager.GetApplicationProcess().Handle, _winEvent, 0, 0, PInvokeConstant.WINEVENT_OUTOFCONTEXT);
         }
 
         public void UnhookWinEvent()
@@ -173,34 +178,46 @@ namespace MSFSPopoutPanelManager.Provider
 
         private void EventCallback(IntPtr hWinEventHook, uint iEvent, IntPtr hWnd, int idObject, int idChild, int dwEventThread, int dwmsEventTime)
         {
-            PanelConfig panelConfig;
-
-            // check by priority to minimize escaping constraint
-            if (hWnd == IntPtr.Zero
-                || idObject != 0
-                || hWinEventHook != _winEventHook
-                || !AllowEdit
-                || !(iEvent == PInvokeConstant.EVENT_OBJECT_LOCATIONCHANGE || iEvent == PInvokeConstant.EVENT_SYSTEM_MOVESIZEEND)
-                || UserProfile.PanelConfigs == null || UserProfile.PanelConfigs.Count == 0)
+            switch(iEvent)
             {
-                return;
-            }
-
-            if(UserProfile.IsLocked)
-            {
-                panelConfig = UserProfile.PanelConfigs.FirstOrDefault(panel => panel.PanelHandle == hWnd);
-
-                if (panelConfig != null && panelConfig.PanelType == PanelType.CustomPopout)
-                {
-                    // Move window back to original location if user profile is locked
-                    if (iEvent == PInvokeConstant.EVENT_SYSTEM_MOVESIZEEND)
+                case PInvokeConstant.EVENT_OBJECT_LOCATIONCHANGE:
+                case PInvokeConstant.EVENT_SYSTEM_MOVESIZEEND:
+                case PInvokeConstant.EVENT_SYSTEM_CAPTURESTART:
+                case PInvokeConstant.EVENT_SYSTEM_CAPTUREEND:
+                    // check by priority to speed up comparing of escaping constraints
+                    if (hWnd == IntPtr.Zero
+                        || idObject != 0
+                        || hWinEventHook != _winEventHook
+                        || !AllowEdit
+                        || UserProfile.PanelConfigs == null
+                        || UserProfile.PanelConfigs.Count == 0)
                     {
-                        PInvoke.MoveWindow(panelConfig.PanelHandle, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height, false);
                         return;
                     }
 
-                    if (iEvent == PInvokeConstant.EVENT_OBJECT_LOCATIONCHANGE)
-                    {
+                    HandleEventCallback(hWnd, iEvent);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void HandleEventCallback(IntPtr hWnd, uint iEvent)
+        {
+            var panelConfig = UserProfile.PanelConfigs.FirstOrDefault(panel => panel.PanelHandle == hWnd);
+
+            if (panelConfig == null)
+                return;
+
+            if (panelConfig.IsLockable && UserProfile.IsLocked)
+            {
+                switch (iEvent)
+                {
+                    case PInvokeConstant.EVENT_SYSTEM_MOVESIZEEND:
+                        // Move window back to original location
+                        PInvoke.MoveWindow(panelConfig.PanelHandle, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height, false);
+                        break;
+                    case PInvokeConstant.EVENT_OBJECT_LOCATIONCHANGE:
                         // Detect if window is maximized, if so, save settings
                         WINDOWPLACEMENT wp = new WINDOWPLACEMENT();
                         wp.length = System.Runtime.InteropServices.Marshal.SizeOf(wp);
@@ -209,16 +226,19 @@ namespace MSFSPopoutPanelManager.Provider
                         {
                             PInvoke.ShowWindow(hWnd, PInvokeConstant.SW_RESTORE);
                         }
-                        return;
-                    }
+                        break;
+                    case PInvokeConstant.EVENT_SYSTEM_CAPTUREEND:
+                        if (!panelConfig.TouchEnabled || _prevWinEvent == PInvokeConstant.EVENT_OBJECT_LOCATIONCHANGE)
+                            break;
+
+                        if (!panelConfig.HasTouchableEvent || _prevWinEvent == PInvokeConstant.EVENT_SYSTEM_CAPTUREEND)
+                            break;
+
+                        HandleTouchEvent(panelConfig);
+                        break;
                 }
-
-                return;
             }
-
-            panelConfig = UserProfile.PanelConfigs.FirstOrDefault(panel => panel.PanelHandle == hWnd);
-
-            if (panelConfig != null)
+            else
             {
                 switch (iEvent)
                 {
@@ -260,7 +280,53 @@ namespace MSFSPopoutPanelManager.Provider
                     case PInvokeConstant.EVENT_SYSTEM_MOVESIZEEND:
                         _userProfileManager.WriteUserProfiles();
                         break;
+                    case PInvokeConstant.EVENT_SYSTEM_CAPTUREEND:
+                        if (!panelConfig.TouchEnabled || _prevWinEvent == PInvokeConstant.EVENT_OBJECT_LOCATIONCHANGE)
+                            break;
+
+                        if (!panelConfig.HasTouchableEvent || _prevWinEvent == PInvokeConstant.EVENT_SYSTEM_CAPTUREEND)
+                            break;
+
+                        HandleTouchEvent(panelConfig);
+                        break;
                 }
+            }
+
+            _prevWinEvent = iEvent;
+        }
+
+        private void HandleTouchEvent(PanelConfig panelConfig)
+        {
+            Point point;
+            PInvoke.GetCursorPos(out point);
+
+            // Disable left clicking if user is touching the title bar area
+            if (point.Y - panelConfig.Top > (panelConfig.HideTitlebar ? 5 : 31))
+            {
+                var prevWinEventClickLock = ++_winEventClickLock;
+
+                UnhookWinEvent();
+                InputEmulationManager.LeftClickFast(point.X, point.Y);
+                HookWinEvent();
+
+                if (prevWinEventClickLock == _winEventClickLock)
+                {
+                    Task.Run(() => RefocusMsfs(prevWinEventClickLock));
+                }
+            }
+        }
+
+        private async Task RefocusMsfs(int prevWinEventClickLock)
+        {
+            Thread.Sleep(1000);
+
+            if (prevWinEventClickLock == _winEventClickLock)
+            {
+                var simulatorProcess = DiagnosticManager.GetSimulatorProcess();
+
+                Rectangle rectangle;
+                PInvoke.GetWindowRect(simulatorProcess.Handle, out rectangle);
+                PInvoke.SetCursorPos(rectangle.X + 18, rectangle.Y + 80);
             }
         }
     }

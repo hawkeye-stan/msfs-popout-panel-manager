@@ -28,6 +28,13 @@ namespace MSFSPopoutPanelManager.Provider
             PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, 0);
         }
 
+        public static void LeftClickFast(int x, int y)
+        {
+            PInvoke.mouse_event(MOUSEEVENTF_LEFTDOWN, x, y, 0, 0);
+            Thread.Sleep(50);
+            PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, 0);
+        }
+
         public static void PopOutPanel(int x, int y)
         {
             LeftClick(x, y);
