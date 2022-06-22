@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Drawing;
 using System.Threading;
-using WindowsInput.Events;
 
 namespace MSFSPopoutPanelManager.Provider
 {
     public class InputEmulationManager
     {
-        const uint MOUSEEVENTF_ABSOLUTE = 0x8000;
-        const uint MOUSEEVENTF_MOVE = 0x0001;
         const uint MOUSEEVENTF_LEFTDOWN = 0x02;
         const uint MOUSEEVENTF_LEFTUP = 0x04;
         const uint KEYEVENTF_EXTENDEDKEY = 0x01;
@@ -140,7 +136,7 @@ namespace MSFSPopoutPanelManager.Provider
                 var hwnd = simualatorProcess.Handle;
 
                 PInvoke.SetForegroundWindow(hwnd);
-                Thread.Sleep(500);
+                Thread.Sleep(2000);
 
                 Rectangle rectangle;
                 PInvoke.GetWindowRect(hwnd, out rectangle);
@@ -148,28 +144,24 @@ namespace MSFSPopoutPanelManager.Provider
                 Rectangle clientRectangle;
                 PInvoke.GetClientRect(hwnd, out clientRectangle);
 
-                // For windows mode
-                // The "Ready to Fly" button is at about 93% width, 91.3% height at the lower right corner of game window
-                var x = Convert.ToInt32(rectangle.X + (clientRectangle.Width + 8) * 0.93);    // with 8 pixel adjustment
-                var y = Convert.ToInt32(rectangle.Y + (clientRectangle.Height + 39) * 0.915);     // with 39 pixel adjustment
+                // The "Ready to Fly" button is at about 94.7% width, 91.3% height at the lower right corner of game window
+                // Try to click the area a few times to hit that button for both full screen and windows mode
 
-                LeftClick(x, y);    // set focus to game app
+                // set focus to game app
+                var x = Convert.ToInt32(rectangle.X + (clientRectangle.Width) * 0.947);
+                var y = Convert.ToInt32(rectangle.Y + (clientRectangle.Height) * 0.9);
+                LeftClick(x, y);    
                 Thread.Sleep(250);
                 LeftClick(x, y);
                 Thread.Sleep(250);
-
-                //Debug.WriteLine($"Windows Mode 'Ready to Fly' button coordinate: {x}, {y}");
-
-                // For full screen mode
-                x = Convert.ToInt32(rectangle.X + (clientRectangle.Width) * 0.93);    
-                y = Convert.ToInt32(rectangle.Y + (clientRectangle.Height) * 0.915);
-
-                LeftClick(x, y);    // set focus to game app
-                Thread.Sleep(250);
-                LeftClick(x, y);
-                Thread.Sleep(250);
-
-                //Debug.WriteLine($"Full Screen Mode 'Ready to Fly' button coordinate: {x} , {y}");
+                
+                for (var top = y; top < y + 100; top = top + 20)
+                {
+                    LeftClick(x, Convert.ToInt32(top));
+                    Thread.Sleep(100);
+                    LeftClick(x, Convert.ToInt32(top));
+                    Thread.Sleep(100);
+                }
             }
         }
     }
