@@ -4,7 +4,7 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
-    <Version>3.4.0.0</Version>
+    <Version>3.3.4.0</Version>
     <PackageId>MSFS 2020 Popout Panel Manager</PackageId>
     <Authors>Stanley Kwok</Authors>
     <Product>MSFS 2020 Popout Panel Manager</Product>
@@ -18,9 +18,6 @@
 
   <ItemGroup>
     <Content Include="log4net.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\README.md">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\check.png">
@@ -41,12 +38,6 @@
     <Content Include="Resources\transparent.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\VERSION.md">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-	<Content Include="..\LICENSE">
-	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	</Content>
   </ItemGroup>
 
   <ItemGroup>

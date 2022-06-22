@@ -1,7 +1,9 @@
 ﻿using MSFSPopoutPanelManager.FsConnector;
 using MSFSPopoutPanelManager.Shared;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Timers;
 
@@ -16,7 +18,6 @@ namespace MSFSPopoutPanelManager.Provider
 
         private System.Timers.Timer _requestDataTimer;
         private SimConnectSystemEvent _lastSystemEvent;
-        private bool _isSimActive;
         private bool _isPowerOnForPopOut;
         private bool _isTrackIRManaged;
 
@@ -44,19 +45,16 @@ namespace MSFSPopoutPanelManager.Provider
                 _requestDataTimer.Elapsed += HandleMessageReceived;
             };
 
-            _isSimActive = false;
             _simConnector.Start();
         }
 
         public void Stop()
         {
-            _isSimActive = false;
             _simConnector.Stop();
         }
 
         public void Restart()
         {
-            _isSimActive = false;
             _simConnector.StopAndReconnect();
         }
 
@@ -111,10 +109,14 @@ namespace MSFSPopoutPanelManager.Provider
 
         private void SetTrackIREnable(bool enable)
         {
+            // Wait for _simData.ElectricalMasterBattery to refresh
+            Thread.Sleep(MSFS_DATA_REFRESH_TIMEOUT + 250);
+
             // It is prop3 in SimConnectStruct (by DataDefinitions.cs)
             SimConnectStruct simConnectStruct = new SimConnectStruct();
+                        
             simConnectStruct.Prop01 = _simData.Title;                                                                   // must set "Title" for TrackIR variable to write correctly
-            simConnectStruct.Prop02 = _simData.ElectricalMasterBattery ? Convert.ToDouble(1) : Convert.ToDouble(0);     // must set "ElectricalMasterBattery" for TrackIR variable to write correctly
+            simConnectStruct.Prop02 = _simData.ElectricalMasterBattery ? Convert.ToDouble(1) : Convert.ToDouble(0);   // must set "ElectricalMasterBattery" for TrackIR variable to write correctly
             simConnectStruct.Prop03 = enable ? Convert.ToDouble(1): Convert.ToDouble(0);                                // this is the TrackIR variable
             _simConnector.SetDataObject(simConnectStruct);
         }
@@ -143,32 +145,46 @@ namespace MSFSPopoutPanelManager.Provider
             OnSimConnectDataRefreshed?.Invoke(this, new EventArgs<dynamic>(e.Value));
         }
 
+        private List<SimConnectSystemEvent> _systemEventBuffer;
+        private List<SimConnectSystemEvent> FlightRestartBeginBufferDef = new List<SimConnectSystemEvent>() { SimConnectSystemEvent.SIMSTOP, SimConnectSystemEvent.VIEW };
+        private List<SimConnectSystemEvent> FlightRestartEndBufferDef = new List<SimConnectSystemEvent>() { SimConnectSystemEvent.SIMSTART, SimConnectSystemEvent.VIEW };
+        private List<SimConnectSystemEvent> FlightStartBufferDef = new List<SimConnectSystemEvent>() { SimConnectSystemEvent.SIMSTOP, SimConnectSystemEvent.SIMSTART, SimConnectSystemEvent.SIMSTOP, SimConnectSystemEvent.SIMSTART, SimConnectSystemEvent.VIEW };
+        private List<SimConnectSystemEvent> FlightEndBufferDef = new List<SimConnectSystemEvent>() { SimConnectSystemEvent.SIMSTOP, SimConnectSystemEvent.SIMSTART, SimConnectSystemEvent.VIEW, SimConnectSystemEvent.SIMSTOP, SimConnectSystemEvent.SIMSTART };
+        private bool _systemEventInFlightRestartSequence;
+
         private void HandleReceiveSystemEvent(object sender, EventArgs<SimConnectSystemEvent> e)
         {
+            if (_systemEventBuffer == null)
+                _systemEventBuffer = new List<SimConnectSystemEvent>();
+
             var systemEvent = e.Value;
+
+            _systemEventBuffer.Add(systemEvent);
 
             Debug.WriteLine($"SimConnectSystemEvent Received: {systemEvent}");
 
-            // to detect flight start at the "Ready to Fly" screen, it has a SIMSTART follows by a VIEW event
-            if (_lastSystemEvent == SimConnectSystemEvent.SIMSTART && systemEvent == SimConnectSystemEvent.VIEW)
+            if (_systemEventBuffer.TakeLast(2).SequenceEqual(FlightRestartBeginBufferDef))
             {
-                _isSimActive = true;
-                _lastSystemEvent = SimConnectSystemEvent.NONE;
-                OnFlightStarted?.Invoke(this, null);
-                return;
-            }
-            
-            // look for pair of events denoting sim ended after sim is active
-            if ((_isSimActive && _lastSystemEvent == SimConnectSystemEvent.SIMSTOP && systemEvent == SimConnectSystemEvent.VIEW) ||
-                (_isSimActive && _lastSystemEvent == SimConnectSystemEvent.SIMSTOP && systemEvent == SimConnectSystemEvent.SIMSTART))
-            {
-                _isSimActive = false;
-                _lastSystemEvent = SimConnectSystemEvent.NONE;
                 OnFlightStopped?.Invoke(this, null);
-                return;
+                _systemEventBuffer = null;
+                _systemEventInFlightRestartSequence = true;
             }
-
-            _lastSystemEvent = systemEvent;
+            else if (_systemEventInFlightRestartSequence && _systemEventBuffer.TakeLast(2).SequenceEqual(FlightRestartEndBufferDef))
+            {
+                OnFlightStarted?.Invoke(this, null);
+                _systemEventBuffer = null;
+                _systemEventInFlightRestartSequence = false;
+            }
+            else if (_systemEventBuffer.TakeLast(5).SequenceEqual(FlightStartBufferDef))
+            {
+                OnFlightStarted?.Invoke(this, null);
+                _systemEventBuffer = null;
+            }
+            else if (_systemEventBuffer.TakeLast(5).SequenceEqual(FlightEndBufferDef))
+            {
+                OnFlightStopped?.Invoke(this, null);
+                _systemEventBuffer = null;
+            }
         }
     }
 }

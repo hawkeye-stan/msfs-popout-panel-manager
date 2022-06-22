@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.32002.261
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32602.215
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfApp", "WpfApp\WpfApp.csproj", "{54712A0A-B344-45E4-85C4-0A913305A0E6}"
 EndProject
@@ -21,6 +21,23 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		LICENSE = LICENSE
 		README.md = README.md
 		VERSION.md = VERSION.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{D8938324-934B-4602-B30E-66B60365B426}"
+	ProjectSection(SolutionItems) = preProject
+		images\logo.png = images\logo.png
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{E2AF3E4D-F5B6-44C0-8E15-528206E9F3C7}"
+	ProjectSection(SolutionItems) = preProject
+		images\doc\frameworkdownload.png = images\doc\frameworkdownload.png
+		images\doc\screenshot_1.png = images\doc\screenshot_1.png
+		images\doc\screenshot_2.png = images\doc\screenshot_2.png
+		images\doc\screenshot_3.png = images\doc\screenshot_3.png
+		images\doc\screenshot_4.png = images\doc\screenshot_4.png
+		images\doc\screenshot_5.png = images\doc\screenshot_5.png
+		images\doc\screenshot_6.png = images\doc\screenshot_6.png
+		images\doc\screenshot_7.png = images\doc\screenshot_7.png
 	EndProjectSection
 EndProject
 Global
@@ -52,6 +69,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D8938324-934B-4602-B30E-66B60365B426} = {15FC98CD-0A69-437B-A5E5-67D025DB5CDC}
+		{E2AF3E4D-F5B6-44C0-8E15-528206E9F3C7} = {D8938324-934B-4602-B30E-66B60365B426}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D1607553-61E8-4ED6-B382-ABA6F6944586}

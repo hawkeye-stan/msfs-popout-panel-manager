@@ -50,10 +50,6 @@ namespace MSFSPopoutPanelManager.WpfApp
                         var x = Convert.ToInt32(rectangle.X + clientRectangle.Width / 2 - this.Width / 2);
                         var y = Convert.ToInt32(rectangle.Y + clientRectangle.Height / 2 - this.Height / 2);
 
-                        Debug.WriteLine($"Game Location: X:{rectangle.X} Y:{rectangle.Y}");
-                        Debug.WriteLine($"Game Rectangle: Width:{clientRectangle.Width} Height:{clientRectangle.Height}");
-                        Debug.WriteLine($"Message Dialog Location: X:{x} Y:{y}");
-
                         PInvoke.MoveWindow(dialogHandle, x, y, Convert.ToInt32(this.Width), Convert.ToInt32(this.Height), false);
                     }
                 }

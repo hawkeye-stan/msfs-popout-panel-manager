@@ -245,8 +245,6 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
 
         private void HandleOnFlightStarted(object sender, EventArgs e)
         {
-            Debug.WriteLine("Flight Started");
-
             Application.Current.Dispatcher.Invoke(() =>
             {
                 AutoSwitchProfile(DataStore.CurrentMsfsPlaneTitle);
