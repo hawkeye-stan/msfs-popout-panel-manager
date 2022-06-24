@@ -8,7 +8,7 @@ Version 3.3.4.0
 - Fixed issue when using Auto Pop Out Panel and the game is in Windows mode, Pop Out Manager
   fails to automatically click the "Ready to Fly" button.
 
-- Made improvements to the detection of flight start and flight end. This help to resolve an
+- Made improvements to the detection of flight starts and flight ends. This help to resolve an
   issue when exiting a flight, Pop Out Manager tries to pop out panels again.
 
 - Added touch enabled panel experimental feature. Please see github repo README.md on
