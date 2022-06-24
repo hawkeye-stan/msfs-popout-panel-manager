@@ -143,7 +143,7 @@ namespace MSFSPopoutPanelManager.Provider
                 var hwnd = simualatorProcess.Handle;
 
                 PInvoke.SetForegroundWindow(hwnd);
-                Thread.Sleep(2000);
+                Thread.Sleep(250);
 
                 Rectangle rectangle;
                 PInvoke.GetWindowRect(hwnd, out rectangle);

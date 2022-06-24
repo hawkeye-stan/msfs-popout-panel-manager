@@ -14,6 +14,7 @@
     <RootNamespace>MSFSPopoutPanelManager.WpfApp</RootNamespace>
     <ApplicationIcon>logo.ico</ApplicationIcon>
     <Platforms>x64</Platforms>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
   </PropertyGroup>
 
   <ItemGroup>
@@ -84,5 +85,4 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
-
 </Project>
