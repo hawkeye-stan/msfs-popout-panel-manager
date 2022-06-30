@@ -9,9 +9,6 @@ using System.Windows.Input;
 
 namespace MSFSPopoutPanelManager.WpfApp
 {
-    /// <summary>
-    /// Interaction logic for AddProfileDialog.xaml
-    /// </summary>
     public partial class AddProfileDialog : MetroWindow
     {
         public List<UserProfile> UserProfiles { get; set; }

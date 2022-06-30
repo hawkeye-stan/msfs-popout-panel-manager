@@ -38,6 +38,8 @@ namespace MSFSPopoutPanelManager.Provider
         public const uint WS_POPUP = 0x80000000;
         public const uint WS_EX_DLGMODALFRAME = 0x00000001;
         public const uint WS_THICKFRAME = 0x00040000;
+        public const uint WS_MAXIMIZEBOX = 0x10000;
+        public const uint WS_MINIMIZEBOX = 0x20000;
 
         public const int HWND_TOPMOST = -1;
         public const int HWND_NOTOPMOST = -2;
@@ -57,6 +59,8 @@ namespace MSFSPopoutPanelManager.Provider
         [DllImport("user32.dll", SetLastError = true)]
         public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
+        [DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true)]
+        public static extern IntPtr FindWindowByCaption(IntPtr ZeroOnly, string lpWindowName);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         private static extern int GetClassName(IntPtr hWnd, StringBuilder strPtrClassName, Int32 nMaxCount);

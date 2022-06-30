@@ -1,19 +1,14 @@
-﻿using MSFSPopoutPanelManager.Model;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using MSFSPopoutPanelManager.Model;
 using MSFSPopoutPanelManager.Provider;
 using System;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
 
 namespace MSFSPopoutPanelManager.WpfApp.ViewModel
 {
-    public class PanelConfigurationViewModel
+    public class PanelConfigurationViewModel : ObservableObject
     {
         private UserProfileManager _userProfileManager;
         private PanelConfigurationManager _panelConfigurationManager;
-
-        // Using PropertyChanged.Fody
-        public event PropertyChangedEventHandler PropertyChanged;
 
         public DataStore DataStore { get; set; }
 
@@ -39,9 +34,9 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
             _panelConfigurationManager.UserProfile = DataStore.ActiveUserProfile;
             _panelConfigurationManager.AllowEdit = DataStore.AllowEdit;
             _panelConfigurationManager.HookWinEvent();
-            DataStore.OnAllowEditChanged += (sender, e) => 
+            DataStore.OnAllowEditChanged += (sender, e) =>
             {
-                _panelConfigurationManager.AllowEdit = DataStore.AllowEdit; 
+                _panelConfigurationManager.AllowEdit = DataStore.AllowEdit;
             };
         }
 
@@ -57,7 +52,7 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
 
         private void OnPanelConfigUpdated(object panelConfigItem)
         {
-            if(DataStore.AllowEdit)
+            if (DataStore.AllowEdit)
                 _panelConfigurationManager.PanelConfigPropertyUpdated(panelConfigItem as PanelConfigItem);
         }
 
@@ -71,5 +66,5 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
         {
             return true;
         }
-    }  
+    }
 }

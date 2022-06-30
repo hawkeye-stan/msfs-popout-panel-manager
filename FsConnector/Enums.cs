@@ -1,5 +1,4 @@
-﻿
-namespace MSFSPopoutPanelManager.FsConnector
+﻿namespace MSFSPopoutPanelManager.FsConnector
 {
     public enum SimConnectDefinition
     {
@@ -8,7 +7,7 @@ namespace MSFSPopoutPanelManager.FsConnector
 
     public enum NotificationGroup
     {
-        GROUP0,
+        GROUP0
     }
 
     public enum DataRequest
@@ -23,7 +22,7 @@ namespace MSFSPopoutPanelManager.FsConnector
         SIMSTOP,
         FLIGHTLOADED,
         VIEW,
-        PAUSED, 
+        PAUSED,
         NONE
     };
 }

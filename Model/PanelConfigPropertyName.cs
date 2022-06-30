@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace MSFSPopoutPanelManager.Model
+﻿namespace MSFSPopoutPanelManager.Model
 {
     public enum PanelConfigPropertyName
     {

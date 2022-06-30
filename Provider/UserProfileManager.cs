@@ -4,7 +4,6 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -90,8 +89,6 @@ namespace MSFSPopoutPanelManager.Provider
 
         public void WriteUserProfiles()
         {
-            Debug.WriteLine("saving profile....");
-
             if (UserProfiles == null)
                 throw new Exception("User Profiles is null.");
 

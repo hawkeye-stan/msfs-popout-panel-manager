@@ -38,13 +38,13 @@ namespace MSFSPopoutPanelManager.Provider
         {
             var simulatorProcess = DiagnosticManager.GetSimulatorProcess();
 
-            if(simulatorProcess != null)
+            if (simulatorProcess != null)
                 _simulatorHandle = simulatorProcess.Handle;
-                
+
             _panels = new List<PanelConfig>();
 
             OnPopOutStarted?.Invoke(this, null);
-                
+
             // If enable, load the current viewport into custom view by Ctrl-Alt-0
             if (AppSetting.UseAutoPanning)
             {
@@ -82,7 +82,7 @@ namespace MSFSPopoutPanelManager.Provider
 
                 // Recenter the view port by Ctrl-Space, needs to click on game window
                 var simualatorProcess = DiagnosticManager.GetSimulatorProcess();
-                if (simualatorProcess != null && UserProfile.PanelSourceCoordinates.Count > 0)
+                if (simualatorProcess != null)
                 {
                     InputEmulationManager.CenterView(simualatorProcess.Handle);
                 }
@@ -91,7 +91,7 @@ namespace MSFSPopoutPanelManager.Provider
 
                 OnPopOutCompleted?.Invoke(this, new EventArgs<bool>(true));
             }
-            else 
+            else
             {
                 OnPopOutCompleted?.Invoke(this, new EventArgs<bool>(false));
             }
@@ -143,7 +143,7 @@ namespace MSFSPopoutPanelManager.Provider
                     PInvoke.SetWindowText(panelInfo.PanelHandle, panelInfo.PanelName + " (Custom)");
 
                     if (i > 1)
-                        PInvoke.MoveWindow(panelInfo.PanelHandle, 0, 0, 800, 600, true);
+                        WindowManager.MoveWindow(panelInfo.PanelHandle, panelInfo.PanelType, 0, 0, 800, 600);
                 }
 
                 _currentPanelIndex = _panels.Count;
@@ -173,7 +173,7 @@ namespace MSFSPopoutPanelManager.Provider
                         _panels[i].Width = 800;
                         _panels[i].Height = 600;
 
-                        PInvoke.MoveWindow(_panels[i].PanelHandle, _panels[i].Top, _panels[i].Left, _panels[i].Width, _panels[i].Height, true);
+                        WindowManager.MoveWindow(_panels[i].PanelHandle, _panels[i].PanelType, _panels[i].Top, _panels[i].Left, _panels[i].Width, _panels[i].Height);
                         PInvoke.SetForegroundWindow(_panels[i].PanelHandle);
                         Thread.Sleep(200);
                     }
@@ -238,7 +238,7 @@ namespace MSFSPopoutPanelManager.Provider
                         Thread.Sleep(500);
                     }
 
-                    // Apply full screen (cannot combine with always on top or hide title bar
+                    // Apply full screen (cannot combine with always on top or hide title bar)
                     if (panel.FullScreen)
                     {
                         WindowManager.MoveWindow(panel.PanelHandle, panel.Left, panel.Top);
@@ -246,17 +246,17 @@ namespace MSFSPopoutPanelManager.Provider
                         InputEmulationManager.ToggleFullScreenPanel(panel.PanelHandle);
                         Thread.Sleep(1000);
                     }
-                    else 
+                    else
                     {
                         // Apply locations
                         PInvoke.ShowWindow(panel.PanelHandle, PInvokeConstant.SW_RESTORE);
                         Thread.Sleep(250);
-                        PInvoke.MoveWindow(panel.PanelHandle, panel.Left, panel.Top, panel.Width, panel.Height, false);
+                        WindowManager.MoveWindow(panel.PanelHandle, panel.PanelType, panel.Left, panel.Top, panel.Width, panel.Height);
                         Thread.Sleep(1000);
 
                         // Built-in panels (ie. Checklist, ATC) needs another window resize since there is a bug where when move between
                         // monitors, it changes its size
-                        if(panel.PanelType == PanelType.BuiltInPopout)
+                        if (panel.PanelType == PanelType.BuiltInPopout)
                         {
                             PInvoke.MoveWindow(panel.PanelHandle, panel.Left, panel.Top, panel.Width, panel.Height, false);
                             Thread.Sleep(1000);
@@ -265,7 +265,7 @@ namespace MSFSPopoutPanelManager.Provider
                         // Apply always on top
                         if (panel.AlwaysOnTop)
                         {
-                            WindowManager.ApplyAlwaysOnTop(panel.PanelHandle, true, new Rectangle(panel.Left, panel.Top, panel.Width, panel.Height));
+                            WindowManager.ApplyAlwaysOnTop(panel.PanelHandle, panel.PanelType, true, new Rectangle(panel.Left, panel.Top, panel.Width, panel.Height));
                             Thread.Sleep(1000);
                         }
 
@@ -300,7 +300,7 @@ namespace MSFSPopoutPanelManager.Provider
         {
             // Resize all windows to 800x600 when separating and shimmy the panel
             // MSFS draws popout panel differently at different time for same panel
-            PInvoke.MoveWindow(hwnd, -8, 0, 800, 600, true);
+            WindowManager.MoveWindow(hwnd, PanelType.CustomPopout, -8, 0, 800, 600);
             PInvoke.SetForegroundWindow(hwnd);
             Thread.Sleep(500);
 
@@ -319,7 +319,7 @@ namespace MSFSPopoutPanelManager.Provider
                 if (!_panels.Exists(x => x.PanelHandle == hwnd))
                 {
                     Interlocked.Increment(ref _currentPanelIndex);
-                    panelInfo.PanelIndex = _currentPanelIndex;      
+                    panelInfo.PanelIndex = _currentPanelIndex;
                     _panels.Add(panelInfo);
                 }
             }
@@ -357,7 +357,7 @@ namespace MSFSPopoutPanelManager.Provider
                     _panels.Add(panelInfo);
 
                     // Apply always on top to these panels
-                    WindowManager.ApplyAlwaysOnTop(panelInfo.PanelHandle, true);
+                    //WindowManager.ApplyAlwaysOnTop(panelInfo.PanelHandle, true);
                 }
             }
 
@@ -400,7 +400,7 @@ namespace MSFSPopoutPanelManager.Provider
                 panelInfo.PanelHandle = hwnd;
                 panelInfo.PanelName = caption;
 
-                if (caption.IndexOf("MSFS Touch Panel |") > -1)
+                if (caption.IndexOf("Touch Panel |") > -1)
                 {
                     panelInfo.PanelType = PanelType.MSFSTouchPanel;
                     return panelInfo;
@@ -408,8 +408,6 @@ namespace MSFSPopoutPanelManager.Provider
                 else
                     return null;
             }
-
-            return null;
         }
 
         private Point AnalyzeMergedWindows(IntPtr hwnd)
@@ -432,7 +430,7 @@ namespace MSFSPopoutPanelManager.Provider
 
             var panelsStartingLeft = GetPanelMenubarStartingLeft(sourceImage, rectangle, panelMenubarTop + 5);
 
-            // The center of magnifying glass icon is around (2.7 x height of menubar) to the right of the panel menubar starting left
+            // The center of magnifying glass icon is around (3.2 x height of menubar) to the right of the panel menubar starting left
             // But need to use higher number here to click the left side of magnifying glass icon because on some panel, the ratio is smaller
             var menubarHeight = panelMenubarBottom - panelMenubarTop;
             var magnifyingIconXCoor = panelsStartingLeft - Convert.ToInt32(menubarHeight * 3.2);        // ToDo: play around with this multiplier to find the best for all resolutions

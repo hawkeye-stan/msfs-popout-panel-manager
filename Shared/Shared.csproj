@@ -10,7 +10,7 @@
     <Copyright>Stanley Kwok 2021</Copyright>
     <PackageProjectUrl>https://github.com/hawkeye-stan/msfs-popout-panel-manager</PackageProjectUrl>
     <Version>3.3.4.0</Version>
-    <Platforms>AnyCPU;x64</Platforms>
+    <Platforms>x64</Platforms>
 	<UseWPF>true</UseWPF>
 	<AssemblyVersion>3.3.4.0</AssemblyVersion>
   </PropertyGroup>

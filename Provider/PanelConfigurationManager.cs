@@ -1,6 +1,5 @@
 ﻿using MSFSPopoutPanelManager.Model;
 using System;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
@@ -30,7 +29,7 @@ namespace MSFSPopoutPanelManager.Provider
 
         public void HookWinEvent()
         {
-              // Setup panel config event hooks
+            // Setup panel config event hooks
             _winEventHook = PInvoke.SetWinEventHook(PInvokeConstant.EVENT_SYSTEM_CAPTURESTART, PInvokeConstant.EVENT_OBJECT_LOCATIONCHANGE, DiagnosticManager.GetApplicationProcess().Handle, _winEvent, 0, 0, PInvokeConstant.WINEVENT_OUTOFCONTEXT);
         }
 
@@ -68,29 +67,27 @@ namespace MSFSPopoutPanelManager.Provider
                         name = name + " (Custom)";
                     PInvoke.SetWindowText(panelConfig.PanelHandle, name);
                 }
-                else if(!panelConfig.FullScreen)
+                else if (!panelConfig.FullScreen)
                 {
                     switch (panelConfigItem.PanelConfigProperty)
                     {
                         case PanelConfigPropertyName.Left:
                         case PanelConfigPropertyName.Top:
-                            PInvoke.MoveWindow(panelConfig.PanelHandle, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height, true);
+                            WindowManager.MoveWindow(panelConfig.PanelHandle, panelConfig.PanelType, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height);
                             break;
                         case PanelConfigPropertyName.Width:
                         case PanelConfigPropertyName.Height:
                             if (panelConfig.HideTitlebar)
                                 WindowManager.ApplyHidePanelTitleBar(panelConfig.PanelHandle, false);
 
-                            int orignalLeft = panelConfig.Left;
-                            PInvoke.MoveWindow(panelConfig.PanelHandle, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height, true);
-                            MSFSBugPanelShiftWorkaround(panelConfig.PanelHandle, orignalLeft, panelConfig.Top, panelConfig.Width, panelConfig.Height);
+                            WindowManager.MoveWindowWithMsfsBugOverrirde(panelConfig.PanelHandle, panelConfig.PanelType, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height);
 
                             if (panelConfig.HideTitlebar)
                                 WindowManager.ApplyHidePanelTitleBar(panelConfig.PanelHandle, true);
 
                             break;
                         case PanelConfigPropertyName.AlwaysOnTop:
-                            WindowManager.ApplyAlwaysOnTop(panelConfig.PanelHandle, panelConfig.AlwaysOnTop, new Rectangle(panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height));
+                            WindowManager.ApplyAlwaysOnTop(panelConfig.PanelHandle, panelConfig.PanelType, panelConfig.AlwaysOnTop, new Rectangle(panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height));
                             break;
                         case PanelConfigPropertyName.HideTitlebar:
                             WindowManager.ApplyHidePanelTitleBar(panelConfig.PanelHandle, panelConfig.HideTitlebar);
@@ -123,11 +120,11 @@ namespace MSFSPopoutPanelManager.Provider
                 {
                     case PanelConfigPropertyName.Left:
                         panelConfig.Left += changeAmount;
-                        PInvoke.MoveWindow(panelConfig.PanelHandle, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height, false);
+                        WindowManager.MoveWindow(panelConfig.PanelHandle, panelConfig.PanelType, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height);
                         break;
                     case PanelConfigPropertyName.Top:
                         panelConfig.Top += changeAmount;
-                        PInvoke.MoveWindow(panelConfig.PanelHandle, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height, false);
+                        WindowManager.MoveWindow(panelConfig.PanelHandle, panelConfig.PanelType, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height);
                         break;
                     case PanelConfigPropertyName.Width:
                         panelConfig.Width += changeAmount;
@@ -135,8 +132,7 @@ namespace MSFSPopoutPanelManager.Provider
                         if (panelConfig.HideTitlebar)
                             WindowManager.ApplyHidePanelTitleBar(panelConfig.PanelHandle, false);
 
-                        PInvoke.MoveWindow(panelConfig.PanelHandle, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height, false);
-                        MSFSBugPanelShiftWorkaround(panelConfig.PanelHandle, orignalLeft, panelConfig.Top, panelConfig.Width, panelConfig.Height);
+                        WindowManager.MoveWindowWithMsfsBugOverrirde(panelConfig.PanelHandle, panelConfig.PanelType, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height);
 
                         if (panelConfig.HideTitlebar)
                             WindowManager.ApplyHidePanelTitleBar(panelConfig.PanelHandle, true);
@@ -148,8 +144,7 @@ namespace MSFSPopoutPanelManager.Provider
                         if (panelConfig.HideTitlebar)
                             WindowManager.ApplyHidePanelTitleBar(panelConfig.PanelHandle, false);
 
-                        PInvoke.MoveWindow(panelConfig.PanelHandle, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height, false);
-                        MSFSBugPanelShiftWorkaround(panelConfig.PanelHandle, orignalLeft, panelConfig.Top, panelConfig.Width, panelConfig.Height);
+                        WindowManager.MoveWindowWithMsfsBugOverrirde(panelConfig.PanelHandle, panelConfig.PanelType, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height);
 
                         if (panelConfig.HideTitlebar)
                             WindowManager.ApplyHidePanelTitleBar(panelConfig.PanelHandle, true);
@@ -163,22 +158,9 @@ namespace MSFSPopoutPanelManager.Provider
             }
         }
 
-        private void MSFSBugPanelShiftWorkaround(IntPtr handle, int originalLeft, int top, int width, int height)
-        {
-            // Fixed MSFS bug, create workaround where on 2nd or later instance of width adjustment, the panel shift to the left by itself
-            // Wait for system to catch up on panel coordinate that were just applied
-            System.Threading.Thread.Sleep(200);
-
-            Rectangle rectangle;
-            PInvoke.GetWindowRect(handle, out rectangle);
-
-            if (rectangle.Left != originalLeft)
-                PInvoke.MoveWindow(handle, originalLeft, top, width, height, false);
-        }
-
         private void EventCallback(IntPtr hWinEventHook, uint iEvent, IntPtr hWnd, int idObject, int idChild, int dwEventThread, int dwmsEventTime)
         {
-            switch(iEvent)
+            switch (iEvent)
             {
                 case PInvokeConstant.EVENT_OBJECT_LOCATIONCHANGE:
                 case PInvokeConstant.EVENT_SYSTEM_MOVESIZEEND:
@@ -316,7 +298,7 @@ namespace MSFSPopoutPanelManager.Provider
             }
         }
 
-        private async Task RefocusMsfs(int prevWinEventClickLock)
+        private void RefocusMsfs(int prevWinEventClickLock)
         {
             Thread.Sleep(1000);
 

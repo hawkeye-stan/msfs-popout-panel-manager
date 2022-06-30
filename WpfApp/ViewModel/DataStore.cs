@@ -1,17 +1,16 @@
-﻿using MSFSPopoutPanelManager.Model;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using MSFSPopoutPanelManager.Model;
 using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 
 namespace MSFSPopoutPanelManager.WpfApp.ViewModel
 {
-    public class DataStore : INotifyPropertyChanged
+    public class DataStore : ObservableObject
     {
         private int _activeProfileId;
-
-        public event PropertyChangedEventHandler PropertyChanged;
+        private AppSetting _appSetting;
 
         public event EventHandler OnActiveUserProfileChanged;
         public event EventHandler OnAllowEditChanged;
@@ -23,21 +22,45 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
             IsFlightActive = true;      // ToDo: temporary for testing
         }
 
-        public AppSetting AppSetting { get; set; }
+        public AppSetting AppSetting
+        {
+            get
+            {
+                return _appSetting;
+            }
+            set
+            {
+                _appSetting = value;
+
+                if (_appSetting != null)
+                {
+
+                    IsEnableAutoPopOutPanel = _appSetting.AutoPopOutPanels;
+                }
+
+                // bubble event up to this 'DataStore' level
+
+
+                _appSetting.AutoPopOutPanelsChanged += (sender, e) =>
+                {
+                    IsEnableAutoPopOutPanel = e.Value;
+                };
+            }
+        }
 
         public ObservableCollection<UserProfile> UserProfiles { get; set; }
 
-        public ObservableCollection<PanelSourceCoordinate> ActiveProfilePanelCoordinates 
-        { 
-            get 
+        public ObservableCollection<PanelSourceCoordinate> ActiveProfilePanelCoordinates
+        {
+            get
             {
                 if (ActiveUserProfile == null)
                     return new ObservableCollection<PanelSourceCoordinate>();
                 else
-                    return ActiveUserProfile.PanelSourceCoordinates; 
-            } 
+                    return ActiveUserProfile.PanelSourceCoordinates;
+            }
         }
-        
+
         public ObservableCollection<PanelConfig> ActiveProfilePanelConfigs
         {
             get
@@ -69,14 +92,10 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
             }
             set
             {
-                if(value != _allowEdit)
+                if (value != _allowEdit)
                 {
                     _allowEdit = value;
-                    if (PropertyChanged != null)
-                    {
-                        PropertyChanged(this, new PropertyChangedEventArgs("AllowEdit"));
-                        OnAllowEditChanged?.Invoke(this, null);
-                    }
+                    OnAllowEditChanged?.Invoke(this, null);
                 }
             }
         }
@@ -98,7 +117,7 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
                 // Set active profile flag
                 UserProfiles.ToList().ForEach(p => p.IsActive = false);
                 var profile = UserProfiles.ToList().Find(p => p.ProfileId == value);
-                if(profile != null)
+                if (profile != null)
                     profile.IsActive = true;
 
                 OnActiveUserProfileChanged?.Invoke(this, null);
@@ -112,7 +131,7 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
 
         public string CurrentMsfsPlaneTitle { get; set; }
 
-        public bool HasCurrentMsfsPlaneTitle 
+        public bool HasCurrentMsfsPlaneTitle
         {
             get { return !String.IsNullOrEmpty(CurrentMsfsPlaneTitle); }
         }
@@ -123,7 +142,7 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
             {
                 if (ActiveUserProfile == null)
                     return false;
-               
+
                 return ActiveUserProfile.BindingAircraftLiveries.ToList().Exists(p => p == CurrentMsfsPlaneTitle);
             }
         }
@@ -165,5 +184,6 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
         public bool IsEnteredFlight { get; set; }
 
         public bool IsFlightActive { get; set; }
+        public bool IsEnableAutoPopOutPanel { get; set; }
     }
 }

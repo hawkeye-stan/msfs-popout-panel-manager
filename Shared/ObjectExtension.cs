@@ -19,13 +19,22 @@ namespace MSFSPopoutPanelManager.Shared
         {
             return InternalCopy(originalObject, new Dictionary<Object, Object>(new ReferenceEqualityComparer()));
         }
+
         private static Object InternalCopy(Object originalObject, IDictionary<Object, Object> visited)
         {
-            if (originalObject == null) return null;
+            if (originalObject == null)
+                return null;
+
             var typeToReflect = originalObject.GetType();
-            if (IsPrimitive(typeToReflect)) return originalObject;
-            if (visited.ContainsKey(originalObject)) return visited[originalObject];
-            if (typeof(Delegate).IsAssignableFrom(typeToReflect)) return null;
+            if (IsPrimitive(typeToReflect))
+                return originalObject;
+
+            if (visited.ContainsKey(originalObject))
+                return visited[originalObject];
+
+            if (typeof(Delegate).IsAssignableFrom(typeToReflect))
+                return null;
+
             var cloneObject = CloneMethod.Invoke(originalObject, null);
             if (typeToReflect.IsArray)
             {
@@ -35,7 +44,6 @@ namespace MSFSPopoutPanelManager.Shared
                     Array clonedArray = (Array)cloneObject;
                     clonedArray.ForEach((array, indices) => array.SetValue(InternalCopy(clonedArray.GetValue(indices), visited), indices));
                 }
-
             }
             visited.Add(originalObject, cloneObject);
             CopyFields(originalObject, visited, cloneObject, typeToReflect);
@@ -63,6 +71,7 @@ namespace MSFSPopoutPanelManager.Shared
                 fieldInfo.SetValue(cloneObject, clonedFieldValue);
             }
         }
+
         public static T Copy<T>(this T original)
         {
             return (T)Copy((Object)original);
@@ -75,6 +84,7 @@ namespace MSFSPopoutPanelManager.Shared
         {
             return ReferenceEquals(x, y);
         }
+
         public override int GetHashCode(object obj)
         {
             if (obj == null) return 0;

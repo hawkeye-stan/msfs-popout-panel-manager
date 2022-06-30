@@ -11,9 +11,6 @@ using System.Windows;
 
 namespace MSFSPopoutPanelManager.WpfApp
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
     public partial class App : Application
     {
         private static Mutex _mutex = null;
@@ -59,8 +56,11 @@ namespace MSFSPopoutPanelManager.WpfApp
         private void HandleDispatcherException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
             e.Handled = true;
-            Log.Error(e.Exception.Message, e.Exception);
-            ShowExceptionDialog();
+            if (e.Exception.Message != "E_INVALIDARG")      // Ignore this error
+            {
+                Log.Error(e.Exception.Message, e.Exception);
+                ShowExceptionDialog();
+            }
         }
 
         private void HandledDomainException(object sender, UnhandledExceptionEventArgs e)
@@ -78,7 +78,11 @@ namespace MSFSPopoutPanelManager.WpfApp
 
             if (MessageBox.Show(messageBoxMessage, messageBoxTitle, messageBoxButtons) == MessageBoxResult.OK)
             {
-                Application.Current.Shutdown();
+                try
+                {
+                    Application.Current.Shutdown();
+                }
+                catch { }
             }
         }
     }

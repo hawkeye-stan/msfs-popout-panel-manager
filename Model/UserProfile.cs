@@ -1,14 +1,12 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 
 namespace MSFSPopoutPanelManager.Model
 {
-    public class UserProfile : INotifyPropertyChanged
+    public class UserProfile : ObservableObject
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
         public UserProfile()
         {
             PanelSourceCoordinates = new ObservableCollection<PanelSourceCoordinate>();
@@ -71,16 +69,16 @@ namespace MSFSPopoutPanelManager.Model
         {
             object val = new object();
 
-            if(reader.TokenType == JsonToken.String)
+            if (reader.TokenType == JsonToken.String)
             {
                 var instance = (string)serializer.Deserialize(reader, typeof(string));
                 val = new ObservableCollection<string>() { instance };
             }
-            else if(reader.TokenType == JsonToken.StartArray)
+            else if (reader.TokenType == JsonToken.StartArray)
             {
                 val = serializer.Deserialize(reader, objectType);
             }
-            else if(reader.TokenType == JsonToken.Null)
+            else if (reader.TokenType == JsonToken.Null)
             {
                 val = new ObservableCollection<string>();
             }

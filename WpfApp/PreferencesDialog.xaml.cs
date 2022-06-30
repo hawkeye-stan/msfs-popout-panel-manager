@@ -1,66 +1,37 @@
 ﻿using MahApps.Metro.Controls;
 using MSFSPopoutPanelManager.Model;
-using System.ComponentModel;
+using MSFSPopoutPanelManager.WpfApp.ViewModel;
 using System.Windows;
 using System.Windows.Controls;
 
 namespace MSFSPopoutPanelManager.WpfApp
 {
-    /// <summary>
-    /// Interaction logic for AddProfileDialog.xaml
-    /// </summary>
-    public partial class PreferencesDialog : MetroWindow, INotifyPropertyChanged
+    public partial class PreferencesDialog : MetroWindow
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        private PreferencesViewModel _preferencesViewModel;
 
-        public PreferencesDialog(AppSetting appSetting)
+        public PreferencesDialog(PreferencesViewModel preferencesViewModel)
         {
+            _preferencesViewModel = preferencesViewModel;
+
             InitializeComponent();
-            AppSetting = appSetting;
-
-            this.DataContext = this;
-
-            ApplicationSettingsVisibility = Visibility.Visible;
-            PopOutSettingsVisibility = Visibility.Collapsed;
-            AutoPopOutSettingsVisibility = Visibility.Collapsed;
-            TrackIRSettingsVisibility = Visibility.Collapsed;
+            this.DataContext = preferencesViewModel;
         }
 
         public AppSetting AppSetting { get; set; }
 
-        public Visibility ApplicationSettingsVisibility { get; set; }
+        public bool ApplicationSettingsVisible { get; set; }
 
-        public Visibility PopOutSettingsVisibility { get; set; }
+        public bool PopOutSettingsVisible { get; set; }
 
-        public Visibility AutoPopOutSettingsVisibility { get; set; }
+        public bool AutoPopOutSettingsVisible { get; set; }
 
-        public Visibility TrackIRSettingsVisibility { get; set; }
+        public bool TrackIRSettingsVisible { get; set; }
 
         private void TreeViewItem_Selected(object sender, RoutedEventArgs e)
         {
             var treeViewItem = (TreeViewItem)e.Source;
-
-            ApplicationSettingsVisibility = Visibility.Collapsed;
-            PopOutSettingsVisibility = Visibility.Collapsed;
-            AutoPopOutSettingsVisibility = Visibility.Collapsed;
-            TrackIRSettingsVisibility = Visibility.Collapsed;
-
-            if (treeViewItem.Header.ToString() == "Application Settings")
-            {
-                ApplicationSettingsVisibility = Visibility.Visible;
-            }
-            else if(treeViewItem.Header.ToString() == "Pop Out Settings")
-            {
-                PopOutSettingsVisibility = Visibility.Visible;
-            }
-            else if (treeViewItem.Header.ToString() == "Auto Pop Out Panel Settings")
-            {
-                AutoPopOutSettingsVisibility = Visibility.Visible;
-            }
-            else if (treeViewItem.Header.ToString() == "Track IR Settings")
-            {
-                TrackIRSettingsVisibility = Visibility.Visible;
-            }
+            _preferencesViewModel.SectionSelectCommand.Execute(treeViewItem.Header.ToString());
         }
     }
 }

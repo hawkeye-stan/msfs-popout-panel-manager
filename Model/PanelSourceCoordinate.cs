@@ -1,13 +1,11 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 using System;
-using System.ComponentModel;
 
 namespace MSFSPopoutPanelManager.Model
 {
-    public class PanelSourceCoordinate : INotifyPropertyChanged
+    public class PanelSourceCoordinate : ObservableObject
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
         public int PanelIndex { get; set; }
 
         public int X { get; set; }

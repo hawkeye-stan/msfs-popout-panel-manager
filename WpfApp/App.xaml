@@ -1,9 +1,7 @@
 ﻿<Application x:Class="MSFSPopoutPanelManager.WpfApp.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
-             xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-             xmlns:local="clr-namespace:MSFSPopoutPanelManager.WpfApp"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              StartupUri="ApplicationWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>

@@ -1,10 +1,9 @@
 ﻿<UserControl x:Class="MSFSPopoutPanelManager.WpfApp.UserControlPanelConfiguration"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:MSFSPopoutPanelManager.WpfApp"
              xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
              mc:Ignorable="d" 
              Height="505"
@@ -125,7 +124,8 @@
                                              SourceUpdated="GridData_SourceUpdated" 
                                              Style="{StaticResource TextBoxColumnFocus}" 
                                              IsReadOnly="{c:Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path='DataContext.DataStore.ActiveUserProfile.IsLocked or !DataContext.DataStore.AllowEdit'}" 
-                                             IsHitTestVisible="{c:Binding Path='!FullScreen'}"/>                                </DataTemplate>
+                                             IsHitTestVisible="{c:Binding Path='!FullScreen'}"/>
+                                </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
                         <DataGridTemplateColumn Header="Y-Pos" Width="80">
@@ -228,7 +228,6 @@
                     </Button.Style>
                 </Button>
             </WrapPanel>
-
         </DockPanel>
     </Grid>
 </UserControl>

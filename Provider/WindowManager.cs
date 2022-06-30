@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MSFSPopoutPanelManager.Model;
+using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 
@@ -16,12 +17,16 @@ namespace MSFSPopoutPanelManager.Provider
                 PInvoke.SetWindowLong(handle, PInvokeConstant.GWL_STYLE, (uint)(currentStyle | (PInvokeConstant.WS_CAPTION | PInvokeConstant.WS_SIZEBOX)));
         }
 
-        public static void ApplyAlwaysOnTop(IntPtr handle, bool alwaysOnTop, Rectangle panelRectangle)
+        public static void ApplyAlwaysOnTop(IntPtr handle, PanelType panelType, bool alwaysOnTop, Rectangle panelRectangle)
         {
+            // Override weird size adjustment for Touch Panel WPF window
+            int newWidth = panelType == PanelType.MSFSTouchPanel ? panelRectangle.Width - 16 : panelRectangle.Width;
+            int newHeight = panelType == PanelType.MSFSTouchPanel ? panelRectangle.Height - 39 : panelRectangle.Height;
+
             if (alwaysOnTop)
-                PInvoke.SetWindowPos(handle, new IntPtr(PInvokeConstant.HWND_TOPMOST), panelRectangle.Left, panelRectangle.Top, panelRectangle.Width, panelRectangle.Height, PInvokeConstant.SWP_ALWAYS_ON_TOP);
+                PInvoke.SetWindowPos(handle, new IntPtr(PInvokeConstant.HWND_TOPMOST), panelRectangle.Left, panelRectangle.Top, newWidth, newHeight, PInvokeConstant.SWP_ALWAYS_ON_TOP);
             else
-                PInvoke.SetWindowPos(handle, new IntPtr(PInvokeConstant.HWND_NOTOPMOST), panelRectangle.Left, panelRectangle.Top, panelRectangle.Width, panelRectangle.Height, 0);
+                PInvoke.SetWindowPos(handle, new IntPtr(PInvokeConstant.HWND_NOTOPMOST), panelRectangle.Left, panelRectangle.Top, newWidth, newHeight, 0);
         }
 
         public static void ApplyAlwaysOnTop(IntPtr handle, bool alwaysOnTop)
@@ -32,7 +37,7 @@ namespace MSFSPopoutPanelManager.Provider
             Rectangle clientRectangle;
             PInvoke.GetClientRect(handle, out clientRectangle);
 
-            ApplyAlwaysOnTop(handle, alwaysOnTop, new Rectangle(rect.X, rect.Y, clientRectangle.Width, clientRectangle.Height));
+            ApplyAlwaysOnTop(handle, PanelType.WPFWindow, alwaysOnTop, new Rectangle(rect.X, rect.Y, clientRectangle.Width, clientRectangle.Height));
         }
 
         public static void CloseWindow(IntPtr handle)
@@ -45,6 +50,36 @@ namespace MSFSPopoutPanelManager.Provider
             Rectangle rectangle;
             PInvoke.GetClientRect(handle, out rectangle);
             PInvoke.MoveWindow(handle, x, y, rectangle.Width, rectangle.Height, true);
+        }
+
+        public static void MoveWindow(IntPtr handle, PanelType panelType, int x, int y, int width, int height)
+        {
+            // Override weird size adjustment for Touch Panel WPF window
+            int newWidth = panelType == PanelType.MSFSTouchPanel ? width - 16 : width;
+            int newHeight = panelType == PanelType.MSFSTouchPanel ? height - 39 : height;
+
+            PInvoke.MoveWindow(handle, x, y, newWidth, newHeight, true);
+        }
+
+        public static void MoveWindowWithMsfsBugOverrirde(IntPtr handle, PanelType panelType, int x, int y, int width, int height)
+        {
+            int originalX = x;
+
+            // Override weird size adjustment for Touch Panel WPF window
+            int newWidth = panelType == PanelType.MSFSTouchPanel ? width - 16 : width;
+            int newHeight = panelType == PanelType.MSFSTouchPanel ? height - 39 : height;
+
+            PInvoke.MoveWindow(handle, x, y, newWidth, newHeight, true);
+
+            // Fixed MSFS bug, create workaround where on 2nd or later instance of width adjustment, the panel shift to the left by itself
+            // Wait for system to catch up on panel coordinate that were just applied
+            System.Threading.Thread.Sleep(200);
+
+            Rectangle rectangle;
+            PInvoke.GetWindowRect(handle, out rectangle);
+
+            if (rectangle.Left != originalX)
+                PInvoke.MoveWindow(handle, originalX, y, newWidth, newHeight, false);
         }
 
         public static void MinimizeWindow(IntPtr handle)
@@ -73,6 +108,11 @@ namespace MSFSPopoutPanelManager.Provider
             {
                 PInvoke.EnumWindows(new PInvoke.CallBack(EnumToMinimizePopoutPanels), 1);
             }
+        }
+
+        public static IntPtr FindWindowByCaption(string caption)
+        {
+            return PInvoke.FindWindowByCaption(IntPtr.Zero, caption);
         }
 
         private static bool EnumToMinimizePopoutPanels(IntPtr hwnd, int index)

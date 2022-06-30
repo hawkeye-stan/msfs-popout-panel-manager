@@ -69,7 +69,7 @@ namespace MSFSPopoutPanelManager.Provider
 
         private void HandleOnPanelSelectionRemoved(object sender, EventArgs e)
         {
-            if(_panelCoordinates.Count > 0)
+            if (_panelCoordinates.Count > 0)
             {
                 _panelCoordinates.RemoveAt(_panelCoordinates.Count - 1);
                 _panelIndex--;

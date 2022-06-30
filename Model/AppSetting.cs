@@ -1,19 +1,15 @@
-﻿using MSFSPopoutPanelManager.Shared;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using MSFSPopoutPanelManager.Shared;
 using Newtonsoft.Json;
 using System;
-using System.ComponentModel;
 using System.IO;
 
 namespace MSFSPopoutPanelManager.Model
 {
-    public class AppSetting : INotifyPropertyChanged
+    public class AppSetting : ObservableObject
     {
         private const string APP_SETTING_DATA_FILENAME = "appsettingdata.json";
-
         private bool _saveEnabled;
-
-        // Using PropertyChanged.Fody
-        public event PropertyChangedEventHandler PropertyChanged;
 
         public event EventHandler<EventArgs<bool>> AlwaysOnTopChanged;
         public event EventHandler<EventArgs<bool>> AutoPopOutPanelsChanged;
@@ -100,7 +96,7 @@ namespace MSFSPopoutPanelManager.Model
             {
                 return AppAutoStart.CheckIsAutoStart();
             }
-            set 
+            set
             {
                 if (value)
                     AppAutoStart.Activate();
@@ -148,12 +144,9 @@ namespace MSFSPopoutPanelManager.Model
         }
     }
 
-    public class AutoPopOutPanelsWaitDelay : INotifyPropertyChanged
+    public class AutoPopOutPanelsWaitDelay : ObservableObject
     {
-        // Using PropertyChanged.Fody
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public event EventHandler DataChanged;
+        public event EventHandler<EventArgs<string>> DataChanged;
 
         public AutoPopOutPanelsWaitDelay()
         {
@@ -170,7 +163,7 @@ namespace MSFSPopoutPanelManager.Model
 
         public void OnPropertyChanged(string propertyName, object before, object after)
         {
-            DataChanged?.Invoke(this, null);
+            DataChanged?.Invoke(this, new EventArgs<string>(propertyName));
         }
     }
 }

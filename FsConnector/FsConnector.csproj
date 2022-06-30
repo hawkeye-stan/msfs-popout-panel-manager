@@ -11,7 +11,7 @@
     <Copyright>Stanley Kwok 2021</Copyright>
     <PackageProjectUrl>https://github.com/hawkeye-stan/msfs-popout-panel-manager</PackageProjectUrl>
     <RootNamespace>MSFSPopoutPanelManager.FsConnector</RootNamespace>
-    <Platforms>x64;AnyCPU</Platforms>
+    <Platforms>x64</Platforms>
     <AssemblyVersion>3.3.4.0</AssemblyVersion>
     <FileVersion>3.3.4.0</FileVersion>
   </PropertyGroup>

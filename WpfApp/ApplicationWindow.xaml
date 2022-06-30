@@ -1,14 +1,13 @@
 ﻿<mah:MetroWindow x:Class="MSFSPopoutPanelManager.WpfApp.ApplicationWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-        xmlns:tb="http://www.hardcodet.net/taskbar"
-        xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
-        xmlns:local="clr-namespace:MSFSPopoutPanelManager.WpfApp"
-        xmlns:shared="clr-namespace:MSFSPopoutPanelManager.Shared;assembly=Shared"
-        mc:Ignorable="d"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:tb="http://www.hardcodet.net/taskbar"
+                 xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
+                 xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                 xmlns:shared="clr-namespace:MSFSPopoutPanelManager.Shared;assembly=Shared"
+                 mc:Ignorable="d"
         Title="MSFS Pop Out Panel Manager" 
         Height="670" 
         Width="920"
@@ -19,14 +18,14 @@
         WindowState="{Binding InitialWindowState, Mode=OneWay}"
         Loaded="Window_Loaded"
         Closing="Window_Closing">
-     <Window.InputBindings>
-        <KeyBinding Command="{Binding Path=MinimizeAllPanelsCommand}" Modifiers="Ctrl" Key="M" />
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding Path=MinimizeAllPanelsCommand}" Modifiers="Ctrl+Alt" Key="M" />
     </Window.InputBindings>
     <Grid>
         <tb:TaskbarIcon Name="notifyIcon"
                     ToolTipText="MSFS Pop Out Panel Manager"
                     IconSource="logo.ico"
-                    MenuActivation="RightClick"
+                    MenuActivation="LeftOrRightClick"
                     Visibility="Visible">
             <tb:TaskbarIcon.ContextMenu>
                 <ContextMenu>
@@ -58,7 +57,7 @@
                         <MenuItem Name="menuItem_Exit" Header="Exit" Command="{Binding Path=ExitCommand}"/>
                     </MenuItem>
                     <MenuItem Header="View">
-                        <MenuItem Name="menuItem_MinimizeAllPanels" Header="Minimize All Panels    "  InputGestureText="Ctrl+M" Command="{Binding Path=MinimizeAllPanelsCommand}" IsChecked="{Binding Path=IsMinimizedAllPanels, Mode=TwoWay}" IsEnabled="{c:Binding Path='IsShownPanelConfigurationScreen'}"/>
+                        <MenuItem Name="menuItem_MinimizeAllPanels" Header="Minimize All Panels    "  InputGestureText="Ctrl+Alt+M" Command="{Binding Path=MinimizeAllPanelsCommand}" IsChecked="{Binding Path=IsMinimizedAllPanels, Mode=TwoWay}" IsEnabled="{c:Binding Path='IsShownPanelConfigurationScreen'}"/>
                     </MenuItem>
                     <MenuItem Header="Help">
                         <MenuItem Name="menuItem_UserGuide" Header="User Guide" Command="{Binding Path=UserGuideCommand}"/>
@@ -102,7 +101,6 @@
                     <Label Name="lblVersion" Margin="0, 0, 0, 5" FontSize="14" Content="{Binding Path = ApplicationVersion, Mode=OneWay}" />
                 </WrapPanel>
             </DockPanel>
-
         </DockPanel>
     </Grid>
 </mah:MetroWindow>

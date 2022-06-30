@@ -1,16 +1,13 @@
 ﻿using MahApps.Metro.Controls;
+using MSFSPopoutPanelManager.Model;
 using MSFSPopoutPanelManager.Provider;
 using System;
-using System.Diagnostics;
 using System.Drawing;
 using System.Windows;
 using System.Windows.Interop;
 
 namespace MSFSPopoutPanelManager.WpfApp
 {
-    /// <summary>
-    /// Interaction logic for OnScreenMessageDialog.xaml
-    /// </summary>
     public partial class OnScreenMessageDialog : MetroWindow
     {
         public MessageIcon MessageIcon { get; set; }
@@ -40,17 +37,20 @@ namespace MSFSPopoutPanelManager.WpfApp
                     if (window != null)
                     {
                         var dialogHandle = window.Handle;
-                        var simulatorProcessHandle = DiagnosticManager.GetSimulatorProcess().Handle;
+                        var simulatorProcess = DiagnosticManager.GetSimulatorProcess();
 
-                        Rectangle rectangle;
-                        PInvoke.GetWindowRect(DiagnosticManager.GetSimulatorProcess().Handle, out rectangle);
-                        Rectangle clientRectangle;
-                        PInvoke.GetClientRect(DiagnosticManager.GetSimulatorProcess().Handle, out clientRectangle);
+                        if (simulatorProcess != null)
+                        {
+                            Rectangle rectangle;
+                            PInvoke.GetWindowRect(simulatorProcess.Handle, out rectangle);
+                            Rectangle clientRectangle;
+                            PInvoke.GetClientRect(simulatorProcess.Handle, out clientRectangle);
 
-                        var x = Convert.ToInt32(rectangle.X + clientRectangle.Width / 2 - this.Width / 2);
-                        var y = Convert.ToInt32(rectangle.Y + clientRectangle.Height / 2 - this.Height / 2);
+                            var x = Convert.ToInt32(rectangle.X + clientRectangle.Width / 2 - this.Width / 2);
+                            var y = Convert.ToInt32(rectangle.Y + clientRectangle.Height / 2 - this.Height / 2);
 
-                        PInvoke.MoveWindow(dialogHandle, x, y, Convert.ToInt32(this.Width), Convert.ToInt32(this.Height), false);
+                            WindowManager.MoveWindow(dialogHandle, PanelType.WPFWindow, x, y, Convert.ToInt32(this.Width), Convert.ToInt32(this.Height));
+                        }
                     }
                 }
             };
@@ -63,7 +63,7 @@ namespace MSFSPopoutPanelManager.WpfApp
                     this.Close(); timer.Enabled = false;
                 });
             };
-            timer.Interval = duration * 1000;  
+            timer.Interval = duration * 1000;
             timer.Enabled = true;
         }
     }

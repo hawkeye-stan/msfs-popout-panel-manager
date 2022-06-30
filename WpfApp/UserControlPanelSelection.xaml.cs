@@ -4,9 +4,6 @@ using System.Windows.Controls;
 
 namespace MSFSPopoutPanelManager.WpfApp
 {
-    /// <summary>
-    /// Interaction logic for UserControlPanelSelection.xaml
-    /// </summary>
     public partial class UserControlPanelSelection : UserControl
     {
         private PanelSelectionViewModel _panelSelectionViewModel;
@@ -94,16 +91,6 @@ namespace MSFSPopoutPanelManager.WpfApp
 
         private void AddBinding_Click(object sender, RoutedEventArgs e)
         {
-            //ConfirmationDialog dialog = new ConfirmationDialog("Confirm Add Binding", $"Are you sure you want to bind the aircraft livery below to the active profile? \n{_panelSelectionViewModel.DataStore.CurrentMsfsPlaneTitle}");
-            //dialog.Owner = Application.Current.MainWindow;
-            //dialog.Topmost = true;
-            //dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-
-            //if ((bool)dialog.ShowDialog())
-            //{
-            //    _panelSelectionViewModel.AddProfileBindingCommand.Execute(null);
-            //}
-
             _panelSelectionViewModel.AddProfileBindingCommand.Execute(null);
         }
 

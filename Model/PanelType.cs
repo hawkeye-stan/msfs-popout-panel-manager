@@ -5,6 +5,7 @@
         FlightSimMainWindow,
         BuiltInPopout,
         CustomPopout,
-        MSFSTouchPanel
+        MSFSTouchPanel,
+        WPFWindow
     }
 }

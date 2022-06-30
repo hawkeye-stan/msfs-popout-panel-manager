@@ -25,7 +25,7 @@ namespace MSFSPopoutPanelManager.Model
                 }
 
                 SimBaseDocument data;
-                
+
                 using (Stream stream = new FileStream(filePath, FileMode.Open))
                 {
                     data = (SimBaseDocument)serializer.Deserialize(stream);

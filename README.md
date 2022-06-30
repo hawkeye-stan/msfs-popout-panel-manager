@@ -4,7 +4,7 @@
 <img src="images/doc/panel_selection.png" width="600" hspace="10"/>
 </p>
 
-MSFS Pop Out Panel Manager is an application for MSFS 2020 which helps pop out, save and re-position pop out panels to be used by utilities such as Sim Innovations Air Manager or to place pop out panels onto your screen or another monitor at predetermined locations automatically.
+MSFS Pop Out Panel Manager is an application for MSFS 2020 which helps pop out, save and position pop out panels to be used by utilities such as Sim Innovations Air Manager or to place pop out panels onto your screen or another monitor at predetermined locations automatically.
 
 Please follow [FlightSimulator.com](https://forums.flightsimulator.com/t/msfs-pop-out-panel-manager-automatically-pop-out-and-save-panel-position/460613)  forum thread regarding this project
 
@@ -15,18 +15,19 @@ Please follow [FlightSimulator.com](https://forums.flightsimulator.com/t/msfs-po
 <hr>
 
 ## Application Features
-* Display resolution independent. Supports 1080p/1440p/4k display.
+* Display resolution independent. Supports 1080p/1440p/4k display and ultrawide displays.
 * Support multiple user defined aircraft profiles to save panel locations to be recalled later.
 * Intuitive user interface to defined location of panels to be popped out.
 * [Auto Pop Out](#auto-pop-out-feature) feature. The application will detect active aircraft by livery and activate the corresponding profile on start of new flight session.
-* [Cold Start feature](#auto-pop-out-feature). Instrumentation panels can be popped out even when they're not powered on (for G1000 planes only).
+* [Cold Start feature](#auto-pop-out-feature). Instrumentation panels can be popped out even when they're not powered on (for G1000 /  / G1000 NXi planes only).
 * Auto Panning feature remembers the cockpit camera angle when you first define the pop out panels. You can now pan, zoom in, and zoom out to identify offscreen panels and the camera angle will be saved and reused. This feature requires the use of Ctrl-Alt-0 keyboard binding to save custom camera view per plane configuration. (Can be configured to use 0 through 9). If the keyboard binding is currently being used. The auto-panning feature will overwrite the saved camera view if enabled.
 * Fine-grain control in positioning of panels down to pixel level. 
-* Panels can also be configured to be always on top, with title bar hidden, or stretch to full screen mode.
+* Panels can be configured to appear always on top, with title bar hidden, or stretch to full screen mode.
 * Auto disable Track IR when pop out starts.
 * User-friendly features such as application always on top, auto start, minimized to tray with keyboard shortcuts.
 * Auto save feature. All profile and panel changes are saved automatically.
-* **Experimental Feature**: Enable touch support for pop outs on touch enable display. Please see [Touch Enable Pop Out Feature](#touch-enable-pop-out-feature) for more information.
+* Auto update feature. Application can auto-update itself when new version becomes available.
+* **Experimental Feature**: Enable touch support for pop outs on touch capable  display. Please see [Touch Enable Pop Out Feature](#touch-enable-pop-out-feature) for more information.
 
 <hr>
 

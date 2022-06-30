@@ -58,7 +58,7 @@ namespace MSFSPopoutPanelManager.Provider
             Rectangle clientRectangle;
             PInvoke.GetClientRect(hwnd, out clientRectangle);
 
-            var x = Convert.ToInt32(rectangle.X + (clientRectangle.Width) * 0.5); 
+            var x = Convert.ToInt32(rectangle.X + (clientRectangle.Width) * 0.5);
             var y = Convert.ToInt32(rectangle.Y + (clientRectangle.Height) * 0.5);
 
             PInvoke.SetForegroundWindow(hwnd);
@@ -75,7 +75,7 @@ namespace MSFSPopoutPanelManager.Provider
 
         public static void SaveCustomView(IntPtr hwnd, string keybinding)
         {
-            uint customViewKey = (uint) (Convert.ToInt32(keybinding) + KEY_0);
+            uint customViewKey = (uint)(Convert.ToInt32(keybinding) + KEY_0);
 
             PInvoke.SetForegroundWindow(hwnd);
             Thread.Sleep(500);
@@ -117,7 +117,6 @@ namespace MSFSPopoutPanelManager.Provider
             Thread.Sleep(200);
             PInvoke.keybd_event(Convert.ToByte(customViewKey), 0, KEYEVENTF_KEYUP, 0);
             PInvoke.keybd_event(Convert.ToByte(VK_LMENU), 0, KEYEVENTF_KEYUP, 0);
-
         }
 
         public static void ToggleFullScreenPanel(IntPtr hwnd)
@@ -157,11 +156,11 @@ namespace MSFSPopoutPanelManager.Provider
                 // set focus to game app
                 var x = Convert.ToInt32(rectangle.X + (clientRectangle.Width) * 0.947);
                 var y = Convert.ToInt32(rectangle.Y + (clientRectangle.Height) * 0.9);
-                LeftClick(x, y);    
+                LeftClick(x, y);
                 Thread.Sleep(250);
                 LeftClick(x, y);
                 Thread.Sleep(250);
-                
+
                 for (var top = y; top < y + 100; top = top + 20)
                 {
                     LeftClick(x, Convert.ToInt32(top));

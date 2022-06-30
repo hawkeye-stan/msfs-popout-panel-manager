@@ -1,12 +1,11 @@
 ﻿<UserControl x:Class="MSFSPopoutPanelManager.WpfApp.UserControlPanelSelection"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
-             xmlns:local="clr-namespace:MSFSPopoutPanelManager.WpfApp"
-             xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
              xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
+             xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
              mc:Ignorable="d" 
              Height="505"
              Width="920"
@@ -43,6 +42,7 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
+        <BooleanToVisibilityConverter x:Key="VisibleIfTrueConverter" />
     </UserControl.Resources>
     <Grid>
         <DockPanel>
@@ -95,30 +95,34 @@
                         <TextBlock Text="Power on required to pop out panels on cold start (G1000 / NXi Only)" TextWrapping="Wrap"  Margin="5,0,0,3"/>
                     </CheckBox>
                 </WrapPanel>
-                <Separator Margin="5,10,5,5"/>
-                <Label Content="3. Identify pop out panel locations in the game by clicking on them." Margin="0,0,0,0" />
-                <WrapPanel Orientation="Vertical" Margin="20,0,0,0" HorizontalAlignment="Left">
-                    <WrapPanel Orientation="Horizontal">
-                        <Label Content="LEFT CLICK" Foreground="AntiqueWhite"/>
-                        <Label Content="to add a new panel."/>
+                <WrapPanel Orientation="Vertical">
+                    <Label Content="3. Identify pop out panel locations in the game by clicking on them." Margin="0,0,0,0" />
+                    <WrapPanel Orientation="Vertical" Margin="20,0,0,0" HorizontalAlignment="Left">
+                        <WrapPanel Orientation="Horizontal">
+                            <Label Content="LEFT CLICK" Foreground="AntiqueWhite"/>
+                            <Label Content="to add a new panel."/>
+                        </WrapPanel>
+                        <WrapPanel Orientation="Horizontal">
+                            <Label Content="CTRL + LEFT CLICK" Foreground="AntiqueWhite" />
+                            <Label Content="when all panels have been selected or to cancel selections." />
+                        </WrapPanel>
+                        <WrapPanel Orientation="Horizontal">
+                            <Label Content="SHIFT + LEFT CLICK" Foreground="AntiqueWhite" />
+                            <Label Content="to remove the most recently added panel."/>
+                        </WrapPanel>
+                        <WrapPanel Orientation="Horizontal" Margin="0,5,0,0" HorizontalAlignment="Left">
+                            <Button Content="Start Panel Selection" HorizontalAlignment="Left" Margin="0,0,0,0" Width="165" Click="StartPanelSelection_Click" Style="{StaticResource ProfileSelectedDependency}"/>
+                            <Button Content="Save Auto Panning Camera" HorizontalAlignment="Left" Margin="20,0,0,0" IsEnabled="{c:Binding Path='DataStore.HasActiveUserProfileId and DataStore.IsFlightActive'}" Width="215" Click="SaveAutoPanningCamera_Click" Style="{StaticResource ProfileSelectedDependency}"/>
+                        </WrapPanel>
                     </WrapPanel>
-
-                    <WrapPanel Orientation="Horizontal">
-                        <Label Content="CTRL + LEFT CLICK" Foreground="AntiqueWhite" />
-                        <Label Content="when all panels have been selected or to cancel selections." />
-                    </WrapPanel>
-                    <WrapPanel Orientation="Horizontal">
-                        <Label Content="SHIFT + LEFT CLICK" Foreground="AntiqueWhite" />
-                        <Label Content="to remove the most recently added panel."/>
-                    </WrapPanel>
-                    <WrapPanel Orientation="Horizontal" Margin="0,5,0,0" HorizontalAlignment="Left">
-                        <Button Content="Start Panel Selection" HorizontalAlignment="Left" Margin="0,0,0,0" Width="165" Click="StartPanelSelection_Click" Style="{StaticResource ProfileSelectedDependency}"/>
-                        <Button Content="Save Auto Panning Camera" HorizontalAlignment="Left" Margin="20,0,0,0" IsEnabled="{c:Binding Path='DataStore.HasActiveUserProfileId and DataStore.IsFlightActive'}" Width="215" Click="SaveAutoPanningCamera_Click" Style="{StaticResource ProfileSelectedDependency}"/>
-                    </WrapPanel>
+                    <Separator Margin="5,10,5,5"/>
                 </WrapPanel>
-                <Separator Margin="5,10,5,5"/>
-                <Label Content="4. Start the pop out process for selected panels." Margin="0,0,0,0" />
-                <Button Content="Start Pop Out" HorizontalAlignment="Left" Margin="20,5,0,0" Width="130" IsEnabled="{c:Binding Path='DataStore.HasActiveUserProfileId and DataStore.IsFlightActive'}" Command="{Binding Path=StartPopOutCommand}" Style="{StaticResource ProfileSelectedDependency}"/>
+                <WrapPanel Orientation="Vertical" >
+                    <Label Content="4. Start the pop out process for selected panels." Margin="0,0,0,0" />
+                    <Button Content="Start Pop Out" HorizontalAlignment="Left" Margin="20,5,0,0" Width="130" IsEnabled="{c:Binding Path='DataStore.HasActiveUserProfileId and DataStore.IsFlightActive'}" Command="{Binding Path=StartPopOutCommand}" Style="{StaticResource ProfileSelectedDependency}"/>
+                </WrapPanel>
+                <WrapPanel Orientation="Vertical" Visibility="Visible">
+                </WrapPanel>
             </WrapPanel>
             <DockPanel DockPanel.Dock="Right" Width="325" HorizontalAlignment="Center">
                 <Label DockPanel.Dock="Top" Content="Panel Locations" HorizontalAlignment="Center" Margin="0,10,0,0"/>

@@ -26,7 +26,7 @@ namespace MSFSPopoutPanelManager.Provider
             // Take a screen shot by removing the titlebar of the window
             var left = rectangle.Left;
             var top = rectangle.Top + (rectangle.Height - clientRectangle.Height) - 8;      // 8 pixels adjustments
-            
+
             var bmp = new Bitmap(clientRectangle.Width, clientRectangle.Height, PixelFormat.Format24bppRgb);
 
             using (Graphics g = Graphics.FromImage(bmp))
@@ -37,10 +37,12 @@ namespace MSFSPopoutPanelManager.Provider
             // Place the above image in the same canvas size as before
             Bitmap backingImage = new Bitmap(rectangle.Width, rectangle.Height);
             using (Graphics gfx = Graphics.FromImage(backingImage))
-            using (SolidBrush brush = new SolidBrush(Color.FromArgb(255, 0, 0)))
             {
-                gfx.FillRectangle(brush, 0, 0, rectangle.Width, rectangle.Height);
-                gfx.DrawImage(bmp, new Point(0, top));
+                using (SolidBrush brush = new SolidBrush(Color.FromArgb(255, 0, 0)))
+                {
+                    gfx.FillRectangle(brush, 0, 0, rectangle.Width, rectangle.Height);
+                    gfx.DrawImage(bmp, new Point(0, top));
+                }
             }
 
             return backingImage;

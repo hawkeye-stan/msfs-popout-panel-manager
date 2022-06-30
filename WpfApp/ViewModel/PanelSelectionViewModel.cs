@@ -1,8 +1,8 @@
-﻿using MSFSPopoutPanelManager.Model;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using MSFSPopoutPanelManager.Model;
 using MSFSPopoutPanelManager.Provider;
 using MSFSPopoutPanelManager.Shared;
 using System;
-using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Windows;
@@ -10,7 +10,7 @@ using System.Windows.Interop;
 
 namespace MSFSPopoutPanelManager.WpfApp.ViewModel
 {
-    public class PanelSelectionViewModel : INotifyPropertyChanged
+    public class PanelSelectionViewModel : ObservableObject
     {
         private UserProfileManager _userProfileManager;
         private PanelSelectionManager _panelSelectionManager;
@@ -18,14 +18,11 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
         private SimConnectManager _simConnectManager;
         private bool _minimizeForPopOut;
 
-        // Using PropertyChanged.Fody
-        public event PropertyChangedEventHandler PropertyChanged;
-
         public event EventHandler OnPopOutStarted;
         public event EventHandler OnPopOutCompleted;
-        public event EventHandler OnShowPrePopOutMessage;
+        public event EventHandler OnUserProfileChanged;
 
-        public DataStore DataStore { get; set; }
+        public DataStore DataStore { get; private set; }
 
         public bool IsEditingPanelCoorOverlay { get; set; }
 
@@ -43,8 +40,9 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
         public PanelSelectionViewModel(DataStore dataStore, UserProfileManager userProfileManager, PanelPopOutManager panelPopoutManager, SimConnectManager simConnectManager)
         {
             DataStore = dataStore;
-            DataStore.OnActiveUserProfileChanged += (sender, e) => { 
-                IsEditingPanelCoorOverlay = false; 
+            DataStore.OnActiveUserProfileChanged += (sender, e) =>
+            {
+                IsEditingPanelCoorOverlay = false;
                 RemoveAllPanelCoorOverlay();
             };
 
@@ -95,6 +93,7 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
         private void OnChangeProfile(object commandParameter)
         {
             DataStore.AppSetting.LastUsedProfileId = DataStore.ActiveUserProfileId;
+            OnUserProfileChanged?.Invoke(this, null);
         }
 
         private void OnAddProfileBinding(object commandParameter)
@@ -178,7 +177,7 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
             // Turn off TrackIR if TrackIR is started
             if (commandParameter == null && DataStore.AppSetting.AutoDisableTrackIR)
             {
-                if(IsEditingPanelCoorOverlay)
+                if (IsEditingPanelCoorOverlay)
                     _simConnectManager.TurnOffTrackIR();
                 else
                     _simConnectManager.TurnOnTrackIR();
@@ -209,7 +208,7 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
                 var overlay = (Window)sender;
                 var handle = new WindowInteropHelper(Window.GetWindow(overlay)).Handle;
                 panelSourceCoordinate.PanelHandle = handle;
-                PInvoke.MoveWindow(handle, (int)overlay.Left, (int)overlay.Top, (int)overlay.Width, (int)overlay.Height, false);
+                WindowManager.MoveWindow(handle, PanelType.WPFWindow, (int)overlay.Left, (int)overlay.Top, (int)overlay.Width, (int)overlay.Height);
             };
             overlay.WindowStartupLocation = System.Windows.WindowStartupLocation.Manual;
             overlay.Left = panelSourceCoordinate.X - overlay.Width / 2;
@@ -276,7 +275,7 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
                 OnPopOutCompleted?.Invoke(this, null);
             }
 
-            // Turn off TrackIR if TrackIR is started
+
             if (DataStore.AppSetting.AutoDisableTrackIR)
                 _simConnectManager.TurnOnTrackIR();
         }
@@ -294,7 +293,7 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
             else
                 Logger.LogStatus("Panels selection is completed. No panel has been selected.", StatusMessageType.Info);
 
-            // Turn off TrackIR if TrackIR is started
+
             if (DataStore.AppSetting.AutoDisableTrackIR)
                 _simConnectManager.TurnOnTrackIR();
         }

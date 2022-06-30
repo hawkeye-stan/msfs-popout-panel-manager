@@ -1,10 +1,9 @@
 ﻿using AutoUpdaterDotNET;
+using CommunityToolkit.Mvvm.ComponentModel;
 using MSFSPopoutPanelManager.Model;
 using MSFSPopoutPanelManager.Provider;
 using MSFSPopoutPanelManager.Shared;
 using System;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -12,20 +11,19 @@ using System.Windows;
 
 namespace MSFSPopoutPanelManager.WpfApp.ViewModel
 {
-    public class ApplicationViewModel : INotifyPropertyChanged
+    public class ApplicationViewModel : ObservableObject
     {
         private UserProfileManager _userProfileManager;
         private PanelPopOutManager _panelPopoutManager;
         private SimConnectManager _simConnectManager;
-
-        // Using PropertyChanged.Fody
-        public event PropertyChangedEventHandler PropertyChanged;
 
         public event EventHandler<EventArgs<StatusMessage>> ShowContextMenuBalloonTip;
 
         public PanelSelectionViewModel PanelSelectionViewModel { get; private set; }
 
         public PanelConfigurationViewModel PanelConfigurationViewModel { get; private set; }
+
+        public PreferencesViewModel PreferencesViewModel { get; private set; }
 
         public DataStore DataStore { get; set; }
 
@@ -42,6 +40,8 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
         public bool IsShownPanelSelectionScreen { get; set; }
 
         public bool IsMinimizedAllPanels { get; set; }
+
+        public IntPtr WindowHandle { get; set; }
 
         public DelegateCommand RestartCommand => new DelegateCommand(OnRestart, CanExecute);
         public DelegateCommand MinimizeAllPanelsCommand => new DelegateCommand(OnMinimizeAllPanels, CanExecute);
@@ -61,15 +61,15 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
             _userProfileManager = new UserProfileManager();
 
             _simConnectManager = new SimConnectManager();
-            _simConnectManager.OnSimConnectDataRefreshed += (sender, e) =>  
-            {  
+            _simConnectManager.OnSimConnectDataRefreshed += (sender, e) =>
+            {
                 // Automatic switching of active profile when SimConnect active aircraft livery changes
-                if(DataStore.CurrentMsfsPlaneTitle != e.Value.Title)
+                if (DataStore.CurrentMsfsPlaneTitle != e.Value.Title)
                 {
                     DataStore.CurrentMsfsPlaneTitle = e.Value.Title;
                     AutoSwitchProfile(e.Value.Title);
                 }
-                
+
                 DataStore.ElectricalMasterBatteryStatus = e.Value.ElectricalMasterBattery;
             };
             _simConnectManager.OnConnected += (sender, e) => { DataStore.IsSimulatorStarted = true; };
@@ -95,9 +95,9 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
 
             PanelSelectionViewModel = new PanelSelectionViewModel(DataStore, _userProfileManager, _panelPopoutManager, _simConnectManager);
             PanelSelectionViewModel.OnPopOutCompleted += (sender, e) => { ShowPanelSelection(false); PanelConfigurationViewModel.Initialize(); };
-
             PanelConfigurationViewModel = new PanelConfigurationViewModel(DataStore, _userProfileManager);
 
+            PreferencesViewModel = new PreferencesViewModel(DataStore);
             InputHookManager.OnStartPopout += (source, e) => { OnStartPopOut(null); };
         }
 
@@ -141,10 +141,17 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
             InputHookManager.StartHook();
         }
 
+        public void Exit()
+        {
+            // This method gets call on Windows_Closing
+            InputHookManager.EndHook();
+            _simConnectManager.Stop();
+        }
+
         private void OnRestart(object commandParameter)
         {
             // Un-minimize all panels if applicable
-            if(IsMinimizedAllPanels)
+            if (IsMinimizedAllPanels)
             {
                 DataStore.AllowEdit = true;
                 IsMinimizedAllPanels = false;
@@ -167,10 +174,14 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
 
         private void OnExit(object commandParameter)
         {
-            InputHookManager.EndHook();
-            _simConnectManager.Stop();
+            if (Application.Current != null)
+                Application.Current.Dispatcher.Invoke(() => Application.Current.Shutdown());
+        }
 
-            Application.Current.Shutdown();
+        private void ShutDownApplication()
+        {
+            if (Application.Current != null)
+                Application.Current.Shutdown();
         }
 
         private void OnMinimizeAllPanels(object commandParameter)

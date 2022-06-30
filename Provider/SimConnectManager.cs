@@ -9,15 +9,14 @@ using System.Timers;
 
 namespace MSFSPopoutPanelManager.Provider
 {
-    public class SimConnectManager 
-    { 
+    public class SimConnectManager
+    {
         private const int MSFS_DATA_REFRESH_TIMEOUT = 1000;
 
         private SimConnector _simConnector;
         private dynamic _simData;
 
         private System.Timers.Timer _requestDataTimer;
-        private SimConnectSystemEvent _lastSystemEvent;
         private bool _isPowerOnForPopOut;
         private bool _isTrackIRManaged;
 
@@ -75,7 +74,7 @@ namespace MSFSPopoutPanelManager.Provider
 
         public void TurnOffpower()
         {
-            if(_isPowerOnForPopOut)
+            if (_isPowerOnForPopOut)
             {
                 _simConnector.TransmitActionEvent(ActionEvent.KEY_AVIONICS_MASTER_2_SET, 0);
                 Thread.Sleep(100);
@@ -91,7 +90,7 @@ namespace MSFSPopoutPanelManager.Provider
 
         public void TurnOffTrackIR()
         {
-            if(_simData != null && _simData.TrackIREnable)
+            if (_simData != null && _simData.TrackIREnable)
             {
                 SetTrackIREnable(false);
                 _isTrackIRManaged = true;
@@ -114,10 +113,10 @@ namespace MSFSPopoutPanelManager.Provider
 
             // It is prop3 in SimConnectStruct (by DataDefinitions.cs)
             SimConnectStruct simConnectStruct = new SimConnectStruct();
-                        
+
             simConnectStruct.Prop01 = _simData.Title;                                                                   // must set "Title" for TrackIR variable to write correctly
             simConnectStruct.Prop02 = _simData.ElectricalMasterBattery ? Convert.ToDouble(1) : Convert.ToDouble(0);   // must set "ElectricalMasterBattery" for TrackIR variable to write correctly
-            simConnectStruct.Prop03 = enable ? Convert.ToDouble(1): Convert.ToDouble(0);                                // this is the TrackIR variable
+            simConnectStruct.Prop03 = enable ? Convert.ToDouble(1) : Convert.ToDouble(0);                                // this is the TrackIR variable
             _simConnector.SetDataObject(simConnectStruct);
         }
 

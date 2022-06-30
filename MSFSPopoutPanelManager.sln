@@ -23,23 +23,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		VERSION.md = VERSION.md
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{D8938324-934B-4602-B30E-66B60365B426}"
-	ProjectSection(SolutionItems) = preProject
-		images\logo.png = images\logo.png
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{E2AF3E4D-F5B6-44C0-8E15-528206E9F3C7}"
-	ProjectSection(SolutionItems) = preProject
-		images\doc\frameworkdownload.png = images\doc\frameworkdownload.png
-		images\doc\screenshot_1.png = images\doc\screenshot_1.png
-		images\doc\screenshot_2.png = images\doc\screenshot_2.png
-		images\doc\screenshot_3.png = images\doc\screenshot_3.png
-		images\doc\screenshot_4.png = images\doc\screenshot_4.png
-		images\doc\screenshot_5.png = images\doc\screenshot_5.png
-		images\doc\screenshot_6.png = images\doc\screenshot_6.png
-		images\doc\screenshot_7.png = images\doc\screenshot_7.png
-	EndProjectSection
-EndProject
+
+
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64

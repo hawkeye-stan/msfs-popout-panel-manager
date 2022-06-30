@@ -10,9 +10,6 @@ using System.Windows.Interop;
 
 namespace MSFSPopoutPanelManager.WpfApp
 {
-    /// <summary>
-    /// Interaction logic for ApplicationWindow.xaml
-    /// </summary>
     public partial class ApplicationWindow : MetroWindow
     {
         private ApplicationViewModel _viewModel;
@@ -97,12 +94,12 @@ namespace MSFSPopoutPanelManager.WpfApp
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            _viewModel.ExitCommand.Execute(null);
+            _viewModel.Exit();
         }
 
         private void EditPreferences_Click(object sender, RoutedEventArgs e)
         {
-            PreferencesDialog dialog = new PreferencesDialog(_viewModel.DataStore.AppSetting);
+            PreferencesDialog dialog = new PreferencesDialog(_viewModel.PreferencesViewModel);
             dialog.Owner = Application.Current.MainWindow;
             dialog.Topmost = true;
             dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
