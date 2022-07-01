@@ -68,6 +68,7 @@ namespace MSFSPopoutPanelManager.Provider
                 _simConnector.TransmitActionEvent(ActionEvent.KEY_MASTER_BATTERY_SET, 1);
                 Thread.Sleep(100);
                 _simConnector.TransmitActionEvent(ActionEvent.KEY_TOGGLE_AVIONICS_MASTER, 1);
+                Thread.Sleep(100);
             }
         }
 
@@ -78,6 +79,7 @@ namespace MSFSPopoutPanelManager.Provider
                 _simConnector.TransmitActionEvent(ActionEvent.KEY_TOGGLE_AVIONICS_MASTER, 1);
                 Thread.Sleep(100);
                 _simConnector.TransmitActionEvent(ActionEvent.KEY_MASTER_BATTERY_SET, 0);
+                Thread.Sleep(100);
 
                 _isPowerOnForPopOut = false;
             }
