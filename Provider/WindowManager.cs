@@ -120,7 +120,7 @@ namespace MSFSPopoutPanelManager.Provider
             var className = PInvoke.GetClassName(hwnd);
             var caption = PInvoke.GetWindowText(hwnd);
 
-            if (className == "AceApp" && caption.IndexOf("Microsoft Flight Simulator") == -1)      // MSFS windows designation
+            if ((className == "AceApp" && caption.IndexOf("Microsoft Flight Simulator") == -1) || caption.IndexOf("Touch Panel") > -1)      // MSFS windows designation
             {
                 if (index == 0)
                     PInvoke.ShowWindow(hwnd, PInvokeConstant.SW_MINIMIZE);

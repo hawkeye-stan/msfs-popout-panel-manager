@@ -43,6 +43,7 @@
                 <TreeViewItem Header="Application Settings" Selected="TreeViewItem_Selected" Margin="0,15,0,10" IsSelected="True"></TreeViewItem>
                 <TreeViewItem Header="Pop Out Settings" Selected="TreeViewItem_Selected" Margin="0,0,0,10"></TreeViewItem>
                 <TreeViewItem Header="Auto Pop Out Panel Settings" Selected="TreeViewItem_Selected" Margin="0,0,0,10"></TreeViewItem>
+                <TreeViewItem Header="Touch Panel Settings" Selected="TreeViewItem_Selected" Margin="0,0,0,10"></TreeViewItem>
                 <TreeViewItem Header="Track IR Settings" Selected="TreeViewItem_Selected" Margin="0,0,0,10"></TreeViewItem>
             </TreeView>
             <WrapPanel DockPanel.Dock="Right" Margin="20,15,20,0" Width="Auto" >
@@ -132,6 +133,37 @@
                         </WrapPanel>
                         <TextBlock Margin="119,0,10,10" Style="{StaticResource TextBlockDescription}">Amount of time to wait for cold start instrumentation power on to complete.<LineBreak/>(Default: 2 seconds)</TextBlock>
                         <WrapPanel Orientation="Horizontal"></WrapPanel>
+                    </WrapPanel>
+                </WrapPanel>
+                <WrapPanel Orientation="Vertical" Width="Auto" Visibility="{Binding Path=TouchPanelSettingsVisible, Converter={StaticResource VisibleIfTrueConverter}, Mode=OneWay}">
+                    <CheckBox IsChecked="{Binding Path=DataStore.AppSetting.TouchPanelSettings.EnableIntegration, Mode=TwoWay}" Content="Enable Touch Panel Integration"></CheckBox>
+                    <TextBlock Style="{StaticResource TextBlockDescription}">
+                        Enable touch panel integration. This will add functionality to bind touch panel template to profile and launch it together with pop out panels.
+                    </TextBlock>
+                    <WrapPanel Visibility="{Binding Path=DataStore.IsEnableTouchPanelIntegration, Converter={StaticResource VisibleIfTrueConverter}, Mode=OneWay}">
+                        <CheckBox IsChecked="{Binding Path=DataStore.AppSetting.TouchPanelSettings.AutoStart, Mode=TwoWay}" Content="Auto Start Touch Panel Server"></CheckBox>
+                        <TextBlock Style="{StaticResource TextBlockDescription}">
+                            Enable auto start of touch panel server. Requires touch panel integration enabled.<LineBreak/>
+                            Server URL: http://localhost:27010
+                        </TextBlock>
+                        <CheckBox IsChecked="{Binding Path=DataStore.AppSetting.TouchPanelSettings.UseArduino, Mode=TwoWay}" Content="Enable Use of Arduino (Touch Panel Server restart required)"></CheckBox>
+                        <TextBlock Style="{StaticResource TextBlockDescription}">
+                            Use of Arduino encoders to control touch panel.
+                        </TextBlock>
+                        <CheckBox IsChecked="{Binding Path=DataStore.AppSetting.TouchPanelSettings.EnableSound, Mode=TwoWay}" Content="Enable Sound"></CheckBox>
+                        <TextBlock Style="{StaticResource TextBlockDescription}">
+                            Enable playing of button clicking sound when using touch panel.
+                        </TextBlock>
+                        <WrapPanel Orientation="Horizontal" Margin="0,20,0,0" >
+                            <mah:NumericUpDown Width="100" Minimum="50" Maximum="3000" Interval="50" FontSize="16" Value="{Binding Path=DataStore.AppSetting.TouchPanelSettings.DataRefreshInterval, Mode=TwoWay}"></mah:NumericUpDown>
+                            <Label Margin="10,0,0,0">Data Refresh Rate</Label>
+                        </WrapPanel>
+                        <TextBlock Margin="0,10,10,10" Style="{StaticResource TextBlockDescription}">Time interval for touch panel to refresh SimConnect data.<LineBreak/>(Default: 100 miliseconds)</TextBlock>
+                        <WrapPanel Orientation="Horizontal" Margin="0,20,0,0" >
+                            <mah:NumericUpDown Width="100" Minimum="200" Maximum="3000" Interval="50" FontSize="16" Value="{Binding Path=DataStore.AppSetting.TouchPanelSettings.MapRefreshInterval, Mode=TwoWay}"></mah:NumericUpDown>
+                            <Label Margin="10,0,0,0">Map Refresh Rate</Label>
+                        </WrapPanel>
+                        <TextBlock Margin="0,10,10,10" Style="{StaticResource TextBlockDescription}">Time interval for touch panel's map to refresh SimConnect data.<LineBreak/>(Default: 250 miliseconds)</TextBlock>
                     </WrapPanel>
                 </WrapPanel>
                 <WrapPanel Orientation="Vertical" Width="Auto" Visibility="{Binding Path=TrackIRSettingsVisible, Converter={StaticResource VisibleIfTrueConverter}, Mode=OneWay}">

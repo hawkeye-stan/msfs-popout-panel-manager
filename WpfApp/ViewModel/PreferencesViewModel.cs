@@ -11,6 +11,7 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
             ApplicationSettingsVisible = true;
             PopOutSettingsVisible = false;
             AutoPopOutSettingsVisible = false;
+            TouchPanelSettingsVisible = false;
             TrackIRSettingsVisible = false;
         }
 
@@ -24,6 +25,8 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
 
         public bool AutoPopOutSettingsVisible { get; private set; }
 
+        public bool TouchPanelSettingsVisible { get; private set; }
+
         public bool TrackIRSettingsVisible { get; private set; }
 
         private bool CanExecute(object commandParameter)
@@ -36,6 +39,7 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
             ApplicationSettingsVisible = false;
             PopOutSettingsVisible = false;
             AutoPopOutSettingsVisible = false;
+            TouchPanelSettingsVisible = false;
             TrackIRSettingsVisible = false;
 
             switch (commandParameter.ToString())
@@ -48,6 +52,9 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
                     break;
                 case "Auto Pop Out Panel Settings":
                     AutoPopOutSettingsVisible = true;
+                    break;
+                case "Touch Panel Settings":
+                    TouchPanelSettingsVisible = true;
                     break;
                 case "Track IR Settings":
                     TrackIRSettingsVisible = true;

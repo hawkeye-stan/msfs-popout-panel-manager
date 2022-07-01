@@ -1,0 +1,453 @@
+[
+  {
+    "propName": "GPS_LAT",
+    "variableName": "GPS POSITION LAT",
+    "simConnectUnit": "degrees",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "GPS_LON",
+    "variableName": "GPS POSITION LON",
+    "simConnectUnit": "degrees",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "PLANE_HEADING",
+    "variableName": "PLANE HEADING DEGREES MAGNETIC",
+    "simConnectUnit": "degrees",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": "toFixed0"
+  },
+  {
+    "propName": "PLANE_HEADING_TRUE",
+    "variableName": "PLANE HEADING DEGREES TRUE",
+    "simConnectUnit": "degrees",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": "toFixed0"
+  },
+
+  {
+    "propName": "PLANE_ALTITUDE",
+    "variableName": "PLANE ALTITUDE",
+    "simConnectUnit": "feet",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": "toFixed0"
+  },
+  {
+    "propName": "PLANE_ALTITUDE_ABOVE_GROUND",
+    "variableName": "PLANE ALT ABOVE GROUND",
+    "simConnectUnit": "feet",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": "toFixed0"
+  },
+  {
+    "propName": "PLANE_AIRSPEED",
+    "variableName": "AIRSPEED INDICATED",
+    "simConnectUnit": "knots",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": "toFixed0"
+  },
+  {
+    "propName": "PLANE_VERTICAL_SPEED",
+    "variableName": "VERTICAL SPEED",
+    "simConnectUnit": "feet/minute",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": "toFixed0"
+  },
+  {
+    "propName": "PLANE_PITCH",
+    "variableName": "PLANE PITCH DEGREES",
+    "simConnectUnit": "degrees",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "PLANE_BANK",
+    "variableName": "PLANE BANK DEGREES",
+    "simConnectUnit": "degrees",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "KOHLSMAN_SETTING_HG",
+    "variableName": "KOHLSMAN SETTING HG",
+    "simConnectUnit": "inHg",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": "toFixed2"
+  },
+  {
+    "propName": "FLAPS_HANDLE_INDEX",
+    "variableName": "FLAPS HANDLE INDEX",
+    "simConnectUnit": "number",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": "toFixed0"
+  },
+  {
+    "propName": "FLAPS_HANDLE_PERCENT",
+    "variableName": "FLAPS HANDLE PERCENT",
+    "simConnectUnit": "percent",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": "toFixed2"
+  },
+  {
+    "propName": "FLAPS_ANGLE",
+    "variableName": "TRAILING EDGE FLAPS LEFT ANGLE",
+    "simConnectUnit": "degrees",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": "toFixed0"
+  },
+  {
+    "propName": "ELEVATOR_TRIM",
+    "variableName": "ELEVATOR TRIM PCT",
+    "simConnectUnit": "percent",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": "toFixed1"
+  },
+  {
+    "propName": "RUDDER_TRIM",
+    "variableName": "RUDDER TRIM",
+    "simConnectUnit": "radians",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": "toFixed2"
+  },
+  {
+    "propName": "AILERON_TRIM",
+    "variableName": "AILERON TRIM",
+    "simConnectUnit": "radians",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": "toFixed3"
+  },
+  {
+    "propName": "BRAKE_PARKING_INDICATOR",
+    "variableName": "BRAKE PARKING INDICATOR",
+    "simConnectUnit": "bool",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "GEAR_POSITION",
+    "variableName": "GEAR POSITION",
+    "simConnectUnit": "enum",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": "toFixed0"
+  },
+  {
+    "propName": "GEAR_CENTER_POSITION",
+    "variableName": "GEAR CENTER POSITION",
+    "simConnectUnit": "percent",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": "toFixed0"
+  },
+  {
+    "propName": "GEAR_LEFT_POSITION",
+    "variableName": "GEAR LEFT POSITION",
+    "simConnectUnit": "percent",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": "toFixed0"
+  },
+  {
+    "propName": "GEAR_RIGHT_POSITION",
+    "variableName": "GEAR RIGHT POSITION",
+    "simConnectUnit": "percent",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": "toFixed0"
+  },
+  {
+    "propName": "TRANSPONDER_CODE",
+    "variableName": "TRANSPONDER CODE:1",
+    "simConnectUnit": "number",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": "padStartZero4"
+  },
+  {
+    "propName": "AP_MASTER_ON",
+    "variableName": "AUTOPILOT MASTER",
+    "simConnectUnit": "bool",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "AP_FLIGHT_DIRECTOR_ON",
+    "variableName": "AUTOPILOT FLIGHT DIRECTOR ACTIVE",
+    "simConnectUnit": "bool",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "AP_GPS_ON",
+    "variableName": "GPS DRIVES NAV1",
+    "simConnectUnit": "bool",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "AP_APPROACH_ON",
+    "variableName": "AUTOPILOT APPROACH HOLD",
+    "simConnectUnit": "bool",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "AP_NAV_ON",
+    "variableName": "AUTOPILOT NAV1 LOCK",
+    "simConnectUnit": "bool",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "AP_ALTITUDE_HOLD_ON",
+    "variableName": "AUTOPILOT ALTITUDE LOCK",
+    "simConnectUnit": "bool",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "AP_HEADING_HOLD_ON",
+    "variableName": "AUTOPILOT HEADING LOCK",
+    "simConnectUnit": "bool",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "AP_VS_HOLD_ON",
+    "variableName": "AUTOPILOT VERTICAL HOLD",
+    "simConnectUnit": "bool",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "AP_FLC_HOLD_ON",
+    "variableName": "AUTOPILOT FLIGHT LEVEL CHANGE",
+    "simConnectUnit": "bool",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "AP_YAW_DAMPER_ON",
+    "variableName": "AUTOPILOT YAW DAMPER",
+    "simConnectUnit": "bool",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "AP_WING_LEVELER_ON",
+    "variableName": "AUTOPILOT WING LEVELER",
+    "simConnectUnit": "bool",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "AUTOPILOT_THROTTLE_ARM",
+    "variableName": "AUTOPILOT THROTTLE ARM",
+    "simConnectUnit": "bool",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "AP_BACK_COURSE_ON",
+    "variableName": "AUTOPILOT BACKCOURSE HOLD",
+    "simConnectUnit": "bool",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "BATTERY_MASTER_ON",
+    "variableName": "ELECTRICAL MASTER BATTERY",
+    "simConnectUnit": "bool",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "ALTERNATOR_MASTER_ON",
+    "variableName": "GENERAL ENG MASTER ALTERNATOR:1",
+    "simConnectUnit": "bool",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "AVIONICS_MASTER_ON",
+    "variableName": "AVIONICS MASTER SWITCH",
+    "simConnectUnit": "bool",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "FUEL_PUMP_ON",
+    "variableName": "GENERAL ENG FUEL PUMP SWITCH:1",
+    "simConnectUnit": "bool",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "DEICE_ON",
+    "variableName": "STRUCTURAL DEICE SWITCH",
+    "simConnectUnit": "bool",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "PITOT_HEAT_ON",
+    "variableName": "PITOT HEAT",
+    "simConnectUnit": "bool",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "LIGHT_LANDING_ON",
+    "variableName": "LIGHT LANDING",
+    "simConnectUnit": "bool",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "LIGHT_TAXI_ON",
+    "variableName": "LIGHT TAXI",
+    "simConnectUnit": "bool",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "LIGHT_NAV_ON",
+    "variableName": "LIGHT NAV",
+    "simConnectUnit": "bool",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "LIGHT_BEACON_ON",
+    "variableName": "LIGHT BEACON",
+    "simConnectUnit": "bool",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "LIGHT_STROBE_ON",
+    "variableName": "LIGHT STROBE",
+    "simConnectUnit": "bool",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "LIGHT_PANEL_ON",
+    "variableName": "LIGHT PANEL",
+    "simConnectUnit": "bool",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "LIGHT_WING_ON",
+    "variableName": "LIGHT WING",
+    "simConnectUnit": "bool",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "SIMULATION_RATE",
+    "variableName": "SIMULATION RATE",
+    "simConnectUnit": "number",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  }
+]

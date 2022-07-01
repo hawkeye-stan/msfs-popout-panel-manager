@@ -23,8 +23,39 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		VERSION.md = VERSION.md
 	EndProjectSection
 EndProject
-
-
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TouchPanel", "TouchPanel", "{0CBBD19D-BE62-4E38-8E70-92C5D4E1B331}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared", "TouchPanel\Shared\Shared.csproj", "{A2AFEE92-0290-4837-B613-8E12F98827B9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimconnectAgent", "TouchPanel\SimconnectAgent\SimconnectAgent.csproj", "{277B73E6-05A2-4039-B27C-B59D77705A97}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArduinoAgent", "TouchPanel\ArduinoAgent\ArduinoAgent.csproj", "{F9836227-5D4F-4561-9417-DBFC68621AA7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FsConnector", "TouchPanel\FsConnector\FsConnector.csproj", "{0449DED3-FBB0-417B-BCA9-0BAEA17C439B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TouchPanelHost", "TouchPanel\TouchPanelHost\TouchPanelHost.csproj", "{F29262F8-B0E4-4017-B54F-3543A7CEA9E9}"
+EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "ReactClient", "TouchPanel\ReactClient\", "{5E191BE5-F410-4127-ABF9-29AB1D44CBE6}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.8"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_51474"
+		Debug.AspNetCompiler.PhysicalPath = "TouchPanel\ReactClient\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_51474\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_51474"
+		Release.AspNetCompiler.PhysicalPath = "TouchPanel\ReactClient\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_51474\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "51474"
+		SlnRelativePath = "TouchPanel\ReactClient\"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -51,13 +82,39 @@ Global
 		{023426F4-9FD2-4198-B9F4-83F0B55B88FC}.Debug|x64.Build.0 = Debug|x64
 		{023426F4-9FD2-4198-B9F4-83F0B55B88FC}.Release|x64.ActiveCfg = Release|x64
 		{023426F4-9FD2-4198-B9F4-83F0B55B88FC}.Release|x64.Build.0 = Release|x64
+		{A2AFEE92-0290-4837-B613-8E12F98827B9}.Debug|x64.ActiveCfg = Debug|x64
+		{A2AFEE92-0290-4837-B613-8E12F98827B9}.Debug|x64.Build.0 = Debug|x64
+		{A2AFEE92-0290-4837-B613-8E12F98827B9}.Release|x64.ActiveCfg = Release|x64
+		{A2AFEE92-0290-4837-B613-8E12F98827B9}.Release|x64.Build.0 = Release|x64
+		{277B73E6-05A2-4039-B27C-B59D77705A97}.Debug|x64.ActiveCfg = Debug|x64
+		{277B73E6-05A2-4039-B27C-B59D77705A97}.Debug|x64.Build.0 = Debug|x64
+		{277B73E6-05A2-4039-B27C-B59D77705A97}.Release|x64.ActiveCfg = Release|x64
+		{277B73E6-05A2-4039-B27C-B59D77705A97}.Release|x64.Build.0 = Release|x64
+		{F9836227-5D4F-4561-9417-DBFC68621AA7}.Debug|x64.ActiveCfg = Debug|x64
+		{F9836227-5D4F-4561-9417-DBFC68621AA7}.Debug|x64.Build.0 = Debug|x64
+		{F9836227-5D4F-4561-9417-DBFC68621AA7}.Release|x64.ActiveCfg = Release|x64
+		{F9836227-5D4F-4561-9417-DBFC68621AA7}.Release|x64.Build.0 = Release|x64
+		{0449DED3-FBB0-417B-BCA9-0BAEA17C439B}.Debug|x64.ActiveCfg = Debug|x64
+		{0449DED3-FBB0-417B-BCA9-0BAEA17C439B}.Debug|x64.Build.0 = Debug|x64
+		{0449DED3-FBB0-417B-BCA9-0BAEA17C439B}.Release|x64.ActiveCfg = Release|x64
+		{0449DED3-FBB0-417B-BCA9-0BAEA17C439B}.Release|x64.Build.0 = Release|x64
+		{F29262F8-B0E4-4017-B54F-3543A7CEA9E9}.Debug|x64.ActiveCfg = Debug|x64
+		{F29262F8-B0E4-4017-B54F-3543A7CEA9E9}.Debug|x64.Build.0 = Debug|x64
+		{F29262F8-B0E4-4017-B54F-3543A7CEA9E9}.Release|x64.ActiveCfg = Release|x64
+		{F29262F8-B0E4-4017-B54F-3543A7CEA9E9}.Release|x64.Build.0 = Release|x64
+		{5E191BE5-F410-4127-ABF9-29AB1D44CBE6}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5E191BE5-F410-4127-ABF9-29AB1D44CBE6}.Release|x64.ActiveCfg = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{D8938324-934B-4602-B30E-66B60365B426} = {15FC98CD-0A69-437B-A5E5-67D025DB5CDC}
-		{E2AF3E4D-F5B6-44C0-8E15-528206E9F3C7} = {D8938324-934B-4602-B30E-66B60365B426}
+		{A2AFEE92-0290-4837-B613-8E12F98827B9} = {0CBBD19D-BE62-4E38-8E70-92C5D4E1B331}
+		{277B73E6-05A2-4039-B27C-B59D77705A97} = {0CBBD19D-BE62-4E38-8E70-92C5D4E1B331}
+		{F9836227-5D4F-4561-9417-DBFC68621AA7} = {0CBBD19D-BE62-4E38-8E70-92C5D4E1B331}
+		{0449DED3-FBB0-417B-BCA9-0BAEA17C439B} = {0CBBD19D-BE62-4E38-8E70-92C5D4E1B331}
+		{F29262F8-B0E4-4017-B54F-3543A7CEA9E9} = {0CBBD19D-BE62-4E38-8E70-92C5D4E1B331}
+		{5E191BE5-F410-4127-ABF9-29AB1D44CBE6} = {0CBBD19D-BE62-4E38-8E70-92C5D4E1B331}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D1607553-61E8-4ED6-B382-ABA6F6944586}

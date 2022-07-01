@@ -13,6 +13,7 @@ namespace MSFSPopoutPanelManager.WpfApp
     public partial class ApplicationWindow : MetroWindow
     {
         private ApplicationViewModel _viewModel;
+        private TouchPanelManagementDialog _touchPanelManagementDialog;
 
         // This command has to be here since it doesn't work in view model, window StateChanged never gets fire
         public DelegateCommand RestoreWindowCommand => new DelegateCommand((o) => { this.WindowState = WindowState.Normal; }, (o) => { return true; });
@@ -105,6 +106,20 @@ namespace MSFSPopoutPanelManager.WpfApp
             dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
 
             dialog.ShowDialog();
+        }
+
+        private void ManageTouchPanel_Click(object sender, RoutedEventArgs e)
+        {
+            if (_touchPanelManagementDialog == null || !_touchPanelManagementDialog.IsLoaded)
+            {
+                _touchPanelManagementDialog = new TouchPanelManagementDialog(_viewModel.TouchPanelManagementViewModel);
+                _touchPanelManagementDialog.Owner = Application.Current.MainWindow;
+                _touchPanelManagementDialog.Topmost = true;
+                _touchPanelManagementDialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                _touchPanelManagementDialog.Show();
+            }
+            else
+                _touchPanelManagementDialog.Focus();
         }
     }
 }

@@ -1,0 +1,33 @@
+﻿<mah:MetroWindow x:Class="MSFSPopoutPanelManager.WpfApp.TouchPanelManagementDialog"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
+                 xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                 mc:Ignorable="d"
+        Title="Touch Panel Server Management" 
+        Height="650" 
+        Width="900"
+        ResizeMode="NoResize" 
+        Background="Transparent">
+    <Grid>
+        <DockPanel>
+            <WrapPanel DockPanel.Dock="Top" Orientation="Horizontal" Width="900" Height="70" Background="#FF252523">
+                <Button Content="Start" HorizontalAlignment="Left" Margin="20,20,0,10" Width="120" Command="{Binding Path=StartServerCommand}" IsEnabled="{c:Binding Path='!IsServerStarted and !IsServerActionDisabled'}" />
+                <Button Content="Stop" HorizontalAlignment="Left" Margin="20,20,0,10" Width="120" Command="{Binding Path=StopServerCommand}" IsEnabled="{c:Binding Path='IsServerStarted and !IsServerActionDisabled'}" />
+                <Button Content="Restart" HorizontalAlignment="Left" Margin="20,20,0,10" Width="120" Command="{Binding Path=RestartServerCommand}" IsEnabled="{c:Binding Path='IsServerStarted and !IsServerActionDisabled'}" />
+            </WrapPanel>
+            <WrapPanel DockPanel.Dock="Top" Orientation="Horizontal" Width="900" Height="270" Background="#FF252523">
+                <Label Content="Client Log" Margin="20,10,0,0"/>
+                <Button Content="Clear Log" Margin="650,10,0,0" Width="120" Command="{Binding Path=ClearClientLogCommand}" />
+                <TextBox Name="txtClientLog" Margin="20,10,0,10" Width="850" Height="200" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" IsReadOnly="True" Background="#FF45494A" Text="{Binding Path=ClientLog, Mode=OneWay}"/>
+            </WrapPanel>
+            <WrapPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Width="900" Height="270" Background="#FF252523">
+                <Label Content="Server Log" Margin="20,10,0,0"/>
+                <Button Content="Clear Log" Margin="645,10,0,0" Width="120" Command="{Binding Path=ClearServerLogCommand}"/>
+                <TextBox Name="txtServerLog" Margin="20,10,0,10" Width="850" Height="200" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" IsReadOnly="True" Background="#FF45494A" Text="{Binding Path=ServerLog, Mode=OneWay}"/>
+            </WrapPanel>
+        </DockPanel>
+    </Grid>
+</mah:MetroWindow>

@@ -34,12 +34,16 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
 
                 if (_appSetting != null)
                 {
-
+                    IsEnableTouchPanelIntegration = _appSetting.TouchPanelSettings.EnableIntegration;
                     IsEnableAutoPopOutPanel = _appSetting.AutoPopOutPanels;
                 }
-
+                
                 // bubble event up to this 'DataStore' level
-
+                _appSetting.TouchPanelSettings.DataChanged += (sender, e) =>
+                {
+                    if (e.Value == "EnableIntegration")
+                        IsEnableTouchPanelIntegration = ((TouchPanelSettings)sender).EnableIntegration;
+                };
 
                 _appSetting.AutoPopOutPanelsChanged += (sender, e) =>
                 {
@@ -184,6 +188,9 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
         public bool IsEnteredFlight { get; set; }
 
         public bool IsFlightActive { get; set; }
+
+        public bool IsEnableTouchPanelIntegration { get; set; }
+
         public bool IsEnableAutoPopOutPanel { get; set; }
     }
 }

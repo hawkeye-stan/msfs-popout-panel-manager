@@ -21,6 +21,7 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
         public event EventHandler OnPopOutStarted;
         public event EventHandler OnPopOutCompleted;
         public event EventHandler OnUserProfileChanged;
+        public TouchPanelBindingViewModel TouchPanelBindingViewModel { get; private set; }
 
         public DataStore DataStore { get; private set; }
 
@@ -58,6 +59,8 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
             _panelPopoutManager = panelPopoutManager;
             _panelPopoutManager.OnPopOutStarted += HandleOnPopOutStarted;
             _panelPopoutManager.OnPopOutCompleted += HandleOnPopOutCompleted;
+
+            TouchPanelBindingViewModel = new TouchPanelBindingViewModel(DataStore, userProfileManager);
         }
 
 
@@ -160,6 +163,17 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
                 // Turn off power if needed after pop out
                 _simConnectManager.TurnOffpower();
             }
+            else if (DataStore.ActiveUserProfile != null && DataStore.ActiveUserProfile.TouchPanelBindings.Count > 0)
+            {
+                Logger.LogStatus("Opening touch panel.....", StatusMessageType.Info);
+
+                var messageDialog = new OnScreenMessageDialog($"Opening touch panel for profile:\n{DataStore.ActiveUserProfile.ProfileName}", DataStore.AppSetting.AutoPopOutPanelsWaitDelay.InitialCockpitView);
+                messageDialog.ShowDialog();
+
+                _panelPopoutManager.UserProfile = DataStore.ActiveUserProfile;
+                _panelPopoutManager.AppSetting = DataStore.AppSetting;
+                _panelPopoutManager.StartOpenTouchPanel();
+            }
         }
 
         private void OnSaveAutoPanningCamera(object commandParameter)
@@ -208,6 +222,7 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
                 var overlay = (Window)sender;
                 var handle = new WindowInteropHelper(Window.GetWindow(overlay)).Handle;
                 panelSourceCoordinate.PanelHandle = handle;
+
                 WindowManager.MoveWindow(handle, PanelType.WPFWindow, (int)overlay.Left, (int)overlay.Top, (int)overlay.Width, (int)overlay.Height);
             };
             overlay.WindowStartupLocation = System.Windows.WindowStartupLocation.Manual;

@@ -23,6 +23,7 @@ namespace MSFSPopoutPanelManager.Provider
 
         public event EventHandler OnPopOutStarted;
         public event EventHandler<EventArgs<bool>> OnPopOutCompleted;
+        public event EventHandler<EventArgs<TouchPanelOpenEventArg>> OnTouchPanelOpened;
 
         public UserProfile UserProfile { get; set; }
 
@@ -69,6 +70,9 @@ namespace MSFSPopoutPanelManager.Provider
 
             if (popoutResults != null)
             {
+                // If touch panel integration is enable, pop out touch panels
+                LaunchTouchPanel();
+
                 if (UserProfile.PanelConfigs.Count > 0)
                 {
                     LoadAndApplyPanelConfigs(popoutResults);
@@ -94,6 +98,62 @@ namespace MSFSPopoutPanelManager.Provider
             else
             {
                 OnPopOutCompleted?.Invoke(this, new EventArgs<bool>(false));
+            }
+        }
+
+        public void StartOpenTouchPanel()
+        {
+            _panels = new List<PanelConfig>();
+            LaunchTouchPanel();
+            
+            if (UserProfile.PanelConfigs.Count > 0)
+            {
+                LoadAndApplyPanelConfigs(_panels);
+                Logger.LogStatus("Touch Panel has been opened succesfully and saved panel settings have been applied.", StatusMessageType.Info);
+            }
+            else
+            {
+                UserProfile.PanelConfigs = new ObservableCollection<PanelConfig>(_panels);
+                Logger.LogStatus("Touch Panel has been opened succesfully.", StatusMessageType.Info);
+            }
+
+            _userProfileManager.WriteUserProfiles();
+            OnPopOutCompleted?.Invoke(this, new EventArgs<bool>(true));
+        }
+
+        private void LaunchTouchPanel()
+        {
+            // If touch panel integration is enable, pop out touch panels
+            if (AppSetting.TouchPanelSettings.EnableIntegration)
+            {
+                var planeProfilesConfigs = TouchPanel.Shared.ConfigurationReader.GetPlaneProfilesConfiguration();
+
+                foreach (var binding in UserProfile.TouchPanelBindings)
+                {
+                    var planeConfig = planeProfilesConfigs.Find(x => x.PlaneId == binding.PlaneId);
+                    var panelConfig = planeConfig == null ? null : planeConfig.Panels.Find(x => x.PanelId == binding.PanelId);
+
+                    if (planeConfig != null && panelConfig != null)
+                    {
+                        var caption = $"Touch Panel | {panelConfig.Name}";
+                        OnTouchPanelOpened?.Invoke(this, new EventArgs<TouchPanelOpenEventArg>(new TouchPanelOpenEventArg() { PlaneId = binding.PlaneId, PanelId = binding.PanelId, Caption = caption, Width = panelConfig.PanelSize.Width, Height = panelConfig.PanelSize.Height }));
+
+                        // detect for a max of 5 seconds
+                        int tryCount = 0;
+                        while (tryCount < 10)
+                        {
+                            var touchPanelHandle = WindowManager.FindWindowByCaption(caption);
+                            if (touchPanelHandle != IntPtr.Zero)
+                            {
+                                // Add the MSFS Touch Panel windows to the panel list
+                                PInvoke.EnumWindows(new PInvoke.CallBack(EnumMSFSTouchPanelPopoutCallBack), 0);
+                                break;
+                            }
+                            Thread.Sleep(500);
+                            tryCount++;
+                        }
+                    }
+                }
             }
         }
 

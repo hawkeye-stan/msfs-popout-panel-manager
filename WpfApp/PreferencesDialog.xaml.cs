@@ -26,6 +26,8 @@ namespace MSFSPopoutPanelManager.WpfApp
 
         public bool AutoPopOutSettingsVisible { get; set; }
 
+        public bool TouchPanelSettingsVisible { get; set; }
+
         public bool TrackIRSettingsVisible { get; set; }
 
         private void TreeViewItem_Selected(object sender, RoutedEventArgs e)

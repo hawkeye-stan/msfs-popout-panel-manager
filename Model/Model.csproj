@@ -5,21 +5,21 @@
     <RootNamespace>MSFSPopoutPanelManager.Model</RootNamespace>
     <AssemblyName>Model</AssemblyName>
     <PackageId>MSFS 2020 Popout Panel Manager Model</PackageId>
-    <Version>3.3.4.0</Version>
+    <Version>4.0.0.0</Version>
     <Authors>Stanley Kwok</Authors>
     <Company>Stanley Kwok</Company>
     <Copyright>Stanley Kwok 2021</Copyright>
     <Product>MSFS 2020 Popout Panel Manager Model</Product>
     <PackageProjectUrl>https://github.com/hawkeye-stan/msfs-popout-panel-manager</PackageProjectUrl>
     <Platforms>x64</Platforms>
-    <AssemblyVersion>3.3.4.0</AssemblyVersion>
-    <FileVersion>3.3.4.0</FileVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+    <FileVersion>4.0.0.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="7.1.2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="PropertyChanged.Fody" Version="3.4.1" />
+    <PackageReference Include="PropertyChanged.Fody" Version="3.4.0" />
   </ItemGroup>
 
   <ItemGroup>

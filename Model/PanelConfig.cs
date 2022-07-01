@@ -32,6 +32,9 @@ namespace MSFSPopoutPanelManager.Model
         public bool IsCustomPopout { get { return PanelType == PanelType.CustomPopout; } }
 
         [JsonIgnore]
+        public bool IsMSFSTouchPanel { get { return PanelType == PanelType.MSFSTouchPanel; } }
+
+        [JsonIgnore]
         public IntPtr PanelHandle { get; set; }
 
         [JsonIgnore]

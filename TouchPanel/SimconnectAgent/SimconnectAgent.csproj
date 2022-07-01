@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>MSFSPopoutPanelManager.TouchPanel.SimConnectAgent</RootNamespace>
+    <Platforms>x64</Platforms>
+    <AssemblyName>MSFSPopoutPanelManager.TouchPanel.SimConnectAgent</AssemblyName>
+	<ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+	<PackageId>MSFSPopoutPanelManager.TouchPanel.SimConnectAgent</PackageId>
+	<Product>MSFSPopoutPanelManager.TouchPanel.SimConnectAgent</Product>
+	<Company>Stanley Kwok</Company>
+	<Authors>Stanley Kwok</Authors>
+	<Version>4.0.0.0</Version>
+	<PackageProjectUrl>https://github.com/hawkeye-stan/msfs-popout-panel-manager</PackageProjectUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CoordinateSharp" Version="2.13.1.1" />
+    <PackageReference Include="ini-parser-netstandard" Version="2.5.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="StringMath" Version="3.0.2" />
+  </ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\ArduinoAgent\ArduinoAgent.csproj" />
+	  <ProjectReference Include="..\FsConnector\FsConnector.csproj" />
+	  <ProjectReference Include="..\Shared\Shared.csproj" />
+	</ItemGroup>
+
+</Project>

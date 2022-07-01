@@ -7,7 +7,7 @@
              xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
              xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
              mc:Ignorable="d" 
-             Height="505"
+             Height="575"
              Width="920"
              Background="#FF323A64"
              Loaded="UserControl_Loaded">
@@ -94,6 +94,33 @@
                     <CheckBox Margin="10,5,0,0" IsChecked="{Binding Path=DataStore.ActiveUserProfile.PowerOnRequiredForColdStart}" IsEnabled="{Binding Path=DataStore.HasActiveUserProfileId}" Command="{Binding Path=SetPowerOnRequiredCommand}">
                         <TextBlock Text="Power on required to pop out panels on cold start (G1000 / NXi Only)" TextWrapping="Wrap"  Margin="5,0,0,3"/>
                     </CheckBox>
+                    <WrapPanel Name="TouchPanelConfigurationPanel" Orientation="Vertical" Margin="0,5,0,0" Visibility="{Binding Path=DataStore.IsEnableTouchPanelIntegration, Converter={StaticResource VisibleIfTrueConverter}, Mode=OneWay}" >
+                        <Label Content="Bind touch panel templates to be opened when pop out panels are launched." Margin="15,0,0,0" />
+                        <WrapPanel Orientation="Horizontal" Margin="20,0,0,0" HorizontalAlignment="Left">
+                            <Label HorizontalContentAlignment="Left" HorizontalAlignment="Left" FontStyle="Italic" Width="450">
+                                <Label.Style>
+                                    <Style TargetType="{x:Type Label}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{c:Binding Path='DataStore.ActiveUserProfile != null and DataStore.ActiveUserProfile.TouchPanelBindings.Count > 0'}" Value="true">
+                                                <Setter Property="Foreground" Value="LightGreen"></Setter>
+                                                <Setter Property="Content" Value="Touch panel template(s) are bound to profile"></Setter>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{c:Binding Path='DataStore.ActiveUserProfile != null and DataStore.ActiveUserProfile.TouchPanelBindings.Count > 0'}" Value="false">
+                                                <Setter Property="Foreground" Value="AntiqueWhite"></Setter>
+                                                <Setter Property="Content" Value="No touch panel template is bound to profile"></Setter>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{c:Binding Path='DataStore.ActiveUserProfile == null'}" Value="True">
+                                                <Setter Property="Foreground" Value="Red" ></Setter>
+                                                <Setter Property="Content" Value="Touch panel template is unavailable"></Setter>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Label.Style>
+                            </Label>
+                            <Button Content="+" ToolTip="Add Binding" Margin="10,0,0,0" Width="40" Click="AddTouchPanelBinding_Click" IsEnabled="{Binding Path=DataStore.HasActiveUserProfileId}"/>
+                        </WrapPanel>
+                    </WrapPanel>
+                    <Separator Margin="5,10,5,5"/>
                 </WrapPanel>
                 <WrapPanel Orientation="Vertical">
                     <Label Content="3. Identify pop out panel locations in the game by clicking on them." Margin="0,0,0,0" />
@@ -126,7 +153,7 @@
             </WrapPanel>
             <DockPanel DockPanel.Dock="Right" Width="325" HorizontalAlignment="Center">
                 <Label DockPanel.Dock="Top" Content="Panel Locations" HorizontalAlignment="Center" Margin="0,10,0,0"/>
-                <DataGrid DockPanel.Dock="Top" HorizontalAlignment="Center" Width="290" Height="395" AutoGenerateColumns="False" CanUserResizeColumns="False" HorizontalScrollBarVisibility="Disabled" 
+                <DataGrid DockPanel.Dock="Top" HorizontalAlignment="Center" Width="290" Height="465" AutoGenerateColumns="False" CanUserResizeColumns="False" HorizontalScrollBarVisibility="Disabled" 
                           CanUserReorderColumns="False" CanUserResizeRows="False" IsReadOnly="True" HorizontalGridLinesBrush="#B9B9B9" VerticalGridLinesBrush="#B9B9B9" GridLinesVisibility="Horizontal" BorderThickness="1" 
                           CanUserAddRows="False" CanUserSortColumns="False" ItemsSource="{Binding Path=DataStore.ActiveProfilePanelCoordinates}">
                     <DataGrid.CellStyle>

@@ -106,5 +106,15 @@ namespace MSFSPopoutPanelManager.WpfApp
                 _panelSelectionViewModel.DeleteProfileBindingCommand.Execute(null);
             }
         }
+
+        private void AddTouchPanelBinding_Click(object sender, RoutedEventArgs e)
+        {
+            TouchPanelBindingDialog dialog = new TouchPanelBindingDialog(_panelSelectionViewModel.TouchPanelBindingViewModel);
+            _panelSelectionViewModel.TouchPanelBindingViewModel.Initialize();
+            dialog.Owner = Application.Current.MainWindow;
+            dialog.Topmost = true;
+            dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            dialog.ShowDialog();
+        }
     }
 }

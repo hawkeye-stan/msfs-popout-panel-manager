@@ -6,6 +6,8 @@ namespace MSFSPopoutPanelManager.Provider
 {
     public class InputEmulationManager
     {
+        const uint MOUSEEVENTF_ABSOLUTE = 0x8000;
+        const uint MOUSEEVENTF_MOVE = 0x0001;
         const uint MOUSEEVENTF_LEFTDOWN = 0x02;
         const uint MOUSEEVENTF_LEFTUP = 0x04;
         const uint KEYEVENTF_EXTENDEDKEY = 0x01;

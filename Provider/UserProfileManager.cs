@@ -29,6 +29,7 @@ namespace MSFSPopoutPanelManager.Provider
 
             var copiedProfile = matchedProfile.Copy<UserProfile>();     // Using Shared/ObjectExtensions.cs extension method
             copiedProfile.BindingAircraftLiveries = new ObservableCollection<string>();
+            copiedProfile.TouchPanelBindings = new ObservableCollection<TouchPanelBinding>();
 
             return AddProfile(copiedProfile, newProfileName);
         }

@@ -9,7 +9,7 @@
                  xmlns:shared="clr-namespace:MSFSPopoutPanelManager.Shared;assembly=Shared"
                  mc:Ignorable="d"
         Title="MSFS Pop Out Panel Manager" 
-        Height="670" 
+        Height="740" 
         Width="920"
         WindowStartupLocation="CenterScreen"
         ResizeMode="CanMinimize" 
@@ -21,6 +21,9 @@
     <Window.InputBindings>
         <KeyBinding Command="{Binding Path=MinimizeAllPanelsCommand}" Modifiers="Ctrl+Alt" Key="M" />
     </Window.InputBindings>
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="VisibleIfTrueConverter" />
+    </Window.Resources>
     <Grid>
         <tb:TaskbarIcon Name="notifyIcon"
                     ToolTipText="MSFS Pop Out Panel Manager"
@@ -59,6 +62,9 @@
                     <MenuItem Header="View">
                         <MenuItem Name="menuItem_MinimizeAllPanels" Header="Minimize All Panels    "  InputGestureText="Ctrl+Alt+M" Command="{Binding Path=MinimizeAllPanelsCommand}" IsChecked="{Binding Path=IsMinimizedAllPanels, Mode=TwoWay}" IsEnabled="{c:Binding Path='IsShownPanelConfigurationScreen'}"/>
                     </MenuItem>
+                    <MenuItem Header="Touch Panel" Visibility="{Binding Path=DataStore.IsEnableTouchPanelIntegration, Converter={StaticResource VisibleIfTrueConverter}, Mode=OneWay}">
+                        <MenuItem Header="Manage" Click="ManageTouchPanel_Click"/>
+                    </MenuItem>
                     <MenuItem Header="Help">
                         <MenuItem Name="menuItem_UserGuide" Header="User Guide" Command="{Binding Path=UserGuideCommand}"/>
                         <MenuItem Name="menuItem_DownloadLatestRelease" Header="Download Latest Release" Command="{Binding Path=DownloadLatestReleaseCommand}"/>
@@ -80,7 +86,7 @@
                 </Image>
             </DockPanel>
             <DockPanel>
-                <StackPanel Name="panelSteps" DockPanel.Dock="Top" Height="505" Background="#FF323C64">
+                <StackPanel Name="panelSteps" DockPanel.Dock="Top" Height="575" Background="#FF323C64">
                 </StackPanel>
                 <WrapPanel DockPanel.Dock="Top" Orientation="Horizontal" Height="70" Background="#FF252523">
                     <Label Content="Status" Margin="5, 10, 5, 5"/>

@@ -29,6 +29,7 @@ namespace MSFSPopoutPanelManager.Model
             AutoDisableTrackIR = true;
             AutoPopOutPanels = false;
             AutoPopOutPanelsWaitDelay = new AutoPopOutPanelsWaitDelay();
+            TouchPanelSettings = new TouchPanelSettings();
         }
 
         public void Load()
@@ -44,8 +45,12 @@ namespace MSFSPopoutPanelManager.Model
             this.IncludeBuiltInPanel = appSetting.IncludeBuiltInPanel;
             this.AutoDisableTrackIR = appSetting.AutoDisableTrackIR;
             this.AutoPopOutPanels = appSetting.AutoPopOutPanels;
+            
             this.AutoPopOutPanelsWaitDelay = appSetting.AutoPopOutPanelsWaitDelay;
             AutoPopOutPanelsWaitDelay.DataChanged += (e, source) => WriteAppSetting(this);
+
+            this.TouchPanelSettings = appSetting.TouchPanelSettings;
+            TouchPanelSettings.DataChanged += (e, source) => WriteAppSetting(this);
 
             _saveEnabled = true;
         }
@@ -88,6 +93,8 @@ namespace MSFSPopoutPanelManager.Model
         public bool AutoDisableTrackIR { get; set; }
 
         public AutoPopOutPanelsWaitDelay AutoPopOutPanelsWaitDelay { get; set; }
+
+        public TouchPanelSettings TouchPanelSettings { get; set; }
 
         [JsonIgnore]
         public bool AutoStart
@@ -160,6 +167,39 @@ namespace MSFSPopoutPanelManager.Model
         public int InitialCockpitView { get; set; }
 
         public int InstrumentationPowerOn { get; set; }
+
+        public void OnPropertyChanged(string propertyName, object before, object after)
+        {
+            DataChanged?.Invoke(this, new EventArgs<string>(propertyName));
+        }
+    }
+
+    public class TouchPanelSettings : ObservableObject
+    {
+        public TouchPanelSettings()
+        {
+            // Default values
+            EnableIntegration = false;
+            AutoStart = false;
+            DataRefreshInterval = 100;
+            MapRefreshInterval = 250;
+            UseArduino = false;
+            EnableSound = true;
+        }
+
+        public event EventHandler<EventArgs<string>> DataChanged;
+
+        public bool EnableIntegration { get; set; }
+
+        public bool AutoStart { get; set; }
+
+        public int DataRefreshInterval { get; set; }
+
+        public int MapRefreshInterval { get; set; }
+
+        public bool UseArduino { get; set; }
+
+        public bool EnableSound { get; set; }
 
         public void OnPropertyChanged(string propertyName, object before, object after)
         {

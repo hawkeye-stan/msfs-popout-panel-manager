@@ -6,7 +6,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
              mc:Ignorable="d" 
-             Height="505"
+             Height="575"
              Width="920"
              Background="#FF323A64">
     <UserControl.Resources>
@@ -42,7 +42,7 @@
             <WrapPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="20,10,0,0" HorizontalAlignment="Left">
                 <Label Content="Panel Locations and Settings   -" Margin="0,0,0,0" HorizontalAlignment="Left"/>
                 <Label Content="{Binding Path=DataStore.ActiveUserProfile.ProfileName}" Margin="0,0,0,0" HorizontalAlignment="Left"/>
-                <DataGrid Name="PanelConfigGrid" HorizontalAlignment="Center" Width="880" Height="390" Margin="0 10 0 0" AutoGenerateColumns="False" CanUserResizeColumns="False" HorizontalScrollBarVisibility="Disabled" 
+                <DataGrid Name="PanelConfigGrid" HorizontalAlignment="Center" Width="880" Height="460" Margin="0 10 0 0" AutoGenerateColumns="False" CanUserResizeColumns="False" HorizontalScrollBarVisibility="Disabled" 
                           CanUserReorderColumns="False" CanUserResizeRows="False" HorizontalGridLinesBrush="#B9B9B9" VerticalGridLinesBrush="#B9B9B9" GridLinesVisibility="Horizontal" SelectionUnit="Cell" 
                           BorderThickness="1" CanUserAddRows="False" CanUserSortColumns="False" KeyboardNavigation.TabNavigation="None" KeyboardNavigation.IsTabStop="False"
                           ItemsSource="{Binding Path=DataStore.ActiveUserProfile.PanelConfigs}">
@@ -192,7 +192,8 @@
                                     <CheckBox Name="FullScreen" Width="90" Margin="35 0 0 0" 
                                               SourceUpdated="GridData_SourceUpdated" 
                                               IsChecked="{Binding Path=FullScreen, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}" 
-                                              IsEnabled="{c:Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path='!DataContext.DataStore.ActiveUserProfile.IsLocked and DataContext.DataStore.AllowEdit'}"/>
+                                              IsEnabled="{c:Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path='!DataContext.DataStore.ActiveUserProfile.IsLocked and DataContext.DataStore.AllowEdit'}"
+                                              IsHitTestVisible="{c:Binding Path='IsCustomPopout'}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>

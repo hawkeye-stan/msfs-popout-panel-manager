@@ -3,10 +3,15 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using MSFSPopoutPanelManager.Model;
 using MSFSPopoutPanelManager.Provider;
 using MSFSPopoutPanelManager.Shared;
+using Newtonsoft.Json;
 using System;
+using System.Dynamic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace MSFSPopoutPanelManager.WpfApp.ViewModel
@@ -22,8 +27,9 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
         public PanelSelectionViewModel PanelSelectionViewModel { get; private set; }
 
         public PanelConfigurationViewModel PanelConfigurationViewModel { get; private set; }
-
         public PreferencesViewModel PreferencesViewModel { get; private set; }
+
+        public TouchPanelManagementViewModel TouchPanelManagementViewModel { get; private set; }
 
         public DataStore DataStore { get; set; }
 
@@ -92,12 +98,21 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
                     }
                 });
             };
+            _panelPopoutManager.OnTouchPanelOpened += (sender, e) =>
+            {
+                TouchPanelWebViewDialog window = new TouchPanelWebViewDialog(e.Value.PlaneId, e.Value.PanelId, e.Value.Caption, e.Value.Width, e.Value.Height);
+                window.Show();
+            };
 
             PanelSelectionViewModel = new PanelSelectionViewModel(DataStore, _userProfileManager, _panelPopoutManager, _simConnectManager);
             PanelSelectionViewModel.OnPopOutCompleted += (sender, e) => { ShowPanelSelection(false); PanelConfigurationViewModel.Initialize(); };
+            PanelSelectionViewModel.OnUserProfileChanged += (sender, e) => { ReloadTouchPanelSimConnectDataDefinition(this, null); };
+            PanelSelectionViewModel.TouchPanelBindingViewModel.OnBindingUpdated += ReloadTouchPanelSimConnectDataDefinition;
             PanelConfigurationViewModel = new PanelConfigurationViewModel(DataStore, _userProfileManager);
 
             PreferencesViewModel = new PreferencesViewModel(DataStore);
+            TouchPanelManagementViewModel = new TouchPanelManagementViewModel(DataStore);
+
             InputHookManager.OnStartPopout += (source, e) => { OnStartPopOut(null); };
         }
 
@@ -134,6 +149,10 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
             if (DataStore.AppSetting.AutoPopOutPanels)
                 ActivateAutoPanelPopOut();
 
+            // Start touch panel server is specified
+            if (DataStore.AppSetting.TouchPanelSettings.EnableIntegration && DataStore.AppSetting.TouchPanelSettings.AutoStart)
+                TouchPanelManagementViewModel.StartServerCommand.Execute(null);
+
             ShowPanelSelection(true);
 
             IsMinimizedAllPanels = false;
@@ -141,11 +160,17 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
             InputHookManager.StartHook();
         }
 
-        public void Exit()
+        public async void Exit()
         {
             // This method gets call on Windows_Closing
             InputHookManager.EndHook();
             _simConnectManager.Stop();
+
+            // Stop touch panel server if started
+            await Task.Run(() =>
+            {
+                TouchPanelManagementViewModel.StopServer();
+            });
         }
 
         private void OnRestart(object commandParameter)
@@ -165,7 +190,7 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
             Logger.ClearStatus();
 
             // Try to close all Cutome Panel window
-            DataStore.ActiveUserProfile.PanelConfigs.ToList().FindAll(p => p.PanelType == PanelType.CustomPopout).ForEach(panel => WindowManager.CloseWindow(panel.PanelHandle));
+            DataStore.ActiveUserProfile.PanelConfigs.ToList().FindAll(p => p.PanelType == PanelType.CustomPopout || p.PanelType == PanelType.MSFSTouchPanel).ForEach(panel => WindowManager.CloseWindow(panel.PanelHandle));
 
             // Clear all panel windows handle for active profile
             DataStore.ActiveUserProfile.PanelConfigs.ToList().ForEach(p => p.PanelHandle = IntPtr.Zero);
@@ -266,7 +291,10 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
                 // find the profile with the matching binding plane title
                 var profile = DataStore.UserProfiles.FirstOrDefault(p => p.BindingAircraftLiveries.ToList().Exists(p => p == DataStore.CurrentMsfsPlaneTitle));
 
-                if (profile == null || profile.PanelSourceCoordinates.Count == 0)
+                if (profile == null)
+                    return;
+
+                if (profile.TouchPanelBindings.Count == 0 && profile.PanelSourceCoordinates.Count == 0)
                     return;
 
                 var messageDialog = new OnScreenMessageDialog($"Automatic pop out is starting for profile:\n{profile.ProfileName}", DataStore.AppSetting.AutoPopOutPanelsWaitDelay.ReadyToFlyButton);      // Wait for the ready to fly button
@@ -282,7 +310,11 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
                 DataStore.ActiveUserProfileId = profile.ProfileId;
                 _panelPopoutManager.UserProfile = profile;
                 _panelPopoutManager.AppSetting = DataStore.AppSetting;
-                _panelPopoutManager.StartPopout();
+
+                if (profile.PanelSourceCoordinates.Count > 0)
+                    _panelPopoutManager.StartPopout();
+                else if (profile.TouchPanelBindings.Count > 0)
+                    _panelPopoutManager.StartOpenTouchPanel();
 
                 // Turn off power if needed after pop out
                 _simConnectManager.TurnOffpower();
@@ -293,6 +325,33 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
         {
             DataStore.IsEnteredFlight = false;
             OnRestart(null);
+        }
+
+        private async void ReloadTouchPanelSimConnectDataDefinition(object sender, EventArgs e)
+        {
+            // Communicate with Touch Panel API server to reload SimConnect data definitions
+            if (DataStore.ActiveUserProfile != null && DataStore.ActiveUserProfile.TouchPanelBindings.Count > 0 && TouchPanelManagementViewModel.IsServerStarted)
+            {
+                var planeId = DataStore.ActiveUserProfile.TouchPanelBindings.Count > 0 ?
+                              DataStore.ActiveUserProfile.TouchPanelBindings[0].PlaneId :
+                              null;
+
+                using (var client = new HttpClient())
+                {
+                    dynamic data = new ExpandoObject();
+                    data.PlaneId = planeId;
+                    var payload = JsonConvert.SerializeObject(data);
+
+                    var url = "http://localhost:27011/posttouchpanelloaded";
+
+                    try
+                    {
+                        var response = await client.PostAsync(url, new StringContent(payload, Encoding.UTF8, "application/json"));
+                        var token = response.Content.ReadAsStringAsync().Result;
+                    }
+                    catch { }
+                }
+            }
         }
 
         private void CheckForAutoUpdate()
@@ -315,6 +374,9 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
                 if (matchedProfile != null)
                     DataStore.ActiveUserProfileId = matchedProfile.ProfileId;
             }
+
+            // Load Touch Panel SimConnect InformApiServer
+            ReloadTouchPanelSimConnectDataDefinition(this, null);
         }
     }
 }

@@ -4,7 +4,7 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
-    <Version>3.3.4.0</Version>
+    <Version>4.0.0.0</Version>
     <PackageId>MSFS 2020 Popout Panel Manager</PackageId>
     <Authors>Stanley Kwok</Authors>
     <Product>MSFS 2020 Popout Panel Manager</Product>
@@ -14,12 +14,10 @@
     <RootNamespace>MSFSPopoutPanelManager.WpfApp</RootNamespace>
     <ApplicationIcon>logo.ico</ApplicationIcon>
     <Platforms>x64</Platforms>
-    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+	<SpaRoot>../TouchPanel/ReactClient</SpaRoot>
+	<DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
+	<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="resources\logo.png" />
-  </ItemGroup>
 
   <ItemGroup>
     <Content Include="log4net.config">
@@ -32,9 +30,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\info.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="resources\logo.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\msfsconnected.png">
@@ -55,6 +50,7 @@
     <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="1.1.0" />
     <PackageReference Include="log4net" Version="2.0.14" />
     <PackageReference Include="MahApps.Metro" Version="2.4.9" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.1245.22" />
     <PackageReference Include="MouseKeyHook" Version="5.6.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="PropertyChanged.Fody" Version="3.4.1" />
@@ -64,6 +60,8 @@
     <ProjectReference Include="..\Model\Model.csproj" />
     <ProjectReference Include="..\Provider\Provider.csproj" />
     <ProjectReference Include="..\Shared\Shared.csproj" />
+    <ProjectReference Include="..\TouchPanel\Shared\Shared.csproj" />
+    <ProjectReference Include="..\TouchPanel\TouchPanelHost\TouchPanelHost.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -80,6 +78,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Resources\logo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="userdata\touchpanel\SimConnectDataDefinitionTemplate.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <Page Update="PreferencesDialog.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
@@ -89,4 +96,42 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="userdata\touchpanel\" />
+  </ItemGroup>
+
+	
+	<Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
+		<!-- Ensure Node.js is installed -->
+		<Exec Command="node --version" ContinueOnError="true">
+			<Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
+		</Exec>
+		<Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
+		<Message Importance="high" Text="Restoring dependencies using 'npm'. This may take several minutes..." />
+		<Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
+	</Target>
+	
+	<Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
+		<!--As part of publishing, ensure the JS resources are freshly built in production mode-->
+		<Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
+		<Exec WorkingDirectory="$(SpaRoot)" Command="npm run build" />
+
+		<!--Include the newly-built files in the publish output  -->
+		<!-- Manually copy react build assets into publish folder -->
+		<Message Text="Manually copy react build assets into publish folder ........" Importance="high" />
+		<ItemGroup>
+			<DataFiles Include="$(SpaRoot)\build\**"></DataFiles>
+		</ItemGroup>
+		<Copy SourceFiles="@(DataFiles)" DestinationFiles="@(DataFiles->'$(PublishDir)ReactClient\%(RecursiveDir)%(Filename)%(Extension)')" />
+		<!--<Message Text="@(DataFiles->'$(PublishDir)ReactClient\%(RecursiveDir)%(Filename)%(Extension)')" Importance="high" />-->
+	
+		<!-- Copy all plugin-extensions items -->
+		<ItemGroup>
+			<PluginFiles Include="$(SolutionDir)\TouchPanel\Plugins\**"></PluginFiles>
+		</ItemGroup>
+		<Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(PublishDir)Plugins\%(RecursiveDir)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Retries="3" RetryDelayMilliseconds="300" />
+
+		<RemoveDir Directories="$(PublishDir)runtimes\linux-arm"></RemoveDir>
+	</Target>
 </Project>

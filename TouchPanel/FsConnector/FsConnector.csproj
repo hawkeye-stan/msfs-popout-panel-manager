@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>MSFSPopoutPanelManager.TouchPanel.FSConnector</RootNamespace>
+    <AssemblyName>MSFSPopoutPanelManager.TouchPanel.FSConnector</AssemblyName>
+    <Platforms>x64</Platforms>
+	<DebugType Condition=" '$(Configuration)' == 'Release' ">None</DebugType>
+	  <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+	  <PackageId>MSFSPopoutPanelManager.TouchPanel.FSConnector</PackageId>
+	  <Product>MSFSPopoutPanelManager.TouchPanel.FSConnector</Product>
+	  <Authors>Stanley Kwok</Authors>
+	  <Version>4.0.0.0</Version>
+	  <PackageProjectUrl>https://github.com/hawkeye-stan/msfs-popout-panel-manager</PackageProjectUrl>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<ContentWithTargetPath Include="resources\SimConnect.dll">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<TargetPath>SimConnect.dll</TargetPath>
+		</ContentWithTargetPath>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Shared\Shared.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Reference Include="Microsoft.FlightSimulator.SimConnect">
+	    <HintPath>resources\managed\Microsoft.FlightSimulator.SimConnect.dll</HintPath>
+	  </Reference>
+	</ItemGroup>
+
+</Project>

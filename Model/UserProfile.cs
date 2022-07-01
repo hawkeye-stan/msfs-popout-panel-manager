@@ -12,6 +12,7 @@ namespace MSFSPopoutPanelManager.Model
             PanelSourceCoordinates = new ObservableCollection<PanelSourceCoordinate>();
             PanelConfigs = new ObservableCollection<PanelConfig>();
             BindingAircraftLiveries = new ObservableCollection<string>();
+            TouchPanelBindings = new ObservableCollection<TouchPanelBinding>();
             IsLocked = false;
         }
 
@@ -21,6 +22,8 @@ namespace MSFSPopoutPanelManager.Model
 
         [JsonConverter(typeof(SingleValueArrayConvertor<string>))]
         public ObservableCollection<string> BindingAircraftLiveries { get; set; }
+
+        public ObservableCollection<TouchPanelBinding> TouchPanelBindings { get; set; }
 
         public bool IsLocked { get; set; }
 

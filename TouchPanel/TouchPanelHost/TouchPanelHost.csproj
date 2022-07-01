@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <AssemblyName>MSFSPopoutPanelManager.TouchPanel.TouchPanelHost</AssemblyName>
+	<Platforms>x64</Platforms>
+    <RootNamespace>MSFSPopoutPanelManager.TouchPanel.TouchPanelHost</RootNamespace>
+    <PackageId>MSFSPopoutPanelManager.TouchPanel.TouchPanelHost</PackageId>
+    <Product>MSFSPopoutPanelManager.TouchPanel.TouchPanelHost</Product>
+	<ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+    <Version>4.0.0.0</Version>
+    <Authors>Stanley Kwok</Authors>
+    <Company>Stanley Kwok</Company>
+    <PackageProjectUrl>https://github.com/hawkeye-stan/msfs-popout-panel-manager</PackageProjectUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices" Version="3.1.24" />
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="5.0.16" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.1185.39" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SimconnectAgent\SimconnectAgent.csproj" />
+  </ItemGroup>
+
+</Project>
