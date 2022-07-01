@@ -10,5 +10,6 @@ namespace MSFSPopoutPanelManager.FsConnector
 
         public double Prop02;
         public double Prop03;
+        public double Prop04;
     }
 }

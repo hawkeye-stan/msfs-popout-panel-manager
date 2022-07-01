@@ -59,16 +59,15 @@ namespace MSFSPopoutPanelManager.Provider
 
         public void TurnOnPower(bool isRequiredForColdStart)
         {
-            if (isRequiredForColdStart && _simData != null && !_simData.ElectricalMasterBattery)
+            // Wait for _simData.AtcOnParkingSpot to refresh
+            Thread.Sleep(MSFS_DATA_REFRESH_TIMEOUT + 250);
+
+            if (isRequiredForColdStart && _simData != null && (_simData.AtcOnParkingSpot || !_simData.ElectricalMasterBattery))
             {
                 _isPowerOnForPopOut = true;
                 _simConnector.TransmitActionEvent(ActionEvent.KEY_MASTER_BATTERY_SET, 1);
                 Thread.Sleep(100);
-                _simConnector.TransmitActionEvent(ActionEvent.KEY_ALTERNATOR_SET, 1);
-                Thread.Sleep(100);
-                _simConnector.TransmitActionEvent(ActionEvent.KEY_AVIONICS_MASTER_SET, 1);
-                Thread.Sleep(100);
-                _simConnector.TransmitActionEvent(ActionEvent.KEY_AVIONICS_MASTER_2_SET, 1);
+                _simConnector.TransmitActionEvent(ActionEvent.KEY_TOGGLE_AVIONICS_MASTER, 1);
             }
         }
 
@@ -76,11 +75,7 @@ namespace MSFSPopoutPanelManager.Provider
         {
             if (_isPowerOnForPopOut)
             {
-                _simConnector.TransmitActionEvent(ActionEvent.KEY_AVIONICS_MASTER_2_SET, 0);
-                Thread.Sleep(100);
-                _simConnector.TransmitActionEvent(ActionEvent.KEY_AVIONICS_MASTER_SET, 0);
-                Thread.Sleep(100);
-                _simConnector.TransmitActionEvent(ActionEvent.KEY_ALTERNATOR_SET, 0);
+                _simConnector.TransmitActionEvent(ActionEvent.KEY_TOGGLE_AVIONICS_MASTER, 1);
                 Thread.Sleep(100);
                 _simConnector.TransmitActionEvent(ActionEvent.KEY_MASTER_BATTERY_SET, 0);
 
@@ -115,8 +110,9 @@ namespace MSFSPopoutPanelManager.Provider
             SimConnectStruct simConnectStruct = new SimConnectStruct();
 
             simConnectStruct.Prop01 = _simData.Title;                                                                   // must set "Title" for TrackIR variable to write correctly
-            simConnectStruct.Prop02 = _simData.ElectricalMasterBattery ? Convert.ToDouble(1) : Convert.ToDouble(0);   // must set "ElectricalMasterBattery" for TrackIR variable to write correctly
-            simConnectStruct.Prop03 = enable ? Convert.ToDouble(1) : Convert.ToDouble(0);                                // this is the TrackIR variable
+            simConnectStruct.Prop02 = _simData.ElectricalMasterBattery ? Convert.ToDouble(1) : Convert.ToDouble(0);     // must set "ElectricalMasterBattery" for TrackIR variable to write correctly
+            simConnectStruct.Prop03 = enable ? Convert.ToDouble(1) : Convert.ToDouble(0);                               // this is the TrackIR variable
+            simConnectStruct.Prop04 = _simData.AtcOnParkingSpot ? Convert.ToDouble(1) : Convert.ToDouble(0);            // must set "AtcOnParkingSpot" for TrackIR variable to write correctly
             _simConnector.SetDataObject(simConnectStruct);
         }
 
