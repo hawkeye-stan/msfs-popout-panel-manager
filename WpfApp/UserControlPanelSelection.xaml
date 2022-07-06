@@ -25,6 +25,14 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
+        <Style x:Key="ProfileSelectedDependencyCheckbox" TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
+            <Setter Property="IsEnabled" Value="False"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Path=DataStore.HasActiveUserProfileId, Mode=OneWay}" Value="True">
+                    <Setter Property="IsEnabled" Value="True"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
         <Style x:Key="ProfileAddPlaneBindingDependency" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
             <Setter Property="Width" Value="130"/>
             <Setter Property="IsEnabled" Value="False"/>
@@ -91,9 +99,7 @@
                         <Button Content="+" ToolTip="Add Binding" Margin="10,0,0,0" Width="40" Click="AddBinding_Click" Style="{StaticResource ProfileAddPlaneBindingDependency}"/>
                         <Button Content="-" ToolTip="Delete Binding"  Margin="10,0,0,0" Width="40" Click="DeleteBinding_Click" Style="{StaticResource ProfileDeletePlaneBindingDependency}"/>
                     </WrapPanel>
-                    <CheckBox Margin="10,5,0,0" IsChecked="{Binding Path=DataStore.ActiveUserProfile.PowerOnRequiredForColdStart}" IsEnabled="{Binding Path=DataStore.HasActiveUserProfileId}" Command="{Binding Path=SetPowerOnRequiredCommand}">
-                        <TextBlock Text="Power on required to pop out panels on cold start (G1000 / NXi Only)" TextWrapping="Wrap"  Margin="5,0,0,3"/>
-                    </CheckBox>
+                    <CheckBox Margin="10,5,0,0" Content="Power on required to pop out panels on cold start (G1000 / NXi Only)" IsChecked="{Binding Path=DataStore.ActiveUserProfile.PowerOnRequiredForColdStart}" Command="{Binding Path=SetPowerOnRequiredCommand}" Style="{StaticResource ProfileSelectedDependencyCheckbox}" />
                 </WrapPanel>
                 <WrapPanel Orientation="Vertical">
                     <Label Content="3. Identify pop out panel locations in the game by clicking on them." Margin="0,0,0,0" />
@@ -112,14 +118,14 @@
                         </WrapPanel>
                         <WrapPanel Orientation="Horizontal" Margin="0,5,0,0" HorizontalAlignment="Left">
                             <Button Content="Start Panel Selection" HorizontalAlignment="Left" Margin="0,0,0,0" Width="165" Click="StartPanelSelection_Click" Style="{StaticResource ProfileSelectedDependency}"/>
-                            <Button Content="Save Auto Panning Camera" HorizontalAlignment="Left" Margin="20,0,0,0" IsEnabled="{c:Binding Path='DataStore.HasActiveUserProfileId and DataStore.IsFlightActive'}" Width="215" Click="SaveAutoPanningCamera_Click" Style="{StaticResource ProfileSelectedDependency}"/>
+                            <Button Content="Override Auto Panning Camera" HorizontalAlignment="Left" Margin="20,0,0,0" Width="240" Click="SaveAutoPanningCamera_Click" Style="{StaticResource ProfileSelectedDependency}"/>
                         </WrapPanel>
                     </WrapPanel>
                     <Separator Margin="5,10,5,5"/>
                 </WrapPanel>
                 <WrapPanel Orientation="Vertical" >
                     <Label Content="4. Start the pop out process for selected panels." Margin="0,0,0,0" />
-                    <Button Content="Start Pop Out" HorizontalAlignment="Left" Margin="20,5,0,0" Width="130" IsEnabled="{c:Binding Path='DataStore.HasActiveUserProfileId and DataStore.IsFlightActive'}" Command="{Binding Path=StartPopOutCommand}" Style="{StaticResource ProfileSelectedDependency}"/>
+                    <Button Content="Start Pop Out" HorizontalAlignment="Left" Margin="20,5,0,0" Width="130" Click="StartPopOut_Click" Style="{StaticResource ProfileSelectedDependency}"/>
                 </WrapPanel>
                 <WrapPanel Orientation="Vertical" Visibility="Visible">
                 </WrapPanel>
@@ -160,7 +166,7 @@
                         <DataGridTextColumn Header="Y-Pos" Width="97" Binding="{Binding Y}"/>
                     </DataGrid.Columns>
                 </DataGrid>
-                <CheckBox DockPanel.Dock="Bottom" Content="Show/Edit Panel Location Overlay" HorizontalAlignment="Center" Command="{Binding Path=EditPanelCoorOverlayCommand}" IsChecked="{Binding Path=IsEditingPanelCoorOverlay, Mode=TwoWay}"/>
+                <CheckBox DockPanel.Dock="Bottom" Content="Show/Edit Panel Location Overlay" HorizontalAlignment="Center" Command="{Binding Path=EditPanelCoorOverlayCommand}" IsChecked="{Binding Path=IsEditingPanelCoorOverlay, Mode=TwoWay}" Style="{StaticResource ProfileSelectedDependencyCheckbox}"/>
             </DockPanel>
         </DockPanel>
     </Grid>

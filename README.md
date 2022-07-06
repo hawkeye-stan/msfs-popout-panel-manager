@@ -38,37 +38,52 @@ What if you can do the setup once by defining on screen where the pop out panels
 
 <hr>
 
-## How to Use
+## How to Install 
 
-[Online video - How to use](https://vimeo.com/723158934) 
+1. After downloading the latest zip package from github repository or from Flightsim.to website, extract the zip package to a folder of your choice on your computer. You must have write access to this folder since your preference settings and profiles will be save in the folder **userdata** within the installation folder. Please do not install in **C:\Program Files** or **C:\Program Files (x86)** since most users do not have write access to these folders.
 
- Start the application **MSFSPopoutPanelManager.exe** and it will automatically connect when MSFS/SimConnect starts. You maybe prompt to download .NET framework 5.0 x64. Please see the screenshot below to download and install x64 desktop version of the framework.
+2. Start the application **MSFSPopoutPanelManager.exe** and it will automatically connect when MSFS/SimConnect starts. You maybe prompt to download .NET framework 5.0 x64 desktop runtime. Please see the screenshot below to download and install x64 desktop version of the framework.
 
 <p align="center">
 <img src="images/doc/framework_download.png" width="1000" hspace="10"/>
 </p>
 
- 1. First start the game and start a flight. Then create a new profile (for example: Kodiak 100) by clicking the "plus" button in step 1 of the app.
+## How to Update
+
+1. To update the application, you can download the latest zip package and directly extract the package into your Pop Out Manager installation folder and overwrite all files within. Your **userdata** folder will be safe.
+
+2. You can also use the built-in auto update feature and let the application handles the update. If the update is optional, you can skip the update if you so choose. When you start the application and if an update is available, a dialog will appear and it will show the latest version's release notes and an option to update the application.
+
+3. If you're not being prompt for update when a new update is available, please try the following fixes:
+
+  - Restart you computer and most of the time this will do the trick.
+  - Clear your default web browser cache on your computer since auto update will try to download latest version of update configuration file from github repository and the file may have been cached on your machine.
+
+## How to Use
+
+[Online video - How to use](https://vimeo.com/723158934) 
+
+1. First start the application and the game. Once you're in the main menu of the game, you can create a new profile by clicking the "plus" button in step 1 of the app.
  
 <p align="center">
 <img src="images/doc/add_profile.png" width="900" hspace="10"/>
 </p>
 
- 2. For step 2, if you want to associate the profile to the current aircraft livery to use in [Auto Pop Out](#auto-pop-out-feature) feature or for automatic profile switching when selecting a different aircraft, click the "plus" button next to the aircraft livery name. The aircraft livery title will become green once the livery is bound to the profile.
+2. For step 2, if you want to associate the profile to the current aircraft livery to use in [Auto Pop Out](#auto-pop-out-feature) feature or for automatic profile switching when selecting a different aircraft, click the "plus" button next to the aircraft livery name. The aircraft livery title will become green once the livery is bound to the profile. Your chosen livery may not be available to select in the application for your newly selected plane until a flight is started.
 
  <p align="center">
 <img src="images/doc/bind_profile_to_livery.png" width="900" hspace="10"/>
 </p>
  
- 3. Now start a flight with your chosen aircraft. Once your flight is started, you're ready to select the panels you want to pop out. Please click "Start Panel Selection" to define where the pop out panels will be using **LEFT CLICK**. Use **CTRL-LEFT CLICK** when selection is completed. You can also move the number circles at this point to do final adjustment.
+3. Now start a flight with your chosen aircraft. Once your flight is started, you're ready to select the panels you want to pop out. Please click "Start Panel Selection" to define where the pop out panels will be using **LEFT CLICK**. Use **CTRL-LEFT CLICK** when selection is completed. You can also move the number circles at this point to do final adjustment.
  
 <p align="center">
 <img src="images/doc/after_panel_selection.png" width="900" hspace="10"/>
 </p>
 
- 4. Next, click "Start Pop Out". At this point, please be patient. The application will start popping out and separating panels one by one and you will see a lot of movements on screen. If something goes wrong, just follow the instruction in the status message and try again. Once the process is done, you will see a list of panels line up in the upper left corner of the screen. All the panels are given a default name. You can name them anything you want as needed.
+4. Next, click "Start Pop Out". At this point, please be patient. The application will start popping out and separating panels one by one and you will see a lot of movements on screen. If something goes wrong, just follow the instruction in the status message and try again. Once the process is done, you will see a list of panels line up in the upper left corner of the screen. All the panels are given a default name. You can name them anything you want as needed.
 
- 5. You can now start panel configuration by dragging the pop out panels into their final position (to your main monitor or another monitor). You can also type value directly into the data grid to move and resize a panel. The +/- pixel buttons by the lower left corner of the grid allow you to change panel position at the chosen increment/decrement by selecting the data grid cell first (X-Pos, Y-Pos, Width, Height). You can also check "Always on Top", "Hide Title Bar", or "Full Screen Mode" if desire. If the panel is touch capable, you can check "Touch Enabled". Please see [Touch Enable Pop Out Feature](#touch-enable-pop-out-feature) regarding this experimental feature. Once all the panels are at their final position, just click "Lock Panel" to prevent further panel changes.
+5. You can now start panel configuration by dragging the pop out panels into their final position (to your main monitor or another monitor). You can also type value directly into the data grid to move and resize a panel. The +/- pixel buttons by the lower left corner of the grid allow you to change panel position at the chosen increment/decrement by selecting the data grid cell first (X-Pos, Y-Pos, Width, Height). You can also check "Always on Top", "Hide Title Bar", or "Full Screen Mode" if desire. If the panel is touch capable, you can check "Touch Enabled". Please see [Touch Enable Pop Out Feature](#touch-enable-pop-out-feature) regarding this experimental feature. Once all the panels are at their final position, just click "Lock Panel" to prevent further panel changes.
  
 <p align="center">
 <img src="images/doc/panel_configuration.png" width="900" hspace="10"/>

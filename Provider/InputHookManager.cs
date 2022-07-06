@@ -1,6 +1,5 @@
 ﻿using Gma.System.MouseKeyHook;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -19,19 +18,12 @@ namespace MSFSPopoutPanelManager.Provider
         public static event EventHandler OnPanelSelectionCompleted;
         public static event EventHandler<Point> OnPanelSelectionAdded;
         public static event EventHandler OnPanelSelectionRemoved;
-        public static event EventHandler OnStartPopout;
 
         public static void StartHook()
         {
             if (_mouseHook == null)
             {
                 _mouseHook = Hook.GlobalEvents();
-
-                _mouseHook.OnCombination(new Dictionary<Combination, Action>
-                {
-                    {Combination.FromString("Control+Alt+P"), () => { if(SubscribeToStartPopOutEvent) OnStartPopout?.Invoke(null, null); }}
-                });
-
                 _mouseHook.MouseDownExt += HandleMouseHookMouseDownExt;
             }
         }
@@ -42,6 +34,7 @@ namespace MSFSPopoutPanelManager.Provider
             {
                 _mouseHook.MouseDownExt -= HandleMouseHookMouseDownExt;
                 _mouseHook.Dispose();
+                _mouseHook = null;
             }
         }
 

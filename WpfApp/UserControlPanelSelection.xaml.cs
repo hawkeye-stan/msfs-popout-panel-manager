@@ -89,6 +89,14 @@ namespace MSFSPopoutPanelManager.WpfApp
             }
         }
 
+        private void StartPopOut_Click(object sender, RoutedEventArgs e)
+        {
+            if (_panelSelectionViewModel.DataStore.ActiveUserProfile.PanelSourceCoordinates.Count > 0)
+            {
+                _panelSelectionViewModel.StartPopOutCommand.Execute(null);
+            }
+        }
+
         private void AddBinding_Click(object sender, RoutedEventArgs e)
         {
             _panelSelectionViewModel.AddProfileBindingCommand.Execute(null);

@@ -24,7 +24,7 @@ namespace MSFSPopoutPanelManager.Model
 
         public bool IsLocked { get; set; }
 
-        public ObservableCollection<PanelSourceCoordinate> PanelSourceCoordinates;
+        public ObservableCollection<PanelSourceCoordinate> PanelSourceCoordinates { get; set; }
 
         public ObservableCollection<PanelConfig> PanelConfigs { get; set; }
 
@@ -44,6 +44,12 @@ namespace MSFSPopoutPanelManager.Model
         public bool HasBindingAircraftLiveries
         {
             get { return BindingAircraftLiveries.Count > 0; }
+        }
+
+        [JsonIgnore]
+        public bool HasPanelSourceCoordinates
+        {
+            get { return PanelSourceCoordinates.Count > 0; }
         }
 
         #region Legacy Properties

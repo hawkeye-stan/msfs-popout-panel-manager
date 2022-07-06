@@ -27,7 +27,7 @@ namespace MSFSPopoutPanelManager.Model
             StartMinimized = false;
             IncludeBuiltInPanel = false;
             AutoDisableTrackIR = true;
-            AutoPopOutPanels = false;
+            AutoPopOutPanels = true;
             AutoPopOutPanelsWaitDelay = new AutoPopOutPanelsWaitDelay();
         }
 
@@ -150,9 +150,9 @@ namespace MSFSPopoutPanelManager.Model
 
         public AutoPopOutPanelsWaitDelay()
         {
-            ReadyToFlyButton = 6;
-            InitialCockpitView = 2;
-            InstrumentationPowerOn = 2;
+            ReadyToFlyButton = 4;
+            InitialCockpitView = 1;
+            InstrumentationPowerOn = 1;
         }
 
         public int ReadyToFlyButton { get; set; }

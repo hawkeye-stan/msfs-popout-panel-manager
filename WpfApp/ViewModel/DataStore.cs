@@ -19,7 +19,6 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
         {
             _activeProfileId = -1;
             _allowEdit = true;
-            IsFlightActive = true;      // ToDo: temporary for testing
         }
 
         public AppSetting AppSetting
@@ -39,8 +38,6 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
                 }
 
                 // bubble event up to this 'DataStore' level
-
-
                 _appSetting.AutoPopOutPanelsChanged += (sender, e) =>
                 {
                     IsEnableAutoPopOutPanel = e.Value;
@@ -183,7 +180,6 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
 
         public bool IsEnteredFlight { get; set; }
 
-        public bool IsFlightActive { get; set; }
         public bool IsEnableAutoPopOutPanel { get; set; }
     }
 }

@@ -1,16 +1,23 @@
 # Version History
 <hr/>
 
+## Version 3.3.5
+* Fixed an issue when using auto pop out panel in combination with power on during cold start for  the following two G1000 planes (Cessna 172 and Cessna 208B Grand Caravan), instrumentations are  not powering on to allow pop out to occur.
+* Fixed an issue when panels are designated as full screen mode, they're not resizing to full screen after they're popped out.
+* Fixed an issue when using auto pop out panel, "Ready to Fly" button may not get click when  interface scale is set to higher than 70. Unfortunately, because of how MSFS coded this particular button, this fix may add few extra seconds to the duration of auto pop out process since the application needs to search for the button to click. To speed up the pop out process, you can try to set auto pop out panel wait delays to minimum of 1 second in preferences menu and increase one second at a time until pop out works flawlessly for your system.
+* Updated verbiage for "Save Auto Panning Camera" button to "Override Auto Panning Camera". This is to clear the confusion when initially selecting panels for a profile, clicking this button seems to be required. "Override Auto Panning Camera" is only needed when your camera viewport has changed for an existing profile and you do not want to recreate a new  profile to set new panel locations.
+* Made improvement to the behavior of Track IR (enable/disable) when using the application.
+
 ## Version 3.3.4
-* Fixed issue when using Auto Pop Out Panel feature in conjunction with Auto Disable Track IR setting. When performing cold start on G1000 / G1000 NXi equipped plane with Power on required checked, PFD and MFD fail to turn on or they will turn off by themselves. This resulted in pop out process to fail.
-* Fixed issue when using Auto Pop Out Panel and the game is in Windows mode, Pop Out Manager fails to automatically click the "Ready to Fly" button.
+* Fixed an issue when using Auto Pop Out Panel feature in conjunction with Auto Disable Track IR setting. When performing cold start on G1000 / G1000 NXi equipped plane with Power on required checked, PFD and MFD fail to turn on or they will turn off by themselves. This resulted in pop out process to fail.
+* Fixed an issue when using Auto Pop Out Panel and the game is in Windows mode, Pop Out Manager fails to automatically click the "Ready to Fly" button.
 * Made improvements to the detection of flight start and flight end. This help to resolve an issue when exiting a flight, Pop Out Manager tries to pop out panels again.
 * Added touch enabled panel experimental feature. Please see github repo README.md on how to use this feature. This feature tries to workaround an outstanding issue regarding lack of support by MSFS with pop out that has touch component (GTN750, King Air 350, Built-in panels such as Check List, ATC, etc).
 * Updated documentations and how to videos.
 
 ## Version 3.3.3
-* Fixed issue when clicking on "Show/Edit Panel Location Overlay" or setting auto TrackIR disabling option will cause PFD/MFD panels to be turned off when performing auto pop out in cold start for G1000 equipped planes.
-* Fixed issue where auto panning of cockpit view does not pan to previously saved camera view during pop out process.
+* Fixed an issue when clicking on "Show/Edit Panel Location Overlay" or setting auto Track IR disabling option will cause PFD/MFD panels to be turned off when performing auto pop out in cold start for G1000 equipped planes.
+* Fixed an issue where auto panning of cockpit view does not pan to previously saved camera view during pop out process.
 
 ## Version 3.3.2
 * Hotfix: Fixed application crash when performing panel selections when MSFS is not running.

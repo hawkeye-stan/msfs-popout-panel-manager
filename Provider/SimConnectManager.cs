@@ -87,6 +87,7 @@ namespace MSFSPopoutPanelManager.Provider
 
         public void TurnOffTrackIR()
         {
+            Debug.Write("TrackIR OFF............" + Environment.NewLine);
             if (_simData != null && _simData.TrackIREnable)
             {
                 SetTrackIREnable(false);
@@ -96,6 +97,7 @@ namespace MSFSPopoutPanelManager.Provider
 
         public void TurnOnTrackIR()
         {
+            Debug.Write("TrackIR ON............" + Environment.NewLine);
             if (_isTrackIRManaged && _simData != null && !_simData.TrackIREnable)
             {
                 SetTrackIREnable(true);

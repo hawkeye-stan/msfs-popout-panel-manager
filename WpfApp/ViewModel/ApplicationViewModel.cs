@@ -49,7 +49,6 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
         public DelegateCommand UserGuideCommand => new DelegateCommand((o) => { DiagnosticManager.OpenOnlineUserGuide(); }, CanExecute);
         public DelegateCommand DownloadLatestReleaseCommand => new DelegateCommand((o) => { DiagnosticManager.OpenOnlineLatestDownload(); }, CanExecute);
         public DelegateCommand UserProfileSelectCommand => new DelegateCommand(OnUserProfileSelected, CanExecute);
-        public DelegateCommand ShowPanelCoorOverlayCommand => new DelegateCommand(OnShowPanelCoorOverlay, CanExecute);
         public DelegateCommand StartPopOutCommand => new DelegateCommand(OnStartPopOut, CanExecute);
 
         public ApplicationViewModel()
@@ -98,7 +97,6 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
             PanelConfigurationViewModel = new PanelConfigurationViewModel(DataStore, _userProfileManager);
 
             PreferencesViewModel = new PreferencesViewModel(DataStore);
-            InputHookManager.OnStartPopout += (source, e) => { OnStartPopOut(null); };
         }
 
         public void Initialize()
@@ -137,8 +135,6 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
             ShowPanelSelection(true);
 
             IsMinimizedAllPanels = false;
-
-            InputHookManager.StartHook();
         }
 
         public void Exit()
@@ -146,6 +142,7 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
             // This method gets call on Windows_Closing
             InputHookManager.EndHook();
             _simConnectManager.Stop();
+            Application.Current.Shutdown();
         }
 
         private void OnRestart(object commandParameter)
@@ -207,12 +204,6 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
 
             if (profileId != DataStore.ActiveUserProfileId)
                 DataStore.ActiveUserProfileId = profileId;
-        }
-
-        private void OnShowPanelCoorOverlay(object commandParameter)
-        {
-            PanelSelectionViewModel.IsEditingPanelCoorOverlay = !PanelSelectionViewModel.IsEditingPanelCoorOverlay;
-            PanelSelectionViewModel.EditPanelCoorOverlayCommand.Execute(null);
         }
 
         private void OnStartPopOut(object commandParameter)

@@ -120,17 +120,17 @@
                             <mah:NumericUpDown Width="80" Minimum="1" Maximum="30" FontSize="16" Value="{Binding Path=DataStore.AppSetting.AutoPopOutPanelsWaitDelay.ReadyToFlyButton, Mode=TwoWay}"></mah:NumericUpDown>
                             <Label Margin="10,0,0,0">Ready to Fly</Label>
                         </WrapPanel>
-                        <TextBlock Margin="119,0,10,10" Style="{StaticResource TextBlockDescription}">Amount of time to wait for 'Ready to Fly' button to appear.<LineBreak/>(Default: 6 seconds)</TextBlock>
+                        <TextBlock Margin="119,0,10,10" Style="{StaticResource TextBlockDescription}">Amount of time to wait for 'Ready to Fly' button to appear.<LineBreak/>(Default: 4 seconds)</TextBlock>
                         <WrapPanel Orientation="Horizontal" Margin="24,0,0,0" >
                             <mah:NumericUpDown Width="80" Minimum="1" Maximum="30" FontSize="16" Value="{Binding Path=DataStore.AppSetting.AutoPopOutPanelsWaitDelay.InitialCockpitView, Mode=TwoWay}"></mah:NumericUpDown>
                             <Label Margin="10,0,0,0">Initial Cockpit View</Label>
                         </WrapPanel>
-                        <TextBlock Margin="119,0,10,10" Style="{StaticResource TextBlockDescription}">Amount of time to wait for the cockpit to appear.<LineBreak/>(Default: 2 seconds)</TextBlock>
+                        <TextBlock Margin="119,0,10,10" Style="{StaticResource TextBlockDescription}">Amount of time to wait for the cockpit to appear.<LineBreak/>(Default: 1 second)</TextBlock>
                         <WrapPanel Orientation="Horizontal" Margin="24,0,0,0" >
                             <mah:NumericUpDown Width="80" Minimum="1" Maximum="30" FontSize="16" Value="{Binding Path=DataStore.AppSetting.AutoPopOutPanelsWaitDelay.InstrumentationPowerOn, Mode=TwoWay}"></mah:NumericUpDown>
                             <Label Margin="10,0,0,0">Instrumentation Power On</Label>
                         </WrapPanel>
-                        <TextBlock Margin="119,0,10,10" Style="{StaticResource TextBlockDescription}">Amount of time to wait for cold start instrumentation power on to complete.<LineBreak/>(Default: 2 seconds)</TextBlock>
+                        <TextBlock Margin="119,0,10,10" Style="{StaticResource TextBlockDescription}">Amount of time to wait for cold start instrumentation power on to complete.<LineBreak/>(Default: 1 second)</TextBlock>
                         <WrapPanel Orientation="Horizontal"></WrapPanel>
                     </WrapPanel>
                 </WrapPanel>

@@ -2,8 +2,6 @@
 using MSFSPopoutPanelManager.Shared;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
 
 namespace MSFSPopoutPanelManager.Provider
 {
@@ -12,10 +10,6 @@ namespace MSFSPopoutPanelManager.Provider
         private UserProfileManager _userProfileManager;
         private int _panelIndex;
         private List<PanelSourceCoordinate> _panelCoordinates;
-        private IntPtr _winEventHook;
-        private static PInvoke.WinEventProc _winEvent;      // keep this as static to prevent garbage collect or the app will crash
-        private Rectangle _lastWindowRectangle;
-        private bool _isEditingPanelCoordinates;
 
         public event EventHandler OnPanelSelectionCompleted;
         public event EventHandler<EventArgs<PanelSourceCoordinate>> OnPanelLocationAdded;
@@ -39,8 +33,9 @@ namespace MSFSPopoutPanelManager.Provider
         {
             _panelIndex = 1;
             _panelCoordinates = new List<PanelSourceCoordinate>();
-            ShowPanelLocationOverlay(_panelCoordinates, true);
+            //ShowPanelLocationOverlay(_panelCoordinates, true);
             InputHookManager.SubscribeToPanelSelectionEvent = true;
+            InputHookManager.StartHook();
         }
 
         public void ShowPanelLocationOverlay(List<PanelSourceCoordinate> panelCoordinates, bool show)
@@ -100,60 +95,6 @@ namespace MSFSPopoutPanelManager.Provider
 
             InputHookManager.SubscribeToPanelSelectionEvent = false;
             OnPanelSelectionCompleted?.Invoke(this, null);
-        }
-
-        public void StartEditPanelLocations()
-        {
-            _winEvent = new PInvoke.WinEventProc(PanelLocationEditEventCallback);
-            _winEventHook = PInvoke.SetWinEventHook(PInvokeConstant.EVENT_SYSTEM_MOVESIZEEND, PInvokeConstant.EVENT_OBJECT_LOCATIONCHANGE, DiagnosticManager.GetApplicationProcess().Handle, _winEvent, 0, 0, PInvokeConstant.WINEVENT_OUTOFCONTEXT);
-            _isEditingPanelCoordinates = true;
-        }
-
-        public void EndEditPanelLocations()
-        {
-            PInvoke.UnhookWinEvent(_winEventHook);
-            _isEditingPanelCoordinates = false;
-        }
-
-        private void PanelLocationEditEventCallback(IntPtr hWinEventHook, uint iEvent, IntPtr hWnd, int idObject, int idChild, int dwEventThread, int dwmsEventTime)
-        {
-            // check by priority to minimize escaping constraint
-            if (hWnd == IntPtr.Zero
-                || idObject != 0
-                || hWinEventHook != _winEventHook
-                || !_isEditingPanelCoordinates
-                || !(iEvent == PInvokeConstant.EVENT_OBJECT_LOCATIONCHANGE || iEvent == PInvokeConstant.EVENT_SYSTEM_MOVESIZEEND)
-                || UserProfile.PanelSourceCoordinates == null || UserProfile.PanelSourceCoordinates.Count == 0)
-            {
-                return;
-            }
-
-            var panelSourceCoordinate = UserProfile.PanelSourceCoordinates.FirstOrDefault(panel => panel.PanelHandle == hWnd);
-
-            if (panelSourceCoordinate != null)
-            {
-                switch (iEvent)
-                {
-                    case PInvokeConstant.EVENT_OBJECT_LOCATIONCHANGE:
-                        Rectangle winRectangle;
-                        PInvoke.GetWindowRect(panelSourceCoordinate.PanelHandle, out winRectangle);
-
-                        if (_lastWindowRectangle == winRectangle)       // ignore duplicate callback messages
-                            return;
-
-                        _lastWindowRectangle = winRectangle;
-                        Rectangle clientRectangle;
-                        PInvoke.GetClientRect(panelSourceCoordinate.PanelHandle, out clientRectangle);
-
-                        panelSourceCoordinate.X = winRectangle.Left;
-                        panelSourceCoordinate.Y = winRectangle.Top;
-
-                        break;
-                    case PInvokeConstant.EVENT_SYSTEM_MOVESIZEEND:
-                        _userProfileManager.WriteUserProfiles();
-                        break;
-                }
-            }
         }
     }
 }

@@ -39,8 +39,7 @@
                             </Style>
                         </MenuItem.ItemContainerStyle>
                     </MenuItem>
-                    <MenuItem Header="Show Panel Location Overlay" IsChecked="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}, Path=DataContext.PanelSelectionViewModel.IsShownPanelCoorOverlay}" Command="{Binding Path=ShowPanelCoorOverlayCommand}"></MenuItem>
-                    <MenuItem Header="Start Pop Out" Command="{Binding Path=StartPopOutCommand}" InputGestureText="Ctrl+Alt+P"></MenuItem>
+                    <MenuItem Header="Start Pop Out" Command="{Binding Path=StartPopOutCommand}" IsEnabled="{c:Binding Path='DataStore.ActiveUserProfile.PanelSourceCoordinates.Count > 0'}"></MenuItem>
                     <Separator></Separator>
                     <MenuItem Header="Exit" Command="{Binding Path=ExitCommand}" ></MenuItem>
                 </ContextMenu>

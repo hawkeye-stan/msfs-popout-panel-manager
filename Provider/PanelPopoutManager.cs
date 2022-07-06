@@ -45,19 +45,8 @@ namespace MSFSPopoutPanelManager.Provider
 
             OnPopOutStarted?.Invoke(this, null);
 
-            // If enable, load the current viewport into custom view by Ctrl-Alt-0
             if (AppSetting.UseAutoPanning)
-            {
-                var simualatorProcess = DiagnosticManager.GetSimulatorProcess();
-                if (simualatorProcess != null)
-                {
-                    // First center view to make sure recalling custom camera works on the first press
-                    InputEmulationManager.CenterView(simualatorProcess.Handle);
-
-                    InputEmulationManager.LoadCustomView(simualatorProcess.Handle, AppSetting.AutoPanningKeyBinding);
-                    Thread.Sleep(500);
-                }
-            }
+                InputEmulationManager.LoadCustomView(AppSetting.AutoPanningKeyBinding);
 
             Task<List<PanelConfig>> popoutPanelTask = Task<List<PanelConfig>>.Factory.StartNew(() =>
             {
@@ -238,15 +227,7 @@ namespace MSFSPopoutPanelManager.Provider
                         Thread.Sleep(500);
                     }
 
-                    // Apply full screen (cannot combine with always on top or hide title bar)
-                    if (panel.FullScreen)
-                    {
-                        WindowManager.MoveWindow(panel.PanelHandle, panel.Left, panel.Top);
-                        Thread.Sleep(1000);
-                        InputEmulationManager.ToggleFullScreenPanel(panel.PanelHandle);
-                        Thread.Sleep(1000);
-                    }
-                    else
+                    if (!panel.FullScreen)
                     {
                         // Apply locations
                         PInvoke.ShowWindow(panel.PanelHandle, PInvokeConstant.SW_RESTORE);
@@ -277,6 +258,19 @@ namespace MSFSPopoutPanelManager.Provider
                     }
 
                     PInvoke.ShowWindow(panel.PanelHandle, PInvokeConstant.SW_RESTORE);
+                }
+            });
+
+            // Apply full screen (cannot combine with always on top or hide title bar)
+            // Cannot run in parallel process
+            UserProfile.PanelConfigs.ToList().ForEach(panel =>
+            {
+                if (panel.FullScreen && (!panel.AlwaysOnTop && !panel.HideTitlebar))
+                {
+                    WindowManager.MoveWindow(panel.PanelHandle, panel.Left, panel.Top);
+                    Thread.Sleep(500);
+                    InputEmulationManager.ToggleFullScreenPanel(panel.PanelHandle);
+                    Thread.Sleep(250);
                 }
             });
         }

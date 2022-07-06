@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace MSFSPopoutPanelManager.Provider
 {
@@ -37,6 +39,7 @@ namespace MSFSPopoutPanelManager.Provider
 
         public static void PopOutPanel(int x, int y)
         {
+            //LeftClickSimulatorUpperLeftCorner();
             LeftClick(x, y);
             Thread.Sleep(300);
 
@@ -93,30 +96,39 @@ namespace MSFSPopoutPanelManager.Provider
             PInvoke.keybd_event(Convert.ToByte(VK_LCONTROL), 0, KEYEVENTF_KEYUP, 0);
         }
 
-        public static void LoadCustomView(IntPtr hwnd, string keybinding)
+        public static void LoadCustomView(string keybinding)
         {
-            uint customViewKey = (uint)(Convert.ToInt32(keybinding) + KEY_0);
+            var simualatorProcess = DiagnosticManager.GetSimulatorProcess();
+            if (simualatorProcess != null)
+            {
+                // First center view to make sure recalling custom camera works on the first press
+                InputEmulationManager.CenterView(simualatorProcess.Handle);
 
-            PInvoke.SetForegroundWindow(hwnd);
-            Thread.Sleep(500);
+                uint customViewKey = (uint)(Convert.ToInt32(keybinding) + KEY_0);
 
-            PInvoke.SetFocus(hwnd);
-            Thread.Sleep(300);
+                PInvoke.SetForegroundWindow(simualatorProcess.Handle);
+                Thread.Sleep(300);
 
-            // First center view using Ctrl-Space
-            PInvoke.keybd_event(Convert.ToByte(VK_LCONTROL), 0, KEYEVENTF_KEYDOWN, 0);
-            PInvoke.keybd_event(Convert.ToByte(VK_SPACE), 0, KEYEVENTF_KEYDOWN, 0);
-            Thread.Sleep(200);
-            PInvoke.keybd_event(Convert.ToByte(VK_SPACE), 0, KEYEVENTF_KEYUP, 0);
-            PInvoke.keybd_event(Convert.ToByte(VK_LCONTROL), 0, KEYEVENTF_KEYUP, 0);
-            Thread.Sleep(200);
+                PInvoke.SetFocus(simualatorProcess.Handle);
+                Thread.Sleep(300);
 
-            // Then load view using Alt-0
-            PInvoke.keybd_event(Convert.ToByte(VK_LMENU), 0, KEYEVENTF_KEYDOWN, 0);
-            PInvoke.keybd_event(Convert.ToByte(customViewKey), 0, KEYEVENTF_KEYDOWN, 0);
-            Thread.Sleep(200);
-            PInvoke.keybd_event(Convert.ToByte(customViewKey), 0, KEYEVENTF_KEYUP, 0);
-            PInvoke.keybd_event(Convert.ToByte(VK_LMENU), 0, KEYEVENTF_KEYUP, 0);
+                // First center view using Ctrl-Space
+                PInvoke.keybd_event(Convert.ToByte(VK_LCONTROL), 0, KEYEVENTF_KEYDOWN, 0);
+                PInvoke.keybd_event(Convert.ToByte(VK_SPACE), 0, KEYEVENTF_KEYDOWN, 0);
+                Thread.Sleep(200);
+                PInvoke.keybd_event(Convert.ToByte(VK_SPACE), 0, KEYEVENTF_KEYUP, 0);
+                PInvoke.keybd_event(Convert.ToByte(VK_LCONTROL), 0, KEYEVENTF_KEYUP, 0);
+                Thread.Sleep(200);
+
+                // Then load view using Alt-0
+                PInvoke.keybd_event(Convert.ToByte(VK_LMENU), 0, KEYEVENTF_KEYDOWN, 0);
+                PInvoke.keybd_event(Convert.ToByte(customViewKey), 0, KEYEVENTF_KEYDOWN, 0);
+                Thread.Sleep(200);
+                PInvoke.keybd_event(Convert.ToByte(customViewKey), 0, KEYEVENTF_KEYUP, 0);
+                PInvoke.keybd_event(Convert.ToByte(VK_LMENU), 0, KEYEVENTF_KEYUP, 0);
+
+                Thread.Sleep(500);
+            }
         }
 
         public static void ToggleFullScreenPanel(IntPtr hwnd)
@@ -150,23 +162,26 @@ namespace MSFSPopoutPanelManager.Provider
                 Rectangle clientRectangle;
                 PInvoke.GetClientRect(hwnd, out clientRectangle);
 
-                // The "Ready to Fly" button is at about 94.7% width, 91.3% height at the lower right corner of game window
+                // The "Ready to Fly" button is at about 94.7% width, 84% to 96.25% height (91.3% default) with interface scaling of 70 at the lower right corner of game window
                 // Try to click the area a few times to hit that button for both full screen and windows mode
 
-                // set focus to game app
                 var x = Convert.ToInt32(rectangle.X + (clientRectangle.Width) * 0.947);
-                var y = Convert.ToInt32(rectangle.Y + (clientRectangle.Height) * 0.9);
+                var y = Convert.ToInt32(rectangle.Y + (clientRectangle.Height) * 0.84);
                 LeftClick(x, y);
-                Thread.Sleep(250);
                 LeftClick(x, y);
-                Thread.Sleep(250);
 
-                for (var top = y; top < y + 100; top = top + 20)
+                for (var top = y; top < y + (clientRectangle.Height) * 0.125; top = top + 10)
                 {
-                    LeftClick(x, Convert.ToInt32(top));
+                    Debug.WriteLine($"Trying to click at x: {x}   y: {Convert.ToInt32(top)}");
+                    PInvoke.SetCursorPos(x, Convert.ToInt32(top));
                     Thread.Sleep(100);
-                    LeftClick(x, Convert.ToInt32(top));
-                    Thread.Sleep(100);
+                    PInvoke.mouse_event(MOUSEEVENTF_LEFTDOWN, x, Convert.ToInt32(top), 0, 0);
+                    Thread.Sleep(200);
+                    PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, x, Convert.ToInt32(top), 0, 0);
+                    Thread.Sleep(200);
+                    PInvoke.mouse_event(MOUSEEVENTF_LEFTDOWN, x, Convert.ToInt32(top), 0, 0);
+                    Thread.Sleep(200);
+                    PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, x, Convert.ToInt32(top), 0, 0);
                 }
             }
         }

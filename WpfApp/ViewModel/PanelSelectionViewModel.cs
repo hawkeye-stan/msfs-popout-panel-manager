@@ -6,7 +6,6 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Windows;
-using System.Windows.Interop;
 
 namespace MSFSPopoutPanelManager.WpfApp.ViewModel
 {
@@ -42,8 +41,10 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
             DataStore = dataStore;
             DataStore.OnActiveUserProfileChanged += (sender, e) =>
             {
-                IsEditingPanelCoorOverlay = false;
-                RemoveAllPanelCoorOverlay();
+                if (IsEditingPanelCoorOverlay && DataStore.AppSetting.AutoDisableTrackIR)
+                    _simConnectManager.TurnOnTrackIR();
+
+                ShowPanelOverlay(false);
             };
 
             _userProfileManager = userProfileManager;
@@ -124,6 +125,8 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
             if (DataStore.AppSetting.AutoDisableTrackIR)
                 _simConnectManager.TurnOffTrackIR();
 
+            RemoveAllPanelCoorOverlay();
+
             WindowManager.MinimizeWindow(DataStore.ApplicationHandle);      // Window hide doesn't work when try to reshow window after selection completes. So need to use minimize.
             _panelSelectionManager.UserProfile = DataStore.ActiveUserProfile;
             _panelSelectionManager.AppSetting = DataStore.AppSetting;
@@ -134,16 +137,27 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
         {
             Thread.Sleep(500);     // allow time for the mouse to be stopped moving by the user
 
-            var simulatorProcess = DiagnosticManager.GetSimulatorProcess();
+            ShowPanelOverlay(false);
+            InputHookManager.EndHook();
 
-            if (!(DataStore.IsSimulatorStarted && DataStore.IsFlightActive))
+            if (!(DataStore.IsSimulatorStarted))
             {
                 Logger.LogStatus("MSFS/SimConnect has not been started. Please try again at a later time.", StatusMessageType.Error);
                 return;
             }
 
+            if(DataStore.ActiveUserProfile.PanelSourceCoordinates.Count == 0)
+            {
+                Logger.LogStatus("No panel has been selected for the profile. Please select at least one panel.", StatusMessageType.Error);
+                return;
+            }
+
             if (DataStore.ActiveUserProfile != null && DataStore.ActiveUserProfile.PanelSourceCoordinates.Count > 0)
             {
+                // Turn off TrackIR if TrackIR is started
+                if (DataStore.AppSetting.AutoDisableTrackIR)
+                    _simConnectManager.TurnOffTrackIR();
+
                 Logger.LogStatus("Panels pop out in progress.....", StatusMessageType.Info);
 
                 var messageDialog = new OnScreenMessageDialog($"Panels pop out in progress for profile:\n{DataStore.ActiveUserProfile.ProfileName}", DataStore.AppSetting.AutoPopOutPanelsWaitDelay.InitialCockpitView);
@@ -165,17 +179,20 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
         private void OnSaveAutoPanningCamera(object commandParameter)
         {
             var simualatorProcess = DiagnosticManager.GetSimulatorProcess();
-            if (simualatorProcess != null && DataStore.IsFlightActive)
+            if (simualatorProcess == null)
             {
-                InputEmulationManager.SaveCustomView(simualatorProcess.Handle, DataStore.AppSetting.AutoPanningKeyBinding);
-                Logger.LogStatus("Auto Panning Camera has been saved succesfully.", StatusMessageType.Info);
+                Logger.LogStatus("MSFS/SimConnect has not been started. Please try again at a later time.", StatusMessageType.Error);
+                return;
             }
+
+            InputEmulationManager.SaveCustomView(simualatorProcess.Handle, DataStore.AppSetting.AutoPanningKeyBinding);
+            Logger.LogStatus("Auto Panning Camera has been saved succesfully.", StatusMessageType.Info);
         }
 
         private void OnEditPanelCoorOverlay(object commandParameter)
         {
             // Turn off TrackIR if TrackIR is started
-            if (commandParameter == null && DataStore.AppSetting.AutoDisableTrackIR)
+            if (DataStore.AppSetting.AutoDisableTrackIR)
             {
                 if (IsEditingPanelCoorOverlay)
                     _simConnectManager.TurnOffTrackIR();
@@ -185,17 +202,19 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
 
             if (IsEditingPanelCoorOverlay)
             {
-                RemoveAllPanelCoorOverlay();
-                DataStore.ActiveUserProfile.PanelSourceCoordinates.ToList().ForEach(c => AddPanelCoorOverlay(c));
-
+                ShowPanelOverlay(true);
                 _panelSelectionManager.UserProfile = DataStore.ActiveUserProfile;
                 _panelSelectionManager.AppSetting = DataStore.AppSetting;
-                _panelSelectionManager.StartEditPanelLocations();
+
+                if (DataStore.AppSetting.UseAutoPanning)
+                    InputEmulationManager.LoadCustomView(DataStore.AppSetting.AutoPanningKeyBinding);
+
+                InputHookManager.StartHook();
             }
             else
             {
-                _panelSelectionManager.EndEditPanelLocations();
-                RemoveAllPanelCoorOverlay();
+                InputHookManager.EndHook();
+                ShowPanelOverlay(false);
             }
         }
 
@@ -203,18 +222,16 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
         {
             PanelCoorOverlay overlay = new PanelCoorOverlay(panelSourceCoordinate.PanelIndex);
             overlay.IsEditingPanelLocation = IsEditingPanelCoorOverlay;
-            overlay.Loaded += (sender, e) =>
-            {
-                var overlay = (Window)sender;
-                var handle = new WindowInteropHelper(Window.GetWindow(overlay)).Handle;
-                panelSourceCoordinate.PanelHandle = handle;
-                WindowManager.MoveWindow(handle, PanelType.WPFWindow, (int)overlay.Left, (int)overlay.Top, (int)overlay.Width, (int)overlay.Height);
-            };
-            overlay.WindowStartupLocation = System.Windows.WindowStartupLocation.Manual;
-            overlay.Left = panelSourceCoordinate.X - overlay.Width / 2;
-            overlay.Top = panelSourceCoordinate.Y - overlay.Height / 2;
+            overlay.WindowStartupLocation = WindowStartupLocation.Manual;
+            overlay.MoveWindow(panelSourceCoordinate.X, panelSourceCoordinate.Y);
             overlay.ShowInTaskbar = false;
             overlay.Show();
+            overlay.WindowLocationChanged += (sender, e) =>
+            {
+                panelSourceCoordinate.X = e.Value.X;
+                panelSourceCoordinate.Y = e.Value.Y;
+                _userProfileManager.WriteUserProfiles();
+            };
         }
 
         private void RemoveLastAddedPanelCoorOverlay()
@@ -243,9 +260,8 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
         private void HandleOnPopOutStarted(object sender, EventArgs e)
         {
             // Hide panel coordinate overlays
-            IsEditingPanelCoorOverlay = false;
-            OnEditPanelCoorOverlay(false);
-
+            ShowPanelOverlay(false);
+            
             // Close all pop out panels
             WindowManager.CloseAllCustomPopoutPanels();
 
@@ -275,7 +291,6 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
                 OnPopOutCompleted?.Invoke(this, null);
             }
 
-
             if (DataStore.AppSetting.AutoDisableTrackIR)
                 _simConnectManager.TurnOnTrackIR();
         }
@@ -285,22 +300,26 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
             WindowManager.BringWindowToForeground(DataStore.ApplicationHandle);
             DataStore.ApplicationWindow.Show();
 
-            IsEditingPanelCoorOverlay = true;
-            OnEditPanelCoorOverlay(null);
-
             if (DataStore.ActiveUserProfile.PanelSourceCoordinates.Count > 0)
                 Logger.LogStatus("Panels selection is completed. Please click 'Start Pop Out' to start popping out these panels.", StatusMessageType.Info);
             else
                 Logger.LogStatus("Panels selection is completed. No panel has been selected.", StatusMessageType.Info);
 
-
-            if (DataStore.AppSetting.AutoDisableTrackIR)
-                _simConnectManager.TurnOnTrackIR();
+            IsEditingPanelCoorOverlay = true;
         }
 
         private bool CanExecute(object commandParameter)
         {
             return true;
+        }
+
+        private void ShowPanelOverlay(bool show)
+        {
+            IsEditingPanelCoorOverlay = show;
+            RemoveAllPanelCoorOverlay();
+
+            if (show && DataStore.ActiveUserProfile != null)
+                DataStore.ActiveUserProfile.PanelSourceCoordinates.ToList().ForEach(c => AddPanelCoorOverlay(c));
         }
     }
 
