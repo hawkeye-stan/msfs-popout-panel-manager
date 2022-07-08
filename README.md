@@ -58,6 +58,7 @@ What if you can do the setup once by defining on screen where the pop out panels
 
   - Restart you computer and most of the time this will do the trick.
   - Clear your default web browser cache on your computer since auto update will try to download latest version of update configuration file from github repository and the file may have been cached on your machine.
+  - Clear Internet Browser History.  First search for "Internet Properties" in Windows control panel. In "General" tab, select "Delete" in Browsing History section.
 
 ## How to Use
 
