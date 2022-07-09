@@ -39,7 +39,6 @@ namespace MSFSPopoutPanelManager.Provider
 
         public static void PopOutPanel(int x, int y)
         {
-            //LeftClickSimulatorUpperLeftCorner();
             LeftClick(x, y);
             Thread.Sleep(300);
 

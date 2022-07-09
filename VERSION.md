@@ -1,6 +1,9 @@
 # Version History
 <hr/>
 
+## Version 3.3.6
+* Hot Fix: Resolved an issue where panel separation fails if your MSFS game window is not on the same monitor as where the panels are initially popped out (upper left corner).
+
 ## Version 3.3.5
 * Fixed an issue when using auto pop out panel in combination with power on during cold start for  the following two G1000 planes (Cessna 172 and Cessna 208B Grand Caravan), instrumentations are  not powering on to allow pop out to occur.
 * Fixed an issue when panels are designated as full screen mode, they're not resizing to full screen after they're popped out.

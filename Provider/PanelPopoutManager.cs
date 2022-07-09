@@ -297,6 +297,7 @@ namespace MSFSPopoutPanelManager.Provider
             WindowManager.MoveWindow(hwnd, PanelType.CustomPopout, -8, 0, 800, 600);
             PInvoke.SetForegroundWindow(hwnd);
             Thread.Sleep(500);
+            InputEmulationManager.LeftClick(0, 0);
 
             // Find the magnifying glass coordinate    
             var point = AnalyzeMergedWindows(hwnd);

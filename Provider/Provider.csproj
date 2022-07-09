@@ -7,7 +7,7 @@
     <RootNamespace>MSFSPopoutPanelManager.Provider</RootNamespace>
     <PackageId>MSFS 2020 Popout Panel Manager Provider</PackageId>
     <Product>MSFS 2020 Popout Panel Manager Provider</Product>
-    <Version>3.3.5.0</Version>
+    <Version>3.3.6.0</Version>
     <Authors>Stanley Kwok</Authors>
     <Copyright>Stanley Kwok 2021</Copyright>
     <PackageProjectUrl>https://github.com/hawkeye-stan/msfs-popout-panel-manager</PackageProjectUrl>

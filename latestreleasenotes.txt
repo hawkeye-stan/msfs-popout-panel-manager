@@ -1,3 +1,8 @@
+Version 3.3.6.0 (HOT FIX)
+
+- Resolved an issue where panel separation fails if your MSFS game window is not on the same 
+  monitor as where the panels are initially popped out (upper left corner).
+
 Version 3.3.5.0 
 
 This update is optional. You can safely skip this version if you do not require the following
