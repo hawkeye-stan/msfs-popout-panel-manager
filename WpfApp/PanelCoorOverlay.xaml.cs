@@ -1,6 +1,8 @@
-﻿using MSFSPopoutPanelManager.Shared;
+﻿using MSFSPopoutPanelManager.Provider;
+using MSFSPopoutPanelManager.Shared;
 using System;
 using System.Windows;
+using System.Windows.Interop;
 
 namespace MSFSPopoutPanelManager.WpfApp
 {
@@ -8,6 +10,9 @@ namespace MSFSPopoutPanelManager.WpfApp
     {
         private const int TOP_ADJUSTMENT = 23;      // half of window height
         private const int LEFT_ADJUSTMENT = 27;     // half of window width
+
+        private int _leftCoor;
+        private int _topCoor;
 
         public bool IsEditingPanelLocation { get; set; }
 
@@ -22,12 +27,23 @@ namespace MSFSPopoutPanelManager.WpfApp
             IsEditingPanelLocation = false;
 
             this.LocationChanged += PanelCoorOverlay_LocationChanged;
+            this.Loaded += PanelCoorOverlay_Loaded;
         }
 
         public void MoveWindow(int x, int y)
         {
+            _leftCoor = x - LEFT_ADJUSTMENT;
+            _topCoor = y - TOP_ADJUSTMENT;
+
             this.Left = x - LEFT_ADJUSTMENT;
             this.Top = y - TOP_ADJUSTMENT;
+        }
+
+        private void PanelCoorOverlay_Loaded(object sender, System.EventArgs e)
+        {
+            // Fixed broken window left/top coordinate for DPI Awareness Per Monitor
+            var handle = new WindowInteropHelper(this).Handle;
+            WindowManager.MoveWindow(handle, _leftCoor, _topCoor);
         }
 
         private void PanelCoorOverlay_LocationChanged(object sender, EventArgs e)
