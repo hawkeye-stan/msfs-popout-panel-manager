@@ -382,6 +382,8 @@ namespace MSFSPopoutPanelManager.Provider
                     panelInfo.PanelType = PanelType.CustomPopout;
                 else if (caption.IndexOf("Microsoft Flight Simulator") > -1)        // MSFS main game window
                     return null;
+                else if (caption.IndexOf("WINDOW") > -1)
+                    panelInfo.PanelType = PanelType.MultiMonitorWindow;
                 else
                     panelInfo.PanelType = PanelType.BuiltInPopout;
 

@@ -6,6 +6,7 @@
         BuiltInPopout,
         CustomPopout,
         MSFSTouchPanel,
-        WPFWindow
+        WPFWindow,
+        MultiMonitorWindow
     }
 }

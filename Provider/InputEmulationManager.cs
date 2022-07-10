@@ -23,6 +23,7 @@ namespace MSFSPopoutPanelManager.Provider
         public static void LeftClick(int x, int y)
         {
             PInvoke.SetCursorPos(x, y);
+            PInvoke.SetCursorPos(x, y);
             Thread.Sleep(300);
 
             PInvoke.mouse_event(MOUSEEVENTF_LEFTDOWN, x, y, 0, 0);
@@ -42,6 +43,7 @@ namespace MSFSPopoutPanelManager.Provider
             LeftClick(x, y);
             Thread.Sleep(300);
 
+            PInvoke.SetCursorPos(x, y);
             PInvoke.SetCursorPos(x, y);
             Thread.Sleep(300);
 

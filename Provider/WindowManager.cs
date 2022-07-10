@@ -136,11 +136,14 @@ namespace MSFSPopoutPanelManager.Provider
             var className = PInvoke.GetClassName(hwnd);
             var caption = PInvoke.GetWindowText(hwnd);
 
+            if (className == "AceApp" && caption.IndexOf("WINDOW") > -1)    // For multi monitor window, do nothing
+                return true;
+
             if (className == "AceApp" && (caption.IndexOf("(Custom)") > -1 || caption == String.Empty))      // Only close non-builtin pop out panels
             {
                 WindowManager.CloseWindow(hwnd);
             }
-            else if (className == "AceApp" && caption.IndexOf("Microsoft Flight Simulator") == -1)    // for builtin pop out  (ATC, VFR Map, ect)
+            else if (className == "AceApp" && caption.IndexOf("Microsoft Flight Simulator") == -1)    // For builtin pop out  (ATC, VFR Map, ect)
             {
                 WindowManager.MoveWindow(hwnd, 0, 0);
             }
