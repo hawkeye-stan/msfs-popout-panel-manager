@@ -2,7 +2,11 @@
 <hr/>
 
 ## Version 3.3.7
-* Fixed an issue where panel number circles are displayed at the wrong location instead of at the location where you clicked your mouse when setting monitor scale that is greater than 100% in Windows display setting.
+* Fixed an issue where panel number circles are displayed at the incorrect location instead of at the location where you clicked your mouse. This issue will most likely occur if your monitor display scale is greater than 100% in Windows display setting.
+
+* Fixed an issue where panel number circles cannot be move immediately after the completion of panel selection.
+
+* Added support for multi window (new in SU10 beta) so the app does not close the add-on window when pop out starts.
 
 ## Version 3.3.6
 * Hot Fix: Resolved an issue where panel separation fails if your MSFS game window is not on the same monitor as where the panels are initially popped out (upper left corner).

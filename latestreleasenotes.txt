@@ -1,31 +1,11 @@
-Version 3.3.6.0 (HOT FIX)
+Version 3.3.7
 
-- Resolved an issue where panel separation fails if your MSFS game window is not on the same 
-  monitor as where the panels are initially popped out (upper left corner).
+- Fixed an issue where panel number circles are displayed at the incorrect location instead of 
+  at the location where you clicked your mouse. This issue will most likely occur if your monitor 
+  display scale is greater than 100% in Windows display setting.
 
-Version 3.3.5.0 
+- Fixed an issue where panel number circles cannot be move immediately after the completion of
+  panel selection.
 
-This update is optional. You can safely skip this version if you do not require the following
-application fixes.
-
-- Fixed an issue when using auto pop out panel in combination with power on during cold start for 
-  the following two G1000 planes (Cessna 172 and Cessna 208B Grand Caravan), instrumentations are 
-  not powering on to allow pop out to occur.
-
-- Fixed an issue when panels are designated as full screen mode, they're not resizing to full 
-  screen after they're popped out.
-
-- Fixed an issue when using auto pop out panel, "Ready to Fly" button may not get click when 
-  interface scale is set to higher than 70. Unfortunately, because of how MSFS coded this 
-  particular button, this fix may add few extra seconds to the duration of auto pop out process 
-  since the application needs to search for the button to click. To speed up the pop out process, 
-  you can try to set auto pop out panel wait delays to minimum of 1 second in preferences menu and
-  increase one second at a time until pop out works flawlessly for your system.
-
-- Updated verbiage for "Save Auto Panning Camera" button to "Override Auto Panning Camera". This 
-  is to clear the confusion when initially selecting panels for a profile, clicking this button 
-  eems to be required. "Override Auto Panning Camera" is only needed when your camera viewport has 
-  changed for an existing profile and you do not want to recreate a new  profile to set new panel 
-  locations.
-
-- Made improvement to the behavior of Track IR (enable/disable) when using the application.
+- Added support for multi window (new in SU10 beta) so the app does not close the add-on window 
+  when pop out starts.

@@ -34,9 +34,6 @@ namespace MSFSPopoutPanelManager.WpfApp
         {
             _leftCoor = x - LEFT_ADJUSTMENT;
             _topCoor = y - TOP_ADJUSTMENT;
-
-            this.Left = x - LEFT_ADJUSTMENT;
-            this.Top = y - TOP_ADJUSTMENT;
         }
 
         private void PanelCoorOverlay_Loaded(object sender, System.EventArgs e)

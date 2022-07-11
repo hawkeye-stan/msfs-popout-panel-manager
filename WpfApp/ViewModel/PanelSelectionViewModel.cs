@@ -206,8 +206,8 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
                 _panelSelectionManager.UserProfile = DataStore.ActiveUserProfile;
                 _panelSelectionManager.AppSetting = DataStore.AppSetting;
 
-                if (DataStore.AppSetting.UseAutoPanning)
-                    InputEmulationManager.LoadCustomView(DataStore.AppSetting.AutoPanningKeyBinding);
+                //if (DataStore.AppSetting.UseAutoPanning)
+                //    InputEmulationManager.LoadCustomView(DataStore.AppSetting.AutoPanningKeyBinding);
 
                 InputHookManager.StartHook();
             }
@@ -306,6 +306,8 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
                 Logger.LogStatus("Panels selection is completed. No panel has been selected.", StatusMessageType.Info);
 
             IsEditingPanelCoorOverlay = true;
+
+            ShowPanelOverlay(true);
         }
 
         private bool CanExecute(object commandParameter)
