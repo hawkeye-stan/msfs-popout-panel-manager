@@ -2,11 +2,17 @@
 <hr/>
 
 ## Version 3.3.7
-* Fixed an issue where panel number circles are displayed at the incorrect location instead of at the location where you clicked your mouse. This issue will most likely occur if your monitor display scale is greater than 100% in Windows display setting.
+* Fixed an issue where panel number circles are displayed at incorrect location instead of at the location where you clicked your mouse. This issue will most likely occur if your monitor display scale is set to greater than 100% in Windows display setting.
 
 * Fixed an issue where panel number circles cannot be move immediately after the completion of panel selection.
 
 * Added support for multi window (new in SU10 beta) so the app does not close the add-on window when pop out starts.
+
+Know Issue:
+
+* Currently, the time it takes for Auto Pop Out Panel to execute for G1000 based planes which require power on for cold start is much longer (can be up to 20 seconds) than previous version of the app. The reason is the time it takes to search and click the "Ready to Fly" button is much longer than before to account for various users' screen resolutions. A solution has already been created by me to totally skip the "Ready to Fly" button check and I'll incorporate this change into next major release of the application.
+
+  https://flightsim.to/file/36500/ready-to-fly-button-skipper
 
 ## Version 3.3.6
 * Hot Fix: Resolved an issue where panel separation fails if your MSFS game window is not on the same monitor as where the panels are initially popped out (upper left corner).
