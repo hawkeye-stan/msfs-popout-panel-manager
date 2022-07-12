@@ -10,7 +10,7 @@ Version 3.3.7
 - Added support for multi window (new in SU10 beta) so the app does not close the add-on window 
   when pop out starts.
 
-Know Issue:
+Known Issue:
 
 * Currently, the time it takes for Auto Pop Out Panel to execute for G1000 based planes which 
   require power on for cold start is much longer (can be up to 20 seconds) than previous 

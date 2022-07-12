@@ -8,7 +8,7 @@
 
 * Added support for multi window (new in SU10 beta) so the app does not close the add-on window when pop out starts.
 
-Know Issue:
+Known Issue:
 
 * Currently, the time it takes for Auto Pop Out Panel to execute for G1000 based planes which require power on for cold start is much longer (can be up to 20 seconds) than previous version of the app. The reason is the time it takes to search and click the "Ready to Fly" button is much longer than before to account for various users' screen resolutions. A solution has already been created by me to totally skip the "Ready to Fly" button check and I'll incorporate this change into next major release of the application.
 
