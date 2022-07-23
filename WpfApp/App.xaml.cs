@@ -1,9 +1,6 @@
-﻿using log4net;
-using log4net.Config;
-using MSFSPopoutPanelManager.Provider;
+﻿using MSFSPopoutPanelManager.Shared;
+using MSFSPopoutPanelManager.WindowsAgent;
 using System;
-using System.IO;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,17 +11,12 @@ namespace MSFSPopoutPanelManager.WpfApp
     public partial class App : Application
     {
         private static Mutex _mutex = null;
-        private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            // Setup log4Net
-            var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
-            XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
-
             // Override default WPF System DPI Awareness to Per Monitor Awareness
             // For this to work make sure [assembly:dpiawareness]
-            DpiAwareness.Enable(Log);
+            DpiAwareness.Enable();
 
             const string appName = "MSFS PopOut Panel Manager";
             bool createdNew;
@@ -49,7 +41,7 @@ namespace MSFSPopoutPanelManager.WpfApp
 
         private void HandleTaskSchedulerUnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
         {
-            Log.Error(e.Exception.Message, e.Exception);
+            FileLogger.WriteException(e.Exception.Message, e.Exception);
             ShowExceptionDialog();
         }
 
@@ -58,7 +50,7 @@ namespace MSFSPopoutPanelManager.WpfApp
             e.Handled = true;
             if (e.Exception.Message != "E_INVALIDARG")      // Ignore this error
             {
-                Log.Error(e.Exception.Message, e.Exception);
+                FileLogger.WriteException(e.Exception.Message, e.Exception);
                 ShowExceptionDialog();
             }
         }
@@ -66,7 +58,7 @@ namespace MSFSPopoutPanelManager.WpfApp
         private void HandledDomainException(object sender, UnhandledExceptionEventArgs e)
         {
             var exception = (Exception)e.ExceptionObject;
-            Log.Error(exception.Message, exception);
+            FileLogger.WriteException(exception.Message, exception);
             ShowExceptionDialog();
         }
 
@@ -104,7 +96,7 @@ namespace MSFSPopoutPanelManager.WpfApp
 
     public static class DpiAwareness
     {
-        public static void Enable(ILog log4net)
+        public static void Enable()
         {
             // Windows 8.1 added support for per monitor DPI
             if (Environment.OSVersion.Version >= new Version(6, 3, 0))
@@ -124,10 +116,9 @@ namespace MSFSPopoutPanelManager.WpfApp
                 SetProcessDPIAware();
             }
 
-            var process = DiagnosticManager.GetApplicationProcess();
+            var process = WindowProcessManager.GetApplicationProcess();
             PROCESS_DPI_AWARENESS outValue;
             GetProcessDpiAwareness(process.Handle, out outValue);
-            //log4net.Info($"DPI Awareness is set to: {outValue}");
         }
 
         [DllImport("User32.dll")]

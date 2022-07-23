@@ -1,6 +1,8 @@
 ﻿using MSFSPopoutPanelManager.Shared.ArrayExtensions;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Reflection;
 
 namespace MSFSPopoutPanelManager.Shared
@@ -75,6 +77,17 @@ namespace MSFSPopoutPanelManager.Shared
         public static T Copy<T>(this T original)
         {
             return (T)Copy((Object)original);
+        }
+    }
+
+    public static class ObservableCollectionExtensionMethods
+    {
+        public static int RemoveAll<T>(this ObservableCollection<T> observableCollection, Func<T, bool> condition)
+        {
+            // Find all elements satisfying the condition, i.e. that will be removed
+            var toRemove = observableCollection.Where(condition).ToList();
+
+            return toRemove.Count(observableCollection.Remove);
         }
     }
 

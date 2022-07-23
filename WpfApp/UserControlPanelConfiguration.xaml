@@ -6,7 +6,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
              mc:Ignorable="d" 
-             Height="505"
+             Height="545"
              Width="920"
              Background="#FF323A64">
     <UserControl.Resources>
@@ -32,20 +32,20 @@
         </ResourceDictionary>
     </UserControl.Resources>
     <UserControl.InputBindings>
-        <KeyBinding Command="{Binding Path=MinusTenPixelCommand}" CommandParameter="-10" Modifiers="Ctrl" Key="OemMinus"/>
-        <KeyBinding Command="{Binding Path=MinusOnePixelCommand}" CommandParameter="-1" Modifiers="Ctrl" Key="OemOpenBrackets" />
-        <KeyBinding Command="{Binding Path=PlusOnePixelCommand}" CommandParameter="1" Modifiers="Ctrl" Key="OemCloseBrackets" />
-        <KeyBinding Command="{Binding Path=PlusTenPixelCommand}" CommandParameter="10" Modifiers="Ctrl" Key="OemPlus" />
+        <KeyBinding Command="{Binding MinusTenPixelCommand}" CommandParameter="-10" Modifiers="Ctrl" Key="OemMinus"/>
+        <KeyBinding Command="{Binding MinusOnePixelCommand}" CommandParameter="-1" Modifiers="Ctrl" Key="OemOpenBrackets" />
+        <KeyBinding Command="{Binding PlusOnePixelCommand}" CommandParameter="1" Modifiers="Ctrl" Key="OemCloseBrackets" />
+        <KeyBinding Command="{Binding PlusTenPixelCommand}" CommandParameter="10" Modifiers="Ctrl" Key="OemPlus" />
     </UserControl.InputBindings>
     <Grid>
         <DockPanel>
             <WrapPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="20,10,0,0" HorizontalAlignment="Left">
                 <Label Content="Panel Locations and Settings   -" Margin="0,0,0,0" HorizontalAlignment="Left"/>
-                <Label Content="{Binding Path=DataStore.ActiveUserProfile.ProfileName}" Margin="0,0,0,0" HorizontalAlignment="Left"/>
-                <DataGrid Name="PanelConfigGrid" HorizontalAlignment="Center" Width="880" Height="390" Margin="0 10 0 0" AutoGenerateColumns="False" CanUserResizeColumns="False" HorizontalScrollBarVisibility="Disabled" 
+                <Label Content="{Binding ProfileData.ActiveProfile.ProfileName}" Margin="0,0,0,0" HorizontalAlignment="Left"/>
+                <DataGrid Name="PanelConfigGrid" HorizontalAlignment="Center" Width="880" Height="430" Margin="0 10 0 0" AutoGenerateColumns="False" CanUserResizeColumns="False" HorizontalScrollBarVisibility="Disabled" 
                           CanUserReorderColumns="False" CanUserResizeRows="False" HorizontalGridLinesBrush="#B9B9B9" VerticalGridLinesBrush="#B9B9B9" GridLinesVisibility="Horizontal" SelectionUnit="Cell" 
                           BorderThickness="1" CanUserAddRows="False" CanUserSortColumns="False" KeyboardNavigation.TabNavigation="None" KeyboardNavigation.IsTabStop="False"
-                          ItemsSource="{Binding Path=DataStore.ActiveUserProfile.PanelConfigs}">
+                          ItemsSource="{Binding ProfileData.ActiveProfile.PanelConfigs}">
                     <DataGrid.RowStyle>
                         <Style TargetType="DataGridRow">
                             <Setter Property="Background" Value="{x:Null}" />
@@ -93,8 +93,8 @@
                         <DataGridTemplateColumn Header="Panel Name" Width="230" >
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Name="PanelName" Width="230" BorderThickness="0" TextAlignment="Left" Text="{Binding Path=PanelName, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=LostFocus}" 
-                                             SourceUpdated="GridData_SourceUpdated" IsReadOnly="{c:Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path='DataContext.DataStore.ActiveUserProfile.IsLocked or !DataContext.DataStore.AllowEdit'}" IsEnabled="{Binding Path=IsCustomPopout, Mode=OneWay}">
+                                    <TextBox Name="PanelName" Width="230" BorderThickness="0" TextAlignment="Left" Text="{Binding PanelName, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=LostFocus}" 
+                                             SourceUpdated="GridData_SourceUpdated" IsReadOnly="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path=DataContext.ProfileData.ActiveProfile.IsLocked}" IsEnabled="{Binding IsCustomPopOut}">
                                         <TextBox.Style>
                                             <Style TargetType="TextBox">
                                                 <Setter Property="Focusable" Value="True"/>
@@ -102,14 +102,6 @@
                                                 <Setter Property="FontFamily" Value="Segoe UI"/>
                                                 <Setter Property="FontWeight" Value="Normal"/>
                                                 <Setter Property="Margin" Value="5, 5, 5, 5"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Path=IsCustomPopout}" Value="False">
-                                                        <Setter Property="FontStyle" Value="Italic" />
-                                                        <Setter Property="Background" Value="#FF252525" />
-                                                        <Setter Property="BorderBrush" Value="#FF252525" />
-                                                        <Setter Property="IsReadOnly" Value="True" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
                                             </Style>
                                         </TextBox.Style>
                                     </TextBox>
@@ -120,11 +112,13 @@
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBox Name="Left" Width="80" BorderThickness="0" 
-                                             Text="{Binding Path=Left, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=LostFocus}" 
+                                             Text="{Binding Left, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=LostFocus}" 
                                              SourceUpdated="GridData_SourceUpdated" 
                                              Style="{StaticResource TextBoxColumnFocus}" 
-                                             IsReadOnly="{c:Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path='DataContext.DataStore.ActiveUserProfile.IsLocked or !DataContext.DataStore.AllowEdit'}" 
-                                             IsHitTestVisible="{c:Binding Path='!FullScreen'}"/>
+                                             IsReadOnly="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path=DataContext.ProfileData.ActiveProfile.IsLocked}" 
+                                             IsHitTestVisible="{c:Binding Path='!FullScreen'}"
+                                             GotFocus="NumericDataPoint_GotFocus"
+                                             LostFocus="NumericDataPoint_LostFocus"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -132,11 +126,13 @@
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBox Name="Top" Width="80" BorderThickness="0" 
-                                             Text="{Binding Path=Top, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=LostFocus}" 
+                                             Text="{Binding Top, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=LostFocus}" 
                                              SourceUpdated="GridData_SourceUpdated" 
                                              Style="{StaticResource TextBoxColumnFocus}" 
-                                             IsReadOnly="{c:Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path='DataContext.DataStore.ActiveUserProfile.IsLocked or !DataContext.DataStore.AllowEdit'}" 
-                                             IsHitTestVisible="{c:Binding Path='!FullScreen'}"/>
+                                             IsReadOnly="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path=DataContext.ProfileData.ActiveProfile.IsLocked}" 
+                                             IsHitTestVisible="{c:Binding Path='!FullScreen'}"
+                                             GotFocus="NumericDataPoint_GotFocus"
+                                             LostFocus="NumericDataPoint_LostFocus"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -144,11 +140,13 @@
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBox Name="Width" Width="80" BorderThickness="0" 
-                                             Text="{Binding Path=Width, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=LostFocus}" 
+                                             Text="{Binding Width, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=LostFocus}" 
                                              SourceUpdated="GridData_SourceUpdated" 
                                              Style="{StaticResource TextBoxColumnFocus}" 
-                                             IsReadOnly="{c:Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path='DataContext.DataStore.ActiveUserProfile.IsLocked or !DataContext.DataStore.AllowEdit'}" 
-                                             IsHitTestVisible="{c:Binding Path='!FullScreen'}"/>
+                                             IsReadOnly="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path=DataContext.ProfileData.ActiveProfile.IsLocked}" 
+                                             IsHitTestVisible="{c:Binding Path='!FullScreen'}"
+                                             GotFocus="NumericDataPoint_GotFocus"
+                                             LostFocus="NumericDataPoint_LostFocus"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -156,11 +154,13 @@
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBox Name="Height" Width="80" BorderThickness="0" 
-                                             Text="{Binding Path=Height, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=LostFocus}" 
+                                             Text="{Binding Height, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=LostFocus}" 
                                              SourceUpdated="GridData_SourceUpdated" 
                                              Style="{StaticResource TextBoxColumnFocus}" 
-                                             IsReadOnly="{c:Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path='DataContext.DataStore.ActiveUserProfile.IsLocked or !DataContext.DataStore.AllowEdit'}" 
-                                             IsHitTestVisible="{c:Binding Path='!FullScreen'}"/>
+                                             IsReadOnly="{c:Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path='DataContext.ProfileData.ActiveProfile.IsLocked'}" 
+                                             IsHitTestVisible="{c:Binding Path='!FullScreen'}"
+                                             GotFocus="NumericDataPoint_GotFocus"
+                                             LostFocus="NumericDataPoint_LostFocus"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -169,8 +169,8 @@
                                 <DataTemplate>
                                     <CheckBox Name="AlwaysOnTop" Width="80" Margin="30 0 0 0" 
                                               SourceUpdated="GridData_SourceUpdated" 
-                                              IsChecked="{Binding Path=AlwaysOnTop, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}" 
-                                              IsEnabled="{c:Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path='!DataContext.DataStore.ActiveUserProfile.IsLocked and DataContext.DataStore.AllowEdit'}"
+                                              IsChecked="{Binding AlwaysOnTop, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}" 
+                                              IsEnabled="{c:Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path='!DataContext.ProfileData.ActiveProfile.IsLocked'}"
                                               IsHitTestVisible="{c:Binding Path='!FullScreen'}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
@@ -180,9 +180,9 @@
                                 <DataTemplate>
                                     <CheckBox Name="HideTitlebar" Width="80" Margin="30 0 0 0" 
                                               SourceUpdated="GridData_SourceUpdated" 
-                                              IsChecked="{Binding Path=HideTitlebar, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}" 
-                                              IsEnabled="{c:Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path='!DataContext.DataStore.ActiveUserProfile.IsLocked and DataContext.DataStore.AllowEdit'}"
-                                              IsHitTestVisible="{c:Binding Path='!FullScreen'}"/>
+                                              IsChecked="{Binding HideTitlebar, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}" 
+                                              IsEnabled="{c:Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path='!DataContext.ProfileData.ActiveProfile.IsLocked '}"
+                                              IsHitTestVisible="{c:Binding Path='!FullScreen and IsCustomPopOut'}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -191,8 +191,9 @@
                                 <DataTemplate>
                                     <CheckBox Name="FullScreen" Width="90" Margin="35 0 0 0" 
                                               SourceUpdated="GridData_SourceUpdated" 
-                                              IsChecked="{Binding Path=FullScreen, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}" 
-                                              IsEnabled="{c:Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path='!DataContext.DataStore.ActiveUserProfile.IsLocked and DataContext.DataStore.AllowEdit'}"/>
+                                              IsChecked="{Binding FullScreen, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}" 
+                                              IsEnabled="{c:Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path='!DataContext.ProfileData.ActiveProfile.IsLocked'}"
+                                              IsHitTestVisible="{c:Binding Path='IsCustomPopOut and !TouchEnabled'}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -201,8 +202,9 @@
                                 <DataTemplate>
                                     <CheckBox Name="TouchEnabled" Width="80" Margin="30 0 0 0" 
                                               SourceUpdated="GridData_SourceUpdated" 
-                                              IsChecked="{Binding Path=TouchEnabled, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}" 
-                                              IsEnabled="{c:Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path='!DataContext.DataStore.ActiveUserProfile.IsLocked and DataContext.DataStore.AllowEdit'}"/>
+                                              IsChecked="{Binding TouchEnabled, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}" 
+                                              IsEnabled="{c:Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path='!DataContext.ProfileData.ActiveProfile.IsLocked'}"
+                                              IsHitTestVisible="{c:Binding Path='!FullScreen and IsCustomPopOut'}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -210,16 +212,16 @@
                 </DataGrid>
             </WrapPanel>
             <WrapPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Margin="20,10,0,0" HorizontalAlignment="Left">
-                <Button Content="-10 px" ToolTip="Ctrl -" HorizontalAlignment="Center" Margin="0,0,0,0" Width="75" Command="{Binding Path=MinusTenPixelCommand}" CommandParameter="-10" IsEnabled="{c:Binding Path='!DataStore.ActiveUserProfile.IsLocked and DataStore.AllowEdit'}"/>
-                <Button Content="-1 px" ToolTip="Ctrl [" HorizontalAlignment="Center" Margin="20,0,0,0" Width="75" Command="{Binding Path=MinusOnePixelCommand}" CommandParameter="-1" IsEnabled="{c:Binding Path='!DataStore.ActiveUserProfile.IsLocked and DataStore.AllowEdit'}"/>
-                <Button Content="+1 px" ToolTip="Ctrl ]" HorizontalAlignment="Center" Margin="20,0,0,0" Width="75" Command="{Binding Path=PlusOnePixelCommand}" CommandParameter="1" IsEnabled="{c:Binding Path='!DataStore.ActiveUserProfile.IsLocked and DataStore.AllowEdit'}"/>
-                <Button Content="+10 px" ToolTip="Ctrl +" HorizontalAlignment="Center" Margin="20,0,0,0" Width="75" Command="{Binding Path=PlusTenPixelCommand}" CommandParameter="10" IsEnabled="{c:Binding Path='!DataStore.ActiveUserProfile.IsLocked and DataStore.AllowEdit'}"/>
-                <Button HorizontalAlignment="Center" Margin="390,0,0,0" Width="130" Click="LockPanels_Click" IsEnabled="{c:Binding Path='DataStore.AllowEdit'}">
+                <Button Name="MinusTenButton" Content="-10 px" ToolTip="Ctrl -" HorizontalAlignment="Center" Margin="0,0,0,0" Width="75" Command="{Binding MinusTenPixelCommand}" CommandParameter="-10"/>
+                <Button Name="MinusOneButton" Content="-1 px" ToolTip="Ctrl [" HorizontalAlignment="Center" Margin="20,0,0,0" Width="75" Command="{Binding MinusOnePixelCommand}" CommandParameter="-1"/>
+                <Button Name="PlusOneButton" Content="+1 px" ToolTip="Ctrl ]" HorizontalAlignment="Center" Margin="20,0,0,0" Width="75" Command="{Binding PlusOnePixelCommand}" CommandParameter="1"/>
+                <Button Name="PlusTenButton" Content="+10 px" ToolTip="Ctrl +" HorizontalAlignment="Center" Margin="20,0,0,0" Width="75" Command="{Binding PlusTenPixelCommand}" CommandParameter="10"/>
+                <Button HorizontalAlignment="Center" Margin="390,0,0,0" Width="130" Command="{Binding LockPanelsCommand}">
                     <Button.Style>
                         <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
                             <Setter Property="Content" Value="Lock Panels"/>
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding Path=DataStore.ActiveUserProfile.IsLocked, Mode=OneWay}" Value="True">
+                                <DataTrigger Binding="{Binding ProfileData.ActiveProfile.IsLocked, Mode=OneWay}" Value="True">
                                     <Setter Property="Background" Value="Red"/>
                                     <Setter Property="Content" Value="Unlock Panels"/>
                                 </DataTrigger>

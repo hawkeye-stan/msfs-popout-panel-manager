@@ -6,50 +6,17 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
              xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
-             Height="505"
+             Height="545"
              Width="920"
-             Background="#FF323A64"
-             Loaded="UserControl_Loaded">
+             Background="#FF323A64">
     <UserControl.Resources>
-        <CollectionViewSource x:Key="UserProfilesViewSource" Source="{Binding Path=DataStore.UserProfiles, Mode=OneWay}">
+        <CollectionViewSource x:Key="UserProfilesViewSource" Source="{Binding ProfileData.Profiles, Mode=OneWay}">
             <CollectionViewSource.SortDescriptions>
                 <scm:SortDescription PropertyName="ProfileName" />
             </CollectionViewSource.SortDescriptions>
         </CollectionViewSource>
-        <Style x:Key="ProfileSelectedDependency" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-            <Setter Property="IsEnabled" Value="False"/>
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding Path=DataStore.HasActiveUserProfileId, Mode=OneWay}" Value="True">
-                    <Setter Property="IsEnabled" Value="True"/>
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
-        <Style x:Key="ProfileSelectedDependencyCheckbox" TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
-            <Setter Property="IsEnabled" Value="False"/>
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding Path=DataStore.HasActiveUserProfileId, Mode=OneWay}" Value="True">
-                    <Setter Property="IsEnabled" Value="True"/>
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
-        <Style x:Key="ProfileAddPlaneBindingDependency" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-            <Setter Property="Width" Value="130"/>
-            <Setter Property="IsEnabled" Value="False"/>
-            <Style.Triggers>
-                <DataTrigger Binding="{c:Binding Path='DataStore.HasActiveUserProfileId and DataStore.HasCurrentMsfsPlaneTitle and DataStore.IsAllowedAddAircraftBinding', Mode=OneWay}" Value="True">
-                    <Setter Property="IsEnabled" Value="True"/>
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
-        <Style x:Key="ProfileDeletePlaneBindingDependency" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-            <Setter Property="IsEnabled" Value="False"/>
-            <Style.Triggers>
-                <DataTrigger Binding="{c:Binding Path='DataStore.HasActiveUserProfileId and DataStore.ActiveUserProfile.HasBindingAircraftLiveries and DataStore.IsAllowedDeleteAircraftBinding', Mode=OneWay}" Value="True">
-                    <Setter Property="IsEnabled" Value="True"/>
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
         <BooleanToVisibilityConverter x:Key="VisibleIfTrueConverter" />
     </UserControl.Resources>
     <Grid>
@@ -63,12 +30,17 @@
                         VerticalAlignment="Center" 
                         Width="450"
                         ItemsSource="{Binding Source={StaticResource UserProfilesViewSource}}" 
-                        SelectedValue="{Binding Path=DataStore.ActiveUserProfileId}" 
+                        SelectedItem="{Binding Path=ProfileData.ActiveProfile, Mode=OneWay}"
                         DisplayMemberPath="ProfileName"
-                        SelectedValuePath="ProfileId"
-                        SelectionChanged="Profile_Changed"/>
-                    <Button Content="+" ToolTip="Add Profile" HorizontalAlignment="Left" Margin="10,0,0,0" Width="40" Click="AddProfile_Click" />
-                    <Button Content="-" ToolTip="Delete Profile" HorizontalAlignment="Left" Margin="10,0,0,0" Width="40" Click="DeleteProfile_Click" Style="{StaticResource ProfileSelectedDependency}"/>
+                        SelectedValuePath="ProfileId">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <i:InvokeCommandAction Command="{Binding ChangeProfileCommand}" CommandParameter="{Binding ElementName=cmbProfile, Path=SelectedValue}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ComboBox>
+                    <Button Content="+" ToolTip="Add Profile" HorizontalAlignment="Left" Margin="10,0,0,0" Width="40" Command="{Binding AddProfileCommand}" />
+                    <Button Content="-" ToolTip="Delete Profile" HorizontalAlignment="Left" Margin="10,0,0,0" Width="40" Command="{Binding DeleteProfileCommand}"/>
                 </WrapPanel>
                 <Separator Margin="5,10,5,5"/>
                 <Label HorizontalAlignment="Left" Margin="0,0,0,0" >
@@ -78,17 +50,17 @@
                 </Label>
                 <WrapPanel Orientation="Vertical" Margin="15,0,0,0" HorizontalAlignment="Left">
                     <WrapPanel Orientation="Horizontal" Margin="5,5,0,0" HorizontalAlignment="Left">
-                        <Label Content="{c:Binding Path='DataStore.CurrentMsfsPlaneTitle == null ? &quot;Active aircraft livery is unavailable&quot; : DataStore.CurrentMsfsPlaneTitle'}" HorizontalContentAlignment="Left" HorizontalAlignment="Left" FontStyle="Italic" Width="450">
+                        <Label Content="{c:Binding 'FlightSimData.CurrentMsfsPlaneTitle == null ? &quot;Active aircraft livery is unavailable&quot; : FlightSimData.CurrentMsfsPlaneTitle'}" HorizontalContentAlignment="Left" HorizontalAlignment="Left" FontStyle="Italic" Width="447">
                             <Label.Style>
                                 <Style TargetType="{x:Type Label}">
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{c:Binding Path='DataStore.IsAircraftBoundToProfile'}" Value="True">
+                                        <DataTrigger Binding="{Binding ProfileData.IsAircraftBoundToProfile}" Value="True">
                                             <Setter Property="Foreground" Value="LightGreen" ></Setter>
                                         </DataTrigger>
-                                        <DataTrigger Binding="{c:Binding Path='DataStore.IsAircraftBoundToProfile'}" Value="False">
+                                        <DataTrigger Binding="{Binding ProfileData.IsAircraftBoundToProfile}" Value="False">
                                             <Setter Property="Foreground" Value="AntiqueWhite" ></Setter>
                                         </DataTrigger>
-                                        <DataTrigger Binding="{c:Binding Path='!DataStore.IsAllowedAddAircraftBinding and !DataStore.IsAllowedDeleteAircraftBinding'}" Value="True">
+                                        <DataTrigger Binding="{c:Binding '!ProfileData.IsAllowedAddAircraftBinding and !ProfileData.IsAllowedDeleteAircraftBinding'}" Value="True">
                                             <Setter Property="Foreground" Value="Red" ></Setter>
                                             <Setter Property="ToolTip" Value="Aircraft Livery is currently bound to another profile"></Setter>
                                         </DataTrigger>
@@ -96,11 +68,16 @@
                                 </Style>
                             </Label.Style>
                         </Label>
-                        <Button Content="+" ToolTip="Add Binding" Margin="10,0,0,0" Width="40" Click="AddBinding_Click" Style="{StaticResource ProfileAddPlaneBindingDependency}"/>
-                        <Button Content="-" ToolTip="Delete Binding"  Margin="10,0,0,0" Width="40" Click="DeleteBinding_Click" Style="{StaticResource ProfileDeletePlaneBindingDependency}"/>
+                        <Button Content="+" ToolTip="Add Binding" Margin="10,0,0,0" Width="40" Command="{Binding AddProfileBindingCommand}"/>
+                        <Button Content="-" ToolTip="Delete Binding"  Margin="10,0,0,0" Width="40" Command="{Binding DeleteProfileBindingCommand}"/>
                     </WrapPanel>
-                    <CheckBox Margin="10,5,0,0" Content="Power on required to pop out panels on cold start (G1000 / NXi Only)" IsChecked="{Binding Path=DataStore.ActiveUserProfile.PowerOnRequiredForColdStart}" Command="{Binding Path=SetPowerOnRequiredCommand}" Style="{StaticResource ProfileSelectedDependencyCheckbox}" />
+                    <CheckBox Margin="10,5,0,0" Content="Power on required to pop out panels on cold start (G1000 / NXi Only)" IsChecked="{Binding ProfileData.ActiveProfile.PowerOnRequiredForColdStart}" Command="{Binding SetPowerOnRequiredCommand}" />
+                    <WrapPanel Name="TouchPanelConfigurationPanel" Orientation="Horizontal" Margin="0,10,0,0" Visibility="{Binding AppSettingData.AppSetting.IsEnabledTouchPanelServer, Converter={StaticResource VisibleIfTrueConverter}, Mode=OneWay}" >
+                        <Label Content="Open MSFS touch panel when flight session starts" Margin="5,0,0,0" />
+                        <Button Content="+" ToolTip="Add Binding" Margin="94,0,0,0" Width="40" Command="{Binding OpenTouchPanelBindingCommand}"/>
+                    </WrapPanel>
                 </WrapPanel>
+                <Separator Margin="5,10,5,5"/>
                 <WrapPanel Orientation="Vertical">
                     <Label Content="3. Identify pop out panel locations in the game by clicking on them." Margin="0,0,0,0" />
                     <WrapPanel Orientation="Vertical" Margin="20,0,0,0" HorizontalAlignment="Left">
@@ -109,32 +86,32 @@
                             <Label Content="to add a new panel."/>
                         </WrapPanel>
                         <WrapPanel Orientation="Horizontal">
-                            <Label Content="CTRL + LEFT CLICK" Foreground="AntiqueWhite" />
-                            <Label Content="when all panels have been selected or to cancel selections." />
-                        </WrapPanel>
-                        <WrapPanel Orientation="Horizontal">
                             <Label Content="SHIFT + LEFT CLICK" Foreground="AntiqueWhite" />
                             <Label Content="to remove the most recently added panel."/>
                         </WrapPanel>
+                        <WrapPanel Orientation="Horizontal">
+                            <Label Content="CTRL + LEFT CLICK" Foreground="AntiqueWhite" />
+                            <Label Content="when all panels have been selected or to cancel selections." />
+                        </WrapPanel>
                         <WrapPanel Orientation="Horizontal" Margin="0,5,0,0" HorizontalAlignment="Left">
-                            <Button Content="Start Panel Selection" HorizontalAlignment="Left" Margin="0,0,0,0" Width="165" Click="StartPanelSelection_Click" Style="{StaticResource ProfileSelectedDependency}"/>
-                            <Button Content="Override Auto Panning Camera" HorizontalAlignment="Left" Margin="20,0,0,0" Width="240" Click="SaveAutoPanningCamera_Click" Style="{StaticResource ProfileSelectedDependency}"/>
+                            <Button Content="Start Panel Selection" HorizontalAlignment="Left" Margin="0,0,0,0" Width="165" Command="{Binding StartPanelSelectionCommand}"/>
+                            <Button Content="Override Auto Panning Camera" HorizontalAlignment="Left" Margin="20,0,0,0" Width="240" Command="{Binding SaveAutoPanningCameraCommand}"/>
                         </WrapPanel>
                     </WrapPanel>
                     <Separator Margin="5,10,5,5"/>
                 </WrapPanel>
                 <WrapPanel Orientation="Vertical" >
                     <Label Content="4. Start the pop out process for selected panels." Margin="0,0,0,0" />
-                    <Button Content="Start Pop Out" HorizontalAlignment="Left" Margin="20,5,0,0" Width="130" Click="StartPopOut_Click" Style="{StaticResource ProfileSelectedDependency}"/>
+                    <Button Content="Start Pop Out" HorizontalAlignment="Left" Margin="20,5,0,0" Width="130" Command="{Binding StartPopOutCommand}"/>
                 </WrapPanel>
                 <WrapPanel Orientation="Vertical" Visibility="Visible">
                 </WrapPanel>
             </WrapPanel>
             <DockPanel DockPanel.Dock="Right" Width="325" HorizontalAlignment="Center">
                 <Label DockPanel.Dock="Top" Content="Panel Locations" HorizontalAlignment="Center" Margin="0,10,0,0"/>
-                <DataGrid DockPanel.Dock="Top" HorizontalAlignment="Center" Width="290" Height="395" AutoGenerateColumns="False" CanUserResizeColumns="False" HorizontalScrollBarVisibility="Disabled" 
+                <DataGrid DockPanel.Dock="Top" HorizontalAlignment="Center" Width="290" Height="435" AutoGenerateColumns="False" CanUserResizeColumns="False" HorizontalScrollBarVisibility="Disabled" 
                           CanUserReorderColumns="False" CanUserResizeRows="False" IsReadOnly="True" HorizontalGridLinesBrush="#B9B9B9" VerticalGridLinesBrush="#B9B9B9" GridLinesVisibility="Horizontal" BorderThickness="1" 
-                          CanUserAddRows="False" CanUserSortColumns="False" ItemsSource="{Binding Path=DataStore.ActiveProfilePanelCoordinates}">
+                          CanUserAddRows="False" CanUserSortColumns="False" ItemsSource="{Binding ProfileData.ActiveProfile.PanelSourceCoordinates}">
                     <DataGrid.CellStyle>
                         <Style TargetType="DataGridCell">
                             <Setter Property="TextBlock.TextAlignment" Value="Center" />
@@ -166,7 +143,7 @@
                         <DataGridTextColumn Header="Y-Pos" Width="97" Binding="{Binding Y}"/>
                     </DataGrid.Columns>
                 </DataGrid>
-                <CheckBox DockPanel.Dock="Bottom" Content="Show/Edit Panel Location Overlay" HorizontalAlignment="Center" Command="{Binding Path=EditPanelCoorOverlayCommand}" IsChecked="{Binding Path=IsEditingPanelCoorOverlay, Mode=TwoWay}" Style="{StaticResource ProfileSelectedDependencyCheckbox}"/>
+                <CheckBox DockPanel.Dock="Bottom" Content="Edit Panel Location Overlay" HorizontalAlignment="Center" Command="{Binding EditPanelSourceCommand}" IsChecked="{Binding PanelSource.IsEditingPanelSource, Mode=OneWay}"/>
             </DockPanel>
         </DockPanel>
     </Grid>

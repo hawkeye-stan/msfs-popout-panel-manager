@@ -1,0 +1,89 @@
+html {
+    /* prevent scroll bounce for non-safari browser */
+    overscroll-behavior: none;
+
+}
+
+body {
+    margin: 0;
+
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    /* prevent scroll bounce for non-safari browser */
+    overscroll-behavior-y: none;
+
+    background-color: rgb(17, 19, 24, 1);
+}
+
+code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+.leaflet-tooltip-pane
+{
+    z-index: 500 !important;
+}
+
+.leaflet-icon 
+{
+    font-size: 2em;
+    padding: 3px 2px 3px 2px !important;
+    vertical-align: bottom;
+}
+
+.leaflet-bar a,
+.leaflet-bar a 
+{
+    height: 36px !important;
+    width: 36px !important;
+}
+
+.easy-button-button
+{
+    height: 36px;
+    width: 36px;
+    padding: 0 !important;
+    border-width: 0;
+}
+
+.leaflet-tooltip
+{
+    padding: 0 !important;
+    opacity: 1;
+    background-color: white;
+    box-shadow: none !important;
+    border: 1px solid black;
+}
+
+.leaflet-tooltip-top:before, 
+.leaflet-tooltip-bottom:before, 
+.leaflet-tooltip-left:before, 
+.leaflet-tooltip-right:before {
+    border: none !important;
+}
+
+.waypointLegend {
+    display: flex; 
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    color: black;
+    font-size: 1.25em;
+    background-color: white;
+    border: 1px solid black;
+    padding: 5px;
+    width: 10em;
+}
+
+.planeMarkerLegendColumn1 {
+    width: 55%;
+}
+
+.planeMarkerLegendColumn2 {
+    width: 45%;
+}
+

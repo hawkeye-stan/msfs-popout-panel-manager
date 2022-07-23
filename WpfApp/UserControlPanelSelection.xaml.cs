@@ -13,106 +13,18 @@ namespace MSFSPopoutPanelManager.WpfApp
             InitializeComponent();
             _panelSelectionViewModel = panelSelectionViewModel;
             this.DataContext = panelSelectionViewModel;
+
+            panelSelectionViewModel.OpenTouchPanelBindingDialog += HandleOpenTouchPanelBindingDialog;
         }
 
-        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        private void HandleOpenTouchPanelBindingDialog(object sender, System.EventArgs e)
         {
-            cmbProfile.SelectionChanged -= Profile_Changed;
-            _panelSelectionViewModel.Initialize();
-            cmbProfile.SelectionChanged += Profile_Changed;
-        }
-
-        private void AddProfile_Click(object sender, RoutedEventArgs e)
-        {
-            AddProfileDialog dialog = new AddProfileDialog(_panelSelectionViewModel.DataStore.UserProfiles);
+            TouchPanelBindingDialog dialog = new TouchPanelBindingDialog(_panelSelectionViewModel.TouchPanelBindingViewModel);
+            _panelSelectionViewModel.TouchPanelBindingViewModel.Initialize();
             dialog.Owner = Application.Current.MainWindow;
             dialog.Topmost = true;
             dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-
-            if ((bool)dialog.ShowDialog())
-            {
-                _panelSelectionViewModel.AddProfileCommand.Execute(new AddProfileCommandParameter() { ProfileName = dialog.ProfileName, CopyProfileId = dialog.SelectedCopyProfileId });
-            }
-        }
-
-        private void DeleteProfile_Click(object sender, RoutedEventArgs e)
-        {
-            ConfirmationDialog dialog = new ConfirmationDialog("Confirm Delete", "Are you sure you want to delete the selected profile?");
-            dialog.Owner = Application.Current.MainWindow;
-            dialog.Topmost = true;
-            dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-
-            if ((bool)dialog.ShowDialog())
-            {
-                _panelSelectionViewModel.DeleteProfileCommand.Execute(null);
-            }
-        }
-
-        private void Profile_Changed(object sender, RoutedEventArgs e)
-        {
-            _panelSelectionViewModel.ChangeProfileCommand.Execute(null);
-        }
-
-        private void StartPanelSelection_Click(object sender, RoutedEventArgs e)
-        {
-            if (_panelSelectionViewModel.DataStore.ActiveUserProfile.PanelSourceCoordinates.Count > 0)
-            {
-                ConfirmationDialog dialog = new ConfirmationDialog("Confirm Overwrite", "WARNING! Are you sure you want to overwrite existing saved panel locations and all saved setttings for this profile?");
-                dialog.Owner = Application.Current.MainWindow;
-                dialog.Topmost = true;
-                dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-
-                if ((bool)dialog.ShowDialog())
-                {
-                    _panelSelectionViewModel.StartPanelSelectionCommand.Execute(null);
-                }
-            }
-            else
-            {
-                _panelSelectionViewModel.StartPanelSelectionCommand.Execute(null);
-            }
-        }
-
-        private void SaveAutoPanningCamera_Click(object sender, RoutedEventArgs e)
-        {
-            if (_panelSelectionViewModel.DataStore.ActiveUserProfile.PanelSourceCoordinates.Count > 0)
-            {
-                ConfirmationDialog dialog = new ConfirmationDialog("Confirm Overwrite Auto Panning Camera", "WARNING! Are you sure you want to overwrite existing Auto Panning camera angle?");
-                dialog.Owner = Application.Current.MainWindow;
-                dialog.Topmost = true;
-                dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-
-                if ((bool)dialog.ShowDialog())
-                {
-                    _panelSelectionViewModel.SaveAutoPanningCameraCommand.Execute(null);
-                }
-            }
-        }
-
-        private void StartPopOut_Click(object sender, RoutedEventArgs e)
-        {
-            if (_panelSelectionViewModel.DataStore.ActiveUserProfile.PanelSourceCoordinates.Count > 0)
-            {
-                _panelSelectionViewModel.StartPopOutCommand.Execute(null);
-            }
-        }
-
-        private void AddBinding_Click(object sender, RoutedEventArgs e)
-        {
-            _panelSelectionViewModel.AddProfileBindingCommand.Execute(null);
-        }
-
-        private void DeleteBinding_Click(object sender, RoutedEventArgs e)
-        {
-            ConfirmationDialog dialog = new ConfirmationDialog("Confirm Delete Binding", $"Are you sure you want to delete aircraft livery binding below from the active profile? \n{_panelSelectionViewModel.DataStore.CurrentMsfsPlaneTitle}");
-            dialog.Owner = Application.Current.MainWindow;
-            dialog.Topmost = true;
-            dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-
-            if ((bool)dialog.ShowDialog())
-            {
-                _panelSelectionViewModel.DeleteProfileBindingCommand.Execute(null);
-            }
+            dialog.ShowDialog();
         }
     }
 }

@@ -1,0 +1,611 @@
+{
+    "id": "PMDG_737_700_EFIS_CPT_DEF",
+    "value": {
+        "panelSize": {
+            "width": 724,
+            "height": 394
+        },
+        "backgroundImage": "background_efis.png",
+        "controlSize": {
+            "squareButton": {
+                "width": 60,
+                "height": 60
+            },
+            "roundButton": {
+                "width": 50,
+                "height": 50
+            },
+            "switchButton": {
+                "width": 120,
+                "height": 120
+            },
+            "efisKnob": {
+                "width": 110,
+                "height": 110
+            },
+            "efisKnobText": {
+                "width": 50,
+                "height": 50
+            },
+            "efisKnob2": {
+                "width": 90,
+                "height": 90
+            },
+            "efisKnob2Text": {
+                "width": 60,
+                "height": 60
+            }
+        },
+        "panelControlDefinitions": [
+            {
+                "id": "btn_rst_knob",
+                "type": "bindableImageButton",
+                "left": 89,
+                "top": 62,
+                "controlSize": {
+                    "$ref": "#value.controlSize.efisKnob"
+                },
+                "highlight": true,
+                "binding": {
+                    "variable": "PMDG_B737_EFIS_CPT_RST",
+                    "images": [
+                        {
+                            "url": "knob_efis_1.png",
+                            "rotate": -33,
+                            "val": 0
+                        },
+                        {
+                            "url": "knob_efis_1.png",
+                            "rotate": 33,
+                            "val": 100
+                        }
+                    ]
+                },
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "PMDG_B737_EFIS_RST_SELECT",
+                            "actionType": "SimVarCode"
+                        }
+                    ],
+                    "useDualEncoder": true,
+                    "encoderAction": {
+                        "encoderLowerCW": "(L:switch_356_73X) 0 == if{ 35601 (>K:ROTOR_BRAKE) }",
+                        "encoderLowerCCW": "(L:switch_356_73X) 100 == if{ 35601 (>K:ROTOR_BRAKE) }",
+                        "encoderLowerSwitch": "35701 (>K:ROTOR_BRAKE)",
+                        "encoderUpperCW": "35507 (>K:ROTOR_BRAKE)",
+                        "encoderUpperCCW": "35508 (>K:ROTOR_BRAKE)",
+                        "encoderUpperSwitch": "35701 (>K:ROTOR_BRAKE)",
+                        "actionType": "SimVarCode"
+                    }
+                }
+            },
+            {
+                "id": "btn_rst_knob_text",
+                "type": "imageButton",
+                "left": 119,
+                "top": 90,
+                "controlSize": {
+                    "$ref": "#value.controlSize.efisKnobText"
+                },
+                "highlight": true,
+                "image": "knob_rst_text.png",
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "PMDG_B737_EFIS_RST_SELECT",
+                            "actionType": "SimVarCode"
+                        }
+                    ],
+                    "useDualEncoder": true,
+                    "encoderAction": {
+                        "encoderLowerCW": "(L:switch_356_73X) 0 == if{ 35601 (>K:ROTOR_BRAKE) }",
+                        "encoderLowerCCW": "(L:switch_356_73X) 100 == if{ 35601 (>K:ROTOR_BRAKE) }",
+                        "encoderLowerSwitch": "35701 (>K:ROTOR_BRAKE)",
+                        "encoderUpperCW": "35507 (>K:ROTOR_BRAKE)",
+                        "encoderUpperCCW": "35508 (>K:ROTOR_BRAKE)",
+                        "encoderUpperSwitch": "35701 (>K:ROTOR_BRAKE)",
+                        "actionType": "SimVarCode"
+                    }
+                }
+            },
+            {
+                "id": "btn_std_knob",
+                "type": "bindableImageButton",
+                "left": 528,
+                "top": 62,
+                "controlSize": {
+                    "$ref": "#value.controlSize.efisKnob"
+                },
+                "highlight": true,
+                "binding": {
+                    "variable": "PMDG_B737_EFIS_CPT_STD",
+                    "images": [
+                        {
+                            "url": "knob_efis_1.png",
+                            "rotate": -33,
+                            "val": 0
+                        },
+                        {
+                            "url": "knob_efis_1.png",
+                            "rotate": 33,
+                            "val": 100
+                        }
+                    ]
+                },
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "PMDG_B737_EFIS_STD_SELECT",
+                            "actionType": "SimVarCode"
+                        }
+                    ],
+                    "useDualEncoder": true,
+                    "encoderAction": {
+                        "encoderLowerCW": "(L:switch_366_73X) 0 == if{ 36601 (>K:ROTOR_BRAKE) }",
+                        "encoderLowerCCW": "(L:switch_366_73X) 100 == if{ 36601 (>K:ROTOR_BRAKE) }",
+                        "encoderLowerSwitch": "36701 (>K:ROTOR_BRAKE)",
+                        "encoderUpperCW": "36507 (>K:ROTOR_BRAKE)",
+                        "encoderUpperCCW": "36508 (>K:ROTOR_BRAKE)",
+                        "encoderUpperSwitch": "36701 (>K:ROTOR_BRAKE)",
+                        "actionType": "SimVarCode"
+                    }
+                }
+            },
+            {
+                "id": "btn_std_knob_text",
+                "type": "imageButton",
+                "left": 556,
+                "top": 91,
+                "controlSize": {
+                    "$ref": "#value.controlSize.efisKnobText"
+                },
+                "highlight": true,
+                "image": "knob_std_text.png",
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "PMDG_B737_EFIS_STD_SELECT",
+                            "actionType": "SimVarCode"
+                        }
+                    ],
+                    "useDualEncoder": true,
+                    "encoderAction": {
+                        "encoderLowerCW": "(L:switch_366_73X) 0 == if{ 36601 (>K:ROTOR_BRAKE) }",
+                        "encoderLowerCCW": "(L:switch_366_73X) 100 == if{ 36601 (>K:ROTOR_BRAKE) }",
+                        "encoderLowerSwitch": "36701 (>K:ROTOR_BRAKE)",
+                        "encoderUpperCW": "36507 (>K:ROTOR_BRAKE)",
+                        "encoderUpperCCW": "36508 (>K:ROTOR_BRAKE)",
+                        "encoderUpperSwitch": "36701 (>K:ROTOR_BRAKE)",
+                        "actionType": "SimVarCode"
+                    }
+                }
+            },
+            {
+                "id": "btn_ctr_knob",
+                "type": "bindableImageButton",
+                "left": 229,
+                "top": 205,
+                "controlSize": {
+                    "$ref": "#value.controlSize.efisKnob2"
+                },
+                "highlight": true,
+                "binding": {
+                    "variable": "PMDG_B737_EFIS_CPT_CTR",
+                    "images": [
+                        {
+                            "url": "knob_efis_2.png",
+                            "rotate": -44,
+                            "val": 0
+                        },
+                        {
+                            "url": "knob_efis_2.png",
+                            "rotate": -22,
+                            "val": 10
+                        },
+                        {
+                            "url": "knob_efis_2.png",
+                            "rotate": 22,
+                            "val": 20
+                        },
+                        {
+                            "url": "knob_efis_2.png",
+                            "rotate": 44,
+                            "val": 30
+                        }
+                    ]
+                },
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "PMDG_B737_EFIS_CTR_SELECT",
+                            "actionType": "SimVarCode"
+                        }
+                    ],
+                    "useEncoder": true,
+                    "encoderAction": {
+                        "encoderLowerCW": "35907 (>K:ROTOR_BRAKE)",
+                        "encoderLowerCCW": "35908 (>K:ROTOR_BRAKE)",
+                        "encoderLowerSwitch": "36001 (>K:ROTOR_BRAKE)",
+                        "encoderUpperCW": "35907 (>K:ROTOR_BRAKE)",
+                        "encoderUpperCCW": "35908 (>K:ROTOR_BRAKE)",
+                        "encoderUpperSwitch": "36001 (>K:ROTOR_BRAKE)",
+                        "actionType": "SimVarCode"
+                    }
+                }
+            },
+            {
+                "id": "btn_ctr_knob_text",
+                "type": "imageButton",
+                "left": 243,
+                "top": 221,
+                "controlSize": {
+                    "$ref": "#value.controlSize.efisKnob2Text"
+                },
+                "highlight": true,
+                "image": "knob_ctr_text.png",
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "PMDG_B737_EFIS_CTR_SELECT",
+                            "actionType": "SimVarCode"
+                        }
+                    ],
+                    "useEncoder": true,
+                    "encoderAction": {
+                        "encoderLowerCW": "35907 (>K:ROTOR_BRAKE)",
+                        "encoderLowerCCW": "35908 (>K:ROTOR_BRAKE)",
+                        "encoderLowerSwitch": "36001 (>K:ROTOR_BRAKE)",
+                        "encoderUpperCW": "35907 (>K:ROTOR_BRAKE)",
+                        "encoderUpperCCW": "35908 (>K:ROTOR_BRAKE)",
+                        "encoderUpperSwitch": "36001 (>K:ROTOR_BRAKE)",
+                        "actionType": "SimVarCode"
+                    }
+                }
+            },
+            {
+                "id": "btn_tfc_knob",
+                "type": "bindableImageButton",
+                "left": 407,
+                "top": 205,
+                "controlSize": {
+                    "$ref": "#value.controlSize.efisKnob2"
+                },
+                "highlight": true,
+                "binding": {
+                    "variable": "PMDG_B737_EFIS_CPT_TFS",
+                    "images": [
+                        {
+                            "url": "knob_efis_2.png",
+                            "rotate": -90,
+                            "val": 0
+                        },
+                        {
+                            "url": "knob_efis_2.png",
+                            "rotate": -60,
+                            "val": 10
+                        },
+                        {
+                            "url": "knob_efis_2.png",
+                            "rotate": -30,
+                            "val": 20
+                        },
+                        {
+                            "url": "knob_efis_2.png",
+                            "rotate": 0,
+                            "val": 30
+                        },
+                        {
+                            "url": "knob_efis_2.png",
+                            "rotate": 30,
+                            "val": 40
+                        },
+                        {
+                            "url": "knob_efis_2.png",
+                            "rotate": 60,
+                            "val": 50
+                        },
+                        {
+                            "url": "knob_efis_2.png",
+                            "rotate": 90,
+                            "val": 60
+                        },
+                        {
+                            "url": "knob_efis_2.png",
+                            "rotate": 118,
+                            "val": 70
+                        }
+                    ]
+                },
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "PMDG_B737_EFIS_TFC_SELECT",
+                            "actionType": "SimVarCode"
+                        }
+                    ],
+                    "useEncoder": true,
+                    "encoderAction": {
+                        "encoderLowerCW": "36107 (>K:ROTOR_BRAKE)",
+                        "encoderLowerCCW": "36108 (>K:ROTOR_BRAKE)",
+                        "encoderLowerSwitch": "36201 (>K:ROTOR_BRAKE)",
+                        "encoderUpperCW": "36107 (>K:ROTOR_BRAKE)",
+                        "encoderUpperCCW": "36108 (>K:ROTOR_BRAKE)",
+                        "encoderUpperSwitch": "36201 (>K:ROTOR_BRAKE)",
+                        "actionType": "SimVarCode"
+                    }
+                }
+            },
+            {
+                "id": "btn_tfc_knob_text",
+                "type": "imageButton",
+                "left": 420,
+                "top": 221,
+                "controlSize": {
+                    "$ref": "#value.controlSize.efisKnob2Text"
+                },
+                "highlight": true,
+                "image": "knob_tfc_text.png",
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "PMDG_B737_EFIS_TFC_SELECT",
+                            "actionType": "SimVarCode"
+                        }
+                    ],
+                    "useEncoder": true,
+                    "encoderAction": {
+                        "encoderLowerCW": "36107 (>K:ROTOR_BRAKE)",
+                        "encoderLowerCCW": "36108 (>K:ROTOR_BRAKE)",
+                        "encoderLowerSwitch": "36201 (>K:ROTOR_BRAKE)",
+                        "encoderUpperCW": "36107 (>K:ROTOR_BRAKE)",
+                        "encoderUpperCCW": "36108 (>K:ROTOR_BRAKE)",
+                        "encoderUpperSwitch": "36201 (>K:ROTOR_BRAKE)",
+                        "actionType": "SimVarCode"
+                    }
+                }
+            },
+            {
+                "id": "btn_fpv",
+                "type": "imageButton",
+                "left": 271,
+                "top": 57,
+                "controlSize": {
+                    "$ref": "#value.controlSize.roundButton"
+                },
+                "highlight": false,
+                "image": "btn_efis_round.png",
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "36301 (>K:ROTOR_BRAKE)",
+                            "actionType": "SimVarCode"
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_mtrs",
+                "type": "imageButton",
+                "left": 406,
+                "top": 57,
+                "controlSize": {
+                    "$ref": "#value.controlSize.roundButton"
+                },
+                "highlight": false,
+                "image": "btn_efis_round.png",
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "36401 (>K:ROTOR_BRAKE)",
+                            "actionType": "SimVarCode"
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_wxr",
+                "type": "imageButton",
+                "left": 61,
+                "top": 303,
+                "controlSize": {
+                    "$ref": "#value.controlSize.squareButton"
+                },
+                "highlight": false,
+                "image": "btn_wxr.png",
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "36901 (>K:ROTOR_BRAKE)",
+                            "actionType": "SimVarCode"
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_sta",
+                "type": "imageButton",
+                "left": 151,
+                "top": 303,
+                "controlSize": {
+                    "$ref": "#value.controlSize.squareButton"
+                },
+                "highlight": false,
+                "image": "btn_sta.png",
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "37001 (>K:ROTOR_BRAKE)",
+                            "actionType": "SimVarCode"
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_wpt",
+                "type": "imageButton",
+                "left": 243,
+                "top": 303,
+                "controlSize": {
+                    "$ref": "#value.controlSize.squareButton"
+                },
+                "highlight": false,
+                "image": "btn_wpt.png",
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "37101 (>K:ROTOR_BRAKE)",
+                            "actionType": "SimVarCode"
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_arpt",
+                "type": "imageButton",
+                "left": 332,
+                "top": 303,
+                "controlSize": {
+                    "$ref": "#value.controlSize.squareButton"
+                },
+                "highlight": false,
+                "image": "btn_arpt.png",
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "37201 (>K:ROTOR_BRAKE)",
+                            "actionType": "SimVarCode"
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_data",
+                "type": "imageButton",
+                "left": 426,
+                "top": 303,
+                "controlSize": {
+                    "$ref": "#value.controlSize.squareButton"
+                },
+                "highlight": false,
+                "image": "btn_data.png",
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "37301 (>K:ROTOR_BRAKE)",
+                            "actionType": "SimVarCode"
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_pos",
+                "type": "imageButton",
+                "left": 515,
+                "top": 303,
+                "controlSize": {
+                    "$ref": "#value.controlSize.squareButton"
+                },
+                "highlight": false,
+                "image": "btn_pos.png",
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "37401 (>K:ROTOR_BRAKE)",
+                            "actionType": "SimVarCode"
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_terr",
+                "type": "imageButton",
+                "left": 607,
+                "top": 303,
+                "controlSize": {
+                    "$ref": "#value.controlSize.squareButton"
+                },
+                "highlight": false,
+                "image": "btn_terr.png",
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "37501 (>K:ROTOR_BRAKE)",
+                            "actionType": "SimVarCode"
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_vor1",
+                "type": "bindableImageButton",
+                "left": 21,
+                "top": 171,
+                "controlSize": {
+                    "$ref": "#value.controlSize.switchButton"
+                },
+                "highlight": false,
+                "binding": {
+                    "variable": "PMDG_B737_EFIS_CPT_VOR1",
+                    "images": [
+                        {
+                            "url": "switch_vor1_up.png",
+                            "val": 0
+                        },
+                        {
+                            "url": "switch_vor1_mid.png",
+                            "val": 50
+                        },
+                        {
+                            "url": "switch_vor1_down.png",
+                            "val": 100
+                        }
+                    ]
+                },
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "(L:switch_358_73X) 0 == if{ 35801 (>K:ROTOR_BRAKE) } els{ (L:switch_358_73X) 50 == if{ 35801 (>K:ROTOR_BRAKE) } els{ 35802 (>K:ROTOR_BRAKE) 35802 (>K:ROTOR_BRAKE) }}",
+                            "actionType": "SimVarCode"
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_vor2",
+                "type": "bindableImageButton",
+                "left": 595,
+                "top": 171,
+                "controlSize": {
+                    "$ref": "#value.controlSize.switchButton"
+                },
+                "highlight": false,
+                "binding": {
+                    "variable": "PMDG_B737_EFIS_CPT_VOR2",
+                    "images": [
+                        {
+                            "url": "switch_vor2_up.png",
+                            "val": 0
+                        },
+                        {
+                            "url": "switch_vor2_mid.png",
+                            "val": 50
+                        },
+                        {
+                            "url": "switch_vor2_down.png",
+                            "val": 100
+                        }
+                    ]
+                },
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "(L:switch_368_73X) 0 == if{ 36801 (>K:ROTOR_BRAKE) } els{ (L:switch_368_73X) 50 == if{ 36801 (>K:ROTOR_BRAKE) } els{ 36802 (>K:ROTOR_BRAKE) 36802 (>K:ROTOR_BRAKE) }}",
+                            "actionType": "SimVarCode"
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}

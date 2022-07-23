@@ -2,91 +2,124 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net5.0-windows</TargetFramework>
+    <TargetFrameworks>net6.0-windows</TargetFrameworks>
     <UseWPF>true</UseWPF>
-    <Version>3.3.7.0</Version>
+    <AssemblyName>MSFSPopoutPanelManager</AssemblyName>
     <PackageId>MSFS 2020 Popout Panel Manager</PackageId>
-    <Authors>Stanley Kwok</Authors>
     <Product>MSFS 2020 Popout Panel Manager</Product>
+    <Authors>Stanley Kwok</Authors>
+    <Company>Stanley Kwok</Company>
     <Copyright>Stanley Kwok 2021</Copyright>
     <PackageProjectUrl>https://github.com/hawkeye-stan/msfs-popout-panel-manager</PackageProjectUrl>
-    <AssemblyName>MSFSPopoutPanelManager</AssemblyName>
     <RootNamespace>MSFSPopoutPanelManager.WpfApp</RootNamespace>
     <ApplicationIcon>logo.ico</ApplicationIcon>
     <Platforms>x64</Platforms>
+    <Version>3.4.0.0</Version>
+    <AssemblyVersion>3.4.0.0</AssemblyVersion>
+    <FileVersion>3.4.0.0</FileVersion>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <DebugType>embedded</DebugType>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <SpaRoot>../ReactClient</SpaRoot>
+    <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
+    <!-- Publishing options -->
+    <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <Configurations>Debug;Release;DebugTouchPanel;ReleaseTouchPanel</Configurations>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="resources\logo.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="log4net.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\check.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\cross.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\info.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="resources\logo.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\msfsconnected.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\msfsdisconnected.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\transparent.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Autoupdater.NET.Official" Version="1.7.0" />
-    <PackageReference Include="CalcBinding" Version="2.5.2" />
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="7.1.2" />
-    <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="1.1.0" />
-    <PackageReference Include="log4net" Version="2.0.14" />
-    <PackageReference Include="MahApps.Metro" Version="2.4.9" />
-    <PackageReference Include="MouseKeyHook" Version="5.6.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="PropertyChanged.Fody" Version="3.4.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Model\Model.csproj" />
-    <ProjectReference Include="..\Provider\Provider.csproj" />
-    <ProjectReference Include="..\Shared\Shared.csproj" />
-  </ItemGroup>
 
   <ItemGroup>
     <Resource Include="logo.ico" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="PreferencesDialog.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="UserControlPanelConfiguration.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Content Include="log4net.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Resource Include="Resources\check.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\cross.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\info.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="resources\logo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\msfsconnected.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\msfsdisconnected.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\transparent.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>
-    <Page Update="PreferencesDialog.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="UserControlPanelConfiguration.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <SubType>Designer</SubType>
-    </Page>
+    <PackageReference Include="Autoupdater.NET.Official" Version="1.7.0" />
+    <PackageReference Include="CalcBinding" Version="2.5.2" />
+    <PackageReference Include="Fody" Version="6.6.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="1.1.0" />
+    <PackageReference Include="InputSimulatorCore" Version="1.0.5" />
+    <PackageReference Include="log4net" Version="2.0.14" />
+    <PackageReference Include="MahApps.Metro" Version="2.4.9" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Prism.Core" Version="8.1.97" />
+    <PackageReference Include="PropertyChanged.Fody" Version="3.4.1" />
+    <PackageReference Include="StringMath" Version="3.0.2" />
+    <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
+    <PackageReference Include="System.IO.Ports" Version="6.0.0" Condition=" '$(Configuration)' == 'ReleaseTouchPanel' " />
+    <PackageReference Include="WindowsHook" Version="1.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices" Version="3.1.27" Condition=" '$(Configuration)' == 'ReleaseTouchPanel' Or '$(Configuration)' == 'DebugTouchPanel' " />
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="6.0.7" Condition=" '$(Configuration)' == 'ReleaseTouchPanel' Or '$(Configuration)' == 'DebugTouchPanel' " />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.1264.42" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Orchestration\Orchestration.csproj">
+      <SetTargetFramework>TargetFramework=net6.0</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Shared\Shared.csproj">
+      <SetTargetFramework>TargetFramework=net6.0</SetTargetFramework>
+    </ProjectReference>
+  </ItemGroup>
+
+  <Target Name="CopyItems" AfterTargets="ComputeFilesToPublish">
+    <!-- Copy all plugin-extensions items -->
+    <ItemGroup>
+      <Skipper Include="$(SolutionDir)\Assets\Community\zzz-ready-to-fly-button-skipper\**"></Skipper>
+      <MobiFlight Include="$(SolutionDir)\Assets\Community\mobiflight-event-module\**"></MobiFlight>
+    </ItemGroup>
+    <Copy SourceFiles="@(Skipper)" DestinationFolder="$(PublishDir)Community\zzz-ready-to-fly-button-skipper\%(RecursiveDir)" SkipUnchangedFiles="false" OverwriteReadOnlyFiles="true" />
+    <Copy SourceFiles="@(MobiFlight)" DestinationFolder="$(PublishDir)Community\mobiflight-event-module\%(RecursiveDir)" SkipUnchangedFiles="false" OverwriteReadOnlyFiles="true" Condition=" '$(Configuration)' == 'ReleaseTouchPanel' " />
+  </Target>
+
+  <!-- Conditional compiling, buidling, and publishing for person version of the app with touch panel included -->
+  <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'DebugTouchPanel' And !Exists('$(SpaRoot)node_modules') ">
+    <Exec Command="node --version" ContinueOnError="true">
+      <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
+    </Exec>
+    <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
+    <Message Importance="high" Text="Restoring dependencies using 'npm'. This may take several minutes..." />
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
+  </Target>
+  <ItemGroup Condition=" '$(Configuration)' == 'ReleaseTouchPanel' ">
+    <ContentWithTargetPath Include="..\ReactClient\build\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>ReactClient\%(RecursiveDir)%(Filename)%(Extension)</TargetPath>
+    </ContentWithTargetPath>
+  </ItemGroup>
+  <Target Name="BuildReactJs" BeforeTargets="BeforeBuild" Condition=" '$(Configuration)' == 'ReleaseTouchPanel' ">
+    <Message Importance="high" Text="Building ReactJS app............................." />
+     <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
+     <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build" />
+  </Target>
 </Project>

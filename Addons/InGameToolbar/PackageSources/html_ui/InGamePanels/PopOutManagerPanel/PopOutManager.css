@@ -1,0 +1,138 @@
+﻿body.modal-open {
+  pointer-events: none;
+}
+
+body.modal-open .stepDialog {
+  pointer-events: auto;
+}
+
+pop-out-manager #popOutManager .ingameUiWrapper .horizontalLayout { 
+  background-color: var(--backgroundColorPanel);
+  display: flex;
+  flex-direction: column;
+  padding: 1em 1em;
+}
+
+pop-out-manager #popOutManager .ingameUiWrapper .horizontalLayout #profileInfo {
+  flex: 1 1 0;
+  margin-bottom: 1em;
+}
+
+pop-out-manager #popOutManager .ingameUiWrapper .horizontalLayout #panelConfigTable {
+  display: flex;
+  flex-direction: column;
+  border: solid 1px white;
+  flex: 20 1 0;
+}
+
+pop-out-manager #popOutManager .ingameUiWrapper .horizontalLayout #panelConfigButtons {
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  margin: 2em 1em 1em 1em;
+  flex: 2 1 0;
+}
+
+pop-out-manager #popOutManager .ingameUiWrapper .panelConfigButton {
+  display: flex;
+  justify-content: center;
+  width: 6em;
+  height: 3em;
+  margin-right: 1em;
+}
+
+pop-out-manager #popOutManager .ingameUiWrapper .lockPanelsButton {
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  right: 0;
+  width: 10em;
+  height: 3em;
+}
+
+.panelRow {
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+
+.panelRow .column1 {
+  width: 34%;
+}
+
+.panelRow .column2 {
+  width: 8%;
+}
+
+.panelRow .column3 {
+  width: 8%;
+}
+
+.panelRow .column4 {
+  width: 8%;
+}
+
+.panelRow .column5 {
+  width: 8%;
+}
+
+.panelRow .column6 {
+  width: 8%;
+}
+
+.panelRow .column7 {
+  width: 8%;
+}
+
+.panelRow .column8 {
+  width: 10%;
+}
+
+.panelRow .column9 {
+  width: 8%;
+}
+
+.panelCell {
+  display: flex;
+  padding: 0.7em 1em;
+  margin: 0;
+  justify-content: center;
+  text-align: center;
+  border-bottom: solid 1px white;
+  border-right: solid 1px white;
+}
+
+.panelCell:last-child {
+  border-right: none;
+}
+
+.panelCell .alignCenter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.panelCell ui-input .default-input input {
+  padding-left: 0.25em;
+  padding-right: 0.25em;
+}
+
+.panelCell checkbox-element .checkbox .choices .iconWrapper .icon {
+  width: 1.6em;
+  height: 1.6em;
+}
+
+
+.stepDialog {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 20vw;
+  top: 20vh;
+  width: 60vw; /* Full width */
+  height: 60vh; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgba(161, 153, 153, 1); 
+}
+
+

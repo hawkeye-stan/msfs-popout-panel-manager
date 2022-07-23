@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<SimBase.Document Type="InGamePanels" version="1,0">
+    <Filename>InGamePanel_PopOutManager.spb</Filename>
+    <InGamePanels.InGamePanelDefinition id="PANEL_POP_OUT_MANAGER" Name="Pop Out Manager" url="html_UI/ingamePanels/PopOutManagerPanel/PopOutManager.html" resizeDirections="Both" minWidth="80" minHeight="40" defaultWidth="120" defaultHeight="50" defaultTop="30" defaultLeft="5" icon="POP_OUT_MANAGER" buttonVisible="true">
+  </InGamePanels.InGamePanelDefinition>
+</SimBase.Document>

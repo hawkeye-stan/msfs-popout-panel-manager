@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <AssemblyName>ArduinoAgent</AssemblyName>
+    <PackageId>MSFS 2020 Popout Panel Manager ArduinoAgent</PackageId>
+    <Product>MSFS 2020 Popout Panel Manager ArduinoAgent</Product>
+    <Authors>Stanley Kwok</Authors>
+    <Company>Stanley Kwok</Company>
+    <Copyright>Stanley Kwok 2021</Copyright>
+    <PackageProjectUrl>https://github.com/hawkeye-stan/msfs-popout-panel-manager</PackageProjectUrl>
+    <RootNamespace>MSFSPopoutPanelManager.ArduinoAgent</RootNamespace>
+    <Platforms>x64</Platforms>
+    <Version>3.4.0.0</Version>
+    <AssemblyVersion>3.4.0.0</AssemblyVersion>
+    <FileVersion>3.4.0.0</FileVersion>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <DebugType>Embedded</DebugType>
+    <Configurations>Debug;Release;DebugTouchPanel;ReleaseTouchPanel</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugTouchPanel|x64'">
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.IO.Ports" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Shared\Shared.csproj" />
+  </ItemGroup>
+
+</Project>

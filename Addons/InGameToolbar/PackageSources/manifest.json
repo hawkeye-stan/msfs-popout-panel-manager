@@ -1,0 +1,15 @@
+{
+  "dependencies": [],
+  "content_type": "UNKNOWN",
+  "title": "pop-out-manager",
+  "manufacturer": "Stanley Kwok",
+  "creator": "Stanley Kwok",
+  "package_version": "1.0.0",
+  "minimum_game_version": "1.27.9",
+  "release_notes": {
+    "neutral": {
+      "LastUpdate": "",
+      "OlderHistory": ""
+    }
+  }
+}

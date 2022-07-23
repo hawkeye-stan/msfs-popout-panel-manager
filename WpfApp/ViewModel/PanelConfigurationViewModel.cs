@@ -1,70 +1,82 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using MSFSPopoutPanelManager.Model;
-using MSFSPopoutPanelManager.Provider;
+﻿using MSFSPopoutPanelManager.Orchestration;
+using MSFSPopoutPanelManager.Shared;
+using Prism.Commands;
 using System;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace MSFSPopoutPanelManager.WpfApp.ViewModel
 {
     public class PanelConfigurationViewModel : ObservableObject
     {
-        private UserProfileManager _userProfileManager;
-        private PanelConfigurationManager _panelConfigurationManager;
+        private MainOrchestrator _orchestrator;
 
-        public DataStore DataStore { get; set; }
+        public PanelConfigurationViewModel(MainOrchestrator orchestrator)
+        {
+            _orchestrator = orchestrator;
+
+            LockPanelsCommand = new DelegateCommand(OnLockPanelsUpdated);
+
+            PanelConfigUpdatedCommand = new DelegateCommand<object>(OnPanelConfigUpdated);
+
+            MinusTenPixelCommand = new DelegateCommand<object>(OnDataItemIncDec, (obj) => NumericDataPointTextBox != null && ProfileData.HasActiveProfile && !ProfileData.ActiveProfile.IsLocked).ObservesProperty(() => SelectedPanelConfigItem).ObservesProperty(() => ProfileData.ActiveProfile.IsLocked);
+
+            MinusOnePixelCommand = new DelegateCommand<object>(OnDataItemIncDec, (obj) => NumericDataPointTextBox != null && ProfileData.HasActiveProfile && !ProfileData.ActiveProfile.IsLocked).ObservesProperty(() => SelectedPanelConfigItem).ObservesProperty(() => ProfileData.ActiveProfile.IsLocked);
+
+            PlusOnePixelCommand = new DelegateCommand<object>(OnDataItemIncDec, (obj) => NumericDataPointTextBox != null && ProfileData.HasActiveProfile && !ProfileData.ActiveProfile.IsLocked).ObservesProperty(() => SelectedPanelConfigItem).ObservesProperty(() => ProfileData.ActiveProfile.IsLocked);
+
+            PlusTenPixelCommand = new DelegateCommand<object>(OnDataItemIncDec, (obj) => NumericDataPointTextBox != null && ProfileData.HasActiveProfile && !ProfileData.ActiveProfile.IsLocked).ObservesProperty(() => SelectedPanelConfigItem).ObservesProperty(() => ProfileData.ActiveProfile.IsLocked);
+        }
+
+        public DelegateCommand LockPanelsCommand { get; private set; }
+
+        public DelegateCommand<object> PanelConfigUpdatedCommand { get; private set; }
+
+        public DelegateCommand<object> MinusTenPixelCommand { get; private set; }
+
+        public DelegateCommand<object> MinusOnePixelCommand { get; private set; }
+
+        public DelegateCommand<object> PlusOnePixelCommand { get; private set; }
+
+        public DelegateCommand<object> PlusTenPixelCommand { get; private set; }
+
+        public ProfileData ProfileData { get { return _orchestrator.ProfileData; } }
 
         public PanelConfigItem SelectedPanelConfigItem { get; set; }
 
-        public DelegateCommand LockPanelsCommand => new DelegateCommand(OnLockPanelsChanged, CanExecute);
-        public DelegateCommand PanelConfigUpdatedCommand => new DelegateCommand(OnPanelConfigUpdated, CanExecute);
-        public DelegateCommand MinusTenPixelCommand => new DelegateCommand(OnDataItemIncDec, CanExecute);
-        public DelegateCommand MinusOnePixelCommand => new DelegateCommand(OnDataItemIncDec, CanExecute);
-        public DelegateCommand PlusOnePixelCommand => new DelegateCommand(OnDataItemIncDec, CanExecute);
-        public DelegateCommand PlusTenPixelCommand => new DelegateCommand(OnDataItemIncDec, CanExecute);
+        public TextBox NumericDataPointTextBox { get; set; }
 
-        public PanelConfigurationViewModel(DataStore dataStore, UserProfileManager userProfileManager)
+        private void OnLockPanelsUpdated()
         {
-            DataStore = dataStore;
-            _userProfileManager = userProfileManager;
-            _panelConfigurationManager = new PanelConfigurationManager(_userProfileManager);
-        }
+            if (ProfileData.ActiveProfile == null)
+                return;
 
-        public void Initialize()
-        {
-            _userProfileManager.UserProfiles = DataStore.UserProfiles;
-            _panelConfigurationManager.UserProfile = DataStore.ActiveUserProfile;
-            _panelConfigurationManager.AllowEdit = DataStore.AllowEdit;
-            _panelConfigurationManager.HookWinEvent();
-            DataStore.OnAllowEditChanged += (sender, e) =>
+            if (!ProfileData.ActiveProfile.IsLocked)
             {
-                _panelConfigurationManager.AllowEdit = DataStore.AllowEdit;
-            };
+                _orchestrator.PanelConfiguration.LockStatusUpdated();
+            }
+            else if (DialogHelper.ConfirmDialog("Confirm Unlock Panels", "Are you sure you want to unlock all panels to make changes?"))
+            {
+                _orchestrator.PanelConfiguration.LockStatusUpdated();
+            }
         }
 
-        public void UnhookWinEvents()
+        private void OnPanelConfigUpdated(object commandParameter)
         {
-            _panelConfigurationManager.UnhookWinEvent();
-        }
-
-        private void OnLockPanelsChanged(object commandParamenter)
-        {
-            _panelConfigurationManager.LockPanelsUpdated();
-        }
-
-        private void OnPanelConfigUpdated(object panelConfigItem)
-        {
-            if (DataStore.AllowEdit)
-                _panelConfigurationManager.PanelConfigPropertyUpdated(panelConfigItem as PanelConfigItem);
+            var panelConfigItem = commandParameter as PanelConfigItem;
+            if (panelConfigItem != null)
+                _orchestrator.PanelConfiguration.PanelConfigPropertyUpdated(panelConfigItem.PanelIndex, panelConfigItem.PanelConfigProperty);
         }
 
         private void OnDataItemIncDec(object commandParameter)
         {
-            if (DataStore.AllowEdit)
-                _panelConfigurationManager.PanelConfigIncreaseDecrease(SelectedPanelConfigItem, Convert.ToInt32(commandParameter));
-        }
+            _orchestrator.PanelConfiguration.PanelConfigIncreaseDecrease(SelectedPanelConfigItem.PanelIndex, SelectedPanelConfigItem.PanelConfigProperty, Convert.ToInt32(commandParameter));
 
-        private bool CanExecute(object commandParameter)
-        {
-            return true;
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                if (NumericDataPointTextBox != null)
+                    NumericDataPointTextBox.Focus();
+            });
         }
     }
 }

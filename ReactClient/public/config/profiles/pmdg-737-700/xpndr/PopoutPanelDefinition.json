@@ -1,0 +1,299 @@
+{
+    "id": "PMDG_737_700_XPNDR_DEF",
+    "value": {
+        "panelSize": {
+            "width": 498,
+            "height": 259
+        },
+        "backgroundImage": "background_xpndr.png",
+        "controlSize": {
+            "adfDisplay": {
+                "width": 115,
+                "height": 49
+            },
+            "adfModeKnob": {
+                "width": 75,
+                "height": 75
+            },
+            "adfKnob": {
+                "width": 92,
+                "height": 92
+            },
+            "atcDisplay": {
+                "width": 115,
+                "height": 49
+            },
+            "xpndrDisplay": {
+                "width": 115,
+                "height": 49
+            },
+            "transfer": {
+                "width": 48,
+                "height": 28
+            },
+            "knob2": {
+                "width": 75,
+                "height": 75
+            },
+            "knob6": {
+                "width": 75,
+                "height": 75
+            },
+            "knob6a": {
+                "width": 50,
+                "height": 50
+            },
+            "ident": {
+                "width": 30,
+                "height": 30
+            }
+        },
+        "panelControlDefinitions": [
+            {
+                "id": "display_atc",
+                "type": "textBlock",
+                "left": 205,
+                "top": 60,
+                "controlSize": {
+                    "$ref": "#value.controlSize.atcDisplay"
+                },
+                "binding": {
+                    "color": "rgb(255, 255, 255, 1)",
+                    "text": "ATC"
+                }
+            },
+            {
+                "id": "display_atc_mode",
+                "type": "textBlock",
+                "left": 233,
+                "top": 60,
+                "controlSize": {
+                    "$ref": "#value.controlSize.atcDisplay"
+                },
+                "binding": {
+                    "variable": "PMDG_B737_XPNDR_XPNDR_MODE",
+                    "color": "rgb(255, 255, 255, 1)",
+                    "bindingValues": [
+                        {
+                            "val": 0,
+                            "text": "1"
+                        },
+                        {
+                            "val": 100,
+                            "text": "2"
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "display_xpndr",
+                "type": "digitDisplay",
+                "left": 171,
+                "top": 83,
+                "controlSize": {
+                    "$ref": "#value.controlSize.xpndrDisplay"
+                },
+                "binding": {
+                    "variable": "TRANSPONDER_CODE",
+                    "numberOfDisplayDigit": 4,
+                    "padZeroes": true,
+                    "color": "rgb(255, 255, 255, 1)"
+                }
+            },
+            {
+                "id": "button_xpndr_mode",
+                "type": "bindableImageButton",
+                "left": 48,
+                "top": 55,
+                "controlSize": {
+                    "$ref": "#value.controlSize.knob6a"
+                },
+                "highlight": false,
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "79801 (>K:ROTOR_BRAKE)",
+                            "actionType": "SimVarCode"
+                        }
+                    ]
+                },
+                "binding": {
+                    "variable": "PMDG_B737_XPNDR_XPNDR_MODE",
+                    "images": [
+                        {
+                            "url": "knob6.png",
+                            "rotate": 70,
+                            "val": 0
+                        },
+                        {
+                            "url": "knob6.png",
+                            "rotate": 110,
+                            "val": 100
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "button_altsource_mode",
+                "type": "bindableImageButton",
+                "left": 48,
+                "top": 165,
+                "controlSize": {
+                    "$ref": "#value.controlSize.knob6a"
+                },
+                "highlight": false,
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "80301 (>K:ROTOR_BRAKE)",
+                            "actionType": "SimVarCode"
+                        }
+                    ]
+                },
+                "binding": {
+                    "variable": "PMDG_B737_XPNDR_ALTSOURCE_MODE",
+                    "images": [
+                        {
+                            "url": "knob6.png",
+                            "rotate": 70,
+                            "val": 0
+                        },
+                        {
+                            "url": "knob6.png",
+                            "rotate": 110,
+                            "val": 100
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "atc_mode_knob",
+                "type": "bindableImageButton",
+                "left": 365,
+                "top": 61,
+                "controlSize": {
+                    "$ref": "#value.controlSize.knob6"
+                },
+                "highlight": true,
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "PMDG_B737_ATC_MODE_SELECT",
+                            "actionType": "SimEventId"
+                        }
+                    ],
+                    "useEncoder": true,
+                    "encoderAction": {
+                        "encoderLowerCW": "80007 (>K:ROTOR_BRAKE)",
+                        "encoderLowerCCW": "80008 (>K:ROTOR_BRAKE)",
+                        "encoderUpperCW": "80007 (>K:ROTOR_BRAKE)",
+                        "encoderUpperCCW": "80008 (>K:ROTOR_BRAKE)",
+                        "actionType": "SimVarCode"
+                    }
+                },
+                "binding": {
+                    "variable": "PMDG_B737_XPNDR_ATC_MODE",
+                    "images": [
+                        {
+                            "url": "knob6.png",
+                            "val": 0
+                        },
+                        {
+                            "url": "knob6.png",
+                            "rotate": 30,
+                            "val": 10
+                        },
+                        {
+                            "url": "knob6.png",
+                            "rotate": 60,
+                            "val": 20
+                        },
+                        {
+                            "url": "knob6.png",
+                            "rotate": 90,
+                            "val": 30
+                        },
+                        {
+                            "url": "knob6.png",
+                            "rotate": 120,
+                            "val": 40
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "atc_left_knob",
+                "type": "imageButton",
+                "image": "knob2.png",
+                "left": 128,
+                "top": 147,
+                "controlSize": {
+                    "$ref": "#value.controlSize.knob2"
+                },
+                "highlight": true,
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "PMDG_B737_ATC1_SELECT",
+                            "actionType": "SimEventId"
+                        }
+                    ],
+                    "useDualEncoder": true,
+                    "encoderAction": {
+                        "encoderLowerCW": "80407 (>K:ROTOR_BRAKE)",
+                        "encoderLowerCCW": "80408 (>K:ROTOR_BRAKE)",
+                        "encoderUpperCW": "80507 (>K:ROTOR_BRAKE)",
+                        "encoderUpperCCW": "80508 (>K:ROTOR_BRAKE)",
+                        "actionType": "SimVarCode"
+                    }
+                }
+            },
+            {
+                "id": "atc_right_knob",
+                "type": "imageButton",
+                "image": "knob2.png",
+                "left": 292,
+                "top": 147,
+                "controlSize": {
+                    "$ref": "#value.controlSize.knob2"
+                },
+                "highlight": true,
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "PMDG_B737_ATC2_SELECT",
+                            "actionType": "SimEventId"
+                        }
+                    ],
+                    "useDualEncoder": true,
+                    "encoderAction": {
+                        "encoderUpperCW": "80807 (>K:ROTOR_BRAKE)",
+                        "encoderUpperCCW": "80808 (>K:ROTOR_BRAKE)",
+                        "encoderLowerCW": "80707 (>K:ROTOR_BRAKE)",
+                        "encoderLowerCCW": "80708 (>K:ROTOR_BRAKE)",
+                        "actionType": "SimVarCode"
+                    }
+                }
+            },
+            {
+                "id": "button_atc_ident",
+                "type": "imageButton",
+                "image": "ident.png",
+                "left": 236,
+                "top": 189,
+                "controlSize": {
+                    "$ref": "#value.controlSize.ident"
+                },
+                "highlight": false,
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "80601 (>K:ROTOR_BRAKE)",
+                            "actionType": "SimVarCode"
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}

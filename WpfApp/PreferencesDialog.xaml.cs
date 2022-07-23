@@ -1,5 +1,5 @@
 ﻿using MahApps.Metro.Controls;
-using MSFSPopoutPanelManager.Model;
+using MSFSPopoutPanelManager.UserDataAgent;
 using MSFSPopoutPanelManager.WpfApp.ViewModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,6 +27,10 @@ namespace MSFSPopoutPanelManager.WpfApp
         public bool AutoPopOutSettingsVisible { get; set; }
 
         public bool TrackIRSettingsVisible { get; set; }
+
+        public bool TouchSettingsVisible { get; set; }
+
+        public bool MSFSTouchPanelSettingsVisible { get; set; }
 
         private void TreeViewItem_Selected(object sender, RoutedEventArgs e)
         {

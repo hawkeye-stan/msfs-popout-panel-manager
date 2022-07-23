@@ -1,0 +1,488 @@
+{
+    "id": "KODIAK_LIGHTS_DEF",
+    "value": {
+        "panelSize": {
+            "width": 929,
+            "height": 380
+        },
+        "backgroundImage": "background_lights.png",
+        "controlSize": {
+            "toggleButtonBase": {
+                "width": 50,
+                "height": 98
+            },
+            "lightKnob": {
+                "width": 70,
+                "height": 70
+            },
+            "iceKnob": {
+                "width": 65,
+                "height": 65
+            },
+            "rockerBase": {
+                "width": 55,
+                "height": 115
+            }
+        },
+        "panelControlDefinitions": [
+            {
+                "id": "btn_beacon_light",
+                "type": "bindableImageButton",
+                "left": 82,
+                "top": 49,
+                "controlSize": {
+                    "$ref": "#value.controlSize.toggleButtonBase"
+                },
+                "highlight": false,
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "TOGGLE_BEACON_LIGHTS",
+                            "actionType": "SimEventId"
+                        }
+                    ]
+                },
+                "binding": {
+                    "variable": "LIGHT_BEACON_ON",
+                    "images": [
+                        {
+                            "url": "toggle_down.png",
+                            "val": 0
+                        },
+                        {
+                            "url": "toggle_up.png",
+                            "val": 1
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_strobe_light",
+                "type": "bindableImageButton",
+                "left": 178,
+                "top": 49,
+                "controlSize": {
+                    "$ref": "#value.controlSize.toggleButtonBase"
+                },
+                "highlight": false,
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "STROBES_TOGGLE",
+                            "actionType": "SimEventId"
+                        }
+                    ]
+                },
+                "binding": {
+                    "variable": "LIGHT_STROBE_ON",
+                    "images": [
+                        {
+                            "url": "toggle_down.png",
+                            "val": 0
+                        },
+                        {
+                            "url": "toggle_up.png",
+                            "val": 1
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_nav_light",
+                "type": "bindableImageButton",
+                "left": 272,
+                "top": 49,
+                "controlSize": {
+                    "$ref": "#value.controlSize.toggleButtonBase"
+                },
+                "highlight": false,
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "TOGGLE_NAV_LIGHTS",
+                            "actionType": "SimEventId"
+                        }
+                    ]
+                },
+                "binding": {
+                    "variable": "LIGHT_NAV_ON",
+                    "images": [
+                        {
+                            "url": "toggle_down.png",
+                            "val": 0
+                        },
+                        {
+                            "url": "toggle_up.png",
+                            "val": 1
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_taxi_light",
+                "type": "bindableImageButton",
+                "left": 367,
+                "top": 49,
+                "controlSize": {
+                    "$ref": "#value.controlSize.toggleButtonBase"
+                },
+                "highlight": false,
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "TOGGLE_TAXI_LIGHTS",
+                            "actionType": "SimEventId"
+                        }
+                    ]
+                },
+                "binding": {
+                    "variable": "LIGHT_TAXI_ON",
+                    "images": [
+                        {
+                            "url": "toggle_down.png",
+                            "val": 0
+                        },
+                        {
+                            "url": "toggle_up.png",
+                            "val": 1
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_landing_light",
+                "type": "bindableImageButton",
+                "left": 485,
+                "top": 49,
+                "controlSize": {
+                    "$ref": "#value.controlSize.toggleButtonBase"
+                },
+                "highlight": false,
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "(L:SWS_LIGHTING_Switch_Light_Landing) ++ 3 % (>L:SWS_LIGHTING_Switch_Light_Landing)",
+                            "actionType": "SimVarCode"
+                        }
+                    ]
+                },
+                "binding": {
+                    "variable": "KODIAK_LANDING_LIGHT",
+                    "images": [
+                        {
+                            "url": "toggle_down.png",
+                            "val": 0
+                        },
+                        {
+                            "url": "toggle_mid.png",
+                            "val": 1
+                        },
+                        {
+                            "url": "toggle_up.png",
+                            "val": 2
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_cabin_light",
+                "type": "bindableImageButton",
+                "left": 603,
+                "top": 49,
+                "controlSize": {
+                    "$ref": "#value.controlSize.toggleButtonBase"
+                },
+                "highlight": false,
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "(L:SWS_LIGHTING_Switch_Light_CABIN_12) ++ 3 % (>L:SWS_LIGHTING_Switch_Light_CABIN_12)",
+                            "actionType": "SimVarCode"
+                        }
+                    ]
+                },
+                "binding": {
+                    "variable": "KODIAK_CABIN_LIGHT",
+                    "images": [
+                        {
+                            "url": "toggle_down.png",
+                            "val": 0
+                        },
+                        {
+                            "url": "toggle_mid.png",
+                            "val": 1
+                        },
+                        {
+                            "url": "toggle_up.png",
+                            "val": 2
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_instrument_light_knob",
+                "type": "imageButton",
+                "image": "knob_light_dual.png",
+                "left": 685,
+                "top": 69,
+                "controlSize": {
+                    "$ref": "#value.controlSize.lightKnob"
+                },
+                "highlight": true,
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "KODIAK_INSTRUMENTS_LIGHT_KNOB_SELECT",
+                            "actionType": "SimEventId"
+                        }
+                    ],
+                    "useDualEncoder": true,
+                    "encoderAction": {
+                        "encoderLowerCW": "[/{KODIAK_GLARESHIELD_SETTING/} * 100 + 5] 100 min (>K:LIGHT_POTENTIOMETER_3_SET) 1 (>K:GLARESHIELD_LIGHTS_ON)",
+                        "encoderLowerCCW": "[/{KODIAK_GLARESHIELD_SETTING/} * 100 - 5] 0 max (>K:LIGHT_POTENTIOMETER_3_SET)",
+                        "encoderUpperCW": "[/{KODIAK_INSTRUMENTATION_LIGHT_SETTING/} * 100 + 5] 100 min (>K:LIGHT_POTENTIOMETER_2_SET) 1 (>K:PANEL_LIGHTS_ON)",
+                        "encoderUpperCCW": "[/{KODIAK_INSTRUMENTATION_LIGHT_SETTING/} * 100 - 5] 0 max (>K:LIGHT_POTENTIOMETER_2_SET)",
+                        "actionType": "SimVarCode"
+                    }
+                }
+            },
+            {
+                "id": "btn_switch_panel_light_knob",
+                "type": "imageButton",
+                "image": "knob_light.png",
+                "left": 778,
+                "top": 69,
+                "controlSize": {
+                    "$ref": "#value.controlSize.lightKnob"
+                },
+                "highlight": true,
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "KODIAK_PANEL_LIGHT_KNOB_SELECT",
+                            "actionType": "SimEventId"
+                        }
+                    ],
+                    "useEncoder": true,
+                    "encoderAction": {
+                        "encoderLowerCW": "[/{KODIAK_PANEL_LIGHT_SETTING/} * 100 + 5] 100 min (>K:LIGHT_POTENTIOMETER_21_SET) 1 (>K:PEDESTRAL_LIGHTS_ON)",
+                        "encoderLowerCCW": "[/{KODIAK_PANEL_LIGHT_SETTING/} * 100 - 5] 0 max (>K:LIGHT_POTENTIOMETER_21_SET)",
+                        "encoderUpperCW": "[/{KODIAK_PANEL_LIGHT_SETTING/} * 100 + 5] 100 min (>K:LIGHT_POTENTIOMETER_21_SET) 1 (>K:PEDESTRAL_LIGHTS_ON)",
+                        "encoderUpperCCW": "[/{KODIAK_PANEL_LIGHT_SETTING/} * 100 - 5] 0 max (>K:LIGHT_POTENTIOMETER_21_SET)",
+                        "actionType": "SimVarCode"
+                    }
+                }
+            },
+            {
+                "id": "btn_engine_inlet_bypass_override",
+                "type": "image",
+                "image": "toggle_down.png",
+                "left": 82,
+                "top": 225,
+                "controlSize": {
+                    "$ref": "#value.controlSize.toggleButtonBase"
+                },
+                "highlight": false
+            },
+            {
+                "id": "btn_engine_inlet_bypass",
+                "type": "bindableImageButton",
+                "left": 178,
+                "top": 225,
+                "controlSize": {
+                    "$ref": "#value.controlSize.toggleButtonBase"
+                },
+                "highlight": false,
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "1 (>K:ANTI_ICE_TOGGLE_ENG1)",
+                            "actionType": "SimVarCode"
+                        }
+                    ]
+                },
+                "binding": {
+                    "variable": "ENG_ANTI_ICE_1",
+                    "images": [
+                        {
+                            "url": "toggle_down.png",
+                            "val": 0
+                        },
+                        {
+                            "url": "toggle_up.png",
+                            "val": 1
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_pitot_heat_left",
+                "type": "bindableImageButton",
+                "left": 272,
+                "top": 225,
+                "controlSize": {
+                    "$ref": "#value.controlSize.toggleButtonBase"
+                },
+                "highlight": false,
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "1 (>K:PITOT_HEAT_TOGGLE)",
+                            "actionType": "SimVarCode"
+                        }
+                    ]
+                },
+                "binding": {
+                    "variable": "KODIAK_PITOT_HEAT_1",
+                    "images": [
+                        {
+                            "url": "toggle_down.png",
+                            "val": 0
+                        },
+                        {
+                            "url": "toggle_up.png",
+                            "val": 1
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_pitot_heat_right",
+                "type": "bindableImageButton",
+                "left": 367,
+                "top": 225,
+                "controlSize": {
+                    "$ref": "#value.controlSize.toggleButtonBase"
+                },
+                "highlight": false,
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "2 (>K:PITOT_HEAT_TOGGLE)",
+                            "actionType": "SimVarCode"
+                        }
+                    ]
+                },
+                "binding": {
+                    "variable": "KODIAK_PITOT_HEAT_2",
+                    "images": [
+                        {
+                            "url": "toggle_down.png",
+                            "val": 0
+                        },
+                        {
+                            "url": "toggle_up.png",
+                            "val": 1
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_ice_knob",
+                "type": "bindableImageButton",
+                "left": 480,
+                "top": 250,
+                "controlSize": {
+                    "$ref": "#value.controlSize.iceKnob"
+                },
+                "highlight": false,
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "TOGGLE_PROPELLER_DEICE",
+                            "actionType": "SimEventId"
+                        }
+                    ]
+                },
+                "binding": {
+                    "variable": "PROP_DEICE_SWITCH",
+                    "images": [
+                        {
+                            "url": "knob_ice.png",
+                            "rotate": 0,
+                            "val": 0
+                        },
+                        {
+                            "url": "knob_ice.png",
+                            "rotate": 95,
+                            "val": 1
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_wind_shield_heat",
+                "type": "bindableImageButton",
+                "left": 603,
+                "top": 225,
+                "controlSize": {
+                    "$ref": "#value.controlSize.toggleButtonBase"
+                },
+                "highlight": false,
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "KODIAK_100_DEICE_WINDSHIELD_TOGGLE",
+                            "actionType": "SimEventId"
+                        }
+                    ]
+                },
+                "binding": {
+                    "variable": "WINDSHIELD_DEICE_SWITCH",
+                    "images": [
+                        {
+                            "url": "toggle_down.png",
+                            "val": 0
+                        },
+                        {
+                            "url": "toggle_up.png",
+                            "val": 1
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_backup_pump_heat",
+                "type": "image",
+                "image": "toggle_down.png",
+                "left": 696,
+                "top": 225,
+                "controlSize": {
+                    "$ref": "#value.controlSize.toggleButtonBase"
+                },
+                "highlight": false
+            },
+            {
+                "id": "btn_ice_light",
+                "type": "bindableImageButton",
+                "left": 790,
+                "top": 225,
+                "controlSize": {
+                    "$ref": "#value.controlSize.toggleButtonBase"
+                },
+                "highlight": false,
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "TOGGLE_WING_LIGHTS",
+                            "actionType": "SimEventId"
+                        }
+                    ]
+                },
+                "binding": {
+                    "variable": "LIGHT_WING_ON",
+                    "images": [
+                        {
+                            "url": "toggle_down.png",
+                            "val": 0
+                        },
+                        {
+                            "url": "toggle_up.png",
+                            "val": 1
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}

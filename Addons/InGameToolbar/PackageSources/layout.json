@@ -1,0 +1,29 @@
+{
+  "content": [
+    {
+      "path": "html_ui/icons/toolbar/POP_OUT_MANAGER.svg",
+      "size": 740,
+      "date": 133013771715368552
+    },
+    {
+      "path": "html_ui/InGamePanels/PopOutManagerPanel/PopOutManager.css",
+      "size": 1921,
+      "date": 133015501657300878
+    },
+    {
+      "path": "html_ui/InGamePanels/PopOutManagerPanel/PopOutManager.html",
+      "size": 3194,
+      "date": 133023923647110813
+    },
+    {
+      "path": "html_ui/InGamePanels/PopOutManagerPanel/PopOutManager.js",
+      "size": 10854,
+      "date": 133023924937932717
+    },
+    {
+      "path": "InGamePanels/pop-out-manager.spb",
+      "size": 684,
+      "date": 133023927549810418
+    }
+  ]
+}

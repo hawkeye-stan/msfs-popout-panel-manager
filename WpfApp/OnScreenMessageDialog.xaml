@@ -5,6 +5,7 @@
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                  xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
                  xmlns:local="clr-namespace:MSFSPopoutPanelManager.WpfApp"
+                 xmlns:shared="clr-namespace:MSFSPopoutPanelManager.Shared;assembly=Shared"
                  mc:Ignorable="d"
         Height="Auto" 
         Width="Auto"
@@ -21,13 +22,10 @@
                     <Image.Style>
                         <Style TargetType="Image">
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding Path=MessageIcon, Mode=OneWay}" Value="{x:Static local:MessageIcon.Success}">
-                                    <Setter Property="Source" Value="Resources/check.png"/>
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding Path=MessageIcon, Mode=OneWay}" Value="{x:Static local:MessageIcon.Failed}">
+                                <DataTrigger Binding="{Binding StatusMessageType, Mode=OneWay}" Value="{x:Static shared:StatusMessageType.Error}">
                                     <Setter Property="Source" Value="Resources/cross.png"/>
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding Path=MessageIcon, Mode=OneWay}" Value="{x:Static local:MessageIcon.Info}">
+                                <DataTrigger Binding="{Binding StatusMessageType, Mode=OneWay}" Value="{x:Static shared:StatusMessageType.Info}">
                                     <Setter Property="Source" Value="Resources/info.png"/>
                                 </DataTrigger>
                             </Style.Triggers>

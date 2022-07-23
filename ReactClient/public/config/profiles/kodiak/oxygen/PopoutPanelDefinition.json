@@ -1,0 +1,76 @@
+{
+    "id": "KODIAK_OXYGEN_DEF",
+    "value": {
+        "panelSize": {
+            "width": 215,
+            "height": 215
+        },
+        "backgroundImage": "background_oxygen.png",
+        "controlSize": {
+            "oxygenBase": {
+                "width": 49,
+                "height": 69
+            },
+            "oxygenIndicatorBase": {
+                "width": 10,
+                "height": 107
+            }
+        },
+        "panelControlDefinitions": [
+            {
+                "id": "btn_oxygen",
+                "type": "bindableImageButton",
+                "left": 92,
+                "top": 82,
+                "controlSize": {
+                    "$ref": "#value.controlSize.oxygenBase"
+                },
+                "highlight": false,
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "(L:XMLVAR_Oxygen) ++ 2 % (>L:XMLVAR_Oxygen)",
+                            "actionType": "SimVarCode"
+                        }
+                    ]
+                },
+                "binding": {
+                    "variable": "KODIAK_OXYGEN",
+                    "images": [
+                        {
+                            "url": "oxygen_off.png",
+                            "val": 0
+                        },
+                        {
+                            "url": "oxygen_on.png",
+                            "val": 1
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_oxygen_indicator",
+                "type": "bindableImageButton",
+                "left": 66,
+                "top": 60,
+                "controlSize": {
+                    "$ref": "#value.controlSize.oxygenIndicatorBase"
+                },
+                "highlight": false,
+                "binding": {
+                    "variable": "KODIAK_OXYGEN",
+                    "images": [
+                        {
+                            "url": "oxygen_indicator_off.png",
+                            "val": 0
+                        },
+                        {
+                            "url": "oxygen_indicator_on.png",
+                            "val": 1
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}

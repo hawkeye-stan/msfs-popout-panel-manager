@@ -1,8 +1,10 @@
 ﻿using Hardcodet.Wpf.TaskbarNotification;
 using MahApps.Metro.Controls;
-using MSFSPopoutPanelManager.Provider;
 using MSFSPopoutPanelManager.Shared;
+using MSFSPopoutPanelManager.WindowsAgent;
 using MSFSPopoutPanelManager.WpfApp.ViewModel;
+using Prism.Commands;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -15,7 +17,7 @@ namespace MSFSPopoutPanelManager.WpfApp
         private ApplicationViewModel _viewModel;
 
         // This command has to be here since it doesn't work in view model, window StateChanged never gets fire
-        public DelegateCommand RestoreWindowCommand => new DelegateCommand((o) => { this.WindowState = WindowState.Normal; }, (o) => { return true; });
+        public DelegateCommand RestoreWindowCommand => new DelegateCommand(() => { this.WindowState = WindowState.Normal; }, () => { return true; });
 
         public ApplicationWindow()
         {
@@ -50,14 +52,16 @@ namespace MSFSPopoutPanelManager.WpfApp
             panelSteps.Children.Add(userControlPanelConfiguration);
 
             notifyIcon.DoubleClickCommand = RestoreWindowCommand;
+
+            WindowActionManager.OnPopOutManagerAlwaysOnTopChanged += (sender, e) => { this.Topmost = e; };
         }
 
-        private void HandleShowContextMenuBalloonTip(object sender, EventArgs<StatusMessage> e)
+        private void HandleShowContextMenuBalloonTip(object sender, StatusMessageEventArg e)
         {
-            if (e.Value.MessageType == StatusMessageType.Error)
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                notifyIcon.ShowBalloonTip("MSFS Pop Out Panel Manager Error", e.Value.Message, BalloonIcon.Error);
-            }
+                notifyIcon.ShowBalloonTip("MSFS Pop Out Panel Manager Error", e.Message, BalloonIcon.Error);
+            });
         }
 
         private void Window_StateChanged(object sender, System.EventArgs e)
@@ -68,7 +72,7 @@ namespace MSFSPopoutPanelManager.WpfApp
                     this.ShowInTaskbar = true;
                     break;
                 case WindowState.Minimized:
-                    if (_viewModel.DataStore.AppSetting.MinimizeToTray)
+                    if (_viewModel.AppSettingData.AppSetting.MinimizeToTray)
                     {
                         notifyIcon.Visibility = Visibility.Visible;
                         this.ShowInTaskbar = false;
@@ -79,32 +83,23 @@ namespace MSFSPopoutPanelManager.WpfApp
                     this.ShowInTaskbar = true;
 
                     // Fix always on top status once app is minimize and then restore
-                    if (_viewModel.DataStore.AppSetting.AlwaysOnTop)
-                        WindowManager.ApplyAlwaysOnTop(_viewModel.DataStore.ApplicationHandle, true);
+                    if (_viewModel.AppSettingData.AppSetting.AlwaysOnTop)
+                        WindowActionManager.ApplyAlwaysOnTop(_viewModel.ApplicationHandle, PanelType.PopOutManager, true);
                     break;
             }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            _viewModel.DataStore.ApplicationHandle = new WindowInteropHelper(Window.GetWindow(this)).Handle;
-            _viewModel.DataStore.ApplicationWindow = this;
+            _viewModel.ApplicationHandle = new WindowInteropHelper(Window.GetWindow(this)).Handle;
+            _viewModel.ApplicationWindow = Application.Current.MainWindow;
             _viewModel.Initialize();
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private async void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            _viewModel.Exit();
-        }
-
-        private void EditPreferences_Click(object sender, RoutedEventArgs e)
-        {
-            PreferencesDialog dialog = new PreferencesDialog(_viewModel.PreferencesViewModel);
-            dialog.Owner = Application.Current.MainWindow;
-            dialog.Topmost = true;
-            dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-
-            dialog.ShowDialog();
+            e.Cancel = true;
+            await _viewModel.WindowClosing();
         }
     }
 }

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="/SCSS/common.css" />
+    <link rel="stylesheet" href="MissionStartup.css" />
+
+    <script type="text/javascript" src="/JS/coherent.js"></script>
+    <script type="text/javascript" src="/JS/common.js"></script>
+    <script type="text/javascript" src="/JS/buttons.js"></script>
+    <link rel="import" href="/templates/PanelInfoLine/PanelInfoLine.html" />
+
+    <link rel="import" href="/templates/NewPushButton/NewPushButton.html" />
+
+    <script type="text/javascript" src="MissionStartup.js"></script>
+</head>
+<body>
+    <mission-startup>
+        <div id="StartupContainer">
+            <div id="StartupInfo">
+                <div id="AirportInfos" class="invisible StartupInfosPanel">
+                    <!-- contains a list of panel-info-element -->
+                </div>
+                <div id="PlaneInfos" class="invisible StartupInfosPanel">
+                    <!-- contains a list of panel-info-element -->
+                </div>
+            </div>
+            <image-button id="FlyButton" default-button title="TT:MENU.READY_FLY" class="bigButton button-yellow" data-url="/icons/freeflight/worldMap_Departure.svg" eventOnValidate="END_BRIEFING" toGlobalFlow="true"></image-button>
+        </div>
+    </mission-startup>
+
+    <script>
+        // Define ready to fly button skip delay in seconds
+        const READY_TO_FLY_BUTTON_SKIP_DELAY = 2;
+
+        // Click ready to fly button
+        Coherent.on("MissionStartup_Step", (step) => {
+            if(step == 0)
+            {
+                setTimeout(() => {
+                    LaunchFlowEventToGlobalFlow("END_BRIEFING", "FlyButton");
+                    Coherent.trigger("END_BRIEFING", "FlyButton");
+                }, READY_TO_FLY_BUTTON_SKIP_DELAY * 1000);
+            }
+        });
+    </script>
+</body>
+</html>

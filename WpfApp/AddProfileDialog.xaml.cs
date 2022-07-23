@@ -1,9 +1,7 @@
 ﻿using MahApps.Metro.Controls;
-using MSFSPopoutPanelManager.Model;
+using MSFSPopoutPanelManager.UserDataAgent;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 
@@ -11,16 +9,16 @@ namespace MSFSPopoutPanelManager.WpfApp
 {
     public partial class AddProfileDialog : MetroWindow
     {
-        public List<UserProfile> UserProfiles { get; set; }
+        public List<Profile> UserProfiles { get; set; }
 
         public int SelectedCopyProfileId { get; set; }
 
-        public AddProfileDialog(ObservableCollection<UserProfile> userProfiles)
+        public AddProfileDialog(List<Profile> userProfiles)
         {
             InitializeComponent();
 
-            UserProfiles = userProfiles.ToList();
-            UserProfiles.Insert(0, new UserProfile() { ProfileId = -1 });
+            UserProfiles = userProfiles;
+            UserProfiles.Insert(0, new Profile() { ProfileId = -1 });
             this.DataContext = this;
 
             SelectedCopyProfileId = -1;

@@ -1,0 +1,42 @@
+﻿<mah:MetroWindow  x:Class="MSFSPopoutPanelManager.WpfApp.TouchPanelBindingDialog"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                  mc:Ignorable="d"
+        Title="Touch Panel Binding" 
+        Height="600" 
+        Width="600"
+        ResizeMode="NoResize" 
+        Background="Transparent">
+    <Grid>
+        <WrapPanel Orientation="Vertical">
+            <TextBlock Margin="15, 10, 0, 10" Width="600">Please select only panel from the same plane.</TextBlock>
+            <Separator/>
+            <ItemsControl x:Name="Profiles" ItemsSource="{Binding PlaneProfiles}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <WrapPanel Orientation="Vertical" Margin="10, 10, 0, 0">
+                                <Label Content="{Binding Name}"></Label>
+                                <ItemsControl ItemsSource="{Binding Panels}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <CheckBox Margin="10, 10, 0, 0" Content="{Binding Name}" IsChecked="{Binding IsSelected, Mode=TwoWay}" Command="{Binding ElementName=Profiles, Path=DataContext.PanelSelectCommand}"></CheckBox>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel IsItemsHost="True" Orientation="Vertical" Margin="10, 0, 0, 0"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                </ItemsControl>
+                            </WrapPanel>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </WrapPanel>
+    </Grid>
+</mah:MetroWindow>

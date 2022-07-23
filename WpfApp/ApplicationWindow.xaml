@@ -4,12 +4,11 @@
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                  xmlns:tb="http://www.hardcodet.net/taskbar"
-                 xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
                  xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
                  xmlns:shared="clr-namespace:MSFSPopoutPanelManager.Shared;assembly=Shared"
                  mc:Ignorable="d"
         Title="MSFS Pop Out Panel Manager" 
-        Height="670" 
+        Height="710" 
         Width="920"
         WindowStartupLocation="CenterScreen"
         ResizeMode="CanMinimize" 
@@ -18,9 +17,6 @@
         WindowState="{Binding InitialWindowState, Mode=OneWay}"
         Loaded="Window_Loaded"
         Closing="Window_Closing">
-    <Window.InputBindings>
-        <KeyBinding Command="{Binding Path=MinimizeAllPanelsCommand}" Modifiers="Ctrl+Alt" Key="M" />
-    </Window.InputBindings>
     <Grid>
         <tb:TaskbarIcon Name="notifyIcon"
                     ToolTipText="MSFS Pop Out Panel Manager"
@@ -29,19 +25,19 @@
                     Visibility="Visible">
             <tb:TaskbarIcon.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="Profiles" ItemsSource="{Binding DataStore.UserProfiles}">
+                    <MenuItem Header="Profiles" ItemsSource="{Binding ProfileData.Profiles}">
                         <MenuItem.ItemContainerStyle>
                             <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
-                                <Setter Property="MenuItem.Header" Value="{Binding Path=ProfileName}" />
-                                <Setter Property="MenuItem.IsChecked" Value="{Binding Path=IsActive}" />
-                                <Setter Property="MenuItem.Command" Value="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}, Path=DataContext.UserProfileSelectCommand}" />
-                                <Setter Property="MenuItem.CommandParameter" Value="{Binding Path=ProfileId}" />
+                                <Setter Property="MenuItem.Header" Value="{Binding ProfileName}" />
+                                <Setter Property="MenuItem.IsChecked" Value="{Binding IsActive}" />
+                                <Setter Property="MenuItem.Command" Value="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}, Path=DataContext.ChangeProfileCommand}" />
+                                <Setter Property="MenuItem.CommandParameter" Value="{Binding ProfileId}" />
                             </Style>
                         </MenuItem.ItemContainerStyle>
                     </MenuItem>
-                    <MenuItem Header="Start Pop Out" Command="{Binding Path=StartPopOutCommand}" IsEnabled="{c:Binding Path='DataStore.ActiveUserProfile.PanelSourceCoordinates.Count > 0'}"></MenuItem>
+                    <MenuItem Header="Start Pop Out" Command="{Binding StartPopOutCommand}"></MenuItem>
                     <Separator></Separator>
-                    <MenuItem Header="Exit" Command="{Binding Path=ExitCommand}" ></MenuItem>
+                    <MenuItem Header="Exit" Command="{Binding ExitCommand}" ></MenuItem>
                 </ContextMenu>
             </tb:TaskbarIcon.ContextMenu>
         </tb:TaskbarIcon>
@@ -49,28 +45,25 @@
             <DockPanel DockPanel.Dock="Top">
                 <Menu Width="870" Background="#FF252525">
                     <MenuItem Header="File">
-                        <MenuItem Name="menuItem_Restart" Header="Restart" Command="{Binding Path=RestartCommand}" IsEnabled="{Binding Path=IsShownPanelConfigurationScreen}"/>
+                        <MenuItem Name="menuItem_Restart" Header="Restart" Command="{Binding RestartCommand}"/>
                         <Separator />
-                        <MenuItem Header="Preferences" Click="EditPreferences_Click" />
+                        <MenuItem Name="menuItem_Preferences" Header="Preferences" Command="{Binding EditPreferencesCommand}" />
                         <Separator />
-                        <MenuItem Name="menuItem_Exit" Header="Exit" Command="{Binding Path=ExitCommand}"/>
-                    </MenuItem>
-                    <MenuItem Header="View">
-                        <MenuItem Name="menuItem_MinimizeAllPanels" Header="Minimize All Panels    "  InputGestureText="Ctrl+Alt+M" Command="{Binding Path=MinimizeAllPanelsCommand}" IsChecked="{Binding Path=IsMinimizedAllPanels, Mode=TwoWay}" IsEnabled="{c:Binding Path='IsShownPanelConfigurationScreen'}"/>
+                        <MenuItem Name="menuItem_Exit" Header="Exit" Command="{Binding ExitCommand}"/>
                     </MenuItem>
                     <MenuItem Header="Help">
-                        <MenuItem Name="menuItem_UserGuide" Header="User Guide" Command="{Binding Path=UserGuideCommand}"/>
-                        <MenuItem Name="menuItem_DownloadLatestRelease" Header="Download Latest Release" Command="{Binding Path=DownloadLatestReleaseCommand}"/>
+                        <MenuItem Name="menuItem_UserGuide" Header="User Guide" Command="{Binding UserGuideCommand}"/>
+                        <MenuItem Name="menuItem_DownloadLatestRelease" Header="Download Latest Release" Command="{Binding DownloadLatestReleaseCommand}"/>
                     </MenuItem>
                 </Menu>
                 <Image Width="20">
                     <Image.Style>
                         <Style TargetType="Image">
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding Path=DataStore.IsSimulatorStarted , Mode=OneWay}" Value="True">
+                                <DataTrigger Binding="{Binding FlightSimData.IsSimulatorStarted , Mode=OneWay}" Value="True">
                                     <Setter Property="Source" Value="Resources/msfsconnected.png"/>
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding Path=DataStore.IsSimulatorStarted , Mode=OneWay}" Value="False">
+                                <DataTrigger Binding="{Binding FlightSimData.IsSimulatorStarted , Mode=OneWay}" Value="False">
                                     <Setter Property="Source" Value="Resources/msfsdisconnected.png"/>
                                 </DataTrigger>
                             </Style.Triggers>
@@ -79,15 +72,15 @@
                 </Image>
             </DockPanel>
             <DockPanel>
-                <StackPanel Name="panelSteps" DockPanel.Dock="Top" Height="505" Background="#FF323C64">
+                <StackPanel Name="panelSteps" DockPanel.Dock="Top" Height="545" Background="#FF323C64">
                 </StackPanel>
                 <WrapPanel DockPanel.Dock="Top" Orientation="Horizontal" Height="70" Background="#FF252523">
                     <Label Content="Status" Margin="5, 10, 5, 5"/>
-                    <TextBox Name="txtStatus" Margin="5, 10, 5, 5" Height="55" TextWrapping="Wrap" IsReadOnly="True" Width="835" Background="#FF45494A" Text="{Binding Path=StatusMessage.Message, Mode=OneWay}">
+                    <TextBox Name="txtStatus" Margin="5, 10, 5, 5" Height="55" TextWrapping="Wrap" IsReadOnly="True" Width="835" Background="#FF45494A" Text="{Binding StatusMessage, Mode=OneWay}">
                         <TextBox.Style>
                             <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding Path=StatusMessage.MessageType, Mode=OneWay}" Value="{x:Static shared:StatusMessageType.Error}">
+                                    <DataTrigger Binding="{Binding StatusMessageType, Mode=OneWay}" Value="{x:Static shared:StatusMessageType.Error}">
                                         <Setter Property="Foreground" Value="#FFFF6262"></Setter>
                                     </DataTrigger>
                                 </Style.Triggers>
@@ -95,9 +88,9 @@
                         </TextBox.Style>
                     </TextBox>
                 </WrapPanel>
-                <WrapPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Background="#FF252525" Height="45">
-                    <Label Margin="425, 0, 0, 5" FontSize="14" Content="Version" />
-                    <Label Name="lblVersion" Margin="0, 0, 0, 5" FontSize="14" Content="{Binding Path = ApplicationVersion, Mode=OneWay}" />
+                <WrapPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Background="#FF252525" Height="45" HorizontalAlignment="Center">
+                    <Label Margin="0, 0, 0, 5" FontSize="14" Content="Version" />
+                    <Label Name="lblVersion" Margin="0, 0, 0, 5" FontSize="14" Content="{Binding ApplicationVersion, Mode=OneWay}" />
                 </WrapPanel>
             </DockPanel>
         </DockPanel>

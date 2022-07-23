@@ -1,0 +1,49 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net6.0</TargetFrameworks>
+    <AssemblyName>Orchestration</AssemblyName>
+    <PackageId>MSFS 2020 Popout Panel Manager Orchestration</PackageId>
+    <Product>MSFS 2020 Popout Panel Manager Orchestration</Product>
+    <Authors>Stanley Kwok</Authors>
+    <Company>Stanley Kwok</Company>
+    <Copyright>Stanley Kwok 2021</Copyright>
+    <PackageProjectUrl>https://github.com/hawkeye-stan/msfs-popout-panel-manager</PackageProjectUrl>
+    <RootNamespace>MSFSPopoutPanelManager.Orchestration</RootNamespace>
+    <Platforms>x64</Platforms>
+    <Version>3.4.0.0</Version>
+    <AssemblyVersion>3.4.0.0</AssemblyVersion>
+    <FileVersion>3.4.0.0</FileVersion>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <DebugType>Embedded</DebugType>
+    <Configurations>Debug;Release;DebugTouchPanel;ReleaseTouchPanel</Configurations>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseTouchPanel|x64'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugTouchPanel|x64'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Autoupdater.NET.Official" Version="1.7.0" />
+    <PackageReference Include="Fody" Version="6.6.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="PropertyChanged.Fody" Version="3.4.1" />
+    <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SimconnectAgent\SimconnectAgent.csproj" />
+    <ProjectReference Include="..\TouchPanelAgent\TouchPanelAgent.csproj" />
+    <ProjectReference Include="..\UserDataAgent\UserDataAgent.csproj" />
+    <ProjectReference Include="..\WebServer\WebServer.csproj" Condition=" '$(Configuration)' == 'ReleaseTouchPanel' Or '$(Configuration)' == 'DebugTouchPanel' " />
+    <ProjectReference Include="..\WindowsAgent\WindowsAgent.csproj" />
+  </ItemGroup>
+</Project>

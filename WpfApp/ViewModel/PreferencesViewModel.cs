@@ -1,22 +1,28 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using MSFSPopoutPanelManager.Orchestration;
+using MSFSPopoutPanelManager.Shared;
+using Prism.Commands;
 
 namespace MSFSPopoutPanelManager.WpfApp.ViewModel
 {
     public class PreferencesViewModel : ObservableObject
     {
-        public PreferencesViewModel(DataStore dataStore)
+        private MainOrchestrator _orchestrator;
+
+        public PreferencesViewModel(MainOrchestrator orchestrator)
         {
-            DataStore = dataStore;
+            _orchestrator = orchestrator;
 
             ApplicationSettingsVisible = true;
             PopOutSettingsVisible = false;
             AutoPopOutSettingsVisible = false;
             TrackIRSettingsVisible = false;
+
+            SectionSelectCommand = new DelegateCommand<object>(OnSectionSelected);
         }
 
-        public DelegateCommand SectionSelectCommand => new DelegateCommand(OnSectionSelected, CanExecute);
+        public DelegateCommand<object> SectionSelectCommand { get; private set; }
 
-        public DataStore DataStore { get; private set; }
+        public AppSettingData AppSettingData { get { return _orchestrator.AppSettingData; } }
 
         public bool ApplicationSettingsVisible { get; private set; }
 
@@ -26,10 +32,9 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
 
         public bool TrackIRSettingsVisible { get; private set; }
 
-        private bool CanExecute(object commandParameter)
-        {
-            return true;
-        }
+        public bool TouchSettingsVisible { get; private set; }
+
+        public bool MSFSTouchPanelSettingsVisible { get; private set; }
 
         private void OnSectionSelected(object commandParameter)
         {
@@ -37,6 +42,8 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
             PopOutSettingsVisible = false;
             AutoPopOutSettingsVisible = false;
             TrackIRSettingsVisible = false;
+            TouchSettingsVisible = false;
+            MSFSTouchPanelSettingsVisible = false;
 
             switch (commandParameter.ToString())
             {
@@ -51,6 +58,12 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
                     break;
                 case "Track IR Settings":
                     TrackIRSettingsVisible = true;
+                    break;
+                case "Touch Settings":
+                    TouchSettingsVisible = true;
+                    break;
+                case "MSFS Touch Panel Settings":
+                    MSFSTouchPanelSettingsVisible = true;
                     break;
             }
         }

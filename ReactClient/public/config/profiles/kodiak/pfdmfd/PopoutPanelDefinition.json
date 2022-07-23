@@ -1,0 +1,3203 @@
+[
+    {
+        "id": "KODIAK_PFD_MFD_DEF",
+        "value": {
+            "panelSize": {
+                "width": 2458,
+                "height": 914
+            },
+            "backgroundImage": "background_pfdmfd.png",
+            "controlSize": {
+                "regularKnob": {
+                    "width": 77,
+                    "height": 77
+                },
+                "crsKnob": {
+                    "width": 79,
+                    "height": 79
+                },
+                "volKnob": {
+                    "width": 49,
+                    "height": 49
+                },
+                "rangeKnob": {
+                    "width": 66,
+                    "height": 66
+                },
+                "buttonBase": {
+                    "width": 57,
+                    "height": 36
+                },
+                "speedKnob": {
+                    "width": 53,
+                    "height": 94
+                }
+            },
+            "encoderAction": {
+                "mfdFms": {
+                    "encoderLowerCW": "AS1000_MFD_FMS_Lower_INC",
+                    "encoderLowerCCW": "AS1000_MFD_FMS_Lower_DEC",
+                    "encoderUpperCW": "AS1000_MFD_FMS_Upper_INC",
+                    "encoderUpperCCW": "AS1000_MFD_FMS_Upper_DEC",
+                    "encoderLowerSwitch": "AS1000_MFD_FMS_Upper_PUSH",
+                    "encoderUpperSwitch": "AS1000_MFD_FMS_Upper_PUSH",
+                    "actionType": "SimEventId"
+                }
+            },
+            "panelControlDefinitions": [
+                {
+                    "id": "btn_vol1knob",
+                    "type": "imageButton",
+                    "image": "knob_vol.png",
+                    "left": 60,
+                    "top": 41,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.volKnob"
+                    },
+                    "highlight": true,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_VOL1_KNOB_SELECT",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "useEncoder": true,
+                        "encoderAction": {
+                            "encoderLowerCW": "AS1000_PFD_VOL_1_INC",
+                            "encoderLowerCCW": "AS1000_PFD_VOL_1_DEC",
+                            "encoderUpperCW": "AS1000_PFD_VOL_1_INC",
+                            "encoderUpperCCW": "AS1000_PFD_VOL_1_DEC",
+                            "actionType": "SimEventId"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_vol2knob",
+                    "type": "imageButton",
+                    "image": "knob_vol.png",
+                    "left": 2348,
+                    "top": 41,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.volKnob"
+                    },
+                    "highlight": true,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_VOL2_KNOB_SELECT",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "useEncoder": true,
+                        "encoderAction": {
+                            "encoderLowerCW": "AS1000_PFD_VOL_2_INC",
+                            "encoderLowerCCW": "AS1000_PFD_VOL_2_DEC",
+                            "encoderUpperCW": "AS1000_PFD_VOL_2_INC",
+                            "encoderUpperCCW": "AS1000_PFD_VOL_2_DEC",
+                            "actionType": "SimEventId"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_navknob",
+                    "type": "imageButton",
+                    "image": "knob.png",
+                    "left": 47,
+                    "top": 171,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.regularKnob"
+                    },
+                    "highlight": true,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_NAV_KNOB_SELECT",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "useDualEncoder": true,
+                        "encoderAction": {
+                            "encoderLowerCW": "AS1000_PFD_NAV_Large_INC",
+                            "encoderLowerCCW": "AS1000_PFD_NAV_Large_DEC",
+                            "encoderUpperCW": "AS1000_PFD_NAV_Small_INC",
+                            "encoderUpperCCW": "AS1000_PFD_NAV_Small_DEC",
+                            "encoderLowerSwitch": "AS1000_PFD_NAV_Push",
+                            "encoderUpperSwitch": "AS1000_PFD_NAV_Push",
+                            "actionType": "SimEventId"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_navswap",
+                    "type": "imageButton",
+                    "image": "button_swap.png",
+                    "left": 97,
+                    "top": 104,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_NAV_Switch",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "encoderLowerCW": "AS1000_PFD_NAV_Large_INC",
+                            "encoderLowerCCW": "AS1000_PFD_NAV_Large_DEC",
+                            "encoderUpperCW": "AS1000_PFD_NAV_Small_INC",
+                            "encoderUpperCCW": "AS1000_PFD_NAV_Small_DEC",
+                            "encoderLowerSwitch": "AS1000_PFD_NAV_Push",
+                            "encoderUpperSwitch": "AS1000_PFD_NAV_Push",
+                            "actionType": "SimEventId"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_hdgknob",
+                    "type": "imageButton",
+                    "image": "knob_hdg.png",
+                    "left": 46,
+                    "top": 339,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.regularKnob"
+                    },
+                    "highlight": true,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_HDG_KNOB_SELECT",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "useDualEncoder": true,
+                        "encoderAction": {
+                            "encoderLowerCW": "AS1000_PFD_HEADING_FAST_INC",
+                            "encoderLowerCCW": "AS1000_PFD_HEADING_FAST_DEC",
+                            "encoderUpperCW": "AS1000_PFD_HEADING_INC",
+                            "encoderUpperCCW": "AS1000_PFD_HEADING_DEC",
+                            "encoderLowerSwitch": "AS1000_PFD_HEADING_SYNC",
+                            "encoderUpperSwitch": "AS1000_PFD_HEADING_SYNC",
+                            "actionType": "SimEventId"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_altknob",
+                    "type": "imageButton",
+                    "image": "knob.png",
+                    "left": 48,
+                    "top": 790,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.regularKnob"
+                    },
+                    "highlight": true,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_ALT_KNOB_SELECT",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "useDualEncoder": true,
+                        "encoderAction": {
+                            "encoderLowerCW": "AS1000_AP_ALT_INC_1000",
+                            "encoderLowerCCW": "AS1000_AP_ALT_DEC_1000",
+                            "encoderLowerSwitch": "AS1000_AP_ALT_SYNC",
+                            "encoderUpperCW": "AS1000_AP_ALT_INC_100",
+                            "encoderUpperCCW": "AS1000_AP_ALT_DEC_100",
+                            "encoderUpperSwitch": "AS1000_AP_ALT_SYNC",
+                            "actionType": "SimEventId"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_comknob",
+                    "type": "imageButton",
+                    "image": "knob.png",
+                    "left": 2334,
+                    "top": 170,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.regularKnob"
+                    },
+                    "highlight": true,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_COM_KNOB_SELECT",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "useDualEncoder": true,
+                        "encoderAction": {
+                            "encoderLowerCW": "AS1000_PFD_COM_Large_INC",
+                            "encoderLowerCCW": "AS1000_PFD_COM_Large_DEC",
+                            "encoderLowerSwitch": "AS1000_PFD_COM_Push",
+                            "encoderUpperCW": "AS1000_PFD_COM_Small_INC",
+                            "encoderUpperCCW": "AS1000_PFD_COM_Small_DEC",
+                            "encoderUpperSwitch": "AS1000_PFD_COM_Push",
+                            "actionType": "SimEventId"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_comswap",
+                    "type": "imageButton",
+                    "image": "button_swap.png",
+                    "left": 2304,
+                    "top": 104,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_COM_Switch",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "encoderLowerw": "AS1000_PFD_COM_Small_INC",
+                            "encoderLowerCCW": "AS1000_PFD_COM_Small_DEC",
+                            "encoderUpperCW": "AS1000_PFD_COM_Large_INC",
+                            "encoderUpperCCW": "AS1000_PFD_COM_Large_DEC",
+                            "encoderLowerSwitch": "AS1000_PFD_COM_Push",
+                            "encoderUpperSwitch": "AS1000_PFD_COM_Push",
+                            "actionType": "SimEventId"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_crsknob",
+                    "type": "imageButton",
+                    "image": "knob_crs.png",
+                    "left": 2334,
+                    "top": 334,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.crsKnob"
+                    },
+                    "highlight": true,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_CRS_KNOB_SELECT",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "useDualEncoder": true,
+                        "encoderAction": {
+                            "encoderLowerCW": "AS1000_PFD_BARO_INC",
+                            "encoderLowerCCW": "AS1000_PFD_BARO_DEC",
+                            "encoderUpperCW": "AS1000_PFD_CRS_INC",
+                            "encoderUpperCCW": "AS1000_PFD_CRS_DEC",
+                            "encoderLowerSwitch": "AS1000_PFD_CRS_PUSH",
+                            "encoderUpperSwitch": "AS1000_PFD_CRS_PUSH",
+                            "actionType": "SimEventId"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_rangeknob",
+                    "type": "imageButton",
+                    "image": "knob_range.png",
+                    "left": 2339,
+                    "top": 493,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.rangeKnob"
+                    },
+                    "highlight": true,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_MAP_KNOB_SELECT",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "useEncoder": true,
+                        "encoderAction": {
+                            "encoderLowerCW": "AS1000_MFD_RANGE_INC",
+                            "encoderLowerCCW": "AS1000_MFD_RANGE_DEC",
+                            "encoderLowerSwitch": "AS1000_MFD_JOYSTICK_PUSH",
+                            "encoderUpperCW": "AS1000_MFD_RANGE_INC",
+                            "encoderUpperCCW": "AS1000_MFD_RANGE_DEC",
+                            "encoderUpperSwitch": "AS1000_MFD_JOYSTICK_PUSH",
+                            "joystick1up": "AS1000_MFD_JOYSTICK_UP",
+                            "joystick1down": "AS1000_MFD_JOYSTICK_DOWN",
+                            "joystick1left": "AS1000_MFD_JOYSTICK_LEFT",
+                            "joystick1right": "AS1000_MFD_JOYSTICK_RIGHT",
+                            "joystick1switch": "AS1000_MFD_JOYSTICK_PUSH",
+                            "actionType": "SimEventId"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_fmsknob",
+                    "type": "imageButton",
+                    "image": "knob.png",
+                    "left": 2331,
+                    "top": 791,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.regularKnob"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_FMS_KNOB_SELECT",
+                                "actionType": "EncoderAction"
+                            }
+                        ],
+                        "useDualEncoder": true
+                    }
+                },
+                {
+                    "id": "btn_ap",
+                    "type": "imageButton",
+                    "image": "button_ap.png",
+                    "left": 22,
+                    "top": 468,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AP_MASTER",
+                                "actionType": "SimEventId"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "btn_fd",
+                    "type": "imageButton",
+                    "image": "button_fd.png",
+                    "left": 94,
+                    "top": 468,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "TOGGLE_FLIGHT_DIRECTOR",
+                                "actionType": "SimEventId"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "btn_hdg",
+                    "type": "imageButton",
+                    "image": "button_hdg.png",
+                    "left": 22,
+                    "top": 518,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AP_PANEL_HEADING_HOLD",
+                                "actionType": "SimEventId"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "btn_alt",
+                    "type": "imageButton",
+                    "image": "button_alt.png",
+                    "left": 94,
+                    "top": 518,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AP_PANEL_ALTITUDE_HOLD",
+                                "actionType": "SimEventId"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "btn_nav",
+                    "type": "imageButton",
+                    "image": "button_nav.png",
+                    "left": 22,
+                    "top": 568,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AP_NAV1_HOLD",
+                                "actionType": "SimEventId"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "btn_vnv",
+                    "type": "imageButton",
+                    "image": "button_vnv.png",
+                    "left": 94,
+                    "top": 568,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_VNAV_TOGGLE",
+                                "actionType": "SimEventId"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "btn_apr",
+                    "type": "imageButton",
+                    "image": "button_apr.png",
+                    "left": 22,
+                    "top": 619,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AP_APR_HOLD",
+                                "actionType": "SimEventId"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "btn_bc",
+                    "type": "imageButton",
+                    "image": "button_bc.png",
+                    "left": 94,
+                    "top": 619,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AP_BC_HOLD",
+                                "actionType": "SimEventId"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "btn_vs",
+                    "type": "imageButton",
+                    "image": "button_vs.png",
+                    "left": 22,
+                    "top": 669,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AP_PANEL_VS_HOLD",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "encoderLowerCW": "AS1000_MFD_NOSE_UP",
+                            "encoderLowerCCW": "AS1000_MFD_NOSE_DN",
+                            "actionType": "SimEventId"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_flc",
+                    "type": "imageButton",
+                    "image": "button_flc.png",
+                    "left": 22,
+                    "top": 719,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_FLC_Push",
+                                "actionType": "SimEventId"
+                            },
+                            {
+                                "action": "AP_SPD_VAR_SET",
+                                "actionValueVariable": "PLANE_AIRSPEED",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "encoderLowerCW": "AS1000_MFD_NOSE_DN",
+                            "encoderLowerCCW": "AS1000_MFD_NOSE_UP",
+                            "actionType": "SimEventId"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_speedknob",
+                    "type": "imageButton",
+                    "image": "knob_speed.png",
+                    "left": 96,
+                    "top": 668,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.speedKnob"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AIRSPEED_BUG_SELECT",
+                                "actionType": "EncoderAction"
+                            }
+                        ],
+                        "useEncoder": true
+                    }
+                },
+                {
+                    "id": "btn_dir",
+                    "type": "imageButton",
+                    "image": "button_dir.png",
+                    "left": 2306,
+                    "top": 618,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_DIRECTTO",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_menu",
+                    "type": "imageButton",
+                    "image": "button_menu.png",
+                    "left": 2379,
+                    "top": 618,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_MENU_Push",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_fpl",
+                    "type": "imageButton",
+                    "image": "button_fpl.png",
+                    "left": 2306,
+                    "top": 670,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_FPL_Push",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_proc",
+                    "type": "imageButton",
+                    "image": "button_proc.png",
+                    "left": 2379,
+                    "top": 670,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_PROC_Push",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_clr",
+                    "type": "imageButton",
+                    "image": "button_clr.png",
+                    "left": 2306,
+                    "top": 722,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_CLR",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_ent",
+                    "type": "imageButton",
+                    "image": "button_ent.png",
+                    "left": 2379,
+                    "top": 722,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_ENT_Push",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_pfd_1",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 208,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_SOFTKEYS_1",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_pfd_2",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 292,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_SOFTKEYS_2",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_pfd_3",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 378,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_SOFTKEYS_3",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_pfd_4",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 463,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_SOFTKEYS_4",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_pfd_5",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 549,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_SOFTKEYS_5",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_pfd_6",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 636,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_SOFTKEYS_6",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_pfd_7",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 721,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_SOFTKEYS_7",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_pfd_8",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 804,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_SOFTKEYS_8",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_pfd_9",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 890,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_SOFTKEYS_9",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_pfd_10",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 976,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_SOFTKEYS_10",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_pfd_11",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 1061,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_SOFTKEYS_11",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_pfd_12",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 1145,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_SOFTKEYS_12",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_mfd_1",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 1258,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_SOFTKEYS_1",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_mfd_2",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 1343,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_SOFTKEYS_2",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_mfd_3",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 1429,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_SOFTKEYS_3",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_mfd_4",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 1514,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_SOFTKEYS_4",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_mfd_5",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 1600,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_SOFTKEYS_5",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_mfd_6",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 1686,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_SOFTKEYS_6",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_mfd_7",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 1770,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_SOFTKEYS_7",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_mfd_8",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 1854,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_SOFTKEYS_8",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_mfd_9",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 1940,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_SOFTKEYS_9",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_mfd_10",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 2024,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_SOFTKEYS_10",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_mfd_11",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 2110,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_SOFTKEYS_11",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_mfd_12",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 2195,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_SOFTKEYS_12",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "id": "KODIAK_PFD_ONLY_DEF",
+        "value": {
+            "panelSize": {
+                "width": 1408,
+                "height": 914
+            },
+            "backgroundImage": "background_pfd_only.png",
+            "controlSize": {
+                "regularKnob": {
+                    "width": 77,
+                    "height": 77
+                },
+                "crsKnob": {
+                    "width": 79,
+                    "height": 79
+                },
+                "volKnob": {
+                    "width": 49,
+                    "height": 49
+                },
+                "rangeKnob": {
+                    "width": 66,
+                    "height": 66
+                },
+                "buttonBase": {
+                    "width": 57,
+                    "height": 36
+                },
+                "speedKnob": {
+                    "width": 53,
+                    "height": 94
+                }
+            },
+            "encoderAction": {
+                "pfdFms": {
+                    "encoderLowerCW": "AS1000_PFD_FMS_Lower_INC",
+                    "encoderLowerCCW": "AS1000_PFD_FMS_Lower_DEC",
+                    "encoderUpperCW": "AS1000_PFD_FMS_Upper_INC",
+                    "encoderUpperCCW": "AS1000_PFD_FMS_Upper_DEC",
+                    "encoderLowerSwitch": "AS1000_PFD_FMS_Upper_PUSH",
+                    "encoderUpperSwitch": "AS1000_PFD_FMS_Upper_PUSH",
+                    "actionType": "SimEventId"
+                }
+            },
+            "panelControlDefinitions": [
+                {
+                    "id": "btn_vol1knob",
+                    "type": "imageButton",
+                    "image": "knob_vol.png",
+                    "left": 60,
+                    "top": 41,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.volKnob"
+                    },
+                    "highlight": true,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_VOL1_KNOB_SELECT",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "useEncoder": true,
+                        "encoderAction": {
+                            "encoderLowerCW": "AS1000_PFD_VOL_1_INC",
+                            "encoderLowerCCW": "AS1000_PFD_VOL_1_DEC",
+                            "encoderUpperCW": "AS1000_PFD_VOL_1_INC",
+                            "encoderUpperCCW": "AS1000_PFD_VOL_1_DEC",
+                            "actionType": "SimEventId"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_vol2knob",
+                    "type": "imageButton",
+                    "image": "knob_vol.png",
+                    "left": 1296,
+                    "top": 41,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.volKnob"
+                    },
+                    "highlight": true,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_VOL2_KNOB_SELECT",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "useEncoder": true,
+                        "encoderAction": {
+                            "encoderLowerCW": "AS1000_PFD_VOL_2_INC",
+                            "encoderLowerCCW": "AS1000_PFD_VOL_2_DEC",
+                            "encoderUpperCW": "AS1000_PFD_VOL_2_INC",
+                            "encoderUpperCCW": "AS1000_PFD_VOL_2_DEC",
+                            "actionType": "SimEventId"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_navknob",
+                    "type": "imageButton",
+                    "image": "knob.png",
+                    "left": 47,
+                    "top": 171,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.regularKnob"
+                    },
+                    "highlight": true,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_NAV_KNOB_SELECT",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "useDualEncoder": true,
+                        "encoderAction": {
+                            "encoderLowerCW": "AS1000_PFD_NAV_Large_INC",
+                            "encoderLowerCCW": "AS1000_PFD_NAV_Large_DEC",
+                            "encoderUpperCW": "AS1000_PFD_NAV_Small_INC",
+                            "encoderUpperCCW": "AS1000_PFD_NAV_Small_DEC",
+                            "encoderLowerSwitch": "AS1000_PFD_NAV_Push",
+                            "encoderUpperSwitch": "AS1000_PFD_NAV_Push",
+                            "actionType": "SimEventId"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_navswap",
+                    "type": "imageButton",
+                    "image": "button_swap.png",
+                    "left": 97,
+                    "top": 104,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_NAV_Switch",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "encoderLowerCW": "AS1000_PFD_NAV_Large_INC",
+                            "encoderLowerCCW": "AS1000_PFD_NAV_Large_DEC",
+                            "encoderUpperCW": "AS1000_PFD_NAV_Small_INC",
+                            "encoderUpperCCW": "AS1000_PFD_NAV_Small_DEC",
+                            "encoderLowerSwitch": "AS1000_PFD_NAV_Push",
+                            "encoderUpperSwitch": "AS1000_PFD_NAV_Push",
+                            "actionType": "SimEventId"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_hdgknob",
+                    "type": "imageButton",
+                    "image": "knob_hdg.png",
+                    "left": 46,
+                    "top": 339,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.regularKnob"
+                    },
+                    "highlight": true,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_HDG_KNOB_SELECT",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "useDualEncoder": true,
+                        "encoderAction": {
+                            "encoderLowerCW": "AS1000_PFD_HEADING_FAST_INC",
+                            "encoderLowerCCW": "AS1000_PFD_HEADING_FAST_DEC",
+                            "encoderUpperCW": "AS1000_PFD_HEADING_INC",
+                            "encoderUpperCCW": "AS1000_PFD_HEADING_DEC",
+                            "encoderLowerSwitch": "AS1000_PFD_HEADING_SYNC",
+                            "encoderUpperSwitch": "AS1000_PFD_HEADING_SYNC",
+                            "actionType": "SimEventId"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_altknob",
+                    "type": "imageButton",
+                    "image": "knob.png",
+                    "left": 48,
+                    "top": 790,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.regularKnob"
+                    },
+                    "highlight": true,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_ALT_KNOB_SELECT",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "useDualEncoder": true,
+                        "encoderAction": {
+                            "encoderLowerCW": "AS1000_AP_ALT_INC_1000",
+                            "encoderLowerCCW": "AS1000_AP_ALT_DEC_1000",
+                            "encoderLowerSwitch": "AS1000_AP_ALT_SYNC",
+                            "encoderUpperCW": "AS1000_AP_ALT_INC_100",
+                            "encoderUpperCCW": "AS1000_AP_ALT_DEC_100",
+                            "encoderUpperSwitch": "AS1000_AP_ALT_SYNC",
+                            "actionType": "SimEventId"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_comknob",
+                    "type": "imageButton",
+                    "image": "knob.png",
+                    "left": 1282,
+                    "top": 170,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.regularKnob"
+                    },
+                    "highlight": true,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_COM_KNOB_SELECT",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "useDualEncoder": true,
+                        "encoderAction": {
+                            "encoderLowerCW": "AS1000_PFD_COM_Large_INC",
+                            "encoderLowerCCW": "AS1000_PFD_COM_Large_DEC",
+                            "encoderLowerSwitch": "AS1000_PFD_COM_Push",
+                            "encoderUpperCW": "AS1000_PFD_COM_Small_INC",
+                            "encoderUpperCCW": "AS1000_PFD_COM_Small_DEC",
+                            "encoderUpperSwitch": "AS1000_PFD_COM_Push",
+                            "actionType": "SimEventId"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_comswap",
+                    "type": "imageButton",
+                    "image": "button_swap.png",
+                    "left": 1252,
+                    "top": 104,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_COM_Switch",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "encoderLowerw": "AS1000_PFD_COM_Small_INC",
+                            "encoderLowerCCW": "AS1000_PFD_COM_Small_DEC",
+                            "encoderUpperCW": "AS1000_PFD_COM_Large_INC",
+                            "encoderUpperCCW": "AS1000_PFD_COM_Large_DEC",
+                            "encoderLowerSwitch": "AS1000_PFD_COM_Push",
+                            "encoderUpperSwitch": "AS1000_PFD_COM_Push",
+                            "actionType": "SimEventId"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_crsknob",
+                    "type": "imageButton",
+                    "image": "knob_crs.png",
+                    "left": 1282,
+                    "top": 334,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.crsKnob"
+                    },
+                    "highlight": true,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_CRS_KNOB_SELECT",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "useDualEncoder": true,
+                        "encoderAction": {
+                            "encoderLowerCW": "AS1000_PFD_BARO_INC",
+                            "encoderLowerCCW": "AS1000_PFD_BARO_DEC",
+                            "encoderUpperCW": "AS1000_PFD_CRS_INC",
+                            "encoderUpperCCW": "AS1000_PFD_CRS_DEC",
+                            "encoderLowerSwitch": "AS1000_PFD_CRS_PUSH",
+                            "encoderUpperSwitch": "AS1000_PFD_CRS_PUSH",
+                            "actionType": "SimEventId"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_rangeknob",
+                    "type": "imageButton",
+                    "image": "knob_range.png",
+                    "left": 1287,
+                    "top": 493,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.rangeKnob"
+                    },
+                    "highlight": true,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_MAP_KNOB_SELECT",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "useEncoder": true,
+                        "encoderAction": {
+                            "encoderLowerCW": "AS1000_PFD_RANGE_INC",
+                            "encoderLowerCCW": "AS1000_PFD_RANGE_DEC",
+                            "encoderLowerSwitch": "AS1000_PFD_JOYSTICK_PUSH",
+                            "encoderUpperCW": "AS1000_PFD_RANGE_INC",
+                            "encoderUpperCCW": "AS1000_PFD_RANGE_DEC",
+                            "encoderUpperSwitch": "AS1000_PFD_JOYSTICK_PUSH",
+                            "joystick1up": "AS1000_PFD_JOYSTICK_UP",
+                            "joystick1down": "AS1000_PFD_JOYSTICK_DOWN",
+                            "joystick1left": "AS1000_PFD_JOYSTICK_LEFT",
+                            "joystick1right": "AS1000_PFD_JOYSTICK_RIGHT",
+                            "joystick1switch": "AS1000_PFD_JOYSTICK_PUSH",
+                            "actionType": "SimEventId"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_fmsknob",
+                    "type": "imageButton",
+                    "image": "knob.png",
+                    "left": 1281,
+                    "top": 791,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.regularKnob"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_FMS_KNOB_SELECT",
+                                "actionType": "EncoderAction"
+                            }
+                        ],
+                        "useDualEncoder": true
+                    }
+                },
+                {
+                    "id": "btn_ap",
+                    "type": "imageButton",
+                    "image": "button_ap.png",
+                    "left": 22,
+                    "top": 468,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AP_MASTER",
+                                "actionType": "SimEventId"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "btn_fd",
+                    "type": "imageButton",
+                    "image": "button_fd.png",
+                    "left": 94,
+                    "top": 468,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "TOGGLE_FLIGHT_DIRECTOR",
+                                "actionType": "SimEventId"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "btn_hdg",
+                    "type": "imageButton",
+                    "image": "button_hdg.png",
+                    "left": 22,
+                    "top": 518,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AP_PANEL_HEADING_HOLD",
+                                "actionType": "SimEventId"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "btn_alt",
+                    "type": "imageButton",
+                    "image": "button_alt.png",
+                    "left": 94,
+                    "top": 518,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AP_PANEL_ALTITUDE_HOLD",
+                                "actionType": "SimEventId"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "btn_nav",
+                    "type": "imageButton",
+                    "image": "button_nav.png",
+                    "left": 22,
+                    "top": 568,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AP_NAV1_HOLD",
+                                "actionType": "SimEventId"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "btn_vnv",
+                    "type": "imageButton",
+                    "image": "button_vnv.png",
+                    "left": 94,
+                    "top": 568,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_VNAV_TOGGLE",
+                                "actionType": "SimEventId"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "btn_apr",
+                    "type": "imageButton",
+                    "image": "button_apr.png",
+                    "left": 22,
+                    "top": 619,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AP_APR_HOLD",
+                                "actionType": "SimEventId"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "btn_bc",
+                    "type": "imageButton",
+                    "image": "button_bc.png",
+                    "left": 94,
+                    "top": 619,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AP_BC_HOLD",
+                                "actionType": "SimEventId"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "btn_vs",
+                    "type": "imageButton",
+                    "image": "button_vs.png",
+                    "left": 22,
+                    "top": 669,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AP_PANEL_VS_HOLD",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "encoderLowerCW": "AS1000_PFD_NOSE_UP",
+                            "encoderLowerCCW": "AS1000_PFD_NOSE_DN",
+                            "actionType": "SimEventId"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_flc",
+                    "type": "imageButton",
+                    "image": "button_flc.png",
+                    "left": 22,
+                    "top": 719,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_FLC_Push",
+                                "actionType": "SimEventId"
+                            },
+                            {
+                                "action": "AP_SPD_VAR_SET",
+                                "actionValueVariable": "PLANE_AIRSPEED",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "encoderLowerCW": "AS1000_PFD_NOSE_DN",
+                            "encoderLowerCCW": "AS1000_PFD_NOSE_UP",
+                            "actionType": "SimEventId"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_speedknob",
+                    "type": "imageButton",
+                    "image": "knob_speed.png",
+                    "left": 96,
+                    "top": 668,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.speedKnob"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AIRSPEED_BUG_SELECT",
+                                "actionType": "EncoderAction"
+                            }
+                        ],
+                        "useEncoder": true
+                    }
+                },
+                {
+                    "id": "btn_dir",
+                    "type": "imageButton",
+                    "image": "button_dir.png",
+                    "left": 1254,
+                    "top": 618,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_DIRECTTO",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.pfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_menu",
+                    "type": "imageButton",
+                    "image": "button_menu.png",
+                    "left": 1327,
+                    "top": 618,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_MENU_Push",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.pfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_fpl",
+                    "type": "imageButton",
+                    "image": "button_fpl.png",
+                    "left": 1254,
+                    "top": 670,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_FPL_Push",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.pfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_proc",
+                    "type": "imageButton",
+                    "image": "button_proc.png",
+                    "left": 1327,
+                    "top": 670,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_PROC_Push",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.pfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_clr",
+                    "type": "imageButton",
+                    "image": "button_clr.png",
+                    "left": 1254,
+                    "top": 722,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_CLR",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.pfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_ent",
+                    "type": "imageButton",
+                    "image": "button_ent.png",
+                    "left": 1327,
+                    "top": 722,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_ENT_Push",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.pfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_pfd_1",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 208,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_SOFTKEYS_1",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.pfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_pfd_2",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 292,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_SOFTKEYS_2",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.pfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_pfd_3",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 378,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_SOFTKEYS_3",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.pfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_pfd_4",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 463,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_SOFTKEYS_4",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.pfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_pfd_5",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 549,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_SOFTKEYS_5",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.pfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_pfd_6",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 636,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_SOFTKEYS_6",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.pfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_pfd_7",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 721,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_SOFTKEYS_7",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.pfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_pfd_8",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 804,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_SOFTKEYS_8",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.pfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_pfd_9",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 890,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_SOFTKEYS_9",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.pfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_pfd_10",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 976,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_SOFTKEYS_10",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.pfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_pfd_11",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 1061,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_SOFTKEYS_11",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.pfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_pfd_12",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 1145,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_PFD_SOFTKEYS_12",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.pfdFms"
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "id": "KODIAK_MFD_ONLY_DEF",
+        "value": {
+            "panelSize": {
+                "width": 1408,
+                "height": 914
+            },
+            "backgroundImage": "background_pfd_only.png",
+            "controlSize": {
+                "regularKnob": {
+                    "width": 77,
+                    "height": 77
+                },
+                "crsKnob": {
+                    "width": 79,
+                    "height": 79
+                },
+                "volKnob": {
+                    "width": 49,
+                    "height": 49
+                },
+                "rangeKnob": {
+                    "width": 66,
+                    "height": 66
+                },
+                "buttonBase": {
+                    "width": 57,
+                    "height": 36
+                },
+                "speedKnob": {
+                    "width": 53,
+                    "height": 94
+                }
+            },
+            "encoderAction": {
+                "mfdFms": {
+                    "encoderLowerCW": "AS1000_MFD_FMS_Lower_INC",
+                    "encoderLowerCCW": "AS1000_MFD_FMS_Lower_DEC",
+                    "encoderUpperCW": "AS1000_MFD_FMS_Upper_INC",
+                    "encoderUpperCCW": "AS1000_MFD_FMS_Upper_DEC",
+                    "encoderLowerSwitch": "AS1000_MFD_FMS_Upper_PUSH",
+                    "encoderUpperSwitch": "AS1000_MFD_FMS_Upper_PUSH",
+                    "actionType": "SimEventId"
+                }
+            },
+            "panelControlDefinitions": [
+                {
+                    "id": "btn_vol1knob",
+                    "type": "imageButton",
+                    "image": "knob_vol.png",
+                    "left": 60,
+                    "top": 41,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.volKnob"
+                    },
+                    "highlight": true,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_VOL1_KNOB_SELECT",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "useEncoder": true,
+                        "encoderAction": {
+                            "encoderLowerCW": "AS1000_MFD_VOL_1_INC",
+                            "encoderLowerCCW": "AS1000_MFD_VOL_1_DEC",
+                            "encoderUpperCW": "AS1000_MFD_VOL_1_INC",
+                            "encoderUpperCCW": "AS1000_MFD_VOL_1_DEC",
+                            "actionType": "SimEventId"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_vol2knob",
+                    "type": "imageButton",
+                    "image": "knob_vol.png",
+                    "left": 1296,
+                    "top": 41,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.volKnob"
+                    },
+                    "highlight": true,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_VOL2_KNOB_SELECT",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "useEncoder": true,
+                        "encoderAction": {
+                            "encoderLowerCW": "AS1000_MFD_VOL_2_INC",
+                            "encoderLowerCCW": "AS1000_MFD_VOL_2_DEC",
+                            "encoderUpperCW": "AS1000_MFD_VOL_2_INC",
+                            "encoderUpperCCW": "AS1000_MFD_VOL_2_DEC",
+                            "actionType": "SimEventId"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_navknob",
+                    "type": "imageButton",
+                    "image": "knob.png",
+                    "left": 47,
+                    "top": 171,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.regularKnob"
+                    },
+                    "highlight": true,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_NAV_KNOB_SELECT",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "useDualEncoder": true,
+                        "encoderAction": {
+                            "encoderLowerCW": "AS1000_MFD_NAV_Large_INC",
+                            "encoderLowerCCW": "AS1000_MFD_NAV_Large_DEC",
+                            "encoderUpperCW": "AS1000_MFD_NAV_Small_INC",
+                            "encoderUpperCCW": "AS1000_MFD_NAV_Small_DEC",
+                            "encoderLowerSwitch": "AS1000_MFD_NAV_Push",
+                            "encoderUpperSwitch": "AS1000_MFD_NAV_Push",
+                            "actionType": "SimEventId"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_navswap",
+                    "type": "imageButton",
+                    "image": "button_swap.png",
+                    "left": 97,
+                    "top": 104,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_NAV_Switch",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "encoderLowerCW": "AS1000_MFD_NAV_Large_INC",
+                            "encoderLowerCCW": "AS1000_MFD_NAV_Large_DEC",
+                            "encoderUpperCW": "AS1000_MFD_NAV_Small_INC",
+                            "encoderUpperCCW": "AS1000_MFD_NAV_Small_DEC",
+                            "encoderLowerSwitch": "AS1000_MFD_NAV_Push",
+                            "encoderUpperSwitch": "AS1000_MFD_NAV_Push",
+                            "actionType": "SimEventId"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_hdgknob",
+                    "type": "imageButton",
+                    "image": "knob_hdg.png",
+                    "left": 46,
+                    "top": 339,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.regularKnob"
+                    },
+                    "highlight": true,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_HDG_KNOB_SELECT",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "useDualEncoder": true,
+                        "encoderAction": {
+                            "encoderLowerCW": "AS1000_MFD_HEADING_FAST_INC",
+                            "encoderLowerCCW": "AS1000_MFD_HEADING_FAST_DEC",
+                            "encoderUpperCW": "AS1000_MFD_HEADING_INC",
+                            "encoderUpperCCW": "AS1000_MFD_HEADING_DEC",
+                            "encoderLowerSwitch": "AS1000_MFD_HEADING_SYNC",
+                            "encoderUpperSwitch": "AS1000_MFD_HEADING_SYNC",
+                            "actionType": "SimEventId"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_altknob",
+                    "type": "imageButton",
+                    "image": "knob.png",
+                    "left": 48,
+                    "top": 790,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.regularKnob"
+                    },
+                    "highlight": true,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_ALT_KNOB_SELECT",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "useDualEncoder": true,
+                        "encoderAction": {
+                            "encoderLowerCW": "AS1000_AP_ALT_INC_1000",
+                            "encoderLowerCCW": "AS1000_AP_ALT_DEC_1000",
+                            "encoderLowerSwitch": "AS1000_AP_ALT_SYNC",
+                            "encoderUpperCW": "AS1000_AP_ALT_INC_100",
+                            "encoderUpperCCW": "AS1000_AP_ALT_DEC_100",
+                            "encoderUpperSwitch": "AS1000_AP_ALT_SYNC",
+                            "actionType": "SimEventId"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_comknob",
+                    "type": "imageButton",
+                    "image": "knob.png",
+                    "left": 1282,
+                    "top": 170,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.regularKnob"
+                    },
+                    "highlight": true,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_COM_KNOB_SELECT",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "useDualEncoder": true,
+                        "encoderAction": {
+                            "encoderLowerCW": "AS1000_MFD_COM_Large_INC",
+                            "encoderLowerCCW": "AS1000_MFD_COM_Large_DEC",
+                            "encoderLowerSwitch": "AS1000_MFD_COM_Push",
+                            "encoderUpperCW": "AS1000_MFD_COM_Small_INC",
+                            "encoderUpperCCW": "AS1000_MFD_COM_Small_DEC",
+                            "encoderUpperSwitch": "AS1000_MFD_COM_Push",
+                            "actionType": "SimEventId"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_comswap",
+                    "type": "imageButton",
+                    "image": "button_swap.png",
+                    "left": 1252,
+                    "top": 104,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_COM_Switch",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "encoderLowerw": "AS1000_MFD_COM_Small_INC",
+                            "encoderLowerCCW": "AS1000_MFD_COM_Small_DEC",
+                            "encoderUpperCW": "AS1000_MFD_COM_Large_INC",
+                            "encoderUpperCCW": "AS1000_MFD_COM_Large_DEC",
+                            "encoderLowerSwitch": "AS1000_MFD_COM_Push",
+                            "encoderUpperSwitch": "AS1000_MFD_COM_Push",
+                            "actionType": "SimEventId"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_crsknob",
+                    "type": "imageButton",
+                    "image": "knob_crs.png",
+                    "left": 1282,
+                    "top": 334,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.crsKnob"
+                    },
+                    "highlight": true,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_CRS_KNOB_SELECT",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "useDualEncoder": true,
+                        "encoderAction": {
+                            "encoderLowerCW": "AS1000_MFD_BARO_INC",
+                            "encoderLowerCCW": "AS1000_MFD_BARO_DEC",
+                            "encoderUpperCW": "AS1000_MFD_CRS_INC",
+                            "encoderUpperCCW": "AS1000_MFD_CRS_DEC",
+                            "encoderLowerSwitch": "AS1000_MFD_CRS_PUSH",
+                            "encoderUpperSwitch": "AS1000_MFD_CRS_PUSH",
+                            "actionType": "SimEventId"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_rangeknob",
+                    "type": "imageButton",
+                    "image": "knob_range.png",
+                    "left": 1287,
+                    "top": 493,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.rangeKnob"
+                    },
+                    "highlight": true,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_MAP_KNOB_SELECT",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "useEncoder": true,
+                        "encoderAction": {
+                            "encoderLowerCW": "AS1000_MFD_RANGE_INC",
+                            "encoderLowerCCW": "AS1000_MFD_RANGE_DEC",
+                            "encoderLowerSwitch": "AS1000_MFD_JOYSTICK_PUSH",
+                            "encoderUpperCW": "AS1000_MFD_RANGE_INC",
+                            "encoderUpperCCW": "AS1000_MFD_RANGE_DEC",
+                            "encoderUpperSwitch": "AS1000_MFD_JOYSTICK_PUSH",
+                            "joystick1up": "AS1000_MFD_JOYSTICK_UP",
+                            "joystick1down": "AS1000_MFD_JOYSTICK_DOWN",
+                            "joystick1left": "AS1000_MFD_JOYSTICK_LEFT",
+                            "joystick1right": "AS1000_MFD_JOYSTICK_RIGHT",
+                            "joystick1switch": "AS1000_MFD_JOYSTICK_PUSH",
+                            "actionType": "SimEventId"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_fmsknob",
+                    "type": "imageButton",
+                    "image": "knob.png",
+                    "left": 1281,
+                    "top": 791,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.regularKnob"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_FMS_KNOB_SELECT",
+                                "actionType": "EncoderAction"
+                            }
+                        ],
+                        "useDualEncoder": true
+                    }
+                },
+                {
+                    "id": "btn_ap",
+                    "type": "imageButton",
+                    "image": "button_ap.png",
+                    "left": 22,
+                    "top": 468,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AP_MASTER",
+                                "actionType": "SimEventId"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "btn_fd",
+                    "type": "imageButton",
+                    "image": "button_fd.png",
+                    "left": 94,
+                    "top": 468,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "TOGGLE_FLIGHT_DIRECTOR",
+                                "actionType": "SimEventId"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "btn_hdg",
+                    "type": "imageButton",
+                    "image": "button_hdg.png",
+                    "left": 22,
+                    "top": 518,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AP_PANEL_HEADING_HOLD",
+                                "actionType": "SimEventId"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "btn_alt",
+                    "type": "imageButton",
+                    "image": "button_alt.png",
+                    "left": 94,
+                    "top": 518,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AP_PANEL_ALTITUDE_HOLD",
+                                "actionType": "SimEventId"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "btn_nav",
+                    "type": "imageButton",
+                    "image": "button_nav.png",
+                    "left": 22,
+                    "top": 568,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AP_NAV1_HOLD",
+                                "actionType": "SimEventId"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "btn_vnv",
+                    "type": "imageButton",
+                    "image": "button_vnv.png",
+                    "left": 94,
+                    "top": 568,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_VNAV_TOGGLE",
+                                "actionType": "SimEventId"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "btn_apr",
+                    "type": "imageButton",
+                    "image": "button_apr.png",
+                    "left": 22,
+                    "top": 619,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AP_APR_HOLD",
+                                "actionType": "SimEventId"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "btn_bc",
+                    "type": "imageButton",
+                    "image": "button_bc.png",
+                    "left": 94,
+                    "top": 619,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AP_BC_HOLD",
+                                "actionType": "SimEventId"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "btn_vs",
+                    "type": "imageButton",
+                    "image": "button_vs.png",
+                    "left": 22,
+                    "top": 669,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AP_PANEL_VS_HOLD",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "encoderLowerCW": "AS1000_MFD_NOSE_UP",
+                            "encoderLowerCCW": "AS1000_MFD_NOSE_DN",
+                            "actionType": "SimEventId"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_flc",
+                    "type": "imageButton",
+                    "image": "button_flc.png",
+                    "left": 22,
+                    "top": 719,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_FLC_Push",
+                                "actionType": "SimEventId"
+                            },
+                            {
+                                "action": "AP_SPD_VAR_SET",
+                                "actionValueVariable": "PLANE_AIRSPEED",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "encoderLowerCW": "AS1000_MFD_NOSE_DN",
+                            "encoderLowerCCW": "AS1000_MFD_NOSE_UP",
+                            "actionType": "SimEventId"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_speedknob",
+                    "type": "imageButton",
+                    "image": "knob_speed.png",
+                    "left": 96,
+                    "top": 668,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.speedKnob"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AIRSPEED_BUG_SELECT",
+                                "actionType": "EncoderAction"
+                            }
+                        ],
+                        "useEncoder": true
+                    }
+                },
+                {
+                    "id": "btn_dir",
+                    "type": "imageButton",
+                    "image": "button_dir.png",
+                    "left": 1254,
+                    "top": 618,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_DIRECTTO",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_menu",
+                    "type": "imageButton",
+                    "image": "button_menu.png",
+                    "left": 1327,
+                    "top": 618,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_MENU_Push",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_fpl",
+                    "type": "imageButton",
+                    "image": "button_fpl.png",
+                    "left": 1254,
+                    "top": 670,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_FPL_Push",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_proc",
+                    "type": "imageButton",
+                    "image": "button_proc.png",
+                    "left": 1327,
+                    "top": 670,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_PROC_Push",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_clr",
+                    "type": "imageButton",
+                    "image": "button_clr.png",
+                    "left": 1254,
+                    "top": 722,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_CLR",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_ent",
+                    "type": "imageButton",
+                    "image": "button_ent.png",
+                    "left": 1327,
+                    "top": 722,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_ENT_Push",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_mfd_1",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 208,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_SOFTKEYS_1",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_mfd_2",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 292,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_SOFTKEYS_2",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_mfd_3",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 378,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_SOFTKEYS_3",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_mfd_4",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 463,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_SOFTKEYS_4",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_mfd_5",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 549,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_SOFTKEYS_5",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_mfd_6",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 636,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_SOFTKEYS_6",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_mfd_7",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 721,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_SOFTKEYS_7",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_mfd_8",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 804,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_SOFTKEYS_8",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_mfd_9",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 890,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_SOFTKEYS_9",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_mfd_10",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 976,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_SOFTKEYS_10",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_mfd_11",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 1061,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_SOFTKEYS_11",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                },
+                {
+                    "id": "btn_softkey_mfd_12",
+                    "type": "imageButton",
+                    "image": "button_softkey.png",
+                    "left": 1145,
+                    "top": 850,
+                    "controlSize": {
+                        "$ref": "#value.controlSize.buttonBase"
+                    },
+                    "highlight": false,
+                    "action": {
+                        "touchActions": [
+                            {
+                                "action": "AS1000_MFD_SOFTKEYS_12",
+                                "actionType": "SimEventId"
+                            }
+                        ],
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
+                    }
+                }
+            ]
+        }
+    }
+]

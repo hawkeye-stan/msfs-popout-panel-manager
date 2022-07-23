@@ -1,6 +1,34 @@
 # Version History
 <hr/>
 
+## Version 3.4
+
+* Changed where user data files are stored. Previously, the files are saved in subfolder "userdata" in your installation directory. Now they're moved to your Windows "Documents" folder under "MSFS Pop Out Panel Manager" for easy access. When you first start the application, a data migration step will occur and your user data files will be moved to this new folder location. This change will allow you to install Pop Out Manager to any folder of your choice in your machine since the application no longer requires write access to your installation folder.
+
+* Upgraded the application to use latest .NET 6.0 framework. You'll notice after user data migration, your installation folder will have only one executable file left.  Please don't be alarmed. This file is much bigger (67MB) since all .NET dependencies and application files are now packaged into a single file. You no longer need to manually install .NET framework to run this application.
+
+* Revamped how Auto Pop Out Panel works. The app no longer tries to hunt and click "Ready to Fly" button by using "Ready to Fly Button Skipper" plugin I created. This community plugin is included in the installation folder and is required for Auto Pop Out Panel to work. Please copy the folder "zzz-ready-to-fly-button-skipper" in subfolder "community" in your installation location into your MSFS community folder. [(Issue #29)](https://github.com/hawkeye-stan/msfs-popout-panel-manager/issues/29).
+
+* Updated how the application detects Sim Start and Sim Stop to perform Auto Pop Out. It now uses the much more reliable camera state SimConnect variable for detection.
+
+* Fixed an issue where full screen mode panel does not expand the panel to fill the entire monitor. To use full screen mode correctly, once panel is popped out, move panel to desire monitor and adjust panel window to remove all top/bottom/left/right black bar. Then click on full screen mode checkbox for the panel. Next time when pop out is executed,  panel will be moved to correct monitor and it will expand to fill the entire screen.  [(Issue #27)](https://github.com/hawkeye-stan/msfs-popout-panel-manager/issues/27)
+
+* Added a new feature to enable or disable fall back camera once pop out is completed. You can also define a custom camera view to load if centering cockpit view does not work for you. [(Issue #28)](https://github.com/hawkeye-stan/msfs-popout-panel-manager/issues/28)
+
+* Added feature to change message dialog on screen duration. You can disable on screen message by setting the duration value to zero.
+
+* (New for SU10+) Added additional keystroke option to pop out panel Ctrl + Right Ctrl + Left click instead of just Right-Alt Left click. This is designed for users that have a keyboard without the Right-Alt key. To use this feature, please map (CTRL + RIGHT CTRL) in Control Options => Miscellaneous => New UI Window Mode in the game.
+
+* Changed how auto pop out with bound livery works. When you start or restart Pop Out Manager and if you're already in a flight with a bound profile, Pop Out Manager will automatic re-pop out all panels for you to sync up all settings based on your cold start or hot start configuration.
+
+* Cleaned up UI and improved UI guidance for user by enable/disabling buttons and actions as needed.
+
+* Lots of the code is rewritten from the ground up for better performance and stability. It also prepares the code architecture for v4.0 new features. Please be patient as I continue to implement v4.0. As always, please report issue and comment and I welcome all feedbacks and will do my best to fix or implement requested features.
+
+Known Issues:
+
+* In SU 10 beta (1.27.11.0), when using Touch Enabled and Full Screen Mode simultaneously, touch event may not register correctly. So if you want to use touch feature, please run the panel in regular pop out window mode instead of full screen.
+
 ## Version 3.3.7
 * Fixed an issue where panel number circles are displayed at incorrect location instead of at the location where you clicked your mouse. This issue will most likely occur if your monitor display scale is set to greater than 100% in Windows display setting.
 

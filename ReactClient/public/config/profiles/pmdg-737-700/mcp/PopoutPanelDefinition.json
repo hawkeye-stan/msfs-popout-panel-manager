@@ -1,0 +1,1066 @@
+{
+    "id": "PMDG_737_700_MCP_DEF",
+    "value": {
+        "panelSize": {
+            "width": 1920,
+            "height": 329
+        },
+        "backgroundImage": "background_mcp.png",
+        "controlSize": {
+            "regularButton": {
+                "width": 65,
+                "height": 65
+            },
+            "crsKnob": {
+                "width": 81,
+                "height": 81
+            },
+            "mcpKnob": {
+                "width": 81,
+                "height": 81
+            },
+            "bkKnob": {
+                "width": 81,
+                "height": 81
+            },
+            "toggleButton": {
+                "width": 97,
+                "height": 97
+            },
+            "knobWheel": {
+                "width": 33,
+                "height": 121
+            },
+            "buttonApDisengage": {
+                "width": 130,
+                "height": 41
+            },
+            "buttonIntv": {
+                "width": 45,
+                "height": 45
+            },
+            "buttonMaster": {
+                "width": 36,
+                "height": 36
+            },
+            "atArmLight": {
+                "width": 40,
+                "height": 14
+            },
+            "threeDigitDisplay": {
+                "width": 75,
+                "height": 35
+            },
+            "fourDigitDisplay": {
+                "width": 100,
+                "height": 35
+            },
+            "fiveDigitDisplay": {
+                "width": 125,
+                "height": 35
+            }
+        },
+        "panelControlDefinitions": [
+            {
+                "id": "ind_at_arm",
+                "type": "bindableImageButton",
+                "left": 265,
+                "top": 57,
+                "controlSize": {
+                    "$ref": "#value.controlSize.atArmLight"
+                },
+                "highlight": false,
+                "binding": {
+                    "variable": "PMDG_B737_MCP_AT_ARM_LIGHT",
+                    "images": [
+                        {
+                            "url": "button_at_arm_off.png",
+                            "val": 0
+                        },
+                        {
+                            "url": "button_at_arm_on.png",
+                            "val": 0.5
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_at_arm",
+                "type": "bindableImageButton",
+                "left": 240,
+                "top": 68,
+                "controlSize": {
+                    "$ref": "#value.controlSize.toggleButton"
+                },
+                "highlight": false,
+                "binding": {
+                    "variable": "PMDG_B737_MCP_AT_ARM_LIGHT",
+                    "images": [
+                        {
+                            "url": "button_toggle_left_off.png",
+                            "val": 0
+                        },
+                        {
+                            "url": "button_toggle_left_on.png",
+                            "val": 0.5
+                        }
+                    ]
+                },
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "38001 (>K:ROTOR_BRAKE)",
+                            "actionType": "SimVarCode"
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_cpt_crs_knob",
+                "type": "imageButton",
+                "left": 96,
+                "top": 123,
+                "controlSize": {
+                    "$ref": "#value.controlSize.crsKnob"
+                },
+                "highlight": true,
+                "image": "knob_crs.png",
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "PMDG_B737_MCP_CPT_CRS_SELECT",
+                            "actionType": "SimVarCode"
+                        }
+                    ],
+                    "useEncoder": true,
+                    "encoderAction": {
+                        "encoderLowerCW": "37607 (>K:ROTOR_BRAKE)",
+                        "encoderLowerCCW": "37608 (>K:ROTOR_BRAKE)",
+                        "encoderUpperCW": "37607 (>K:ROTOR_BRAKE)",
+                        "encoderUpperCCW": "37608 (>K:ROTOR_BRAKE)",
+                        "actionType": "SimVarCode"
+                    }
+                }
+            },
+            {
+                "id": "btn_fo_crs_knob",
+                "type": "imageButton",
+                "left": 1737,
+                "top": 123,
+                "controlSize": {
+                    "$ref": "#value.controlSize.crsKnob"
+                },
+                "highlight": true,
+                "image": "knob_crs.png",
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "PMDG_B737_MCP_FO_CRS_SELECT",
+                            "actionType": "SimEventId"
+                        }
+                    ],
+                    "useEncoder": true,
+                    "encoderAction": {
+                        "encoderLowerCW": "40907 (>K:ROTOR_BRAKE)",
+                        "encoderLowerCCW": "40908 (>K:ROTOR_BRAKE)",
+                        "encoderUpperCW": "40907 (>K:ROTOR_BRAKE)",
+                        "encoderUpperCCW": "40908 (>K:ROTOR_BRAKE)",
+                        "actionType": "SimVarCode"
+                    }
+                }
+            },
+            {
+                "id": "btn_cpt_fd",
+                "type": "bindableImageButton",
+                "left": 168,
+                "top": 203,
+                "controlSize": {
+                    "$ref": "#value.controlSize.toggleButton"
+                },
+                "highlight": false,
+                "binding": {
+                    "variable": "PMDG_B737_MCP_CPT_FD_IND",
+                    "images": [
+                        {
+                            "url": "button_toggle_left_off.png",
+                            "val": 0
+                        },
+                        {
+                            "url": "button_toggle_left_on.png",
+                            "val": 1
+                        }
+                    ]
+                },
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "37801 (>K:ROTOR_BRAKE)",
+                            "actionType": "SimVarCode"
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_cpt_fd_ind",
+                "type": "bindableImageButton",
+                "left": 192,
+                "top": 134,
+                "controlSize": {
+                    "$ref": "#value.controlSize.buttonMaster"
+                },
+                "highlight": false,
+                "binding": {
+                    "variable": "PMDG_B737_MCP_CPT_FD_IND",
+                    "images": [
+                        {
+                            "url": "master_light_off.png",
+                            "val": 0
+                        },
+                        {
+                            "url": "master_light_on.png",
+                            "val": 1
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_fo_fd",
+                "type": "bindableImageButton",
+                "left": 1658,
+                "top": 203,
+                "controlSize": {
+                    "$ref": "#value.controlSize.toggleButton"
+                },
+                "highlight": false,
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "40701 (>K:ROTOR_BRAKE)",
+                            "actionType": "SimVarCode"
+                        }
+                    ]
+                },
+                "binding": {
+                    "variable": "PMDG_B737_MCP_FO_FD_IND",
+                    "images": [
+                        {
+                            "url": "button_toggle_right_off.png",
+                            "val": 0
+                        },
+                        {
+                            "url": "button_toggle_right_on.png",
+                            "val": 1
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_fo_fd_ind",
+                "type": "bindableImageButton",
+                "left": 1682,
+                "top": 134,
+                "controlSize": {
+                    "$ref": "#value.controlSize.buttonMaster"
+                },
+                "highlight": false,
+                "binding": {
+                    "variable": "PMDG_B737_MCP_FO_FD_IND",
+                    "images": [
+                        {
+                            "url": "master_light_off.png",
+                            "val": 0
+                        },
+                        {
+                            "url": "master_light_on.png",
+                            "val": 1
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_toga",
+                "type": "imageButton",
+                "image": "button_toga.png",
+                "left": 80,
+                "top": 225,
+                "controlSize": {
+                    "$ref": "#value.controlSize.regularButton"
+                },
+                "highlight": false,
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "68401 (>K:ROTOR_BRAKE)",
+                            "actionType": "SimVarCode"
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_hud",
+                "type": "imageButton",
+                "image": "button_hud.png",
+                "left": 1769,
+                "top": 225,
+                "controlSize": {
+                    "$ref": "#value.controlSize.regularButton"
+                },
+                "highlight": false,
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "PMDG_B737_MCP_HUD_SELECT",
+                            "actionType": "SimEventId"
+                        }
+                    ],
+                    "useEncoder": true,
+                    "encoderAction": {
+                        "encoderLowerCW": "98007 (>K:ROTOR_BRAKE)",
+                        "encoderLowerCCW": "98008 (>K:ROTOR_BRAKE)",
+                        "encoderLowerSwitch": "97901 (>K:ROTOR_BRAKE)",
+                        "encoderUpperCW": "98007 (>K:ROTOR_BRAKE)",
+                        "encoderUpperCCW": "98008 (>K:ROTOR_BRAKE)",
+                        "encoderUpperSwitch": "98101 (>K:ROTOR_BRAKE)",
+                        "actionType": "SimVarCode"
+                    }
+                }
+            },
+            {
+                "id": "btn_n1_limit",
+                "type": "bindableImageButton",
+                "left": 252,
+                "top": 225,
+                "controlSize": {
+                    "$ref": "#value.controlSize.regularButton"
+                },
+                "highlight": false,
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "38101 (>K:ROTOR_BRAKE)",
+                            "actionType": "SimVarCode"
+                        }
+                    ]
+                },
+                "binding": {
+                    "variable": "PMDG_B737_MCP_N1_IND",
+                    "images": [
+                        {
+                            "url": "button_n1_off.png",
+                            "val": 0
+                        },
+                        {
+                            "url": "button_n1_on.png",
+                            "val": 1
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_speed",
+                "type": "bindableImageButton",
+                "left": 342,
+                "top": 225,
+                "controlSize": {
+                    "$ref": "#value.controlSize.regularButton"
+                },
+                "highlight": false,
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "38201 (>K:ROTOR_BRAKE)",
+                            "actionType": "SimVarCode"
+                        }
+                    ]
+                },
+                "binding": {
+                    "variable": "PMDG_B737_MCP_SPEED_IND",
+                    "images": [
+                        {
+                            "url": "button_speed_off.png",
+                            "val": 0
+                        },
+                        {
+                            "url": "button_speed_on.png",
+                            "val": 1
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_lvl_chg",
+                "type": "bindableImageButton",
+                "left": 605,
+                "top": 225,
+                "controlSize": {
+                    "$ref": "#value.controlSize.regularButton"
+                },
+                "highlight": false,
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "39101 (>K:ROTOR_BRAKE)",
+                            "actionType": "SimVarCode"
+                        }
+                    ]
+                },
+                "binding": {
+                    "variable": "PMDG_B737_MCP_LVL_CHANGE_IND",
+                    "images": [
+                        {
+                            "url": "button_lvl_chg_off.png",
+                            "val": 0
+                        },
+                        {
+                            "url": "button_lvl_chg_on.png",
+                            "val": 1
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_hdg_sel",
+                "type": "bindableImageButton",
+                "left": 733,
+                "top": 225,
+                "controlSize": {
+                    "$ref": "#value.controlSize.regularButton"
+                },
+                "highlight": false,
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "39201 (>K:ROTOR_BRAKE)",
+                            "actionType": "SimVarCode"
+                        }
+                    ]
+                },
+                "binding": {
+                    "variable": "PMDG_B737_MCP_HDG_SEL_IND",
+                    "images": [
+                        {
+                            "url": "button_hdg_sel_off.png",
+                            "val": 0
+                        },
+                        {
+                            "url": "button_hdg_sel_on.png",
+                            "val": 1
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_app",
+                "type": "bindableImageButton",
+                "left": 865,
+                "top": 225,
+                "controlSize": {
+                    "$ref": "#value.controlSize.regularButton"
+                },
+                "highlight": false,
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "39301 (>K:ROTOR_BRAKE)",
+                            "actionType": "SimVarCode"
+                        }
+                    ]
+                },
+                "binding": {
+                    "variable": "PMDG_B737_MCP_APP_IND",
+                    "images": [
+                        {
+                            "url": "button_app_off.png",
+                            "val": 0
+                        },
+                        {
+                            "url": "button_app_on.png",
+                            "val": 1
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_alt_hld",
+                "type": "bindableImageButton",
+                "left": 1043,
+                "top": 225,
+                "controlSize": {
+                    "$ref": "#value.controlSize.regularButton"
+                },
+                "highlight": false,
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "39401 (>K:ROTOR_BRAKE)",
+                            "actionType": "SimVarCode"
+                        }
+                    ]
+                },
+                "binding": {
+                    "variable": "PMDG_B737_MCP_ALT_HOLD_IND",
+                    "images": [
+                        {
+                            "url": "button_alt_hld_off.png",
+                            "val": 0
+                        },
+                        {
+                            "url": "button_alt_hld_on.png",
+                            "val": 1
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_vnav",
+                "type": "bindableImageButton",
+                "left": 605,
+                "top": 34,
+                "controlSize": {
+                    "$ref": "#value.controlSize.regularButton"
+                },
+                "highlight": false,
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "38601 (>K:ROTOR_BRAKE)",
+                            "actionType": "SimVarCode"
+                        }
+                    ]
+                },
+                "binding": {
+                    "variable": "PMDG_B737_MCP_VNAV_IND",
+                    "images": [
+                        {
+                            "url": "button_vnav_off.png",
+                            "val": 0
+                        },
+                        {
+                            "url": "button_vnav_on.png",
+                            "val": 1
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_lnav",
+                "type": "bindableImageButton",
+                "left": 865,
+                "top": 34,
+                "controlSize": {
+                    "$ref": "#value.controlSize.regularButton"
+                },
+                "highlight": false,
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "39701 (>K:ROTOR_BRAKE)",
+                            "actionType": "SimVarCode"
+                        }
+                    ]
+                },
+                "binding": {
+                    "variable": "PMDG_B737_MCP_LNAV_IND",
+                    "images": [
+                        {
+                            "url": "button_lnav_off.png",
+                            "val": 0
+                        },
+                        {
+                            "url": "button_lnav_on.png",
+                            "val": 1
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_vor_loc",
+                "type": "bindableImageButton",
+                "left": 865,
+                "top": 130,
+                "controlSize": {
+                    "$ref": "#value.controlSize.regularButton"
+                },
+                "highlight": false,
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "39601 (>K:ROTOR_BRAKE)",
+                            "actionType": "SimVarCode"
+                        }
+                    ]
+                },
+                "binding": {
+                    "variable": "PMDG_B737_MCP_VOR_LOC_IND",
+                    "images": [
+                        {
+                            "url": "button_vor_loc_off.png",
+                            "val": 0
+                        },
+                        {
+                            "url": "button_vor_loc_on.png",
+                            "val": 1
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_cmd_a",
+                "type": "bindableImageButton",
+                "left": 1485,
+                "top": 55,
+                "controlSize": {
+                    "$ref": "#value.controlSize.regularButton"
+                },
+                "highlight": false,
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "40201 (>K:ROTOR_BRAKE)",
+                            "actionType": "SimVarCode"
+                        }
+                    ]
+                },
+                "binding": {
+                    "variable": "PMDG_B737_MCP_CMD_A_IND",
+                    "images": [
+                        {
+                            "url": "button_cmd_off.png",
+                            "val": 0
+                        },
+                        {
+                            "url": "button_cmd_on.png",
+                            "val": 1
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_cmd_b",
+                "type": "bindableImageButton",
+                "left": 1589,
+                "top": 55,
+                "controlSize": {
+                    "$ref": "#value.controlSize.regularButton"
+                },
+                "highlight": false,
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "40301 (>K:ROTOR_BRAKE)",
+                            "actionType": "SimVarCode"
+                        }
+                    ]
+                },
+                "binding": {
+                    "variable": "PMDG_B737_MCP_CMD_B_IND",
+                    "images": [
+                        {
+                            "url": "button_cmd_off.png",
+                            "val": 0
+                        },
+                        {
+                            "url": "button_cmd_on.png",
+                            "val": 1
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_cws_a",
+                "type": "bindableImageButton",
+                "left": 1485,
+                "top": 146,
+                "controlSize": {
+                    "$ref": "#value.controlSize.regularButton"
+                },
+                "highlight": false,
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "40401 (>K:ROTOR_BRAKE)",
+                            "actionType": "SimVarCode"
+                        }
+                    ]
+                },
+                "binding": {
+                    "variable": "PMDG_B737_MCP_CWS_A_IND",
+                    "images": [
+                        {
+                            "url": "button_cws_off.png",
+                            "val": 0
+                        },
+                        {
+                            "url": "button_cws_on.png",
+                            "val": 1
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_cws_b",
+                "type": "bindableImageButton",
+                "left": 1589,
+                "top": 146,
+                "controlSize": {
+                    "$ref": "#value.controlSize.regularButton"
+                },
+                "highlight": false,
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "40501 (>K:ROTOR_BRAKE)",
+                            "actionType": "SimVarCode"
+                        }
+                    ]
+                },
+                "binding": {
+                    "variable": "PMDG_B737_MCP_CWS_B_IND",
+                    "images": [
+                        {
+                            "url": "button_cws_off.png",
+                            "val": 0
+                        },
+                        {
+                            "url": "button_cws_on.png",
+                            "val": 1
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_hdg_bk_knob",
+                "type": "bindableImageButton",
+                "left": 726,
+                "top": 125,
+                "controlSize": {
+                    "$ref": "#value.controlSize.bkKnob"
+                },
+                "highlight": true,
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "PMDG_B737_MCP_BANK_ANGLE_SELECT",
+                            "actionType": "SimEventId"
+                        }
+                    ],
+                    "useDualEncoder": true,
+                    "encoderAction": {
+                        "encoderLowerCW": "38902 (>K:ROTOR_BRAKE)",
+                        "encoderLowerCCW": "38901 (>K:ROTOR_BRAKE)",
+                        "encoderUpperCW": "39007 (>K:ROTOR_BRAKE)",
+                        "encoderUpperCCW": "39008 (>K:ROTOR_BRAKE)",
+                        "actionType": "SimVarCode"
+                    }
+                },
+                "binding": {
+                    "variable": "PMDG_B737_MCP_BANK_ANGLE",
+                    "images": [
+                        {
+                            "url": "knob_bk.png",
+                            "rotate": 30,
+                            "val": 0
+                        },
+                        {
+                            "url": "knob_bk.png",
+                            "rotate": 60,
+                            "val": 10
+                        },
+                        {
+                            "url": "knob_bk.png",
+                            "rotate": 90,
+                            "val": 20
+                        },
+                        {
+                            "url": "knob_bk.png",
+                            "rotate": 120,
+                            "val": 30
+                        },
+                        {
+                            "url": "knob_bk.png",
+                            "rotate": 150,
+                            "val": 40
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_speed_knob",
+                "type": "imageButton",
+                "left": 465,
+                "top": 155,
+                "controlSize": {
+                    "$ref": "#value.controlSize.mcpKnob"
+                },
+                "highlight": true,
+                "image": "knob_mcp.png",
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "PMDG_B737_MCP_SPEED_SELECT",
+                            "actionType": "SimEventId"
+                        }
+                    ],
+                    "useEncoder": true,
+                    "encoderAction": {
+                        "encoderLowerCW": "38407 (>K:ROTOR_BRAKE)",
+                        "encoderLowerCCW": "38408 (>K:ROTOR_BRAKE)",
+                        "encoderUpperCW": "38407 (>K:ROTOR_BRAKE)",
+                        "encoderUpperCCW": "38408 (>K:ROTOR_BRAKE)",
+                        "actionType": "SimVarCode"
+                    }
+                }
+            },
+            {
+                "id": "btn_alt_knob",
+                "type": "imageButton",
+                "left": 1034,
+                "top": 124,
+                "controlSize": {
+                    "$ref": "#value.controlSize.mcpKnob"
+                },
+                "highlight": true,
+                "image": "knob_mcp.png",
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "PMDG_B737_MCP_ALT_SELECT",
+                            "actionType": "SimEventId"
+                        }
+                    ],
+                    "useEncoder": true,
+                    "encoderAction": {
+                        "encoderLowerCW": "40007 (>K:ROTOR_BRAKE)",
+                        "encoderLowerCCW": "40008 (>K:ROTOR_BRAKE)",
+                        "encoderUpperCW": "40007 (>K:ROTOR_BRAKE)",
+                        "encoderUpperCCW": "40008 (>K:ROTOR_BRAKE)",
+                        "actionType": "SimVarCode"
+                    }
+                }
+            },
+            {
+                "id": "btn_alt_intv",
+                "type": "imageButton",
+                "left": 1143,
+                "top": 144,
+                "controlSize": {
+                    "$ref": "#value.controlSize.buttonIntv"
+                },
+                "highlight": false,
+                "image": "button_intv.png",
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "88501 (>K:ROTOR_BRAKE)",
+                            "actionType": "SimVarCode"
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_co_intv",
+                "type": "imageButton",
+                "left": 397,
+                "top": 144,
+                "controlSize": {
+                    "$ref": "#value.controlSize.buttonIntv"
+                },
+                "highlight": false,
+                "image": "button_intv.png",
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "38301 (>K:ROTOR_BRAKE)",
+                            "actionType": "SimVarCode"
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_spd_intv",
+                "type": "imageButton",
+                "left": 570,
+                "top": 144,
+                "controlSize": {
+                    "$ref": "#value.controlSize.buttonIntv"
+                },
+                "highlight": false,
+                "image": "button_intv.png",
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "38701 (>K:ROTOR_BRAKE)",
+                            "actionType": "SimVarCode"
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_vs",
+                "type": "bindableImageButton",
+                "left": 1144,
+                "top": 225,
+                "controlSize": {
+                    "$ref": "#value.controlSize.regularButton"
+                },
+                "highlight": false,
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "39501 (>K:ROTOR_BRAKE)",
+                            "actionType": "SimVarCode"
+                        }
+                    ]
+                },
+                "binding": {
+                    "variable": "PMDG_B737_MCP_VS_IND",
+                    "images": [
+                        {
+                            "url": "button_vs_off.png",
+                            "val": 0
+                        },
+                        {
+                            "url": "button_vs_on.png",
+                            "val": 1
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "btn_vs_knob",
+                "type": "imageButton",
+                "left": 1367,
+                "top": 152,
+                "controlSize": {
+                    "$ref": "#value.controlSize.knobWheel"
+                },
+                "highlight": true,
+                "image": "knob_wheel.png",
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "PMDG_B737_MCP_VS_SELECT",
+                            "actionType": "SimEventId"
+                        }
+                    ],
+                    "useEncoder": true,
+                    "encoderAction": {
+                        "encoderLowerCW": "40108 (>K:ROTOR_BRAKE)",
+                        "encoderLowerCCW": "40107 (>K:ROTOR_BRAKE)",
+                        "encoderUpperCW": "40108 (>K:ROTOR_BRAKE)",
+                        "encoderUpperCCW": "40107 (>K:ROTOR_BRAKE)",
+                        "actionType": "SimVarCode"
+                    }
+                }
+            },
+            {
+                "id": "btn_at_disengage",
+                "type": "imageButton",
+                "left": 1503,
+                "top": 264,
+                "controlSize": {
+                    "$ref": "#value.controlSize.buttonApDisengage"
+                },
+                "highlight": false,
+                "image": "button_ap_disengage.png",
+                "action": {
+                    "touchActions": [
+                        {
+                            "action": "40601 (>K:ROTOR_BRAKE)",
+                            "actionType": "SimVarCode"
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "display_cpt_crs",
+                "type": "digitDisplay",
+                "left": 112,
+                "top": 65,
+                "controlSize": {
+                    "$ref": "#value.controlSize.threeDigitDisplay"
+                },
+                "highlight": false,
+                "binding": {
+                    "variable": "PMDG_B737_MCP_CPT_CRS",
+                    "numberOfDisplayDigit": 3,
+                    "padZeroes": true
+                }
+            },
+            {
+                "id": "display_fo_crs",
+                "type": "digitDisplay",
+                "left": 1710,
+                "top": 65,
+                "controlSize": {
+                    "$ref": "#value.controlSize.threeDigitDisplay"
+                },
+                "highlight": false,
+                "binding": {
+                    "variable": "PMDG_B737_MCP_FO_CRS",
+                    "numberOfDisplayDigit": 3,
+                    "padZeroes": true
+                }
+            },
+            {
+                "id": "display_ias_mach",
+                "type": "digitDisplay",
+                "left": 440,
+                "top": 65,
+                "controlSize": {
+                    "$ref": "#value.controlSize.fourDigitDisplay"
+                },
+                "highlight": false,
+                "binding": {
+                    "variable": "PMDG_B737_MCP_IAS_MACH",
+                    "numberOfDisplayDigit": 3,
+                    "decimalPlaces": 2,
+                    "decimalPlacesLessThanOneOnly": true
+                }
+            },
+            {
+                "id": "display_hdg",
+                "type": "digitDisplay",
+                "left": 720,
+                "top": 65,
+                "controlSize": {
+                    "$ref": "#value.controlSize.threeDigitDisplay"
+                },
+                "highlight": false,
+                "binding": {
+                    "variable": "PMDG_B737_MCP_HDG",
+                    "numberOfDisplayDigit": 3,
+                    "padZeroes": true
+                }
+            },
+            {
+                "id": "display_alt",
+                "type": "digitDisplay",
+                "left": 1028,
+                "top": 65,
+                "controlSize": {
+                    "$ref": "#value.controlSize.fiveDigitDisplay"
+                },
+                "highlight": false,
+                "binding": {
+                    "variable": "PMDG_B737_MCP_ALT",
+                    "numberOfDisplayDigit": 5
+                }
+            },
+            {
+                "id": "display_vs",
+                "type": "digitDisplay",
+                "left": 1339,
+                "top": 65,
+                "controlSize": {
+                    "$ref": "#value.controlSize.threeDigitDisplay"
+                },
+                "highlight": false,
+                "binding": {
+                    "variable": "PMDG_B737_MCP_V_SPEED",
+                    "numberOfDisplayDigit": 4
+                }
+            }
+        ]
+    }
+}

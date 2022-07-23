@@ -1,4 +1,5 @@
-﻿using MSFSPopoutPanelManager.Model;
+﻿using MSFSPopoutPanelManager.Shared;
+using MSFSPopoutPanelManager.UserDataAgent;
 using MSFSPopoutPanelManager.WpfApp.ViewModel;
 using System;
 using System.Windows;
@@ -18,6 +19,7 @@ namespace MSFSPopoutPanelManager.WpfApp
             InitializeComponent();
             _panelConfigurationViewModel = panelConfigurationViewModel;
             this.DataContext = _panelConfigurationViewModel;
+            FocusManager.SetIsFocusScope(this, true);
         }
 
         private void GridData_SourceUpdated(object sender, DataTransferEventArgs e)
@@ -74,24 +76,45 @@ namespace MSFSPopoutPanelManager.WpfApp
             }
         }
 
-        private void LockPanels_Click(object sender, RoutedEventArgs e)
+        private void NumericDataPoint_GotFocus(object sender, RoutedEventArgs e)
         {
-            if (_panelConfigurationViewModel.DataStore.ActiveUserProfile.IsLocked)
+            var textBox = e.Source as TextBox;
+            switch (textBox.Name)
             {
-                ConfirmationDialog dialog = new ConfirmationDialog("Confirm Unlock Panels", "Are you sure you want to unlock all panels to make changes?");
-                dialog.Owner = Application.Current.MainWindow;
-                dialog.Topmost = true;
-                dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                case "Top":
+                case "Left":
+                case "Width":
+                case "Height":
+                    _panelConfigurationViewModel.NumericDataPointTextBox = textBox;
 
-                if ((bool)dialog.ShowDialog())
+                    var panelConfig = textBox.DataContext as PanelConfig;
+                    _panelConfigurationViewModel.SelectedPanelConfigItem = new PanelConfigItem() { PanelIndex = panelConfig.PanelIndex, PanelConfigProperty = (PanelConfigPropertyName)Enum.Parse(typeof(PanelConfigPropertyName), textBox.Name) };
+                    return;
+            }
+
+            _panelConfigurationViewModel.NumericDataPointTextBox = null;
+        }
+
+        private void NumericDataPoint_LostFocus(object sender, RoutedEventArgs e)
+        {
+            IInputElement focusedControl = FocusManager.GetFocusedElement(this);
+
+            if (focusedControl is Button)
+            {
+                var button = focusedControl as Button;
+                switch (button.Name)
                 {
-                    _panelConfigurationViewModel.LockPanelsCommand.Execute(null);
+                    case "MinusTenButton":
+                    case "MinusOneButton":
+                    case "PlusOneButton":
+                    case "PlusTenButton":
+                        var textBox = e.OriginalSource as TextBox;
+                        _panelConfigurationViewModel.NumericDataPointTextBox = textBox;
+                        return;
                 }
             }
-            else
-            {
-                _panelConfigurationViewModel.LockPanelsCommand.Execute(null);
-            }
+
+            _panelConfigurationViewModel.NumericDataPointTextBox = null;
         }
     }
 }

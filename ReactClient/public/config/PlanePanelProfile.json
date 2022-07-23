@@ -1,0 +1,342 @@
+[
+    {
+        "planeId": "kodiak",
+        "name": "Kodiak 100",
+        "panels": [
+            {
+                "panelId": "kodiak",
+                "name": "Kodiak Full Instrumentation",
+                "rootPath": "kodiak",
+                "panelSize": {
+                    "width": 2458,
+                    "height": 1310
+                },
+                "showMenuBar": true,
+                "enableMap": true,
+                "subPanels": [
+                    {
+                        "panelId": "pfd-mfd",
+                        "name": "PFD MFD",
+                        "definitions": "KODIAK_PFD_MFD_DEF",
+                        "rootPath": "pfdmfd",
+                        "left": 0,
+                        "top": 0,
+                        "scale": 1
+                    },
+                    {
+                        "panelId": "electrical",
+                        "name": "Electrical",
+                        "definitions": "KODIAK_ELECTRICAL_DEF",
+                        "rootPath": "electrical",
+                        "left": 0,
+                        "top": 915,
+                        "scale": 1
+                    },
+                    {
+                        "panelId": "lights",
+                        "name": "Lights",
+                        "definitions": "KODIAK_LIGHTS_DEF",
+                        "rootPath": "lights",
+                        "left": 830,
+                        "top": 915,
+                        "scale": 1
+                    },
+                    {
+                        "panelId": "fuel",
+                        "name": "Fuel",
+                        "definitions": "KODIAK_FUEL_DEF",
+                        "rootPath": "fuel",
+                        "left": 1770,
+                        "top": 980,
+                        "scale": 1
+                    },
+                    {
+                        "panelId": "oxygen",
+                        "name": "Oxygen",
+                        "definitions": "KODIAK_OXYGEN_DEF",
+                        "rootPath": "oxygen",
+                        "left": 2230,
+                        "top": 985,
+                        "scale": 1
+                    }
+                ]
+            },
+            {
+                "panelId": "kodiak-pfd",
+                "name": "Kodiak PFD",
+                "rootPath": "kodiak",
+                "panelSize": {
+                    "width": 1408,
+                    "height": 914
+                },
+                "showMenuBar": false,
+                "enableMap": false,
+                "subPanels": [
+                    {
+                        "panelId": "pfd",
+                        "name": "PFD",
+                        "definitions": "KODIAK_PFD_ONLY_DEF",
+                        "rootPath": "pfdmfd",
+                        "left": 0,
+                        "top": 0,
+                        "scale": 1
+                    }
+                ]
+            },
+            {
+                "panelId": "kodiak-mfd",
+                "name": "Kodiak MFD",
+                "rootPath": "kodiak",
+                "panelSize": {
+                    "width": 1408,
+                    "height": 914
+                },
+                "showMenuBar": false,
+                "enableMap": false,
+                "subPanels": [
+                    {
+                        "panelId": "mfd",
+                        "name": "MFD",
+                        "definitions": "KODIAK_MFD_ONLY_DEF",
+                        "rootPath": "pfdmfd",
+                        "left": 0,
+                        "top": 0,
+                        "scale": 1
+                    }
+                ]
+            },
+            {
+                "panelId": "kodiak-electrical",
+                "name": "Kodiak Electrical",
+                "rootPath": "kodiak",
+                "panelSize": {
+                    "width": 812,
+                    "height": 377
+                },
+                "showMenuBar": false,
+                "enableMap": false,
+                "subPanels": [
+                    {
+                        "panelId": "electrical",
+                        "name": "Electrical",
+                        "definitions": "KODIAK_ELECTRICAL_DEF",
+                        "rootPath": "electrical",
+                        "left": 0,
+                        "top": 0,
+                        "scale": 1
+                    }
+                  
+                ]
+            },
+            {
+                "panelId": "kodiak-lights",
+                "name": "Kodiak Lights",
+                "rootPath": "kodiak",
+                "panelSize": {
+                    "width": 929,
+                    "height": 380
+                },
+                "showMenuBar": false,
+                "enableMap": false,
+                "subPanels": [
+                    {
+                        "panelId": "lights",
+                        "name": "Lights",
+                        "definitions": "KODIAK_LIGHTS_DEF",
+                        "rootPath": "lights",
+                        "left": 0,
+                        "top": 0,
+                        "scale": 1
+                    }
+                ]
+            },
+            {
+                "panelId": "kodiak-fuel",
+                "name": "Kodiak Fuel Switch",
+                "rootPath": "kodiak",
+                "panelSize": {
+                    "width": 440,
+                    "height": 226
+                },
+                "showMenuBar": false,
+                "enableMap": false,
+                "subPanels": [
+                    {
+                        "panelId": "fuel",
+                        "name": "Fuel",
+                        "definitions": "KODIAK_FUEL_DEF",
+                        "rootPath": "fuel",
+                        "left": 0,
+                        "top": 0,
+                        "scale": 1
+                    }
+                ]
+            },
+            {
+                "panelId": "kodiak-oxygen",
+                "name": "Kodiak Oxygen Switch",
+                "rootPath": "kodiak",
+                "panelSize": {
+                    "width": 215,
+                    "height": 215
+                },
+                "showMenuBar": false,
+                "enableMap": false,
+                "subPanels": [
+                    {
+                        "panelId": "oxygen",
+                        "name": "Oxygen",
+                        "definitions": "KODIAK_OXYGEN_DEF",
+                        "rootPath": "oxygen",
+                        "left": 0,
+                        "top": 0,
+                        "scale": 1
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "planeId": "pmdg-737-700",
+        "name": "PMDG 737-700",
+        "panels": [
+            {
+                "panelId": "pmdg-737-700-full-instrumentation",
+                "name": "PMDG 737 Full Instrumentation",
+                "rootPath": "pmdg-737-700",
+                "panelSize": {
+                    "width": 1920,
+                    "height": 1010
+                },
+                "showMenuBar": true,
+                "enableMap": true,
+                "subPanels": [
+                    {
+                        "panelId": "mcp",
+                        "name": "MCP",
+                        "rootPath": "mcp",
+                        "definitions": "PMDG_737_700_MCP_DEF",
+                        "left": 0,
+                        "top": 0,
+                        "scale": 1
+                    },
+                    {
+                        "panelId": "efis-cpt",
+                        "name": "EFIS-CPT",
+                        "rootPath": "efis-cpt",
+                        "definitions": "PMDG_737_700_EFIS_CPT_DEF",
+                        "left": 90,
+                        "top": 335,
+                        "scale": 1
+                    },
+                    {
+                        "panelId": "xpndr",
+                        "name": "XPNDR",
+                        "rootPath": "xpndr",
+                        "definitions": "PMDG_737_700_XPNDR_DEF",
+                        "left": 210,
+                        "top": 735,
+                        "scale": 1
+                    },
+                    {
+                        "panelId": "radio",
+                        "name": "Radio",
+                        "rootPath": "radio",
+                        "definitions": "PMDG_737_700_RADIO_DEF",
+                        "left": 850,
+                        "top": 335,
+                        "scale": 1
+                    }
+                ]
+            },
+            {
+                "panelId": "pmdg-737-700-mcp",
+                "name": "PMDG 737 MCP",
+                "rootPath": "pmdg-737-700",
+                "panelSize": {
+                    "width": 1920,
+                    "height": 329
+                },
+                "showMenuBar": true,
+                "enableMap": false,
+                "subPanels": [
+                    {
+                        "panelId": "mcp",
+                        "name": "MCP",
+                        "rootPath": "mcp",
+                        "definitions": "PMDG_737_700_MCP_DEF",
+                        "left": 0,
+                        "top": 0,
+                        "scale": 1
+                    }
+                ]
+            },
+            {
+                "panelId": "pmdg-737-700-radio",
+                "name": "PMDG 737 Radio",
+                "rootPath": "pmdg-737-700",
+                "panelSize": {
+                    "width": 995,
+                    "height": 485
+                },
+                "showMenuBar": false,
+                "enableMap": false,
+                "subPanels": [
+                    {
+                        "panelId": "radio",
+                        "name": "Radio",
+                        "rootPath": "radio",
+                        "definitions": "PMDG_737_700_RADIO_DEF",
+                        "left": 0,
+                        "top": 0,
+                        "scale": 1
+                    }
+                ]
+            },
+            {
+                "panelId": "pmdg-737-700-xpndr",
+                "name": "PMDG 737 Transponder",
+                "rootPath": "pmdg-737-700",
+                "panelSize": {
+                    "width": 498,
+                    "height": 259
+                },
+                "showMenuBar": false,
+                "enableMap": false,
+                "subPanels": [
+                    {
+                        "panelId": "xpndr",
+                        "name": "XPNDR",
+                        "rootPath": "xpndr",
+                        "definitions": "PMDG_737_700_XPNDR_DEF",
+                        "left": 0,
+                        "top": 0,
+                        "scale": 1
+                    }
+                ]
+            },
+            {
+                "panelId": "pmdg-737-700-efis-cpt",
+                "name": "PMDG 737 EFIS (Captain)",
+                "rootPath": "pmdg-737-700",
+                "panelSize": {
+                    "width": 724,
+                    "height": 394
+                },
+                "showMenuBar": false,
+                "enableMap": false,
+                "subPanels": [
+                    {
+                        "panelId": "efis-cpt",
+                        "name": "EFIS-CPT",
+                        "rootPath": "efis-cpt",
+                        "definitions": "PMDG_737_700_EFIS_CPT_DEF",
+                        "left": 0,
+                        "top": 0,
+                        "scale": 1
+                    }
+                ]
+            }
+        ]
+    }
+]

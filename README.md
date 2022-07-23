@@ -1,7 +1,7 @@
 # MSFS Pop Out Panel Manager
 
 <p align="center">
-<img src="images/doc/panel_selection.png" width="600" hspace="10"/>
+<img src="assets/readme/images/panel_selection.png" width="600" hspace="10"/>
 </p>
 
 MSFS Pop Out Panel Manager is an application for MSFS 2020 which helps pop out, save and position pop out panels to be used by utilities such as Sim Innovations Air Manager or to place pop out panels onto your screen or another monitor at predetermined locations automatically.
@@ -45,7 +45,7 @@ What if you can do the setup once by defining on screen where the pop out panels
 2. Start the application **MSFSPopoutPanelManager.exe** and it will automatically connect when MSFS/SimConnect starts. You maybe prompt to download .NET framework 5.0 x64 desktop runtime. Please see the screenshot below to download and install x64 desktop version of the framework.
 
 <p align="center">
-<img src="images/doc/framework_download.png" width="1000" hspace="10"/>
+<img src="assets/readme/images/framework_download.png" width="1000" hspace="10"/>
 </p>
 
 ## How to Update
@@ -67,19 +67,19 @@ What if you can do the setup once by defining on screen where the pop out panels
 1. First start the application and the game. Once you're in the main menu of the game, you can create a new profile by clicking the "plus" button in step 1 of the app.
  
 <p align="center">
-<img src="images/doc/add_profile.png" width="900" hspace="10"/>
+<img src="assets/readme/images/add_profile.png" width="900" hspace="10"/>
 </p>
 
 2. For step 2, if you want to associate the profile to the current aircraft livery to use in [Auto Pop Out](#auto-pop-out-feature) feature or for automatic profile switching when selecting a different aircraft, click the "plus" button next to the aircraft livery name. The aircraft livery title will become green once the livery is bound to the profile. Your chosen livery may not be available to select in the application for your newly selected plane until a flight is started.
 
  <p align="center">
-<img src="images/doc/bind_profile_to_livery.png" width="900" hspace="10"/>
+<img src="assets/readme/images/bind_profile_to_livery.png" width="900" hspace="10"/>
 </p>
  
 3. Now start a flight with your chosen aircraft. Once your flight is started, you're ready to select the panels you want to pop out. Please click "Start Panel Selection" to define where the pop out panels will be using **LEFT CLICK**. Use **CTRL-LEFT CLICK** when selection is completed. You can also move the number circles at this point to do final adjustment.
  
 <p align="center">
-<img src="images/doc/after_panel_selection.png" width="900" hspace="10"/>
+<img src="assets/readme/images/after_panel_selection.png" width="900" hspace="10"/>
 </p>
 
 4. Next, click "Start Pop Out". At this point, please be patient. The application will start popping out and separating panels one by one and you will see a lot of movements on screen. If something goes wrong, just follow the instruction in the status message and try again. Once the process is done, you will see a list of panels line up in the upper left corner of the screen. All the panels are given a default name. You can name them anything you want as needed.
@@ -87,7 +87,7 @@ What if you can do the setup once by defining on screen where the pop out panels
 5. You can now start panel configuration by dragging the pop out panels into their final position (to your main monitor or another monitor). You can also type value directly into the data grid to move and resize a panel. The +/- pixel buttons by the lower left corner of the grid allow you to change panel position at the chosen increment/decrement by selecting the data grid cell first (X-Pos, Y-Pos, Width, Height). You can also check "Always on Top", "Hide Title Bar", or "Full Screen Mode" if desire. If the panel is touch capable, you can check "Touch Enabled". Please see [Touch Enable Pop Out Feature](#touch-enable-pop-out-feature) regarding this experimental feature. Once all the panels are at their final position, just click "Lock Panel" to prevent further panel changes.
  
 <p align="center">
-<img src="images/doc/panel_configuration.png" width="900" hspace="10"/>
+<img src="assets/readme/images/panel_configuration.png" width="900" hspace="10"/>
 </p>
 
 6. To test if everything is working, please click "Restart" in the File menu. This will close all pop outs. Now click "Start Pop Out" and see the magic happens!
@@ -95,11 +95,11 @@ What if you can do the setup once by defining on screen where the pop out panels
 7. With auto panning feature enabled in preferences setting, you do not have to line up the circles that identified the panels in order for the panels to be popped out. But if you would like to do it manually without auto-panning, on next start of the flight, just line up the panels before clicking "Start Pop Out" if needed.
 
 <p align="center">
-<img src="images/doc/autopanning_1.png" width="900" hspace="10"/>
+<img src="assets/readme/images/autopanning_1.png" width="900" hspace="10"/>
 </p>
 
 <p align="center">
-<img src="images/doc/autopanning_2.png" width="900" hspace="10"/>
+<img src="assets/readme/images/autopanning_2.png" width="900" hspace="10"/>
 </p>
 
 <hr>
@@ -148,13 +148,13 @@ In MSFS, when operating the above panels with pop outs, there are currently 2 li
 - Bug -  If the pop out panel is also display on the main screen, a click through at incorrect coordinate will occur at the relative position where the pop out panel is located. If you click at this particular location in the pop out panel, the click event will register at the wrong coordinate. I haven’t been able to figure out how to work around this issue yet since the bug is deep in the closed source CoherentGT code in how MSFS implements the internal browser control to display to pop out panel. So touch will not work in the relative position of the pop out panel where panel appears on the main screen. This only affects instrumentation pop outs. The built-in ones such as ATC and checklist are fine since once they’re popped out, they no longer appear on the main screen. Below is the screenshot where click through at incorrect coordinate occurs. See the relative position (red box) in the pop out where the same instrumentation appears on the main screen.
 
 <p align="center">
-<img src="images/doc/touch_support_bug.png" width="900" hspace="10"/>
+<img src="assets/readme/images/touch_support_bug.png" width="900" hspace="10"/>
 </p>
 
   If you're a home cockpit builder and your main screen has a view that looks like something below, than touch enable feature will work almost 100% of the time since there is no click through target on your main screen.
 
 <p align="center">
-<img src="images/doc/touch_support_bug_2.png" width="900" hspace="10"/>
+<img src="assets/readme/images/touch_support_bug_2.png" width="900" hspace="10"/>
 </p>  
 
 #### How to enable touch support

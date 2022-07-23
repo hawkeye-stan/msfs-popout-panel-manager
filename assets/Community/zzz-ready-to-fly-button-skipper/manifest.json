@@ -1,0 +1,20 @@
+{
+  "dependencies": [
+    {
+      "name": "fs-base-ui",
+      "package_version": "0.1.10"
+    }
+  ],
+  "content_type": "CUSTOM",
+  "title": "Ready to Fly Button Skipper",
+  "manufacturer": "Hawkeyesk",
+  "creator": "Hawkeyesk",
+  "package_version": "1.0.1",
+  "minimum_game_version": "1.25.9.0",
+  "release_notes": {
+    "neutral": {
+      "LastUpdate": "VERSION 1.0.1\\nSim Update 9 compatibility",
+      "OlderHistory": ""
+    }
+  }
+}

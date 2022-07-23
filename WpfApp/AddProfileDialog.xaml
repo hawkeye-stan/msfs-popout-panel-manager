@@ -14,7 +14,7 @@
         KeyDown="Window_KeyDown"
         Background="Transparent">
     <Window.Resources>
-        <CollectionViewSource x:Key="UserProfilesViewSource" Source="{Binding Path=UserProfiles, Mode=OneWay}">
+        <CollectionViewSource x:Key="UserProfilesViewSource" Source="{Binding UserProfiles, Mode=OneWay}">
             <CollectionViewSource.SortDescriptions>
                 <scm:SortDescription PropertyName="ProfileName" />
             </CollectionViewSource.SortDescriptions>
@@ -28,7 +28,7 @@
                           VerticalAlignment="Top" 
                           Width="420"
                           ItemsSource="{Binding Source={StaticResource UserProfilesViewSource}}" 
-                          SelectedValue="{Binding Path=SelectedCopyProfileId, Mode=TwoWay}" 
+                          SelectedValue="{Binding SelectedCopyProfileId, Mode=TwoWay}" 
                           DisplayMemberPath="ProfileName"
                           SelectedValuePath="ProfileId"/>
             </WrapPanel>
