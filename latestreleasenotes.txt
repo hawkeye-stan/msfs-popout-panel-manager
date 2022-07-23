@@ -1,51 +1,60 @@
 Version 3.4.0.0 
 
-This release is optional and it fixes some of the urgent application issues and made improvement 
-to performance when using Auto Pop Out Panel. Since this update has major application 
-architecture changes and performance improvement, you're encouraged to update to this latest 
-version. You're still welcome to skip this update and continue to use older version of the 
-applicaiton but they will not be supported going forward.
+This release is optional. It added major new features and made performance improvements to the 
+core of the application. I encouraged you to update to this latest version. You're still welcome
+to skip this update and continue to use older version of the applicaiton but they will no longer 
+be supported going forward.
 
 ************************************************************************************************
-                                   IMPORTANT CHANGES
+                                         IMPORTANT 
 
-1. A major change to application architecture resulted in an update download of 60MB. The
-   application now includes the updated .NET framework as part of the package and you will no 
-   longer need to install the framework with a separate download.
+1. In this update, your user data files including your application settings and profiles will 
+   be upgraded and moved to new a folder location in user "Documents" foder. You can backup all 
+   files within subfolder "userdata" (appsettingdata.json, userprofiledata.json) before this 
+   update occurs. To do so, plese close this update dialog using the X button in the upper 
+   right corner (do not click update button) and exit the application. Then backup the folder 
+   and relaunch the application. This update dialog will reappear and you can perform the update
+   at that time. After the data migration, all orphan files in the installation folder will be 
+   deleted.
 
-2. User data files for the application are being moved to new folder location. You can backup 
-   the two user data files "appsettingdata.json" and "userprofiledata.json" in "userdata" 
-   folder in your installation directory before performing this update. To do that, you can 
-   close this update dialog (do not click update) and exit the application. Backup the two files 
-   and relaunch the application. This update dialog will reappear and you can select update a
-   gain.
+2. A major change to application architecture resulted in an update download size of 60MB. The 
+   update now includes .NET framework 6.0 as part of the package and you will no longer need 
+   to install .NET framework with a separate download.
 
-3. New additional community plugin installation is required to to use Auto Pop Out Panel feature.
-   Please see information below for installation instruciton. 
+3. New additional community plugin installation is required to use Auto Pop Out Panel feature.
+   Please see information below regarding Auto Pop Out Panel improvement for installation 
+   instruciton. 
+
 ************************************************************************************************
 
 Change Log:
 
-* Revamped how Auto Pop Out Panel works. The application no longer tries to hunt and click 
-  "Ready to Fly" button by using "Ready to Fly Button Skipper" plugin I created. This community
-  plugin is included in the installation folder and is required for Auto Pop Out Panel to work. 
-  Please copy the folder "zzz-ready-to-fly-button-skipper" in subfolder "community" in your 
-  installation location into your MSFS community folder. (Issue #29)
-  https://github.com/hawkeye-stan/msfs-popout-panel-manager/issues/29.
-
 * Changed where user data files are stored. Previously, the files are saved in subfolder 
-  "userdata" in your installation directory. Now they're moved to your Windows "Documents" 
+  "userdata" in your installation folder. Now they're moved to your Windows "Documents" 
   folder under "MSFS Pop Out Panel Manager" for easy access. When you first start the 
-  application, a data migration step will occur and your user data files will be moved to this 
-  new folder location. This change will allow you to install Pop Out Manager to any folder of 
-  your choice in your machine since the application no longer requires write access to your 
-  installation folder.
+  application, a data migration step will occur and your user data files will be upgraded and 
+  moved to this new folder location. This change will allow you to install Pop Out Manager to 
+  folder of your choice on your machine since the application no longer requires write access
+  to your installation folder.
 
 * Upgraded the application to use latest .NET 6.0 framework. You'll notice after user data 
   migration, your installation folder will have only one executable file left. Please don't 
-  be alarmed when this file is 67MB since all .NET dependencies and application files
+  be alarmed when this file is 60MB since all .NET dependencies and application files
   are now packaged into a single file. You no longer need to manually install .NET framework 
   to run this application.
+
+* Major improvement in how Auto Pop Out Panel works. The application no longer tries to hunt 
+  and click "Ready to Fly" button to continue pop out process by using "Ready to Fly Button 
+  Skipper" plugin I created. This plugin is included in the installation folder and is 
+  required for Auto Pop Out Panel to work. Please copy the folder 
+  "zzz-ready-to-fly-button-skipper" into your MSFS community folder.
+
+* Major improvement in support for touch enabled panel. Using SU10 Beta v1.27.11, touch panel
+  capabilities has greatly improved including new support for touch down and touch up events. 
+  This update enables smooth touch operations (click and drag) for panel running on connected
+  touch monitor or on tablet using software tool such as SpaceDesk. There is a new preference
+  settings section for touch operation adjustments. Please see README.md for current known 
+  issue and workaround for touch operations.
 
 * Updated how the application detects Sim Start and Sim Stop to perform Auto Pop Out. It now 
   uses the much more reliable camera state SimConnect variable for detection.
@@ -64,18 +73,13 @@ Change Log:
 * Added feature to change message dialog on screen duration. You can disable on screen message
   by setting the duration value to zero.
 
-* (New for SU10+) Added additional keystroke option to pop out panel Ctrl + Right Ctrl + Left 
-  click instead of just Right-Alt Left click. This is designed for users that have a keyboard 
+* (New for SU10) Added additional keystroke option to pop out panel Ctrl + Right Ctrl + Left 
+  click instead of just Right-Alt + Left click. This is designed for users that have a keyboard 
   without the Right-Alt key. To use this feature, please map (CTRL + RIGHT CTRL) in 
   Control Options => Miscellaneous => New UI Window Mode in the game.
 
-* Changed how auto pop out with bound livery works. When you start or restart Pop Out Manager 
-  and if you're already in a flight with a bound profile, Pop Out Manager will automatic re-pop
-  out all panels for you to sync up all settings based on your cold start or hot start 
-  configuration.
-
-* Cleaned up UI and improved UI guidance for user by enable/disabling buttons and actions as 
-  needed.
+* Cleaned up UI and improved UI guidance for user by enabling/disabling buttons and actions 
+  throughout the pop out process.
 
 * Lots of the code is rewritten from the ground up for better performance and stability. It 
   also prepares the code architecture for v4.0 new features. Please be patient as I continue
@@ -85,5 +89,5 @@ Change Log:
 Known Issues:
 
 * In SU 10 beta (1.27.11.0), when using Touch Enabled and Full Screen Mode simultaneously for 
-  a panel, touch event may not register correctly. So if you want to use touch feature, please 
-  run the panel in regular pop out window mode instead of full screen.
+  a panel, touch event may not register correctly. Please run the panel in regular pop out 
+  window with "Hide toolbar" option instead of full screen mode.

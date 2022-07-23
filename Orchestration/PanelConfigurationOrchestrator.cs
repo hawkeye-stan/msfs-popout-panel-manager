@@ -241,8 +241,8 @@ namespace MSFSPopoutPanelManager.Orchestration
                         if (!panelConfig.TouchEnabled || _prevWinEvent == PInvokeConstant.EVENT_OBJECT_LOCATIONCHANGE)
                             break;
 
-                        if (!panelConfig.HasTouchableEvent || _prevWinEvent == PInvokeConstant.EVENT_SYSTEM_CAPTUREEND)
-                            break;
+                        //if (!panelConfig.HasTouchableEvent || _prevWinEvent == PInvokeConstant.EVENT_SYSTEM_CAPTUREEND)
+                        //    break;
 
                         HandleTouchUpEvent(panelConfig);
                         break;
@@ -300,8 +300,8 @@ namespace MSFSPopoutPanelManager.Orchestration
                         if (!panelConfig.TouchEnabled || _prevWinEvent == PInvokeConstant.EVENT_OBJECT_LOCATIONCHANGE)
                             break;
 
-                        if (!panelConfig.HasTouchableEvent || _prevWinEvent == PInvokeConstant.EVENT_SYSTEM_CAPTUREEND)
-                            break;
+                        //if (!panelConfig.HasTouchableEvent || _prevWinEvent == PInvokeConstant.EVENT_SYSTEM_CAPTUREEND)
+                        //    break;
 
                         HandleTouchUpEvent(panelConfig);
                         break;
@@ -313,18 +313,20 @@ namespace MSFSPopoutPanelManager.Orchestration
 
         private void HandleTouchDownEvent(PanelConfig panelConfig)
         {
-            Point point;
-            PInvoke.GetCursorPos(out point);
-
-            // Disable left clicking if user is touching the title bar area
-            if (point.Y - panelConfig.Top > (panelConfig.HideTitlebar ? 5 : 31))
+            if (!_isHookMouseDown)
             {
-                if (!_isHookMouseDown)
+                lock (_hookLock)
                 {
-                    lock (_hookLock)
+                    Point point;
+                    PInvoke.GetCursorPos(out point);
+
+                    // Disable left clicking if user is touching the title bar area
+                    if (point.Y - panelConfig.Top > (panelConfig.HideTitlebar ? 5 : 31))
                     {
                         _isHookMouseDown = true;
                         InputEmulationManager.LeftClickMouseDown(point.X, point.Y);
+
+                        //Debug.WriteLine($"Mouse Down {_pair}");
                     }
                 }
             }
@@ -333,30 +335,32 @@ namespace MSFSPopoutPanelManager.Orchestration
 
         private void HandleTouchUpEvent(PanelConfig panelConfig)
         {
-            Point point;
-            PInvoke.GetCursorPos(out point);
-
-            // Disable left clicking if user is touching the title bar area
-            if (point.Y - panelConfig.Top > (panelConfig.HideTitlebar ? 5 : 31))
+            if (_isHookMouseDown)
             {
-                var prevWinEventClickLock = ++_winEventClickLock;
+                Thread.Sleep(AppSettingData.AppSetting.TouchScreenSettings.MouseUpDownDelay);
 
-                if (_isHookMouseDown)
+                lock (_hookLock)
                 {
-                    Thread.Sleep(AppSettingData.AppSetting.TouchScreenSettings.MouseUpDownDelay);
+                    _isHookMouseDown = false;
+                    UnhookWinEvent();
 
-                    lock (_hookLock)
+                    Point point;
+                    PInvoke.GetCursorPos(out point);
+                    // Disable left clicking if user is touching the title bar area
+                    if (point.Y - panelConfig.Top > (panelConfig.HideTitlebar ? 5 : 31))
                     {
-                        _isHookMouseDown = false;
-                        UnhookWinEvent();
                         InputEmulationManager.LeftClickMouseUp(0, 0);
                         HookWinEvent();
-                    }
-                }
+                        // Debug.WriteLine($"Mouse Up {_pair}");
+                        //_pair++;
 
-                if (prevWinEventClickLock == _winEventClickLock && AppSettingData.AppSetting.TouchScreenSettings.RefocusGameWindow)
-                {
-                    Task.Run(() => RefocusMsfs(prevWinEventClickLock));
+                        var prevWinEventClickLock = ++_winEventClickLock;
+
+                        if (prevWinEventClickLock == _winEventClickLock && AppSettingData.AppSetting.TouchScreenSettings.RefocusGameWindow)
+                        {
+                            Task.Run(() => RefocusMsfs(prevWinEventClickLock));
+                        }
+                    }
                 }
             }
         }
@@ -367,14 +371,13 @@ namespace MSFSPopoutPanelManager.Orchestration
 
             if (prevWinEventClickLock == _winEventClickLock)
             {
-                var simulatorProcess = WindowProcessManager.GetSimulatorProcess();
-
-                Rectangle rectangle;
-                PInvoke.GetWindowRect(simulatorProcess.Handle, out rectangle);
-
                 if (!_isHookMouseDown)
                 {
-                    PInvoke.SetCursorPos(rectangle.X + 18, rectangle.Y + 80);
+                    var simulatorProcess = WindowProcessManager.GetSimulatorProcess();
+                    var rectangle = WindowActionManager.GetWindowRect(simulatorProcess.Handle);
+                    var clientRectangle = WindowActionManager.GetClientRect(simulatorProcess.Handle);
+
+                    PInvoke.SetCursorPos(rectangle.X + clientRectangle.Width / 2, rectangle.Y + clientRectangle.Height / 2);
                 }
 
             }

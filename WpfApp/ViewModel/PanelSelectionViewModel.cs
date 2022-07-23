@@ -14,6 +14,13 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
         {
             _orchestrator = orchestrator;
 
+            AddProfileCommand = new DelegateCommand(OnAddProfile);
+
+            DeleteProfileCommand = new DelegateCommand(OnDeleteProfile, () => ProfileData.HasActiveProfile)
+                                                                                .ObservesProperty(() => ProfileData.ActiveProfile);
+
+            ChangeProfileCommand = new DelegateCommand<object>(OnChangeProfile);
+
             AddProfileBindingCommand = new DelegateCommand(OnAddProfileBinding, () => ProfileData.HasActiveProfile && FlightSimData.HasCurrentMsfsPlaneTitle && ProfileData.IsAllowedAddAircraftBinding && FlightSimData.IsSimulatorStarted)
                                                                                 .ObservesProperty(() => FlightSimData.HasCurrentMsfsPlaneTitle)
                                                                                 .ObservesProperty(() => ProfileData.HasActiveProfile)
@@ -57,6 +64,12 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
             TouchPanelBindingViewModel = new TouchPanelBindingViewModel(_orchestrator);
         }
 
+        public DelegateCommand AddProfileCommand { get; private set; }
+
+        public DelegateCommand DeleteProfileCommand { get; private set; }
+
+        public DelegateCommand<object> ChangeProfileCommand { get; private set; }
+
         public DelegateCommand AddProfileBindingCommand { get; private set; }
 
         public DelegateCommand DeleteProfileBindingCommand { get; private set; }
@@ -80,12 +93,6 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
         public AppSettingData AppSettingData { get { return _orchestrator.AppSettingData; } }
 
         public PanelSourceOrchestrator PanelSource { get { return _orchestrator.PanelSource; } }
-
-        public DelegateCommand AddProfileCommand => new DelegateCommand(OnAddProfile);
-
-        public DelegateCommand DeleteProfileCommand => new DelegateCommand(OnDeleteProfile, () => ProfileData.HasActiveProfile).ObservesProperty(() => ProfileData.ActiveProfile);
-
-        public DelegateCommand<object> ChangeProfileCommand => new DelegateCommand<object>(OnChangeProfile);
 
         public TouchPanelBindingViewModel TouchPanelBindingViewModel { get; private set; }
 

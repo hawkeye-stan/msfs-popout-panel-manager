@@ -19,6 +19,7 @@ namespace MSFSPopoutPanelManager.WindowsAgent
         const uint VK_ENT = 0x0D;
         const uint KEY_0 = 0x30;
 
+        private static InputSimulator InputSimulator = new InputSimulator();
 
         public static void LeftClickGameWindow()
         {
@@ -58,15 +59,12 @@ namespace MSFSPopoutPanelManager.WindowsAgent
 
         public static void LeftClickMouseDown(int x, int y)
         {
-            //Thread.Sleep(50);
             PInvoke.mouse_event(MOUSEEVENTF_LEFTDOWN, x, y, 0, 0);
-
         }
 
         public static void LeftClickMouseUp(int x, int y)
         {
-
-            PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, 0);
+            InputSimulator.Mouse.LeftButtonUp();
         }
 
         public static void PopOutPanel(int x, int y, bool useCtrlShift)
@@ -80,14 +78,13 @@ namespace MSFSPopoutPanelManager.WindowsAgent
 
             if (useCtrlShift)
             {
-                InputSimulator inputSimulator = new InputSimulator();
-                inputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.LCONTROL);
-                inputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.RCONTROL);
+                InputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.LCONTROL);
+                InputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.RCONTROL);
                 PInvoke.mouse_event(MOUSEEVENTF_LEFTDOWN, x, y, 0, 0);
                 Thread.Sleep(200);
                 PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, 0);
-                inputSimulator.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.RCONTROL);
-                inputSimulator.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.LCONTROL);
+                InputSimulator.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.RCONTROL);
+                InputSimulator.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.LCONTROL);
             }
             else
             {

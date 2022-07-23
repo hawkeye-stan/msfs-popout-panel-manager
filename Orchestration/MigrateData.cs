@@ -8,16 +8,16 @@ namespace MSFSPopoutPanelManager.Orchestration
     {
         public static void MigrateUserDataFiles()
         {
-            var packageFile = new FileInfo("MSFSPopoutPanelManager.exe");
-
-            var newDataPath = Path.Combine(FileIo.GetUserDataFilePath());
-            var oldDataPath = Path.Combine(packageFile.DirectoryName, "userdata");
-
             try
             {
+                var newDataPath = FileIo.GetUserDataFilePath();
+
                 // Check if migration is necessary
                 if (new DirectoryInfo(newDataPath).Exists)
                     return;
+
+                var packageFile = new FileInfo("MSFSPopoutPanelManager.exe");
+                var oldDataPath = Path.Combine(packageFile.DirectoryName, "userdata");
 
                 // Check if upgrading from older version of app
                 if (!new DirectoryInfo(oldDataPath).Exists)
@@ -56,6 +56,7 @@ namespace MSFSPopoutPanelManager.Orchestration
                     if (!new FileInfo(newAppSettingDataJsonPath).Exists)
                     {
                         StatusMessageWriter.WriteMessage("An error has occured when moving 'appsettingdata.json' to new folder location. Please try manually move this file and restart the app again.", StatusMessageType.Error, true, 5, true);
+                        RemoveDocumentsFolder();
                         Environment.Exit(0);
                     }
 
@@ -71,6 +72,7 @@ namespace MSFSPopoutPanelManager.Orchestration
                     if (!new FileInfo(newUserProfileDataJsonPath).Exists)
                     {
                         StatusMessageWriter.WriteMessage("An error has occured when moving 'userprofiledata.json' to new folder location. Please try manually move this file and restart the app again.", StatusMessageType.Error, true, 5, true);
+                        RemoveDocumentsFolder();
                         Environment.Exit(0);
                     }
 
@@ -83,9 +85,9 @@ namespace MSFSPopoutPanelManager.Orchestration
                 // Force an update of AppSetting file
                 var appSettingData = new AppSettingData();
                 appSettingData.ReadSettings();
-                appSettingData.AppSetting.AlwaysOnTop = false;
+                appSettingData.AppSetting.AlwaysOnTop = !appSettingData.AppSetting.AlwaysOnTop;
                 System.Threading.Thread.Sleep(500);
-                appSettingData.AppSetting.AlwaysOnTop = true;
+                appSettingData.AppSetting.AlwaysOnTop = !appSettingData.AppSetting.AlwaysOnTop;
 
                 StatusMessageWriter.WriteMessage(String.Empty, StatusMessageType.Info, false);
             }
@@ -127,6 +129,16 @@ namespace MSFSPopoutPanelManager.Orchestration
                     }
                     catch { }
                 }
+            }
+        }
+
+        private static void RemoveDocumentsFolder()
+        {
+            var dataPath = FileIo.GetUserDataFilePath();
+
+            if (Directory.Exists(dataPath))
+            {
+                Directory.Delete(dataPath, true);
             }
         }
     }

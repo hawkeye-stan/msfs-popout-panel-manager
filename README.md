@@ -14,19 +14,55 @@ Please follow [FlightSimulator.com](https://forums.flightsimulator.com/t/msfs-po
 
 <hr>
 
+## ** Updated Touch Panel Feature **
+With SU10 Beta v1.27.11, Asobo seems to have fix a major [bug](#touch-enable-pop-out-feature) (in SU9 and before) that stops Pop Out Manager's touch panel feature from working reliably. I'm happy to announce touch enabled feature works pretty well out of the box on either direct connected touch monitor or on pop out window that is displayed on tablet using software tool such as SpaceDesk. Until Asobo actually allow touch passthrough for panels, this tool can serve as a stopgap solution.
+
+I've tested touch operation on GTN750, KingAir PFD/MFD, TMB 930 FMS  and they are operational  with couple of caveats listed below. Please report any issues that you encounter when using touch enable feature. There is still lots of room for improvement and I'll continue my effort to make touch work better and better.
+
+Things that work:
+
+* General button click
+* Touch and drag such as when panning maps or using scrollbars
+* Works on touch monitor or tablet with SpaceDesk
+
+Know issues and workarounds:
+* When setting a panel to be touch enabled, please refrain form using a mouse to operate the panel since it is going to drive you insane. In the application, when no touch (click) action occurs within 1 second after the last touch action, the mouse cursor is going to jump back into the game window in order to give flight control back to the user. If you're using a mouse to interact with a panel that is designated as touch enabled, your mouse cursor is going to jump around. You can turn off game refocus setting but then you'll lose control of the plane as soon as you interact with a pop out panel. I believe the lost of flight control is on Asobo bug list waiting to be fixed.
+
+* Panels are designed in the game for mouse interaction which means it has a built-in assumption for slow-er mouse click response. But using finger to touch is definitely much faster than using a mouse and some panel UI will not be able to keep up with the speed of touch entry if you send touch input too fast. When you encounter UI lag in response or button click not responding to your touch input, please slow down your touch input speed a bit and let the panel catch up. (On my to-do list for improvement.)
+
+* With the point above and because panels are coded by different developers, they will have vary software performance when using them. Touch event may register consistently for one panel and not another. There is a new touch setting in preferences menu to adjust the time delay to allow a panel to register a touch (mouse down then up). If your panel has trouble receiving your touch input, increase this value one step at a time to compensate for the delay.
+
+* Unlike using a mouse, to pan a map, you've to touch the map first to set the map in focus before touching and dragging to pan the map. This is a limitation of touch vs direct mouse click when using drag action in pop out panel. (On my to-do list for improvement.)
+
+* Touch dragging a scrollbar. Since the current scrollbar implementation in MSFS has a very small target zone when using a finger compares to using a mouse, you may have to try couple times to hit the required scrollbar area to scroll. A easier approach to activate the scrollbar is by touching the scrollbar with your finger, hold for about 1 second, then move your finger to scroll. This gives time for MSFS side to register the start scroll event.
+
+* In SU 10 beta (1.27.11.0) or before, when using Touch Enabled and Full Screen Mode simultaneously for a panel, touch event will not register since Full Screen mode does not get treated as a pop out window by Asobo. Please run the panel in regular pop out window and use "Hide toolbar" option instead of full screen mode to simulator full screen. (On my to-do list for improvement.)
+
 ## Application Features
 * Display resolution independent. Supports 1080p/1440p/4k display and ultrawide displays.
+
 * Support multiple user defined aircraft profiles to save panel locations to be recalled later.
+
 * Intuitive user interface to defined location of panels to be popped out.
+
 * [Auto Pop Out](#auto-pop-out-feature) feature. The application will detect active aircraft by livery and activate the corresponding profile on start of new flight session.
+
 * [Cold Start feature](#auto-pop-out-feature). Instrumentation panels can be popped out even when they're not powered on (for G1000 /  / G1000 NXi planes only).
+
 * Auto Panning feature remembers the cockpit camera angle when you first define the pop out panels. You can now pan, zoom in, and zoom out to identify offscreen panels and the camera angle will be saved and reused. This feature requires the use of Ctrl-Alt-0 keyboard binding to save custom camera view per plane configuration. (Can be configured to use 0 through 9). If the keyboard binding is currently being used. The auto-panning feature will overwrite the saved camera view if enabled.
+
 * Fine-grain control in positioning of panels down to pixel level. 
+
 * Panels can be configured to appear always on top, with title bar hidden, or stretch to full screen mode.
+
 * Auto disable Track IR when pop out starts.
+
 * User-friendly features such as application always on top, auto start, minimized to tray with keyboard shortcuts.
+
 * Auto save feature. All profile and panel changes are saved automatically.
+
 * Auto update feature. Application can auto-update itself when new version becomes available.
+
 * **Experimental Feature**: Enable touch support for pop outs on touch capable  display. Please see [Touch Enable Pop Out Feature](#touch-enable-pop-out-feature) for more information.
 
 <hr>
@@ -40,17 +76,15 @@ What if you can do the setup once by defining on screen where the pop out panels
 
 ## How to Install 
 
-1. After downloading the latest zip package from github repository or from Flightsim.to website, extract the zip package to a folder of your choice on your computer. You must have write access to this folder since your preference settings and profiles will be save in the folder **userdata** within the installation folder. Please do not install in **C:\Program Files** or **C:\Program Files (x86)** since most users do not have write access to these folders.
+1. After downloading the latest zip package from github repository or from Flightsim.to website, extract the zip package to a folder of your choice on your computer.
 
-2. Start the application **MSFSPopoutPanelManager.exe** and it will automatically connect when MSFS/SimConnect starts. You maybe prompt to download .NET framework 5.0 x64 desktop runtime. Please see the screenshot below to download and install x64 desktop version of the framework.
+2. If you're using Auto Pop Out Panel feature, a plugin is required to be installed in MSFS community folder. Please copy the folder "zzz-ready-to-fly-button-skipper" into your MSFS community folder. This plugin is used to automatically skip the "Ready to Fly" button press when a flight starts so Auto Pop Out Panel can start its process.
 
-<p align="center">
-<img src="assets/readme/images/framework_download.png" width="1000" hspace="10"/>
-</p>
+3. Start the application **MSFSPopoutPanelManager.exe** and it will automatically connect when MSFS/SimConnect starts. 
 
 ## How to Update
 
-1. To update the application, you can download the latest zip package and directly extract the package into your Pop Out Manager installation folder and overwrite all files within. Your **userdata** folder will be safe.
+1. To update the application, you can download the latest zip package and directly extract the package into your Pop Out Manager installation folder and overwrite all files within. Your application setting and profile data will be safe.
 
 2. You can also use the built-in auto update feature and let the application handles the update. If the update is optional, you can skip the update if you so choose. When you start the application and if an update is available, a dialog will appear and it will show the latest version's release notes and an option to update the application.
 
@@ -58,7 +92,7 @@ What if you can do the setup once by defining on screen where the pop out panels
 
   - Restart you computer and most of the time this will do the trick.
   - Clear your default web browser cache on your computer since auto update will try to download latest version of update configuration file from github repository and the file may have been cached on your machine.
-  - Clear Internet Browser History.  First search for "Internet Properties" in Windows control panel. In "General" tab, select "Delete" in Browsing History section.
+  - Clear Internet Browser History.  First search for "Internet Options" in Windows control panel. In "General" tab, select "Delete" in Browsing History section.
 
 ## How to Use
 
@@ -133,7 +167,6 @@ This feature will make pop out panel touch enabled on touch screen monitor or ta
 - King Air 350
 - PMS GTN750
 - Lower touch panel in TBM 930
-- Built-in panels such as Checklist, ATC, etc.
 
 In MSFS, when operating the above panels with pop outs, there are currently 2 limitations and one major bug that Asobo has to solve to make touch panels viable.  This touch enable pop out experimental feature will try to solve the 2 limitations but is currently not able to overcome the bug.
 
@@ -145,7 +178,9 @@ In MSFS, when operating the above panels with pop outs, there are currently 2 li
  
   **Limitation solved by**: detect when the user has stopped any touch events (after 1 second) and refocus main screen to allow flight control to work again.
 
-- Bug -  If the pop out panel is also display on the main screen, a click through at incorrect coordinate will occur at the relative position where the pop out panel is located. If you click at this particular location in the pop out panel, the click event will register at the wrong coordinate. I haven’t been able to figure out how to work around this issue yet since the bug is deep in the closed source CoherentGT code in how MSFS implements the internal browser control to display to pop out panel. So touch will not work in the relative position of the pop out panel where panel appears on the main screen. This only affects instrumentation pop outs. The built-in ones such as ATC and checklist are fine since once they’re popped out, they no longer appear on the main screen. Below is the screenshot where click through at incorrect coordinate occurs. See the relative position (red box) in the pop out where the same instrumentation appears on the main screen.
+
+**EDITED** - Asobo have fixed the below bug in SU10 Beta v1.27.11. And hopefuly it won't be broken again.
+- ~~Bug~~ -  If the pop out panel is also display on the main screen, a click through at incorrect coordinate will occur at the relative position where the pop out panel is located. If you click at this particular location in the pop out panel, the click event will register at the wrong coordinate. I haven’t been able to figure out how to work around this issue yet since the bug is deep in the closed source CoherentGT code in how MSFS implements the internal browser control to display to pop out panel. So touch will not work in the relative position of the pop out panel where panel appears on the main screen. This only affects instrumentation pop outs. The built-in ones such as ATC and checklist are fine since once they’re popped out, they no longer appear on the main screen. Below is the screenshot where click through at incorrect coordinate occurs. See the relative position (red box) in the pop out where the same instrumentation appears on the main screen.
 
 <p align="center">
 <img src="assets/readme/images/touch_support_bug.png" width="900" hspace="10"/>
@@ -159,45 +194,45 @@ In MSFS, when operating the above panels with pop outs, there are currently 2 li
 
 #### How to enable touch support
 
-Perform your regular panel selection and once your touch capable panel has been popped out, in the configuration screen grid, just check "Touch Enabled" to enable touch support for the selected panel. Once you enable touch support for a panel, using a mouse to operate the panel will no longer work correctly because double submit of Left-Click to MSFS will occur.
+Perform your regular panel selection and once your touch capable panel has been popped out, in the configuration screen grid, just check "Touch Enabled" to enable touch support for the selected panel.
 
-#### Know Issues
+#### Known Issues
 
 - If you enable touch support for a pop out panel, please do not you use a mouse to click the panel. It will register extra click since the app's code simulate a left mouse click when touch.
 
-- A MSFS click through bug where pop out panel also appears on the main game screen. Touch will not register correctly in the section of the pop out panel where the relative position of the panel corresponds to where the panel is located on the main game screen.
+~~- A MSFS click through bug where pop out panel also appears on the main game screen. Touch will not register correctly in the section of the pop out panel where the relative position of the panel corresponds to where the panel is located on the main game screen.~~  **Asobo fixed in SU10 Beta 1.27.11.**
 
-- When a click through occurs on non-instrumentation panel items such as throttle or switches, even though the switches will not accidentally get clicked, touch response in pop out panel may not work. Just touching a little bit to the left/right in the pop out panel may register your touch event correctly and trigger your intend target.
+~~- When a click through occurs on non-instrumentation panel items such as throttle or switches, even though the switches will not accidentally get clicked, touch response in pop out panel may not work. Just touching a little bit to the left/right in the pop out panel may register your touch event correctly and trigger your intend target.~~  **Asobo fixed in SU10 Beta 1.27.11.**
 
 - To do a drag such a scrollbar, hold down your finger a little longer then usual and drag your finger. Some scrollbars also has a very narrow touch target and they will be hard to drag. The bigger your touch display and pop out panel size, the easier for touch the register the correct target.
 
 - If touch suddenly becomes unresponsive, please try to change the main view of the game such as looking left/right using keyboard shortcut. This will sometime reset the mouse coordinate where you touch the pop out panel.
 
+<hr/>
+
 ## User Profile Data Files
 
-The user plane profile data and application settings data are stored as JSON files under the following folder path.
+The user plane profile data and application settings data are stored as JSON files under your "Documents" folder. (%userprofile%\Documents\MSFS Pop Out Manager)
 
-* userdata/userprofiledata.json
+* userprofiledata.json
 
   Stored your various plane profiles.
 
-* userdata/appsettingdata.json
+* appsettingdata.json
 
   Stored your application preference settings.
   
-* userdata/autoupdate.json
+* autoupdate.json
 
   Stored the application auto update information. This file can be deleted if you want to reset your update status.
   
-You can backup this folder and restore this folder if you want to uninstall and reinstall MSFS Pop Out Manager or to download prelease version of application to try out.
+You can backup this folder and restore this folder if you want to uninstall and reinstall MSFS Pop Out Manager.
 
 <hr/>
 
 ## Current Known Issue
 
 * Automatic power on for Auto Pop Out Panels feature will not work if you're using any flight control hardware (such as Honeycomb Alpha or Bravo) that permanently binds the master battery switch or master avionics switch. If the hardware control switch is in the off position, pop out manager won't be able to temporary turn on the instrumentation panels to pop them out. This seems to be a bug on Asobo side and only affects the G1000 instrumentation at the moment.
-
-* Current application package size is bigger than previous version of the application because it is not a single EXE file package. With added feature of exception logging and stack trace to support user feedback and troubleshooting, a Single EXE package in .NET 5.0 as well as .NET 6.0 has a bug that stack trace information is not complete. Hopefully, Microsoft will be fixing this problem. 
 
 * Please see [Version](VERSION.md) file for latest known application issues.
 
@@ -211,7 +246,7 @@ You can backup this folder and restore this folder if you want to uninstall and 
 
 * Unable to pop out ALL panels. This may indicate a potential miscount of panels (circles) and the number of actual panels that got popped out. You may have duplicate panels in your selection or panels that cannot be popped out.
 
-* If you encounter application crashes or unknown error, please help my continuing development effort by attaching the file **error.log** in the application folder and open an issue ticket in github repo for this project. This is going to help me troubleshoot the issue and provide hotfixes.
+* If you encounter application crashes or unknown error, please help my continuing development effort by attaching the file **error.log** in the application Logs folder and open an issue ticket in github repo for this project. This is going to help me troubleshoot the issue and provide hotfixes.
 
 * If you encounter an issue with panels that are not restored back to your saved profile locations, please check if you have other apps such as Sizer or Windows PowerToys that may have conflict with Pop Out Manager.
  
@@ -220,7 +255,6 @@ You can backup this folder and restore this folder if you want to uninstall and 
   ERROR MSFSPopoutPanelManager.WpfApp.App - Could not load file or assembly 'Microsoft.FlightSimulator.SimConnect, Version=11.0.62651.3, Culture=neutral, PublicKeyToken=baf445ffb3a06b5c'. An attempt was made to load a program with an incorrect format. System.BadImageFormatException: 
 
   This usually happens on clean Windows installation. Pop Out Panel Manager uses x64 version of SimConnect.dll to perform its function and a Visaul C++ redistributable is required for SimConnect to run correctly. Please download and install the following [VC++ redistributable](https://aka.ms/vs/17/release/vc_redist.x64.exe) on your PC to resolve this issue. Further information can be obtained in this [support ticket](https://github.com/hawkeye-stan/msfs-popout-panel-manager/issues/21). 
-
 
 ## Author
 Stanley Kwok
@@ -237,7 +271,7 @@ I welcome feedback to help improve the usefulness of this application. You are w
 Thank you for your super kind support of this app!
 
 ## Credits
-[MouseKeyHook](https://github.com/gmamaladze/globalmousekeyhook) by George Mamaladze
+[WindowsHook](https://github.com/topstarai/WindowsHook) by Mark Kang
 
 [Fody](https://github.com/Fody/Fody) .NET assemblies weaver by Fody
 

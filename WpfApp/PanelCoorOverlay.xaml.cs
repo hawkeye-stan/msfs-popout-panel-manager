@@ -1,5 +1,8 @@
-﻿using System;
+﻿using MSFSPopoutPanelManager.Shared;
+using MSFSPopoutPanelManager.WindowsAgent;
+using System;
 using System.Windows;
+using System.Windows.Interop;
 
 namespace MSFSPopoutPanelManager.WpfApp
 {
@@ -7,6 +10,8 @@ namespace MSFSPopoutPanelManager.WpfApp
     {
         private const int TOP_ADJUSTMENT = 23;      // half of window height
         private const int LEFT_ADJUSTMENT = 27;     // half of window width
+        private int _xCoor;
+        private int _yCoor;
 
         public bool IsEditingPanelLocation { get; set; }
 
@@ -19,14 +24,15 @@ namespace MSFSPopoutPanelManager.WpfApp
             InitializeComponent();
             this.lblPanelIndex.Content = panelIndex;
             IsEditingPanelLocation = false;
+            this.Topmost = true;
 
             this.LocationChanged += PanelCoorOverlay_LocationChanged;
         }
 
         public void MoveWindow(int x, int y)
         {
-            this.Left = x - LEFT_ADJUSTMENT;
-            this.Top = y - TOP_ADJUSTMENT;
+            _xCoor = x - LEFT_ADJUSTMENT;
+            _yCoor = y - TOP_ADJUSTMENT;
         }
 
         private void PanelCoorOverlay_LocationChanged(object sender, EventArgs e)
@@ -34,16 +40,25 @@ namespace MSFSPopoutPanelManager.WpfApp
             if (this.Top is double.NaN || this.Left is double.NaN)
                 return;
 
-            var top = Convert.ToInt32(this.Top);
-            var left = Convert.ToInt32(this.Left);
-
-            WindowLocationChanged?.Invoke(this, new System.Drawing.Point(left + LEFT_ADJUSTMENT, top + TOP_ADJUSTMENT));
+            // Fixed broken window left/top coordinate for DPI Awareness Per Monitor
+            var handle = new WindowInteropHelper(this).Handle;
+            var rect = WindowActionManager.GetWindowRect(handle);
+            WindowLocationChanged?.Invoke(this, new System.Drawing.Point(rect.X + LEFT_ADJUSTMENT, rect.Y + TOP_ADJUSTMENT));
         }
 
         private void Window_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
             if (IsEditingPanelLocation && e.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
                 this.DragMove();
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            // Fixed broken window left/top coordinate for DPI Awareness Per Monitor
+            var handle = new WindowInteropHelper(this).Handle;
+            WindowActionManager.MoveWindow(handle, PanelType.WPFWindow, _xCoor, _yCoor, Convert.ToInt32(this.Width), Convert.ToInt32(this.Height));
+
+            WindowActionManager.ApplyAlwaysOnTop(handle, PanelType.WPFWindow, true);
         }
     }
 }

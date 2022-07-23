@@ -232,8 +232,7 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
         private const int CAMERA_STATE_COCKPIT = 2;
         private const int CAMERA_STATE_LOAD_SCREEN = 11;
         private const int CAMERA_STATE_HOME_SCREEN = 15;
-        private int _currentCameraState;
-        private bool _isFlightStarted;
+        private int _currentCameraState = -1;
 
         private void DetectFlightStartedOrStopped()
         {
@@ -243,20 +242,29 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
             if (_currentCameraState == cameraState)
                 return;
 
-            _currentCameraState = cameraState;
-            FileLogger.WriteLog($"Debug Info - Camera State: {cameraState}", StatusMessageType.Debug);
-
-            if (!_isFlightStarted && cameraState == CAMERA_STATE_COCKPIT)
+            switch (_currentCameraState)
             {
-                _isFlightStarted = true;
-                OnFlightStarted?.Invoke(this, null);
+                case CAMERA_STATE_HOME_SCREEN:
+                case CAMERA_STATE_LOAD_SCREEN:
+                    if (cameraState == CAMERA_STATE_COCKPIT)
+                    {
+                        _currentCameraState = cameraState;
+                        OnFlightStarted?.Invoke(this, null);
+                    }
 
+                    break;
+                case CAMERA_STATE_COCKPIT:
+                    if ((cameraState == CAMERA_STATE_LOAD_SCREEN || cameraState == CAMERA_STATE_HOME_SCREEN))
+                    {
+                        _currentCameraState = cameraState;
+                        OnFlightStopped?.Invoke(this, null);
+                    }
+
+                    break;
             }
-            else if (_isFlightStarted && (cameraState == CAMERA_STATE_LOAD_SCREEN || cameraState == CAMERA_STATE_HOME_SCREEN))
-            {
-                _isFlightStarted = false;
-                OnFlightStopped?.Invoke(this, null);
-            }
+
+            if (cameraState == CAMERA_STATE_COCKPIT || cameraState == CAMERA_STATE_HOME_SCREEN || cameraState == CAMERA_STATE_LOAD_SCREEN)
+                _currentCameraState = cameraState;
         }
 
         private void HandleReceiveSystemEvent(object sender, SimConnectSystemEvent e)

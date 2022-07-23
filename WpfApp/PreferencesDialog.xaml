@@ -240,10 +240,11 @@
                         <TextBlock Style="{StaticResource TextBlockHeading}">Touch Down Touch Up Delay</TextBlock>
                         <Line Stretch="Fill" Stroke="Gray" X2="1"/>
                         <WrapPanel>
-                            <mah:NumericUpDown Width="100" Minimum="0" Maximum="300" Interval="50" FontSize="16" Height="32" Value="{Binding AppSettingData.AppSetting.TouchScreenSettings.MouseUpDownDelay, Mode=TwoWay}"></mah:NumericUpDown>
+                            <mah:NumericUpDown Width="100" Minimum="0" Maximum="200" Interval="25" FontSize="16" Height="32" Value="{Binding AppSettingData.AppSetting.TouchScreenSettings.MouseUpDownDelay, Mode=TwoWay}"></mah:NumericUpDown>
                             <AccessText Margin="10,0,0,0" Width="490">Amount of time to delay the touch down and then touch up event when operating touch enabled panel. If your touch is not registering consistently, increasing this value will help. 
-                                For example on a directly connected touch monitor, zero or 50 milliseconds works really well. But when operating a panel on a tablet using software such as Spacedesk, since there is delay for touch signal sending back to Windows OS
-                                by the software, increasing this value to 50 or 100 will compensate for the delay. Please increase or decrease this value one step at time until you get a consistent touch response. (Default: 0 milliseconds)</AccessText>
+                                For example on a direct connected touch monitor, 25 milliseconds work really well. But when operating a panel on a tablet using software such as Spacedesk, since there is delay for touch signal sending back to Windows OS
+                                by the software, increasing this value to 50 or higher may compensate for the delay. The speed of your PC or the type of panel on each plane could also be a factor for touch consistency. 
+                                You can experiment by increasing or decreasing this value one step at time until you get a consistent touch response. (Default: 25 milliseconds)</AccessText>
                         </WrapPanel>
                     </WrapPanel>
                 </WrapPanel>

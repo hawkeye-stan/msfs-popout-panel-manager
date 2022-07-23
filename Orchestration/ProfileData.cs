@@ -42,7 +42,9 @@ namespace MSFSPopoutPanelManager.Orchestration
             if (ActiveProfile == null)
                 return false;
 
-            return ProfileManager.DeleteProfile(profileId, Profiles);
+            var success = ProfileManager.DeleteProfile(profileId, Profiles);
+            UpdateActiveProfile(-1);
+            return true;
         }
 
         public void AddProfileBinding(string planeTitle, int activeProfileId)

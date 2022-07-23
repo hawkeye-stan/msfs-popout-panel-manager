@@ -73,8 +73,8 @@ namespace MSFSPopoutPanelManager.Orchestration
             {
                 StatusMessageWriter.WriteMessage($"Automatic pop out is starting for profile:\n{profile.ProfileName}", StatusMessageType.Info, true);
 
-                // Extra wait for cockpit view to align
-                Thread.Sleep(1000);
+                // Extra wait for cockpit view to appear and align
+                Thread.Sleep(2000);
 
                 CorePopOutSteps();
             }

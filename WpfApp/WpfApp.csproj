@@ -90,6 +90,9 @@
     <ProjectReference Include="..\Shared\Shared.csproj">
       <SetTargetFramework>TargetFramework=net6.0</SetTargetFramework>
     </ProjectReference>
+    <ProjectReference Include="..\WindowsAgent\WindowsAgent.csproj">
+      <SetTargetFramework>TargetFramework=net6.0</SetTargetFramework>
+    </ProjectReference>
   </ItemGroup>
 
   <Target Name="CopyItems" AfterTargets="ComputeFilesToPublish">

@@ -129,7 +129,7 @@ namespace MSFSPopoutPanelManager.UserDataAgent
     {
         public TouchScreenSettings()
         {
-            MouseUpDownDelay = 50;
+            MouseUpDownDelay = 25;
             RefocusGameWindow = true;
         }
 
