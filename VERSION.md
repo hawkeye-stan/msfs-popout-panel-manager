@@ -21,6 +21,8 @@
 
 * (New for SU10+) Added additional keystroke option to pop out panel Ctrl + Right Ctrl + Left click instead of just Right-Alt +Left click. This is designed for users that have a keyboard without the Right-Alt key. To use this feature, please map (CTRL + RIGHT CTRL) in Control Options => Miscellaneous => New UI Window Mode in the game.
 
+* Removed support of in game toolbar panels such as check list, ATC, or VFR map because something has changed in how Asobo coded these pop out windows. Unless Asobo fix/unfix the issue, this feature will not work correctly at all across both SU9 and SU10 beta. I will try to figure out a way to make this feature work again in feature version of the application.
+
 * Cleaned up UI and improved UI guidance for user by enabling/disabling buttons and actions throughout the pop out process.
 
 * Lots of the code is rewritten from the ground up for better performance and stability. It also prepares the code architecture for v4.0 new features. Please be patient as I continue to implement v4.0. As always, please report issue and comment and I welcome all feedbacks and will do my best to fix or implement requested features.
