@@ -141,7 +141,10 @@ namespace MSFSPopoutPanelManager.Orchestration
                 if (uProfile != null && uProfile.ProfileId != ActiveProfile.ProfileId)
                     return false;
 
-                return !ActiveProfile.BindingAircraftLiveries.Any(p => p == FlightSimData.CurrentMsfsPlaneTitle);
+                if (FlightSimData == null || ActiveProfile.BindingAircraftLiveries == null)
+                    return false;
+
+                return ActiveProfile == null ? false : !ActiveProfile.BindingAircraftLiveries.Any(p => p == FlightSimData.CurrentMsfsPlaneTitle);
             }
         }
 

@@ -193,7 +193,7 @@
                                               SourceUpdated="GridData_SourceUpdated" 
                                               IsChecked="{Binding FullScreen, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}" 
                                               IsEnabled="{c:Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path='!DataContext.ProfileData.ActiveProfile.IsLocked'}"
-                                              IsHitTestVisible="{c:Binding Path='IsCustomPopOut and !TouchEnabled'}"/>
+                                              IsHitTestVisible="{c:Binding Path='IsCustomPopOut'}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>

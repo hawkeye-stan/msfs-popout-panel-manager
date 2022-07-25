@@ -45,7 +45,8 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                     {
                         ProcessId = process.Id,
                         ProcessName = process.ProcessName,
-                        Handle = process.MainWindowHandle
+                        Handle = process.MainWindowHandle,
+                        MainModule = process.MainModule
                     };
                 }
             }
@@ -61,5 +62,7 @@ namespace MSFSPopoutPanelManager.WindowsAgent
         public string ProcessName { get; set; }
 
         public IntPtr Handle { get; set; }
+
+        public ProcessModule MainModule { get; set; }
     }
 }

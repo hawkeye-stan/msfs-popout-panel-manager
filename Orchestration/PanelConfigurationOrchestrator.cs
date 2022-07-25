@@ -4,8 +4,6 @@ using MSFSPopoutPanelManager.WindowsAgent;
 using System;
 using System.Drawing;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace MSFSPopoutPanelManager.Orchestration
 {
@@ -13,11 +11,7 @@ namespace MSFSPopoutPanelManager.Orchestration
     {
         private static PInvoke.WinEventProc _winEvent;      // keep this as static to prevent garbage collect or the app will crash
         private static IntPtr _winEventHook;
-        private uint _prevWinEvent = PInvokeConstant.EVENT_SYSTEM_CAPTUREEND;
-        private int _winEventClickLock = 0;
         private Rectangle _lastWindowRectangle;
-        private object _hookLock = new object();
-        private bool _isHookMouseDown = false;
 
         public PanelConfigurationOrchestrator()
         {
@@ -36,11 +30,20 @@ namespace MSFSPopoutPanelManager.Orchestration
         public void StartConfiguration()
         {
             HookWinEvent();
+
+            TouchEventManager.ActiveProfile = ProfileData.ActiveProfile;
+            TouchEventManager.AppSetting = AppSettingData.AppSetting;
+
+            if (ActiveProfile.PanelConfigs.Any(p => p.TouchEnabled) && !TouchEventManager.IsHooked)
+            {
+                TouchEventManager.Hook();
+            }
         }
 
         public void EndConfiguration()
         {
             UnhookWinEvent();
+            TouchEventManager.UnHook();
         }
 
         public void LockStatusUpdated()
@@ -98,6 +101,12 @@ namespace MSFSPopoutPanelManager.Orchestration
                             break;
                         case PanelConfigPropertyName.HideTitlebar:
                             WindowActionManager.ApplyHidePanelTitleBar(panelConfig.PanelHandle, panelConfig.HideTitlebar);
+                            break;
+                        case PanelConfigPropertyName.TouchEnabled:
+                            if (ActiveProfile.PanelConfigs.Any(p => p.TouchEnabled) && !TouchEventManager.IsHooked)
+                                TouchEventManager.Hook();
+                            else if (ActiveProfile.PanelConfigs.All(p => !p.TouchEnabled) && TouchEventManager.IsHooked)
+                                TouchEventManager.UnHook();
                             break;
                     }
                 }
@@ -166,7 +175,7 @@ namespace MSFSPopoutPanelManager.Orchestration
         private void HookWinEvent()
         {
             // Setup panel config event hooks
-            _winEventHook = PInvoke.SetWinEventHook(PInvokeConstant.EVENT_SYSTEM_CAPTURESTART, PInvokeConstant.EVENT_OBJECT_LOCATIONCHANGE, IntPtr.Zero, _winEvent, 0, 0, PInvokeConstant.WINEVENT_OUTOFCONTEXT);
+            _winEventHook = PInvoke.SetWinEventHook(PInvokeConstant.EVENT_SYSTEM_MOVESIZEEND, PInvokeConstant.EVENT_OBJECT_LOCATIONCHANGE, IntPtr.Zero, _winEvent, 0, 0, PInvokeConstant.WINEVENT_OUTOFCONTEXT);
         }
 
         private void UnhookWinEvent()
@@ -231,21 +240,6 @@ namespace MSFSPopoutPanelManager.Orchestration
                             PInvoke.ShowWindow(hwnd, PInvokeConstant.SW_RESTORE);
                         }
                         break;
-                    case PInvokeConstant.EVENT_SYSTEM_CAPTURESTART:
-                        if (!panelConfig.HasTouchableEvent || _prevWinEvent == PInvokeConstant.EVENT_SYSTEM_CAPTURESTART)
-                            break;
-
-                        HandleTouchDownEvent(panelConfig);
-                        break;
-                    case PInvokeConstant.EVENT_SYSTEM_CAPTUREEND:
-                        if (!panelConfig.TouchEnabled || _prevWinEvent == PInvokeConstant.EVENT_OBJECT_LOCATIONCHANGE)
-                            break;
-
-                        //if (!panelConfig.HasTouchableEvent || _prevWinEvent == PInvokeConstant.EVENT_SYSTEM_CAPTUREEND)
-                        //    break;
-
-                        HandleTouchUpEvent(panelConfig);
-                        break;
                 }
             }
             else
@@ -290,96 +284,7 @@ namespace MSFSPopoutPanelManager.Orchestration
                     case PInvokeConstant.EVENT_SYSTEM_MOVESIZEEND:
                         ProfileData.WriteProfiles();
                         break;
-                    case PInvokeConstant.EVENT_SYSTEM_CAPTURESTART:
-                        if (!panelConfig.HasTouchableEvent || _prevWinEvent == PInvokeConstant.EVENT_SYSTEM_CAPTURESTART)
-                            break;
-
-                        HandleTouchDownEvent(panelConfig);
-                        break;
-                    case PInvokeConstant.EVENT_SYSTEM_CAPTUREEND:
-                        if (!panelConfig.TouchEnabled || _prevWinEvent == PInvokeConstant.EVENT_OBJECT_LOCATIONCHANGE)
-                            break;
-
-                        //if (!panelConfig.HasTouchableEvent || _prevWinEvent == PInvokeConstant.EVENT_SYSTEM_CAPTUREEND)
-                        //    break;
-
-                        HandleTouchUpEvent(panelConfig);
-                        break;
                 }
-            }
-
-            _prevWinEvent = iEvent;
-        }
-
-        private void HandleTouchDownEvent(PanelConfig panelConfig)
-        {
-            if (!_isHookMouseDown)
-            {
-                lock (_hookLock)
-                {
-                    Point point;
-                    PInvoke.GetCursorPos(out point);
-
-                    // Disable left clicking if user is touching the title bar area
-                    if (point.Y - panelConfig.Top > (panelConfig.HideTitlebar ? 5 : 31))
-                    {
-                        _isHookMouseDown = true;
-                        InputEmulationManager.LeftClickMouseDown(point.X, point.Y);
-
-                        //Debug.WriteLine($"Mouse Down {_pair}");
-                    }
-                }
-            }
-        }
-
-
-        private void HandleTouchUpEvent(PanelConfig panelConfig)
-        {
-            if (_isHookMouseDown)
-            {
-                Thread.Sleep(AppSettingData.AppSetting.TouchScreenSettings.MouseUpDownDelay);
-
-                lock (_hookLock)
-                {
-                    _isHookMouseDown = false;
-                    UnhookWinEvent();
-
-                    Point point;
-                    PInvoke.GetCursorPos(out point);
-                    // Disable left clicking if user is touching the title bar area
-                    if (point.Y - panelConfig.Top > (panelConfig.HideTitlebar ? 5 : 31))
-                    {
-                        InputEmulationManager.LeftClickMouseUp(0, 0);
-                        HookWinEvent();
-                        // Debug.WriteLine($"Mouse Up {_pair}");
-                        //_pair++;
-
-                        var prevWinEventClickLock = ++_winEventClickLock;
-
-                        if (prevWinEventClickLock == _winEventClickLock && AppSettingData.AppSetting.TouchScreenSettings.RefocusGameWindow)
-                        {
-                            Task.Run(() => RefocusMsfs(prevWinEventClickLock));
-                        }
-                    }
-                }
-            }
-        }
-
-        private void RefocusMsfs(int prevWinEventClickLock)
-        {
-            Thread.Sleep(1000);
-
-            if (prevWinEventClickLock == _winEventClickLock)
-            {
-                if (!_isHookMouseDown)
-                {
-                    var simulatorProcess = WindowProcessManager.GetSimulatorProcess();
-                    var rectangle = WindowActionManager.GetWindowRect(simulatorProcess.Handle);
-                    var clientRectangle = WindowActionManager.GetClientRect(simulatorProcess.Handle);
-
-                    PInvoke.SetCursorPos(rectangle.X + clientRectangle.Width / 2, rectangle.Y + clientRectangle.Height / 2);
-                }
-
             }
         }
     }

@@ -26,6 +26,8 @@ Things that work:
 * Works on touch monitor or tablet with SpaceDesk
 
 Know issues and workarounds:
+* (Reported July 24th) - When trying to click and drag a map on touch enabled panel on tablet using SpaceDesk or Duet, touch is not responsive. I'm active working on a fix or implement a better solution for touch and drag.
+
 * When setting a panel to be touch enabled, please refrain form using a mouse to operate the panel since it is going to drive you insane. In the application, when no touch (click) action occurs within 1 second after the last touch action, the mouse cursor is going to jump back into the game window in order to give flight control back to the user. If you're using a mouse to interact with a panel that is designated as touch enabled, your mouse cursor is going to jump around. You can turn off game refocus setting but then you'll lose control of the plane as soon as you interact with a pop out panel. I believe the lost of flight control is on Asobo bug list waiting to be fixed.
 
 * Panels are designed in the game for mouse interaction which means it has a built-in assumption for slow-er mouse click response. But using finger to touch is definitely much faster than using a mouse and some panel UI will not be able to keep up with the speed of touch entry if you send touch input too fast. When you encounter UI lag in response or button click not responding to your touch input, please slow down your touch input speed a bit and let the panel catch up. (On my to-do list for improvement.)

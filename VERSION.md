@@ -1,6 +1,15 @@
 # Version History
 <hr/>
 
+## Version 3.4.1
+* Button responsiveness
+* Full screen mode works now
+* Panning works naturally
+* Adjustable getting flight control back almost instantaneous (0.5sec) 
+* Fixed scroll bar issue. Just scroll like you normally would
+Known issue:
+* After map scrolling is completed, when try to touch the map again to retarget the crosshair (in GTN 750) or just focus on a point in the map (Other touch panel), the target point may jump off screen. Right now, I'm unable to resolve this since MSFS code keeps track of internal coordinates and I'm unable to override it. Need more investigation to work around this issue. In the mean time, just touch the map again to recenter the crosshair.
+
 ## Version 3.4
 
 * Changed where user data files are stored. Previously, the files are saved in subfolder  "userdata" in your installation directory. Now they're moved to your Windows "Documents"  folder under "MSFS Pop Out Panel Manager" for easy access. When you first start the application, a data migration step will occur and your user data files will be upgraded and moved to this new folder location. This change will allow you to install Pop Out Manager to folder of your choice on your machine since the application no longer requires write access to your installation folder.

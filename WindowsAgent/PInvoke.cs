@@ -147,6 +147,20 @@ namespace MSFSPopoutPanelManager.WindowsAgent
         [DllImport("user32.dll", SetLastError = true)]
         public static extern int UnhookWinEvent(IntPtr hWinEventHook);
 
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        public static extern IntPtr GetModuleHandle(string lpModuleName);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr SetWindowsHookEx(HookType hookType, WindowsHookExProc lpfn, IntPtr hMod, uint dwThreadId);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool UnhookWindowsHookEx(IntPtr hook);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern int CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
+
+        public delegate int WindowsHookExProc(int code, IntPtr wParam, IntPtr lParam);
+
         public delegate bool CallBack(IntPtr hwnd, int lParam);
 
         public delegate void WinEventProc(IntPtr hWinEventHook, uint iEvent, IntPtr hwnd, int idObject, int idChild, int dwEventThread, int dwmsEventTime);
@@ -162,5 +176,22 @@ namespace MSFSPopoutPanelManager.WindowsAgent
         public Point ptMaxPosition;
         public Rectangle rcNormalPosition;
         public Rectangle rcDevice;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct MSLLHOOKSTRUCT
+    {
+        public Point pt;
+        public int mouseData;
+        public int flags;
+        public int time;
+        public UIntPtr dwExtraInfo;
+    }
+
+    public enum HookType : int
+    {
+        WH_GETMESSAGE = 3,
+        WH_MOUSE = 7,
+        WH_MOUSE_LL = 14
     }
 }

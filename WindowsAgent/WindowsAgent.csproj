@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Shared\Shared.csproj" />
+    <ProjectReference Include="..\UserDataAgent\UserDataAgent.csproj" />
   </ItemGroup>
 
 </Project>
