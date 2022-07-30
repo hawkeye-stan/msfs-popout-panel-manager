@@ -1,7 +1,6 @@
 ﻿using MSFSPopoutPanelManager.UserDataAgent;
 using System;
 using System.Diagnostics;
-using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -15,12 +14,10 @@ namespace MSFSPopoutPanelManager.WindowsAgent
         private static IntPtr _hHook = IntPtr.Zero;
         private static PInvoke.WindowsHookExProc callbackDelegate = HookCallBack;
         private static bool _isTouchDown;
+        private static int _mouseMoveCount;
         private static bool _isMouseMoveBlock = false;
         private static object _mouseTouchLock = new object();
-        private static int _mouseMoveUnblockCount = 0;
-        private static int _mouseMoveCount = 0;
-        private static bool _touchUsePreClick = false;
-        private static Point _blockPoint;
+        private static bool _isDragged = false;
 
         private const int PANEL_MENUBAR_HEIGHT = 31;
         private const uint TOUCH_FLAG = 0xFF515700;
@@ -31,8 +28,7 @@ namespace MSFSPopoutPanelManager.WindowsAgent
         private const uint WM_RBUTTONUP = 0x0205;
         private const uint MOUSEEVENTF_LEFTDOWN = 0x0002;
         private const uint MOUSEEVENTF_LEFTUP = 0x0004;
-        private const uint MOUSEEVENTF_RIGHTDOWN = 0x0008;
-        private const uint MOUSEEVENTF_RIGHTUP = 0x0010;
+        private const uint MOUSEEVENTF_MOVE = 0x0001;
 
         public static Profile ActiveProfile { private get; set; }
 
@@ -83,11 +79,13 @@ namespace MSFSPopoutPanelManager.WindowsAgent
 
             // Touch
             // If touch point is within pop out panel boundaries and have touch enabled
-            if (!ActiveProfile.PanelConfigs.Any(p => p.TouchEnabled
+            var panelConfig = ActiveProfile.PanelConfigs.FirstOrDefault(p => p.TouchEnabled
                                                      && info.pt.X > p.Left
                                                     && info.pt.X < p.Left + p.Width
                                                     && info.pt.Y > p.Top + (p.HideTitlebar || p.FullScreen ? 5 : PANEL_MENUBAR_HEIGHT)
-                                                    && info.pt.Y < p.Top + p.Height))
+                                                    && info.pt.Y < p.Top + p.Height);
+
+            if (panelConfig == null)
                 return PInvoke.CallNextHookEx(_hHook, code, wParam, lParam);
 
             switch ((uint)wParam)
@@ -100,55 +98,48 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                     if (!_isTouchDown)
                     {
                         _isTouchDown = true;
+                        _isMouseMoveBlock = true;
 
                         lock (_mouseTouchLock)
                         {
                             Task.Run(() =>
                             {
-                                _isMouseMoveBlock = true;
-
-                                Thread.Sleep(25);
-
-                                if (_mouseMoveCount > 1 || _mouseMoveCount > 1)
+                                if (_mouseMoveCount > 1)
                                 {
-                                    PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, _blockPoint.X, _blockPoint.Y, 0, 0);
-                                    Thread.Sleep(25);
-                                    _touchUsePreClick = true;
+                                    PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, info.pt.X, info.pt.Y, 0, 0);
+                                    _isDragged = true;
                                 }
 
-                                PInvoke.mouse_event(MOUSEEVENTF_LEFTDOWN, _blockPoint.X, _blockPoint.Y, 0, 0);
+                                Thread.Sleep(AppSetting.TouchScreenSettings.TouchDownUpDelay + 25);
+                                PInvoke.mouse_event(MOUSEEVENTF_LEFTDOWN, info.pt.X, info.pt.Y, 0, 0);
+                                Thread.Sleep(AppSetting.TouchScreenSettings.TouchDownUpDelay + 50);
                                 _isMouseMoveBlock = false;
-                                _mouseMoveUnblockCount = 0;
-                                _mouseMoveCount = 0;
-                            });
-                        }
-                    }
-                    break;
-                case WM_LBUTTONUP:
-
-                    if (_isTouchDown)
-                    {
-                        lock (_mouseTouchLock)
-                        {
-                            Task.Run(() =>
-                            {
-                                Thread.Sleep(AppSetting.TouchScreenSettings.MouseUpDownDelay + (_touchUsePreClick ? 175 : 125));
-                                PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, info.pt.X, info.pt.Y, 0, 0);
                                 _isTouchDown = false;
-                                _touchUsePreClick = false;
-                                RefocusMsfsGameWindow();
                             });
                         }
-                        return 1;
                     }
+                    return 1;
+                case WM_LBUTTONUP:
+                    Task.Run(() =>
+                    {
+                        while (_isTouchDown) { }
+                        PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, info.pt.X, info.pt.Y, 0, 0);
+                        if (_isDragged)
+                        {
+                            // Override GTN750 bug - must execute this to fix GTN750 cursor moving offscreen issue when doing touch and drag
+                            Thread.Sleep(AppSetting.TouchScreenSettings.TouchDownUpDelay + 50);
+                            PInvoke.SetCursorPos(info.pt.X, info.pt.Y);
+                            Thread.Sleep(100);
+                            InputEmulationManager.LeftClickFast(info.pt.X, info.pt.Y);
+                            _isDragged = false;
+                        }
+                        _mouseMoveCount = 0;
+                        RefocusMsfsGameWindow(panelConfig);
+                    });
                     return 1;
                 case WM_MOUSEMOVE:
                     if (_isMouseMoveBlock)
-                    {
-                        _mouseMoveUnblockCount++;
-                        _blockPoint = new Point(info.pt.X, info.pt.Y);
-                        break;
-                    }
+                        return 1;
 
                     _mouseMoveCount++;
                     break;
@@ -158,12 +149,11 @@ namespace MSFSPopoutPanelManager.WindowsAgent
 
         }
 
-        private static void RefocusMsfsGameWindow()
+        private static void RefocusMsfsGameWindow(PanelConfig panelConfig)
         {
-            // ToDo: Adjustable refocus MSFS game, min 500 milliseconds
-            Thread.Sleep(1000);
+            Thread.Sleep(AppSetting.TouchScreenSettings.RefocusGameWindowDelay);
 
-            if (!_isTouchDown && AppSetting.TouchScreenSettings.RefocusGameWindow)
+            if (!_isTouchDown && AppSetting.TouchScreenSettings.RefocusGameWindow && !panelConfig.DisableGameRefocus)
             {
                 var rectangle = WindowActionManager.GetWindowRect(_simulatorProcess.Handle);
                 var clientRectangle = WindowActionManager.GetClientRect(_simulatorProcess.Handle);

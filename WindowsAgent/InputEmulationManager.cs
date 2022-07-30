@@ -113,6 +113,7 @@ namespace MSFSPopoutPanelManager.WindowsAgent
 
             PInvoke.SetForegroundWindow(simualatorProcess.Handle);
             LeftClick(x, y);
+            Thread.Sleep(200);
 
             // First center view using Ctrl-Space
             PInvoke.keybd_event(Convert.ToByte(VK_LCONTROL), 0, KEYEVENTF_KEYDOWN, 0);
@@ -157,6 +158,7 @@ namespace MSFSPopoutPanelManager.WindowsAgent
 
             // First center view to make sure recalling custom camera works on the first press
             InputEmulationManager.CenterView();
+            Thread.Sleep(500);
 
             uint customViewKey = (uint)(Convert.ToInt32(keybinding) + KEY_0);
 

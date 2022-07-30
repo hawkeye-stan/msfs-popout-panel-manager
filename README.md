@@ -14,31 +14,19 @@ Please follow [FlightSimulator.com](https://forums.flightsimulator.com/t/msfs-po
 
 <hr>
 
-## ** Updated Touch Panel Feature **
+## ** Updated Touch Panel Feature (July 30th, 2022) **
 With SU10 Beta v1.27.11, Asobo seems to have fix a major [bug](#touch-enable-pop-out-feature) (in SU9 and before) that stops Pop Out Manager's touch panel feature from working reliably. I'm happy to announce touch enabled feature works pretty well out of the box on either direct connected touch monitor or on pop out window that is displayed on tablet using software tool such as SpaceDesk. Until Asobo actually allow touch passthrough for panels, this tool can serve as a stopgap solution.
 
-I've tested touch operation on GTN750, KingAir PFD/MFD, TMB 930 FMS  and they are operational  with couple of caveats listed below. Please report any issues that you encounter when using touch enable feature. There is still lots of room for improvement and I'll continue my effort to make touch work better and better.
+I've tested touch operation on GTN750, GTN530, KingAir PFD/MFD, TMB 930 FMS, Flybywire A32NX EFB and they are operational. Please report any issues that you encounter when using touch enable feature. There is still lots of room for improvement and I'll continue my effort to make touch work better and better.
 
-Things that work:
+Things that work out of the box:
 
-* General button click
+* General button click using touch
 * Touch and drag such as when panning maps or using scrollbars
 * Works on touch monitor or tablet with SpaceDesk
+* Flight control will be regained after 0.5 second (adjustable) of touch inactivity on a panel. This will minimize the lost of flight control when when operating touch panel.
 
-Know issues and workarounds:
-* (Reported July 24th) - When trying to click and drag a map on touch enabled panel on tablet using SpaceDesk or Duet, touch is not responsive. I'm active working on a fix or implement a better solution for touch and drag.
-
-* When setting a panel to be touch enabled, please refrain form using a mouse to operate the panel since it is going to drive you insane. In the application, when no touch (click) action occurs within 1 second after the last touch action, the mouse cursor is going to jump back into the game window in order to give flight control back to the user. If you're using a mouse to interact with a panel that is designated as touch enabled, your mouse cursor is going to jump around. You can turn off game refocus setting but then you'll lose control of the plane as soon as you interact with a pop out panel. I believe the lost of flight control is on Asobo bug list waiting to be fixed.
-
-* Panels are designed in the game for mouse interaction which means it has a built-in assumption for slow-er mouse click response. But using finger to touch is definitely much faster than using a mouse and some panel UI will not be able to keep up with the speed of touch entry if you send touch input too fast. When you encounter UI lag in response or button click not responding to your touch input, please slow down your touch input speed a bit and let the panel catch up. (On my to-do list for improvement.)
-
-* With the point above and because panels are coded by different developers, they will have vary software performance when using them. Touch event may register consistently for one panel and not another. There is a new touch setting in preferences menu to adjust the time delay to allow a panel to register a touch (mouse down then up). If your panel has trouble receiving your touch input, increase this value one step at a time to compensate for the delay.
-
-* Unlike using a mouse, to pan a map, you've to touch the map first to set the map in focus before touching and dragging to pan the map. This is a limitation of touch vs direct mouse click when using drag action in pop out panel. (On my to-do list for improvement.)
-
-* Touch dragging a scrollbar. Since the current scrollbar implementation in MSFS has a very small target zone when using a finger compares to using a mouse, you may have to try couple times to hit the required scrollbar area to scroll. A easier approach to activate the scrollbar is by touching the scrollbar with your finger, hold for about 1 second, then move your finger to scroll. This gives time for MSFS side to register the start scroll event.
-
-* In SU 10 beta (1.27.11.0) or before, when using Touch Enabled and Full Screen Mode simultaneously for a panel, touch event will not register since Full Screen mode does not get treated as a pop out window by Asobo. Please run the panel in regular pop out window and use "Hide toolbar" option instead of full screen mode to simulator full screen. (On my to-do list for improvement.)
+If using SpaceDesk to host pop out panel display, since there is a latency for touch response in wireless display, your touch may not register consistently. Please go to Preferences => Touch Settings => Touch Down Touch Up Delay, and increase the value to 25ms or higher to increase touch sensitivity.
 
 ## Application Features
 * Display resolution independent. Supports 1080p/1440p/4k display and ultrawide displays.
@@ -241,6 +229,8 @@ You can backup this folder and restore this folder if you want to uninstall and 
  <hr/>
  
 ## Common Problem Resolution
+
+* If Pop Out Panel Manager is not running correctly such as panels fail to pop out even all keyboard control bindings are set correctly, please try running the application as administrator and it may resolve the issue..
 
 * Unable to pop out panels when creating a profile for the first time with error such as "Unable to pop out panel #X". If the panel is not being obstructed by another window, by changing the sequence of the pop out when defining the profile may help solve the issue. Currently there are some panels in certain plane configuration that does not follow predefined MSFS pop out rule.
 

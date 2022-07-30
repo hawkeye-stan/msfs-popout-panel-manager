@@ -18,6 +18,7 @@
         HideTitlebar,
         FullScreen,
         TouchEnabled,
+        DisableGameRefocus,
         Invalid
     }
 }

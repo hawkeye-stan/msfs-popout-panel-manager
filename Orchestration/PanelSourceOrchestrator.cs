@@ -132,7 +132,7 @@ namespace MSFSPopoutPanelManager.Orchestration
             // Turn off TrackIR if TrackIR is started
             FlightSimOrchestrator.TurnOffTrackIR();
 
-            if (AppSetting.UseAutoPanning && FlightSimData.IsEnteredFlight)
+            if (AppSetting.UseAutoPanning)
                 InputEmulationManager.LoadCustomView(AppSetting.AutoPanningKeyBinding);
         }
 

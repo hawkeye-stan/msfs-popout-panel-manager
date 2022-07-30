@@ -107,6 +107,9 @@ namespace MSFSPopoutPanelManager.Orchestration
                                 TouchEventManager.Hook();
                             else if (ActiveProfile.PanelConfigs.All(p => !p.TouchEnabled) && TouchEventManager.IsHooked)
                                 TouchEventManager.UnHook();
+
+                            if (!panelConfig.TouchEnabled)
+                                panelConfig.DisableGameRefocus = false;
                             break;
                     }
                 }

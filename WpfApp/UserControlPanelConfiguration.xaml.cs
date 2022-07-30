@@ -70,6 +70,9 @@ namespace MSFSPopoutPanelManager.WpfApp
                     case "Touch Enabled":
                         selectedProperty = PanelConfigPropertyName.TouchEnabled;
                         break;
+                    case "Disable Game Refocus":
+                        selectedProperty = PanelConfigPropertyName.DisableGameRefocus;
+                        break;
                 }
 
                 _panelConfigurationViewModel.SelectedPanelConfigItem = new PanelConfigItem() { PanelIndex = panelConfig.PanelIndex, PanelConfigProperty = selectedProperty };

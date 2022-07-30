@@ -42,7 +42,7 @@ namespace MSFSPopoutPanelManager.WpfApp
         private void HandleTaskSchedulerUnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
         {
             FileLogger.WriteException(e.Exception.Message, e.Exception);
-            ShowExceptionDialog();
+            //ShowExceptionDialog();
         }
 
         private void HandleDispatcherException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
@@ -51,7 +51,7 @@ namespace MSFSPopoutPanelManager.WpfApp
             if (e.Exception.Message != "E_INVALIDARG")      // Ignore this error
             {
                 FileLogger.WriteException(e.Exception.Message, e.Exception);
-                ShowExceptionDialog();
+                //ShowExceptionDialog();
             }
         }
 
@@ -59,7 +59,7 @@ namespace MSFSPopoutPanelManager.WpfApp
         {
             var exception = (Exception)e.ExceptionObject;
             FileLogger.WriteException(exception.Message, exception);
-            ShowExceptionDialog();
+            //ShowExceptionDialog();
         }
 
         private void ShowExceptionDialog()

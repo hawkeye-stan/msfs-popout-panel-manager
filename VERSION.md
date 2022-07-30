@@ -2,13 +2,25 @@
 <hr/>
 
 ## Version 3.4.1
-* Button responsiveness
-* Full screen mode works now
-* Panning works naturally
-* Adjustable getting flight control back almost instantaneous (0.5sec) 
-* Fixed scroll bar issue. Just scroll like you normally would
-Known issue:
-* After map scrolling is completed, when try to touch the map again to retarget the crosshair (in GTN 750) or just focus on a point in the map (Other touch panel), the target point may jump off screen. Right now, I'm unable to resolve this since MSFS code keeps track of internal coordinates and I'm unable to override it. Need more investigation to work around this issue. In the mean time, just touch the map again to recenter the crosshair.
+
+This release is solely focus on addressing issues regarding touch panel capabilities as well as making improvements to touch feature. Panels I used for testing are
+PMT GTN750, WT G3X mod, PMS GTN530, FBW A32NX EFB, King Air 350 PFD/MFD touch screen.
+
+When using SpaceDesk, please increase touch down touch up delay to 25ms in preference touch settings to improve sensitivity in registering touch input.
+
+* Implemented new algorithm to improve general performance for touch panel.
+
+* Button touches are now more responsive. On touch monitor, lag after touch had been minimized and is now performing much closer to a mouse click. On SpaceDesk, the lag is more in line with latency of remote display technology. When using SpaceDesk, you can increase touch delay to 25ms in preference settings to account for the latency if your touch is not register consistently.
+
+* You can now slide your finger to pan the map in panel. There is still a slight delay but touch response is much improved.
+
+* Full screen mode for touch panel can now be turned on.
+
+* Improved scroll bars touch response. They can be dragged and moved much more easily.
+
+* Added adjustable flight control refocus (0.5 sec to 2 sec). The lowest setting makes flight control input refocus seems instantaneous after touch inactivity.
+
+* Added ability to disable flight control refocus for a panel. Set panel to "Disable Game Refocus" will be useful in panel such as Flybywire A32NX EFB since textbox entries in this panel will lose focus if mouse cursor moves away from EFB. 
 
 ## Version 3.4
 

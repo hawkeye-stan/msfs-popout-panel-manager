@@ -239,6 +239,10 @@ namespace MSFSPopoutPanelManager.Orchestration
                 if (handle != IntPtr.Zero)
                     WindowActionManager.MoveWindow(handle, PanelType.CustomPopout, 0, 0, 800, 600);
 
+                // Make window always on top to make sure it is clickable and not obstruct by other user windows
+                //WindowActionManager.ApplyAlwaysOnTop(handle, PanelType.WPFWindow, true);
+                //Thread.Sleep(500);
+
                 if (i > 1)
                     SeparatePanel(panels[0].PanelHandle);       // The joined panel is always the first panel that got popped out
 
@@ -268,6 +272,10 @@ namespace MSFSPopoutPanelManager.Orchestration
 
                 PInvoke.SetWindowText(panel.PanelHandle, panel.PanelName + " (Custom)");
             }
+
+            // Remove window always on top setting
+            //WindowActionManager.ApplyAlwaysOnTop(panels[0].PanelHandle, PanelType.WPFWindow, false);
+            //Thread.Sleep(500);
 
             //Performance validation, make sure the number of pop out panels is equal to the number of selected panel
             if (WindowActionManager.GetWindowsCountByPanelType(new List<PanelType>() { PanelType.CustomPopout }) != ActiveProfile.PanelSourceCoordinates.Count)

@@ -22,6 +22,7 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
             ChangeProfileCommand = new DelegateCommand<object>(OnChangeProfile);
 
             AddProfileBindingCommand = new DelegateCommand(OnAddProfileBinding, () => ProfileData.HasActiveProfile && FlightSimData.HasCurrentMsfsPlaneTitle && ProfileData.IsAllowedAddAircraftBinding && FlightSimData.IsSimulatorStarted)
+                                                                                .ObservesProperty(() => ProfileData.ActiveProfile)
                                                                                 .ObservesProperty(() => FlightSimData.HasCurrentMsfsPlaneTitle)
                                                                                 .ObservesProperty(() => ProfileData.HasActiveProfile)
                                                                                 .ObservesProperty(() => ProfileData.IsAllowedAddAircraftBinding)

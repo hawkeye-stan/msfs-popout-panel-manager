@@ -233,18 +233,24 @@
                         <TextBlock Style="{StaticResource TextBlockHeading}">Refocus Game Window</TextBlock>
                         <Line Stretch="Fill" Stroke="Gray" X2="1"/>
                         <CheckBox IsChecked="{Binding AppSettingData.AppSetting.TouchScreenSettings.RefocusGameWindow, Mode=TwoWay}" >
-                            <AccessText TextWrapping="Wrap">Automactically set focus back to game window after 1 second if inactivity on touch enabled panel. This will give your flight control back when using pop out panel. </AccessText>
+                            <AccessText TextWrapping="Wrap">Automactically set focus back to game window after a period of inactivity on touch enabled panel. This will give your flight control back when using pop out panel.</AccessText>
                         </CheckBox>
+                        <WrapPanel Margin="0,10,0,0">
+                            <mah:NumericUpDown Width="100" Minimum="500" Maximum="2000" Interval="500" FontSize="16" Height="32" Value="{Binding AppSettingData.AppSetting.TouchScreenSettings.RefocusGameWindowDelay, Mode=TwoWay}"></mah:NumericUpDown>
+                            <AccessText Margin="10,0,0,0" Width="490">Amount of time in milliseconds to wait for touch inactivity before input focus goes back to game window.</AccessText>
+                        </WrapPanel>
                     </WrapPanel>
                     <WrapPanel Orientation="Vertical" Margin="0,0,0,20">
                         <TextBlock Style="{StaticResource TextBlockHeading}">Touch Down Touch Up Delay</TextBlock>
                         <Line Stretch="Fill" Stroke="Gray" X2="1"/>
                         <WrapPanel>
-                            <mah:NumericUpDown Width="100" Minimum="0" Maximum="200" Interval="25" FontSize="16" Height="32" Value="{Binding AppSettingData.AppSetting.TouchScreenSettings.MouseUpDownDelay, Mode=TwoWay}"></mah:NumericUpDown>
-                            <AccessText Margin="10,0,0,0" Width="490">Amount of time to delay the touch down and then touch up event when operating touch enabled panel. If your touch is not registering consistently, increasing this value will help. 
-                                For example on a direct connected touch monitor, 25 milliseconds work really well. But when operating a panel on a tablet using software such as Spacedesk, since there is delay for touch signal sending back to Windows OS
-                                by the software, increasing this value to 50 or higher may compensate for the delay. The speed of your PC or the type of panel on each plane could also be a factor for touch consistency. 
-                                You can experiment by increasing or decreasing this value one step at time until you get a consistent touch response. (Default: 25 milliseconds)</AccessText>
+                            <mah:NumericUpDown Width="100" Minimum="0" Maximum="50" Interval="25" FontSize="16" Height="32" Value="{Binding AppSettingData.AppSetting.TouchScreenSettings.TouchDownUpDelay, Mode=TwoWay}"></mah:NumericUpDown>
+                            <AccessText Margin="10,0,0,0" Width="490">Amount of time to delay touch down and then touch up event when operating touch enabled panel. If your touch is not registering consistently, increasing this value will help.</AccessText>
+
+                            <TextBlock FontSize="14" TextWrapping="Wrap" Margin="0,10,0,0">
+                            For panel display on direct connected touch monitor, 0 milliseconds work really well.<LineBreak/><LineBreak/>
+                            For panel display on a tablet using software such as Spacedesk, since there is higher latency for touch signal increasing this value to 25 or higher may compensate for this latency.
+                            </TextBlock>
                         </WrapPanel>
                     </WrapPanel>
                 </WrapPanel>

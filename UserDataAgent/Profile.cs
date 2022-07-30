@@ -92,6 +92,8 @@ namespace MSFSPopoutPanelManager.UserDataAgent
 
         public bool TouchEnabled { get; set; }
 
+        public bool DisableGameRefocus { get; set; }
+
         [JsonIgnore]
         public bool IsCustomPopOut { get { return PanelType == PanelType.CustomPopout; } }
 
