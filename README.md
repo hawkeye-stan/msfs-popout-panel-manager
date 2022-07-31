@@ -28,6 +28,8 @@ Things that work out of the box:
 
 If using SpaceDesk to host pop out panel display, since there is a latency for touch response in wireless display, your touch may not register consistently. Please go to Preferences => Touch Settings => Touch Down Touch Up Delay, and increase the value to 25ms or higher to increase touch sensitivity.
 
+
+
 ## Application Features
 * Display resolution independent. Supports 1080p/1440p/4k display and ultrawide displays.
 
@@ -156,21 +158,18 @@ This feature will make pop out panel touch enabled on touch screen monitor or ta
 
 - King Air 350
 - PMS GTN750
+- PMS GTN530
 - Lower touch panel in TBM 930
+- Flybywire A32NX EFB
 
 In MSFS, when operating the above panels with pop outs, there are currently 2 limitations and one major bug that Asobo has to solve to make touch panels viable.  This touch enable pop out experimental feature will try to solve the 2 limitations but is currently not able to overcome the bug.
 
 - Limitation #1 - For pop out panel, touch events do not get pass through to panels such as King Air PFD or GTN750 and they can only be operated with a mouse. There is a work around if you’re using Spacedesk with tablet by disabling USB HID within Spacedesk drivers in Windows device manager. But if you’re using touch monitors directly connected to your gaming PC, then Spacedesk workaround is not an option.
- 
-  **Limitation solved by**: detect the coordinate where touch event has occurred and sent an extra left mouse click to MSFS.
 
 - Limitation #2 - When you click or hover your mouse over any pop out panels on your main monitor or on another monitor, the game main window will lose focus and you can’t operate flight control without clicking the game window again.
- 
-  **Limitation solved by**: detect when the user has stopped any touch events (after 1 second) and refocus main screen to allow flight control to work again.
 
-
-**EDITED** - Asobo have fixed the below bug in SU10 Beta v1.27.11. And hopefuly it won't be broken again.
-- ~~Bug~~ -  If the pop out panel is also display on the main screen, a click through at incorrect coordinate will occur at the relative position where the pop out panel is located. If you click at this particular location in the pop out panel, the click event will register at the wrong coordinate. I haven’t been able to figure out how to work around this issue yet since the bug is deep in the closed source CoherentGT code in how MSFS implements the internal browser control to display to pop out panel. So touch will not work in the relative position of the pop out panel where panel appears on the main screen. This only affects instrumentation pop outs. The built-in ones such as ATC and checklist are fine since once they’re popped out, they no longer appear on the main screen. Below is the screenshot where click through at incorrect coordinate occurs. See the relative position (red box) in the pop out where the same instrumentation appears on the main screen.
+**EDITED (July 31st)** - Asobo have fixed the below bug in SU10 Beta v1.27.11. And hopefuly it won't be broken again.
+- ~~Bug -  If the pop out panel is also display on the main screen, a click through at incorrect coordinate will occur at the relative position where the pop out panel is located. If you click at this particular location in the pop out panel, the click event will register at the wrong coordinate. I haven’t been able to figure out how to work around this issue yet since the bug is deep in the closed source CoherentGT code in how MSFS implements the internal browser control to display to pop out panel. So touch will not work in the relative position of the pop out panel where panel appears on the main screen. This only affects instrumentation pop outs. The built-in ones such as ATC and checklist are fine since once they’re popped out, they no longer appear on the main screen. Below is the screenshot where click through at incorrect coordinate occurs. See the relative position (red box) in the pop out where the same instrumentation appears on the main screen.~~
 
 <p align="center">
 <img src="assets/readme/images/touch_support_bug.png" width="900" hspace="10"/>
@@ -188,13 +187,9 @@ Perform your regular panel selection and once your touch capable panel has been 
 
 #### Known Issues
 
-- If you enable touch support for a pop out panel, please do not you use a mouse to click the panel. It will register extra click since the app's code simulate a left mouse click when touch.
-
 ~~- A MSFS click through bug where pop out panel also appears on the main game screen. Touch will not register correctly in the section of the pop out panel where the relative position of the panel corresponds to where the panel is located on the main game screen.~~  **Asobo fixed in SU10 Beta 1.27.11.**
 
 ~~- When a click through occurs on non-instrumentation panel items such as throttle or switches, even though the switches will not accidentally get clicked, touch response in pop out panel may not work. Just touching a little bit to the left/right in the pop out panel may register your touch event correctly and trigger your intend target.~~  **Asobo fixed in SU10 Beta 1.27.11.**
-
-- To do a drag such a scrollbar, hold down your finger a little longer then usual and drag your finger. Some scrollbars also has a very narrow touch target and they will be hard to drag. The bigger your touch display and pop out panel size, the easier for touch the register the correct target.
 
 - If touch suddenly becomes unresponsive, please try to change the main view of the game such as looking left/right using keyboard shortcut. This will sometime reset the mouse coordinate where you touch the pop out panel.
 

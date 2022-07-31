@@ -1,13 +1,13 @@
 Version 3.4.1.0 
 
-This release is optional and changes in this release is solely focus on addressing issues
+This release is optional and changes in this release is solely focused on addressing issues
 regarding touch panel capabilities as well as making improvements to touch feature. Panels
 I used for testing are PMT GTN750, WT G3X mod, PMS GTN530, FBW A32NX EFB, King Air 350 
 PFD/MFD touch screen.
 
 When using SpaceDesk, if touch is not registering consistently, please increase touch down 
-touch up delay to 25ms or higher in preferences touch settings to improve sensitivity in 
-registering touch input.
+touch up delay to 25ms or higher in preferences touch settings to improve sensitivity for 
+touch input.
 
 Change Log:
 
@@ -19,8 +19,8 @@ in line with latency of remote display technology. When using SpaceDesk, you can
 touch delay to 25ms in preference settings to account for the latency if your touch is not 
 register consistently.
 
-* You can now slide your finger to pan the map in panel. There is still a slight delay but 
-touch response is much improved.
+* You can now slide your finger to pan map in panel. There is still a slight delay but touch
+response is much improved.
 
 * Full screen mode for touch panel can now be turned on.
 
