@@ -45,12 +45,12 @@
                 <Separator Margin="5,10,5,5"/>
                 <Label HorizontalAlignment="Left" Margin="0,0,0,0" >
                     <TextBlock TextWrapping="WrapWithOverflow">
-                        2. Bind active aircraft livery to the selected profile to automatically activate profile and to automatically pop out panels when a flight session starts.
+                        2. Bind active aircraft to the selected profile to automatically activate profile and automatically pop out panels when a flight session starts.
                     </TextBlock>
                 </Label>
                 <WrapPanel Orientation="Vertical" Margin="15,0,0,0" HorizontalAlignment="Left">
                     <WrapPanel Orientation="Horizontal" Margin="5,5,0,0" HorizontalAlignment="Left">
-                        <Label Content="{c:Binding 'FlightSimData.CurrentMsfsPlaneTitle == null ? &quot;Active aircraft livery is unavailable&quot; : FlightSimData.CurrentMsfsPlaneTitle'}" HorizontalContentAlignment="Left" HorizontalAlignment="Left" FontStyle="Italic" Width="447">
+                        <Label Content="{c:Binding 'FlightSimData.CurrentMsfsAircraft == null ? &quot;Active aircraft is unavailable&quot; : FlightSimData.CurrentMsfsAircraft'}" HorizontalContentAlignment="Left" HorizontalAlignment="Left" FontStyle="Italic" FontSize="16" Width="447">
                             <Label.Style>
                                 <Style TargetType="{x:Type Label}">
                                     <Style.Triggers>
@@ -62,7 +62,7 @@
                                         </DataTrigger>
                                         <DataTrigger Binding="{c:Binding '!ProfileData.IsAllowedAddAircraftBinding and !ProfileData.IsAllowedDeleteAircraftBinding'}" Value="True">
                                             <Setter Property="Foreground" Value="Red" ></Setter>
-                                            <Setter Property="ToolTip" Value="Aircraft Livery is currently bound to another profile"></Setter>
+                                            <Setter Property="ToolTip" Value="Aircraft is currently bound to another profile"></Setter>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>

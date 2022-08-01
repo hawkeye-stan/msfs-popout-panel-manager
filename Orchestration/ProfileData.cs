@@ -47,21 +47,21 @@ namespace MSFSPopoutPanelManager.Orchestration
             return true;
         }
 
-        public void AddProfileBinding(string planeTitle, int activeProfileId)
+        public void AddProfileBinding(string aircraft, int activeProfileId)
         {
             if (ActiveProfile == null)
                 return;
 
-            ProfileManager.AddProfileBinding(planeTitle, activeProfileId, Profiles);
+            ProfileManager.AddProfileBinding(aircraft, activeProfileId, Profiles);
             RefreshProfile();
         }
 
-        public void DeleteProfileBinding(string planeTitle, int activeProfileId)
+        public void DeleteProfileBinding(string aircraft, int activeProfileId)
         {
             if (ActiveProfile == null)
                 return;
 
-            ProfileManager.DeleteProfileBinding(planeTitle, activeProfileId, Profiles);
+            ProfileManager.DeleteProfileBinding(aircraft, activeProfileId, Profiles);
             RefreshProfile();
         }
 
@@ -111,7 +111,7 @@ namespace MSFSPopoutPanelManager.Orchestration
                 if (ActiveProfile == null)
                     return false;
 
-                return ActiveProfile.BindingAircraftLiveries.Any(p => p == FlightSimData.CurrentMsfsPlaneTitle);
+                return ActiveProfile.BindingAircrafts.Any(p => p == FlightSimData.CurrentMsfsAircraft);
             }
         }
 
@@ -119,14 +119,14 @@ namespace MSFSPopoutPanelManager.Orchestration
         {
             get
             {
-                if (ActiveProfile == null || !FlightSimData.HasCurrentMsfsPlaneTitle)
+                if (ActiveProfile == null || !FlightSimData.HasCurrentMsfsAircraft)
                     return false;
 
-                var uProfile = Profiles.FirstOrDefault(u => u.BindingAircraftLiveries.Any(p => p == FlightSimData.CurrentMsfsPlaneTitle));
+                var uProfile = Profiles.FirstOrDefault(u => u.BindingAircrafts.Any(p => p == FlightSimData.CurrentMsfsAircraft));
                 if (uProfile != null && uProfile.ProfileId != ActiveProfile.ProfileId)
                     return false;
 
-                return ActiveProfile.BindingAircraftLiveries.Any(p => p == FlightSimData.CurrentMsfsPlaneTitle);
+                return ActiveProfile.BindingAircrafts.Any(p => p == FlightSimData.CurrentMsfsAircraft);
             }
         }
 
@@ -134,17 +134,17 @@ namespace MSFSPopoutPanelManager.Orchestration
         {
             get
             {
-                if (ActiveProfile == null || !FlightSimData.HasCurrentMsfsPlaneTitle)
+                if (ActiveProfile == null || !FlightSimData.HasCurrentMsfsAircraft)
                     return false;
 
-                var uProfile = Profiles.FirstOrDefault(u => u.BindingAircraftLiveries.Any(p => p == FlightSimData.CurrentMsfsPlaneTitle));
+                var uProfile = Profiles.FirstOrDefault(u => u.BindingAircrafts.Any(p => p == FlightSimData.CurrentMsfsAircraft));
                 if (uProfile != null && uProfile.ProfileId != ActiveProfile.ProfileId)
                     return false;
 
-                if (FlightSimData == null || ActiveProfile.BindingAircraftLiveries == null)
+                if (FlightSimData == null || ActiveProfile.BindingAircrafts == null)
                     return false;
 
-                return ActiveProfile == null ? false : !ActiveProfile.BindingAircraftLiveries.Any(p => p == FlightSimData.CurrentMsfsPlaneTitle);
+                return ActiveProfile == null ? false : !ActiveProfile.BindingAircrafts.Any(p => p == FlightSimData.CurrentMsfsAircraft);
             }
         }
 
@@ -160,12 +160,12 @@ namespace MSFSPopoutPanelManager.Orchestration
             UpdateActiveProfile(currentProfileId);
         }
 
-        public void AutoSwitchProfile(string activeAircraftTitle)
+        public void AutoSwitchProfile(string activeAircraft)
         {
-            // Automatic switching of active profile when SimConnect active aircraft livery changes
+            // Automatic switching of active profile when SimConnect active aircraft changes
             if (Profiles != null)
             {
-                var matchedProfile = Profiles.FirstOrDefault(p => p.BindingAircraftLiveries.Any(t => t == activeAircraftTitle));
+                var matchedProfile = Profiles.FirstOrDefault(p => p.BindingAircrafts.Any(t => t == activeAircraft));
                 if (matchedProfile != null)
                     UpdateActiveProfile(matchedProfile.ProfileId);
             }

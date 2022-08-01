@@ -21,17 +21,17 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
 
             ChangeProfileCommand = new DelegateCommand<object>(OnChangeProfile);
 
-            AddProfileBindingCommand = new DelegateCommand(OnAddProfileBinding, () => ProfileData.HasActiveProfile && FlightSimData.HasCurrentMsfsPlaneTitle && ProfileData.IsAllowedAddAircraftBinding && FlightSimData.IsSimulatorStarted)
+            AddProfileBindingCommand = new DelegateCommand(OnAddProfileBinding, () => ProfileData.HasActiveProfile && FlightSimData.HasCurrentMsfsAircraft && ProfileData.IsAllowedAddAircraftBinding && FlightSimData.IsSimulatorStarted)
                                                                                 .ObservesProperty(() => ProfileData.ActiveProfile)
-                                                                                .ObservesProperty(() => FlightSimData.HasCurrentMsfsPlaneTitle)
+                                                                                .ObservesProperty(() => FlightSimData.HasCurrentMsfsAircraft)
                                                                                 .ObservesProperty(() => ProfileData.HasActiveProfile)
                                                                                 .ObservesProperty(() => ProfileData.IsAllowedAddAircraftBinding)
                                                                                 .ObservesProperty(() => FlightSimData.IsSimulatorStarted);
 
-            DeleteProfileBindingCommand = new DelegateCommand(OnDeleteProfileBinding, () => ProfileData.HasActiveProfile && ProfileData.IsAllowedDeleteAircraftBinding && ProfileData.ActiveProfile.BindingAircraftLiveries.Count > 0 && FlightSimData.IsSimulatorStarted)
+            DeleteProfileBindingCommand = new DelegateCommand(OnDeleteProfileBinding, () => ProfileData.HasActiveProfile && ProfileData.IsAllowedDeleteAircraftBinding && ProfileData.ActiveProfile.BindingAircrafts.Count > 0 && FlightSimData.IsSimulatorStarted)
                                                                                 .ObservesProperty(() => ProfileData.HasActiveProfile)
                                                                                 .ObservesProperty(() => ProfileData.IsAllowedDeleteAircraftBinding)
-                                                                                .ObservesProperty(() => ProfileData.ActiveProfile.BindingAircraftLiveries.Count)
+                                                                                .ObservesProperty(() => ProfileData.ActiveProfile.BindingAircrafts.Count)
                                                                                 .ObservesProperty(() => FlightSimData.IsSimulatorStarted);
 
             SetPowerOnRequiredCommand = new DelegateCommand(() => ProfileData.WriteProfiles(), () => ProfileData.HasActiveProfile && FlightSimData.IsSimulatorStarted)
@@ -124,12 +124,12 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
 
         private void OnAddProfileBinding()
         {
-            _orchestrator.Profile.AddProfileBinding(FlightSimData.CurrentMsfsPlaneTitle);
+            _orchestrator.Profile.AddProfileBinding(FlightSimData.CurrentMsfsAircraft);
         }
 
         private void OnDeleteProfileBinding()
         {
-            _orchestrator.Profile.DeleteProfileBinding(FlightSimData.CurrentMsfsPlaneTitle);
+            _orchestrator.Profile.DeleteProfileBinding(FlightSimData.CurrentMsfsAircraft);
         }
 
         private void OnStartPanelSelection()

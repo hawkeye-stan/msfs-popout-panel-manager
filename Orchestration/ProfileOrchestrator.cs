@@ -26,16 +26,16 @@ namespace MSFSPopoutPanelManager.Orchestration
                 ProfileData.UpdateActiveProfile(profileId);
         }
 
-        public void AddProfileBinding(string bindingLiveryName)
+        public void AddProfileBinding(string bindingAircraft)
         {
             if (ProfileData.ActiveProfile != null)
-                ProfileData.AddProfileBinding(bindingLiveryName, ProfileData.ActiveProfile.ProfileId);
+                ProfileData.AddProfileBinding(bindingAircraft, ProfileData.ActiveProfile.ProfileId);
         }
 
-        public void DeleteProfileBinding(string bindingLiveryName)
+        public void DeleteProfileBinding(string bindingAircraft)
         {
             if (ProfileData.ActiveProfile != null)
-                ProfileData.DeleteProfileBinding(bindingLiveryName, ProfileData.ActiveProfile.ProfileId);
+                ProfileData.DeleteProfileBinding(bindingAircraft, ProfileData.ActiveProfile.ProfileId);
         }
     }
 }

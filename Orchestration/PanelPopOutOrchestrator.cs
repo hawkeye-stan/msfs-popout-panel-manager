@@ -55,14 +55,14 @@ namespace MSFSPopoutPanelManager.Orchestration
             if (ActiveProfile == null)
                 return;
 
-            ProfileData.AutoSwitchProfile(FlightSimData.CurrentMsfsPlaneTitle);
+            ProfileData.AutoSwitchProfile(FlightSimData.CurrentMsfsAircraft);
 
             FlightSimData.IsEnteredFlight = true;
 
-            // find the profile with the matching binding plane title
-            var profile = ProfileData.Profiles.FirstOrDefault(p => p.BindingAircraftLiveries.Any(p => p == FlightSimData.CurrentMsfsPlaneTitle));
+            // find the profile with the matching binding aircraft
+            var profile = ProfileData.Profiles.FirstOrDefault(p => p.BindingAircrafts.Any(p => p == FlightSimData.CurrentMsfsAircraft));
 
-            // Do not do auto pop out if no profile matches the current livery
+            // Do not do auto pop out if no profile matches the current aircraft
             if (profile == null)
                 return;
 

@@ -43,14 +43,15 @@ namespace MSFSPopoutPanelManager.Orchestration
             };
             _simConnectProvider.OnSimConnectDataRefreshed += (sender, e) =>
             {
-                var title = Convert.ToString(e.Find(d => d.PropName == "Title").Value);
+                var aircraftName = Convert.ToString(e.Find(d => d.PropName == "AircraftName").Value);
+                aircraftName = String.IsNullOrEmpty(aircraftName) ? null : aircraftName;
                 var electricalMasterBattery = Convert.ToBoolean(e.Find(d => d.PropName == "ElectricalMasterBattery").Value);
 
-                // Automatic switching of active profile when SimConnect active aircraft livery changes
-                if (FlightSimData.CurrentMsfsPlaneTitle != title)
+                // Automatic switching of active profile when SimConnect active aircraft change
+                if (FlightSimData.CurrentMsfsAircraft != aircraftName)
                 {
-                    FlightSimData.CurrentMsfsPlaneTitle = title;
-                    ProfileData.AutoSwitchProfile(title);
+                    FlightSimData.CurrentMsfsAircraft = aircraftName;
+                    ProfileData.AutoSwitchProfile(aircraftName);
                 }
 
                 if (electricalMasterBattery != FlightSimData.ElectricalMasterBatteryStatus)

@@ -13,6 +13,7 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
             definitions.Add(new SimConnectDataDefinition() { DataDefinitionType = DataDefinitionType.SimConnect, PropName = "TrackIREnable", VariableName = "TRACK IR ENABLE", SimConnectUnit = "Bool", DataType = DataType.Float64, DefaultValue = String.Empty, JavaScriptFormatting = null });
             definitions.Add(new SimConnectDataDefinition() { DataDefinitionType = DataDefinitionType.SimConnect, PropName = "PlaneInParkingSpot", VariableName = "ATC ON PARKING SPOT", SimConnectUnit = "Bool", DataType = DataType.Float64, DefaultValue = String.Empty, JavaScriptFormatting = null });
             definitions.Add(new SimConnectDataDefinition() { DataDefinitionType = DataDefinitionType.SimConnect, PropName = "CameraState", VariableName = "CAMERA STATE", SimConnectUnit = "Number", DataType = DataType.Float64, DefaultValue = String.Empty, JavaScriptFormatting = null });
+            definitions.Add(new SimConnectDataDefinition() { DataDefinitionType = DataDefinitionType.SimEvent, PropName = "AircraftName", VariableName = "", SimConnectUnit = "", DataType = DataType.String, DefaultValue = String.Empty, JavaScriptFormatting = null });
             return definitions;
         }
     }

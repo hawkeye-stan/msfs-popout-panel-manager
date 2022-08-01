@@ -37,7 +37,7 @@ If using SpaceDesk to host pop out panel display, since there is a latency for t
 
 * Intuitive user interface to defined location of panels to be popped out.
 
-* [Auto Pop Out](#auto-pop-out-feature) feature. The application will detect active aircraft by livery and activate the corresponding profile on start of new flight session.
+* [Auto Pop Out](#auto-pop-out-feature) feature. The application will detect active aircraft and activate the corresponding profile on start of new flight session.
 
 * [Cold Start feature](#auto-pop-out-feature). Instrumentation panels can be popped out even when they're not powered on (for G1000 /  / G1000 NXi planes only).
 
@@ -96,7 +96,7 @@ What if you can do the setup once by defining on screen where the pop out panels
 <img src="assets/readme/images/add_profile.png" width="900" hspace="10"/>
 </p>
 
-2. For step 2, if you want to associate the profile to the current aircraft livery to use in [Auto Pop Out](#auto-pop-out-feature) feature or for automatic profile switching when selecting a different aircraft, click the "plus" button next to the aircraft livery name. The aircraft livery title will become green once the livery is bound to the profile. Your chosen livery may not be available to select in the application for your newly selected plane until a flight is started.
+2. For step 2, if you want to associate the profile to the current aircraft to use in [Auto Pop Out](#auto-pop-out-feature) feature or for automatic profile switching when selecting a different aircraft, click the "plus" button next to the aircraft name. The aircraft title will become green once the it is bound to the profile. Your chosen aircraft may not be available to select in the application for your newly selected plane until a flight is started.
 
  <p align="center">
 <img src="assets/readme/images/bind_profile_to_livery.png" width="900" hspace="10"/>
@@ -134,19 +134,17 @@ What if you can do the setup once by defining on screen where the pop out panels
 
 [Online Video - How to enable auto pop out panels](https://vimeo.com/723165248)
 
-The app will try to find a matching profile with the current selected aircraft livery. It will then detect when a flight is starting and automatically click the "Ready to Fly" button. It will also power on instrumentation for cold start (for G1000/NXi equipped plane only), and then pop out all panels. This feature allows panels to be popped out without the need of user interaction. If profiles are set and bound to your frequently used aircraft livery, you can auto-start the app minimized in system tray and as you start your flight, panels will automatically pop out for you for the selected aircraft.
+The app will try to find a matching profile with the current selected aircraft. It will then detect when a flight is starting and automatically click the "Ready to Fly" button. It will also power on instrumentation for cold start (for G1000/NXi equipped plane only), and then pop out all panels. This feature allows panels to be popped out without the need of user interaction. If profiles are set and bound to your frequently used aircraft, you can auto-start the app minimized in system tray and as you start your flight, panels will automatically pop out for you for the selected aircraft.
 
 * In File->Preferences->Auto Pop Out Panel Settings, "Enable Auto Pop Out Panels" option is turned on. You can also adjust wait delay settings if you've a fast computer.
 
-* For existing profile to use Auto Pop Out feature, just click the plus sign in the bind active aircraft livery to profile section. This will bind the active aircraft livery being displayed to the profile. Any bound aircraft livery will appear in GREEN color. Unbound ones will be in WHITE, and bound livery in another profile will be in RED. You can bind as many liveries to a profile as you desire but a livery can only bind to a single profile so Auto Pop Out knows which profile to start when a flight session starts.
+* For existing profile to use Auto Pop Out feature, just click the plus sign in the bind active aircraft to profile section. This will bind the active aircraft being displayed to the profile. Any bound aircraft will appear in GREEN color. Unbound ones will be in WHITE, and bound aircraft in another profile will be in RED. You can bind as many liveries to a profile as you desire but an aircraft can only bind to a single profile so Auto Pop Out knows which profile to start when a flight session starts.
 
 * During my testing, instrumentations only need to be powered on for Auto Pop Out to work for G1000/G1000 NXi plane during cold start. (There seems to be a bug in the game that you can't do Alt-Right click to pop out cold start panel for this particular plane variant). For other plane instrumentations I've tested (G3000, CJ4, Aerosoft CRJ 550/700, FBW A32NX), panels can be popped out without powering on. So please make sure the checkbox "Power on required to pop out panels on cold start" is checked for G1000 related profiles.
 
-* **TIPS:** If you want to fly an aircraft with different livery, just add the aircraft livery binding to your desire profile when you switch livery.
-
 * **TIPS:** You can go to the preference settings to configure the time delay for each steps for the Auto Pop Out process based on the speed of your computer if things do not work correctly or if you want to speed up the Auto Pop Out process.
 
-* **TIPS:** One trick to force SimConnect to update the current selected aircraft livery so you can do the binding immediately after selecting a new livery in the World Map is to click the "Go Back" button at the lower left of your screen.  You should see aircraft title changes to the active ones. Or you can wait until the flight is almost fully loaded and you will see the current aircraft livery name gets updated.
+* **TIPS:** One trick to force SimConnect to update the current selected aircraft so you can do the binding immediately after selecting a new aircraft in the World Map is to click the "Go Back" button at the lower left of your screen.  You should see aircraft title changes to the active ones. Or you can wait until the flight is almost fully loaded and you will see the current aircraft name gets updated.
 
 <hr/>
 

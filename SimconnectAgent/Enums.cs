@@ -51,6 +51,7 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
         SIMSTART,
         SIMSTOP,
         FLIGHTLOADED,
+        AIRCRAFTLOADED,
         PAUSED,
         VIEW,
         NONE

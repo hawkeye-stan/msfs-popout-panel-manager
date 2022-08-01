@@ -6,13 +6,13 @@ namespace MSFSPopoutPanelManager.Orchestration
 {
     public class FlightSimData : ObservableObject
     {
-        public event PropertyChangedEventHandler CurrentMsfsPlaneTitleChanged;
+        public event PropertyChangedEventHandler CurrentMsfsAircraftChanged;
 
-        public string CurrentMsfsPlaneTitle { get; set; }
+        public string CurrentMsfsAircraft { get; set; }
 
-        public bool HasCurrentMsfsPlaneTitle
+        public bool HasCurrentMsfsAircraft
         {
-            get { return !String.IsNullOrEmpty(CurrentMsfsPlaneTitle); }
+            get { return !String.IsNullOrEmpty(CurrentMsfsAircraft); }
         }
 
         public bool ElectricalMasterBatteryStatus { get; set; }
@@ -25,8 +25,8 @@ namespace MSFSPopoutPanelManager.Orchestration
         {
             if (oldValue != newValue)
             {
-                if (propertyName == "CurrentMsfsPlaneTitle")
-                    CurrentMsfsPlaneTitleChanged?.Invoke(this, null);
+                if (propertyName == "CurrentMsfsAircraft")
+                    CurrentMsfsAircraftChanged?.Invoke(this, null);
 
                 base.OnPropertyChanged(propertyName, oldValue, newValue);
             }
@@ -34,7 +34,7 @@ namespace MSFSPopoutPanelManager.Orchestration
 
         public void ClearData()
         {
-            CurrentMsfsPlaneTitle = null;
+            CurrentMsfsAircraft = null;
             ElectricalMasterBatteryStatus = false;
             IsEnteredFlight = false;
         }

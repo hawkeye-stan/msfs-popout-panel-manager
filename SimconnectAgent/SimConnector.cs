@@ -152,6 +152,7 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
             _simConnect.OnRecvException += HandleOnRecvException;
             _simConnect.OnRecvEvent += HandleOnReceiveSystemEvent;
             _simConnect.OnRecvSimobjectDataBytype += HandleOnRecvSimobjectDataBytype;
+            _simConnect.OnRecvEventFilename += HandleOnRecvEventFilename;
 
             // Register simConnect system events
             _simConnect.UnsubscribeFromSystemEvent(SimConnectSystemEvent.SIMSTART);
@@ -160,6 +161,8 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
             _simConnect.SubscribeToSystemEvent(SimConnectSystemEvent.SIMSTOP, "SimStop");
             _simConnect.UnsubscribeFromSystemEvent(SimConnectSystemEvent.VIEW);
             _simConnect.SubscribeToSystemEvent(SimConnectSystemEvent.VIEW, "View");
+            _simConnect.UnsubscribeFromSystemEvent(SimConnectSystemEvent.AIRCRAFTLOADED);
+            _simConnect.SubscribeToSystemEvent(SimConnectSystemEvent.AIRCRAFTLOADED, "AircraftLoaded");
 
             System.Threading.Thread.Sleep(5000);
             ReceiveMessage();
@@ -171,6 +174,20 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
             StatusMessageWriter.WriteMessage("MSFS is connected", StatusMessageType.Info, false);
         }
 
+        private void HandleOnRecvEventFilename(SimConnect sender, SIMCONNECT_RECV_EVENT_FILENAME data)
+        {
+            switch (data.uEventID)
+            {
+                case (uint)SimConnectSystemEvent.AIRCRAFTLOADED:
+                    var filePathToken = data.szFileName.Split(@"\");
+                    var aircraftName = filePathToken[filePathToken.Length - 2];
+                    aircraftName = aircraftName.Replace("_", " ").ToUpper();
+
+                    SimConnectDataDefinitions.Find(s => s.PropName == "AircraftName").Value = aircraftName;
+                    break;
+            }
+        }
+
         private void AddDataDefinitions()
         {
             int definitionId = 1;
@@ -180,33 +197,36 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
 
             foreach (var definition in SimConnectDataDefinitions)
             {
-                SIMCONNECT_DATATYPE simmConnectDataType;
-                switch (definition.DataType)
+                if (definition.DataDefinitionType == DataDefinitionType.SimConnect)
                 {
-                    case DataType.String:
-                        simmConnectDataType = SIMCONNECT_DATATYPE.STRING256;
-                        break;
-                    case DataType.Float64:
-                        simmConnectDataType = SIMCONNECT_DATATYPE.FLOAT64;
-                        break;
-                    default:
-                        simmConnectDataType = SIMCONNECT_DATATYPE.FLOAT64;
-                        break;
+                    SIMCONNECT_DATATYPE simmConnectDataType;
+                    switch (definition.DataType)
+                    {
+                        case DataType.String:
+                            simmConnectDataType = SIMCONNECT_DATATYPE.STRING256;
+                            break;
+                        case DataType.Float64:
+                            simmConnectDataType = SIMCONNECT_DATATYPE.FLOAT64;
+                            break;
+                        default:
+                            simmConnectDataType = SIMCONNECT_DATATYPE.FLOAT64;
+                            break;
+                    }
+
+                    _simConnect.AddToDataDefinition((SIMCONNECT_DEFINE_ID)definitionId, definition.VariableName, definition.SimConnectUnit, simmConnectDataType, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+
+                    // Assign definition id and request id back into definition object
+                    definition.DefineId = (SIMCONNECT_DEFINE_ID)definitionId;
+                    definition.RequestId = (SIMCONNECT_REQUEST)requestId;
+
+                    if (definition.DataType == DataType.String)
+                        _simConnect.RegisterDataDefineStruct<SimConnectStruct>(definition.DefineId);
+                    else
+                        _simConnect.RegisterDataDefineStruct<double>(definition.DefineId);
+
+                    definitionId++;
+                    requestId++;
                 }
-
-                _simConnect.AddToDataDefinition((SIMCONNECT_DEFINE_ID)definitionId, definition.VariableName, definition.SimConnectUnit, simmConnectDataType, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-
-                // Assign definition id and request id back into definition object
-                definition.DefineId = (SIMCONNECT_DEFINE_ID)definitionId;
-                definition.RequestId = (SIMCONNECT_REQUEST)requestId;
-
-                if (definition.DataType == DataType.String)
-                    _simConnect.RegisterDataDefineStruct<SimConnectStruct>(definition.DefineId);
-                else
-                    _simConnect.RegisterDataDefineStruct<double>(definition.DefineId);
-
-                definitionId++;
-                requestId++;
             }
 
             // Setup SimEvent mapping

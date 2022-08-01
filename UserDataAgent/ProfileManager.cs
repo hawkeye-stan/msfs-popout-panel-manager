@@ -28,7 +28,7 @@ namespace MSFSPopoutPanelManager.UserDataAgent
             var matchedProfile = profiles.FirstOrDefault(p => p.ProfileId == copyProfileId);
 
             var copiedProfile = matchedProfile.Copy<Profile>();     // Using Shared/ObjectExtensions.cs extension method
-            copiedProfile.BindingAircraftLiveries = new ObservableCollection<string>();
+            copiedProfile.BindingAircrafts = new ObservableCollection<string>();
 
             return AddProfile(copiedProfile, newProfileName, profiles);
         }
@@ -46,24 +46,24 @@ namespace MSFSPopoutPanelManager.UserDataAgent
             return true;
         }
 
-        public static void AddProfileBinding(string planeTitle, int activeProfileId, IList<Profile> profiles)
+        public static void AddProfileBinding(string aircraft, int activeProfileId, IList<Profile> profiles)
         {
-            var boundProfile = profiles.FirstOrDefault(p => p.BindingAircraftLiveries.Any(p => p == planeTitle));
+            var boundProfile = profiles.FirstOrDefault(p => p.BindingAircrafts.Any(p => p == aircraft));
             if (boundProfile != null)
             {
-                StatusMessageWriter.WriteMessage($"Unable to add binding to the profile because '{planeTitle}' was already bound to profile '{boundProfile.ProfileName}'.", StatusMessageType.Error, false);
+                StatusMessageWriter.WriteMessage($"Unable to add binding to the profile because '{aircraft}' was already bound to profile '{boundProfile.ProfileName}'.", StatusMessageType.Error, false);
                 return;
             }
 
-            profiles.First(p => p.ProfileId == activeProfileId).BindingAircraftLiveries.Add(planeTitle);
+            profiles.First(p => p.ProfileId == activeProfileId).BindingAircrafts.Add(aircraft);
             WriteProfiles(profiles);
 
             StatusMessageWriter.WriteMessage($"Binding for the profile has been added successfully.", StatusMessageType.Info, false);
         }
 
-        public static void DeleteProfileBinding(string planeTitle, int activeProfileId, IList<Profile> profiles)
+        public static void DeleteProfileBinding(string aircraft, int activeProfileId, IList<Profile> profiles)
         {
-            profiles.First(p => p.ProfileId == activeProfileId).BindingAircraftLiveries.Remove(planeTitle);
+            profiles.First(p => p.ProfileId == activeProfileId).BindingAircrafts.Remove(aircraft);
             WriteProfiles(profiles);
 
             StatusMessageWriter.WriteMessage($"Binding for the profile has been deleted successfully.", StatusMessageType.Info, false);

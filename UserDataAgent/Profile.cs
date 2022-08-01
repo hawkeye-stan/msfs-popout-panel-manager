@@ -9,7 +9,7 @@ namespace MSFSPopoutPanelManager.UserDataAgent
     {
         public Profile()
         {
-            BindingAircraftLiveries = new ObservableCollection<string>();
+            BindingAircrafts = new ObservableCollection<string>();
             PanelConfigs = new ObservableCollection<PanelConfig>();
             PanelSourceCoordinates = new ObservableCollection<PanelSourceCoordinate>();
             TouchPanelBindings = new ObservableCollection<TouchPanelBinding>();
@@ -21,7 +21,7 @@ namespace MSFSPopoutPanelManager.UserDataAgent
         public string ProfileName { get; set; }
 
         [JsonConverter(typeof(SingleValueArrayConvertor<string>))]
-        public ObservableCollection<string> BindingAircraftLiveries { get; set; }
+        public ObservableCollection<string> BindingAircrafts { get; set; }
 
         public ObservableCollection<PanelSourceCoordinate> PanelSourceCoordinates { get; set; }
 
@@ -37,14 +37,14 @@ namespace MSFSPopoutPanelManager.UserDataAgent
         public bool IsActive { get; set; }
 
         [JsonIgnore]
-        public bool HasBindingAircraftLiveries
+        public bool HasBindingAircrafts
         {
             get
             {
-                if (BindingAircraftLiveries == null)
+                if (BindingAircrafts == null)
                     return false;
 
-                return BindingAircraftLiveries.Count > 0;
+                return BindingAircrafts.Count > 0;
             }
         }
 

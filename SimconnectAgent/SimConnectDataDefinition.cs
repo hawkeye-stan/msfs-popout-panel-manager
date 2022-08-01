@@ -38,7 +38,8 @@
     {
         AVar,
         LVar,
-        SimConnect
+        SimConnect,
+        SimEvent
     }
 
     public enum DataType

@@ -15,6 +15,7 @@ namespace MSFSPopoutPanelManager.WindowsAgent
         const uint VK_RMENU = 0xA5;
         const uint VK_LMENU = 0xA4;
         const uint VK_LCONTROL = 0xA2;
+        const uint VK_RCONTROL = 0xA3;
         const uint VK_SPACE = 0x20;
         const uint VK_ENT = 0x0D;
         const uint KEY_0 = 0x30;
@@ -102,6 +103,11 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             if (simualatorProcess == null)
                 return;
 
+            CenterView(simualatorProcess);
+        }
+
+        public static void CenterView(WindowProcess simualatorProcess)
+        {
             Rectangle rectangle;
             PInvoke.GetWindowRect(simualatorProcess.Handle, out rectangle);
 
@@ -113,14 +119,13 @@ namespace MSFSPopoutPanelManager.WindowsAgent
 
             PInvoke.SetForegroundWindow(simualatorProcess.Handle);
             LeftClick(x, y);
-            Thread.Sleep(200);
 
             // First center view using Ctrl-Space
-            PInvoke.keybd_event(Convert.ToByte(VK_LCONTROL), 0, KEYEVENTF_KEYDOWN, 0);
+            PInvoke.keybd_event(Convert.ToByte(VK_RCONTROL), 0, KEYEVENTF_KEYDOWN, 0);
             PInvoke.keybd_event(Convert.ToByte(VK_SPACE), 0, KEYEVENTF_KEYDOWN, 0);
             Thread.Sleep(200);
             PInvoke.keybd_event(Convert.ToByte(VK_SPACE), 0, KEYEVENTF_KEYUP, 0);
-            PInvoke.keybd_event(Convert.ToByte(VK_LCONTROL), 0, KEYEVENTF_KEYUP, 0);
+            PInvoke.keybd_event(Convert.ToByte(VK_RCONTROL), 0, KEYEVENTF_KEYUP, 0);
             Thread.Sleep(200);
         }
 
