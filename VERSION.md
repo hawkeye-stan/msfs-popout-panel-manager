@@ -8,6 +8,12 @@
 
 * Implemented work around for SU10+ issue where after panel separation, the panel's size is huge which blocked most of the game window for lower resolution screen and prevented Pop Out Panel Manager from popping out the next panel.
 
+* Implement key binding to move and resize pop out
+
+Known issue:
+
+* When changing the width or height of a pop up that has Hide Title Bar enable, it will sometime break the Hide Title Bar setting and the only way to fix is to re-pop out the panel.
+
 ## Version 3.4.1
 
 This release is solely focused on addressing issues regarding touch panel capabilities as well as making improvements to touch feature. Panels I used for testing are

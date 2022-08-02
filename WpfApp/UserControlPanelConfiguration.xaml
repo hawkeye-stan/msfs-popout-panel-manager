@@ -31,27 +31,21 @@
             </Style>
         </ResourceDictionary>
     </UserControl.Resources>
-    <UserControl.InputBindings>
-        <KeyBinding Command="{Binding MinusTenPixelCommand}" CommandParameter="-10" Modifiers="Ctrl" Key="OemMinus"/>
-        <KeyBinding Command="{Binding MinusOnePixelCommand}" CommandParameter="-1" Modifiers="Ctrl" Key="OemOpenBrackets" />
-        <KeyBinding Command="{Binding PlusOnePixelCommand}" CommandParameter="1" Modifiers="Ctrl" Key="OemCloseBrackets" />
-        <KeyBinding Command="{Binding PlusTenPixelCommand}" CommandParameter="10" Modifiers="Ctrl" Key="OemPlus" />
-    </UserControl.InputBindings>
-    <Grid>
+    <Grid KeyboardNavigation.DirectionalNavigation="None">
         <DockPanel>
             <WrapPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="19,10,0,0" HorizontalAlignment="Left">
                 <Label Content="Panel Locations and Settings   -" Margin="0,0,0,0" HorizontalAlignment="Left"/>
                 <Label Content="{Binding ProfileData.ActiveProfile.ProfileName}" Margin="0,0,0,0" HorizontalAlignment="Left"/>
                 <DataGrid Name="PanelConfigGrid" HorizontalAlignment="Center" Width="882" Height="430" Margin="0 10 0 0" AutoGenerateColumns="False" CanUserResizeColumns="False" HorizontalScrollBarVisibility="Disabled" 
-                          CanUserReorderColumns="False" CanUserResizeRows="False" HorizontalGridLinesBrush="#B9B9B9" VerticalGridLinesBrush="#B9B9B9" GridLinesVisibility="Horizontal" SelectionUnit="Cell" 
+                          CanUserReorderColumns="False" CanUserResizeRows="False" HorizontalGridLinesBrush="#B9B9B9" VerticalGridLinesBrush="#B9B9B9" GridLinesVisibility="Horizontal" SelectionUnit="Cell"   
                           BorderThickness="1" CanUserAddRows="False" CanUserSortColumns="False" KeyboardNavigation.TabNavigation="None" KeyboardNavigation.IsTabStop="False"
-                          ItemsSource="{Binding ProfileData.ActiveProfile.PanelConfigs}">
+                          ItemsSource="{Binding ProfileData.ActiveProfile.PanelConfigs}" HeadersVisibility="Column" KeyboardNavigation.DirectionalNavigation="Local">
                     <DataGrid.RowStyle>
                         <Style TargetType="DataGridRow">
                             <Setter Property="Background" Value="{x:Null}" />
                             <Setter Property="BorderBrush" Value="{x:Null}" />
                             <Style.Triggers>
-                                <Trigger Property="IsSelected" Value="False">
+                                <Trigger Property="IsSelected" Value="True">
                                     <Setter Property="Background" Value="Transparent" />
                                     <Setter Property="BorderBrush" Value="{x:Null}" />
                                 </Trigger>
@@ -89,20 +83,43 @@
                         </Style>
                     </DataGrid.CellStyle>
                     <DataGrid.Columns>
-                        <DataGridTemplateColumn Header="Panel Name" Width="220" >
+                        <DataGridTemplateColumn Header="" Width="30" >
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Name="PanelName" Width="220" BorderThickness="0" TextAlignment="Left" Text="{Binding PanelName, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=LostFocus}" 
-                                             SourceUpdated="GridData_SourceUpdated" IsReadOnly="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path=DataContext.ProfileData.ActiveProfile.IsLocked}" IsEnabled="{Binding IsCustomPopOut}">
+                                    <TextBox Name="PanelName" Width="30" Height="28" BorderThickness="0" TextAlignment="Left" 
+                                             SourceUpdated="GridData_SourceUpdated"
+                                             IsReadOnly="True" 
+                                             IsHitTestVisible="{c:Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path='!DataContext.ProfileData.ActiveProfile.IsLocked'}"
+                                             Text="&#x25B6;"
+                                             VerticalAlignment="Center"
+                                             Padding="5, 3, 0, 0">
                                         <TextBox.Style>
                                             <Style TargetType="TextBox">
-                                                <Setter Property="Focusable" Value="True"/>
-                                                <Setter Property="FontSize" Value="14" />
-                                                <Setter Property="FontFamily" Value="Segoe UI"/>
-                                                <Setter Property="FontWeight" Value="Normal"/>
-                                                <Setter Property="Margin" Value="5, 5, 5, 5"/>
+                                                <Setter Property="Cursor" Value="Arrow"></Setter>
+                                                <Setter Property="SelectionOpacity" Value="0"></Setter>
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsFocused" Value="False">
+                                                        <Setter Property="Background" Value="Transparent" />
+                                                    </Trigger>
+                                                    <Trigger Property="IsFocused" Value="True">
+                                                        <Setter Property="Background" Value="Red" />
+                                                    </Trigger>
+                                                </Style.Triggers>
                                             </Style>
                                         </TextBox.Style>
+                                    </TextBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Panel Name" Width="200" >
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Name="PanelName" Width="220" BorderThickness="0" TextAlignment="Left" 
+                                             Text="{Binding PanelName, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=LostFocus}" 
+                                             SourceUpdated="GridData_SourceUpdated"
+                                             Style="{StaticResource TextBoxColumnFocus}" 
+                                             IsReadOnly="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path=DataContext.ProfileData.ActiveProfile.IsLocked}" 
+                                             IsEnabled="{Binding IsCustomPopOut}">
                                     </TextBox>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
@@ -200,10 +217,10 @@
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-                        <DataGridTemplateColumn Header="Touch Enabled" Width="75">
+                        <DataGridTemplateColumn Header="Touch Enabled" Width="70">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <CheckBox Name="TouchEnabled" Width="75" Margin="30 0 0 0" 
+                                    <CheckBox Name="TouchEnabled" Width="70" Margin="25 0 0 0" 
                                               SourceUpdated="GridData_SourceUpdated" 
                                               IsChecked="{Binding TouchEnabled, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}" 
                                               IsEnabled="{c:Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path='!DataContext.ProfileData.ActiveProfile.IsLocked'}"
@@ -211,10 +228,10 @@
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-                        <DataGridTemplateColumn Header="Disable Game Refocus" Width="75">
+                        <DataGridTemplateColumn Header="Disable Game Refocus" Width="70">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <CheckBox Name="DisableGameRefocus" Width="75" Margin="30 0 0 0" 
+                                    <CheckBox Name="DisableGameRefocus" Width="70" Margin="25 0 0 0" 
                                               SourceUpdated="GridData_SourceUpdated" 
                                               IsChecked="{Binding DisableGameRefocus, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}" 
                                               IsEnabled="{c:Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path='!DataContext.ProfileData.ActiveProfile.IsLocked'}"
@@ -226,10 +243,10 @@
                 </DataGrid>
             </WrapPanel>
             <WrapPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Margin="20,10,0,0" HorizontalAlignment="Left">
-                <Button Name="MinusTenButton" Content="-10 px" ToolTip="Ctrl -" HorizontalAlignment="Center" Margin="0,0,0,0" Width="75" Command="{Binding MinusTenPixelCommand}" CommandParameter="-10"/>
-                <Button Name="MinusOneButton" Content="-1 px" ToolTip="Ctrl [" HorizontalAlignment="Center" Margin="20,0,0,0" Width="75" Command="{Binding MinusOnePixelCommand}" CommandParameter="-1"/>
-                <Button Name="PlusOneButton" Content="+1 px" ToolTip="Ctrl ]" HorizontalAlignment="Center" Margin="20,0,0,0" Width="75" Command="{Binding PlusOnePixelCommand}" CommandParameter="1"/>
-                <Button Name="PlusTenButton" Content="+10 px" ToolTip="Ctrl +" HorizontalAlignment="Center" Margin="20,0,0,0" Width="75" Command="{Binding PlusTenPixelCommand}" CommandParameter="10"/>
+                <Button Name="MinusTenButton" Content="-10 px" ToolTip="Down Arrow" HorizontalAlignment="Center" Margin="0,0,0,0" Width="75" Command="{Binding ConfigurePanelPixelCommand}" CommandParameter="-10"/>
+                <Button Name="MinusOneButton" Content="-1 px" ToolTip="Shift Down Arrow" HorizontalAlignment="Center" Margin="20,0,0,0" Width="75" Command="{Binding ConfigurePanelPixelCommand}" CommandParameter="-1"/>
+                <Button Name="PlusOneButton" Content="+1 px" ToolTip="Shift Up Arrow" HorizontalAlignment="Center" Margin="20,0,0,0" Width="75" Command="{Binding ConfigurePanelPixelCommand}" CommandParameter="1"/>
+                <Button Name="PlusTenButton" Content="+10 px" ToolTip="Up Arrow" HorizontalAlignment="Center" Margin="20,0,0,0" Width="75" Command="{Binding ConfigurePanelPixelCommand}" CommandParameter="10"/>
                 <Button HorizontalAlignment="Center" Margin="390,0,0,0" Width="130" Command="{Binding LockPanelsCommand}">
                     <Button.Style>
                         <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">

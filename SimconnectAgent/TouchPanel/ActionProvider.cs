@@ -18,6 +18,8 @@ namespace MSFSPopoutPanelManager.SimConnectAgent.TouchPanel
         private bool _isSimConnected;
         private ConcurrentQueue<CommandAction> _actionQueue;
         private bool _isUsedArduino;
+        private CommandAction _lastCommandAction;
+        private int _repeatCommandActionCount;
 
         private SimConnectEncoderAction _currentSimConnectEncoderAction;
         private System.Timers.Timer _actionExecutionTimer;
@@ -98,6 +100,7 @@ namespace MSFSPopoutPanelManager.SimConnectAgent.TouchPanel
                             break;
                         default:
                             commandAction = new CommandAction(actionData.Action, actionData.ActionType, Convert.ToUInt16(actionData.ActionValue));
+
                             if (_isUsedArduino)
                             {
                                 Task.Run(() =>
@@ -128,6 +131,22 @@ namespace MSFSPopoutPanelManager.SimConnectAgent.TouchPanel
 
                 if (e.Acceleration == 1)
                 {
+                    // do manual acceleration
+                    if (_lastCommandAction != null && commandAction.Action == _lastCommandAction.Action)
+                        _repeatCommandActionCount++;
+                    else
+                        _repeatCommandActionCount = 0;
+
+                    _lastCommandAction = commandAction;
+
+                    if (_repeatCommandActionCount > 2)
+                    {
+                        for (var i = 0; i < 10; i++)
+                            _actionQueue.Enqueue(commandAction);
+
+                        return;
+                    }
+
                     _actionQueue.Enqueue(commandAction);
                 }
                 else

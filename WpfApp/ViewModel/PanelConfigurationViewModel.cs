@@ -19,26 +19,18 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
 
             PanelConfigUpdatedCommand = new DelegateCommand<object>(OnPanelConfigUpdated);
 
-            MinusTenPixelCommand = new DelegateCommand<object>(OnDataItemIncDec, (obj) => NumericDataPointTextBox != null && ProfileData.HasActiveProfile && !ProfileData.ActiveProfile.IsLocked).ObservesProperty(() => SelectedPanelConfigItem).ObservesProperty(() => ProfileData.ActiveProfile.IsLocked);
+            ConfigurePanelPixelCommand = new DelegateCommand<object>(OnDataItemIncDec, (obj) => NumericDataPointTextBox != null && ProfileData.HasActiveProfile && !ProfileData.ActiveProfile.IsLocked).ObservesProperty(() => SelectedPanelConfigItem).ObservesProperty(() => ProfileData.ActiveProfile.IsLocked);
 
-            MinusOnePixelCommand = new DelegateCommand<object>(OnDataItemIncDec, (obj) => NumericDataPointTextBox != null && ProfileData.HasActiveProfile && !ProfileData.ActiveProfile.IsLocked).ObservesProperty(() => SelectedPanelConfigItem).ObservesProperty(() => ProfileData.ActiveProfile.IsLocked);
-
-            PlusOnePixelCommand = new DelegateCommand<object>(OnDataItemIncDec, (obj) => NumericDataPointTextBox != null && ProfileData.HasActiveProfile && !ProfileData.ActiveProfile.IsLocked).ObservesProperty(() => SelectedPanelConfigItem).ObservesProperty(() => ProfileData.ActiveProfile.IsLocked);
-
-            PlusTenPixelCommand = new DelegateCommand<object>(OnDataItemIncDec, (obj) => NumericDataPointTextBox != null && ProfileData.HasActiveProfile && !ProfileData.ActiveProfile.IsLocked).ObservesProperty(() => SelectedPanelConfigItem).ObservesProperty(() => ProfileData.ActiveProfile.IsLocked);
+            ConfigurePanelCommand = new DelegateCommand<object>(OnConfigurePanel, (obj) => true);
         }
 
         public DelegateCommand LockPanelsCommand { get; private set; }
 
         public DelegateCommand<object> PanelConfigUpdatedCommand { get; private set; }
 
-        public DelegateCommand<object> MinusTenPixelCommand { get; private set; }
+        public DelegateCommand<object> ConfigurePanelPixelCommand { get; private set; }
 
-        public DelegateCommand<object> MinusOnePixelCommand { get; private set; }
-
-        public DelegateCommand<object> PlusOnePixelCommand { get; private set; }
-
-        public DelegateCommand<object> PlusTenPixelCommand { get; private set; }
+        public DelegateCommand<object> ConfigurePanelCommand { get; private set; }
 
         public ProfileData ProfileData { get { return _orchestrator.ProfileData; } }
 
@@ -78,5 +70,60 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
                     NumericDataPointTextBox.Focus();
             });
         }
+
+        private void OnConfigurePanel(object commandParameter)
+        {
+            if (SelectedPanelConfigItem.PanelIndex == -1)
+                return;
+
+            var keyAction = commandParameter as KeyAction;
+
+            switch (keyAction.Action)
+            {
+                case "Up":
+                    _orchestrator.PanelConfiguration.PanelConfigIncreaseDecrease(SelectedPanelConfigItem.PanelIndex, PanelConfigPropertyName.Top, -1 * keyAction.Multiplier);
+                    break;
+                case "Down":
+                    _orchestrator.PanelConfiguration.PanelConfigIncreaseDecrease(SelectedPanelConfigItem.PanelIndex, PanelConfigPropertyName.Top, 1 * keyAction.Multiplier);
+                    break;
+                case "Left":
+                    _orchestrator.PanelConfiguration.PanelConfigIncreaseDecrease(SelectedPanelConfigItem.PanelIndex, PanelConfigPropertyName.Left, -1 * keyAction.Multiplier);
+                    break;
+                case "Right":
+                    _orchestrator.PanelConfiguration.PanelConfigIncreaseDecrease(SelectedPanelConfigItem.PanelIndex, PanelConfigPropertyName.Left, 1 * keyAction.Multiplier);
+                    break;
+                case "Control-Up":
+                    _orchestrator.PanelConfiguration.PanelConfigIncreaseDecrease(SelectedPanelConfigItem.PanelIndex, PanelConfigPropertyName.Height, -1 * keyAction.Multiplier);
+                    break;
+                case "Control-Down":
+                    _orchestrator.PanelConfiguration.PanelConfigIncreaseDecrease(SelectedPanelConfigItem.PanelIndex, PanelConfigPropertyName.Height, 1 * keyAction.Multiplier);
+                    break;
+                case "Control-Left":
+                    _orchestrator.PanelConfiguration.PanelConfigIncreaseDecrease(SelectedPanelConfigItem.PanelIndex, PanelConfigPropertyName.Width, -1 * keyAction.Multiplier);
+                    break;
+                case "Control-Right":
+                    _orchestrator.PanelConfiguration.PanelConfigIncreaseDecrease(SelectedPanelConfigItem.PanelIndex, PanelConfigPropertyName.Width, 1 * keyAction.Multiplier);
+                    break;
+            }
+        }
+    }
+
+    public class KeyAction
+    {
+        public KeyAction(string action, int multiplier)
+        {
+            Action = action;
+            Multiplier = multiplier;
+        }
+
+        public KeyAction(string action)
+        {
+            Action = action;
+            Multiplier = 1;
+        }
+
+        public string Action { get; set; }
+
+        public int Multiplier { get; set; }
     }
 }

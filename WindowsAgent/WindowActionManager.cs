@@ -12,12 +12,14 @@ namespace MSFSPopoutPanelManager.WindowsAgent
 
         public static void ApplyHidePanelTitleBar(IntPtr hwnd, bool hideTitleBar)
         {
-            var currentStyle = PInvoke.GetWindowLong(hwnd, PInvokeConstant.GWL_STYLE).ToInt64();
+            var currentStyle = (uint)PInvoke.GetWindowLong(hwnd, PInvokeConstant.GWL_STYLE);
 
             if (hideTitleBar)
-                PInvoke.SetWindowLong(hwnd, PInvokeConstant.GWL_STYLE, (uint)(currentStyle & ~(PInvokeConstant.WS_CAPTION | PInvokeConstant.WS_SIZEBOX)));
+                currentStyle &= ~(PInvokeConstant.WS_CAPTION | PInvokeConstant.WS_SIZEBOX);
             else
-                PInvoke.SetWindowLong(hwnd, PInvokeConstant.GWL_STYLE, (uint)(currentStyle | (PInvokeConstant.WS_CAPTION | PInvokeConstant.WS_SIZEBOX)));
+                currentStyle |= (PInvokeConstant.WS_CAPTION | PInvokeConstant.WS_SIZEBOX);
+
+            PInvoke.SetWindowLong(hwnd, PInvokeConstant.GWL_STYLE, currentStyle);
         }
 
         public static void ApplyAlwaysOnTop(IntPtr hwnd, PanelType panelType, bool alwaysOnTop, Rectangle panelRectangle)

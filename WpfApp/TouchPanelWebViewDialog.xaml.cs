@@ -17,8 +17,8 @@ namespace MSFSPopoutPanelManager.WpfApp
             InitializeComponent();
             //this.Topmost = true;
             this.Title = caption;
-            this.Width = width;
-            this.Height = height;
+            //this.Width = width;
+            //this.Height = height;
 
             _planeId = planeId;
             _panelId = panelId;

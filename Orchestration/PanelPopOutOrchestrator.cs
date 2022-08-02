@@ -182,10 +182,8 @@ namespace MSFSPopoutPanelManager.Orchestration
             if (AppSetting.TouchPanelSettings.EnableTouchPanelIntegration)
             {
                 var panelResults = AddMsfsTouchPanels(panelConfigs.Count + 1);
-                if (panelResults == null)
-                    return;
-
-                panelConfigs.AddRange(panelResults);
+                if (panelResults != null)
+                    panelConfigs.AddRange(panelResults);
             }
 
             if (panelConfigs.Count == 0)

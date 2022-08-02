@@ -318,8 +318,8 @@
                         "encoderLowerCW": "98007 (>K:ROTOR_BRAKE)",
                         "encoderLowerCCW": "98008 (>K:ROTOR_BRAKE)",
                         "encoderLowerSwitch": "97901 (>K:ROTOR_BRAKE)",
-                        "encoderUpperCW": "98007 (>K:ROTOR_BRAKE)",
-                        "encoderUpperCCW": "98008 (>K:ROTOR_BRAKE)",
+                        "encoderUpperCW": "25802 (>K:ROTOR_BRAKE)",
+                        "encoderUpperCCW": "25801 (>K:ROTOR_BRAKE)",
                         "encoderUpperSwitch": "98101 (>K:ROTOR_BRAKE)",
                         "actionType": "SimVarCode"
                     }

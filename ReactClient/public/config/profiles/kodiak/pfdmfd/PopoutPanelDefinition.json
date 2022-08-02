@@ -325,10 +325,10 @@
                             "encoderUpperCW": "AS1000_MFD_RANGE_INC",
                             "encoderUpperCCW": "AS1000_MFD_RANGE_DEC",
                             "encoderUpperSwitch": "AS1000_MFD_JOYSTICK_PUSH",
-                            "joystick1up": "AS1000_MFD_JOYSTICK_UP",
-                            "joystick1down": "AS1000_MFD_JOYSTICK_DOWN",
-                            "joystick1left": "AS1000_MFD_JOYSTICK_LEFT",
-                            "joystick1right": "AS1000_MFD_JOYSTICK_RIGHT",
+                            "joystick1up": "AS1000_MFD_JOYSTICK_RIGHT",
+                            "joystick1down": "AS1000_MFD_JOYSTICK_LEFT",
+                            "joystick1left": "AS1000_MFD_JOYSTICK_UP",
+                            "joystick1right": "AS1000_MFD_JOYSTICK_DOWN",
                             "joystick1switch": "AS1000_MFD_JOYSTICK_PUSH",
                             "actionType": "SimEventId"
                         }

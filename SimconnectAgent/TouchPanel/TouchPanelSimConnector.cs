@@ -27,6 +27,7 @@ namespace MSFSPopoutPanelManager.SimConnectAgent.TouchPanel
 
         private SimConnect _simConnect;
         private System.Timers.Timer _connectionTimer;
+        private string _planeId;
 
         public event EventHandler<string> OnCriticalException;
         public event EventHandler<List<SimConnectDataDefinition>> OnReceivedData;
@@ -83,6 +84,8 @@ namespace MSFSPopoutPanelManager.SimConnectAgent.TouchPanel
                     // Clear memory cache data to send back to ReactJs app
                     OnReceivedData?.Invoke(this, null);
                 }
+
+                _planeId = planeId;
             }
         }
 
@@ -164,8 +167,11 @@ namespace MSFSPopoutPanelManager.SimConnectAgent.TouchPanel
             _simConnect.UnsubscribeFromSystemEvent(SimConnectSystemEvent.VIEW);
             _simConnect.SubscribeToSystemEvent(SimConnectSystemEvent.VIEW, "View");
 
-            System.Threading.Thread.Sleep(4000);
-            ReceiveMessage();
+            for (var i = 0; i < 5; i++)
+            {
+                System.Threading.Thread.Sleep(1000);
+                ReceiveMessage();
+            }
         }
 
         private void AddDataDefinitions()
@@ -210,6 +216,9 @@ namespace MSFSPopoutPanelManager.SimConnectAgent.TouchPanel
         private void HandleOnRecvOpen(SimConnect sender, SIMCONNECT_RECV_OPEN data)
         {
             MobilFlightInitialize();
+
+            if (_planeId != null)
+                ResetSimConnectDataArea(_planeId);
 
             // MobiFlight wasm event
             _simConnect.OnRecvClientData -= HandleOnRecvClientData;
