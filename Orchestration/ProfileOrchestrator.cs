@@ -1,4 +1,5 @@
 ﻿using MSFSPopoutPanelManager.Shared;
+using System.Linq;
 
 namespace MSFSPopoutPanelManager.Orchestration
 {
@@ -6,12 +7,23 @@ namespace MSFSPopoutPanelManager.Orchestration
     {
         internal ProfileData ProfileData { get; set; }
 
+        internal FlightSimData FlightSimData { get; set; }
+
         public void AddProfile(string profileName, int copyProfileId)
         {
             if (copyProfileId == -1)
                 ProfileData.AddProfile(profileName);
             else
                 ProfileData.AddProfile(profileName, copyProfileId);
+
+            // Automatically bind aircraft
+            var boundProfile = ProfileData.Profiles.FirstOrDefault(p => p.BindingAircrafts.Any(p => p == FlightSimData.CurrentMsfsAircraft));
+            if (boundProfile == null && FlightSimData.HasCurrentMsfsAircraft)
+            {
+                ProfileData.ActiveProfile.BindingAircrafts.Add(FlightSimData.CurrentMsfsAircraft);
+                ProfileData.WriteProfiles();
+                ProfileData.RefreshProfile();
+            }
         }
 
         public void DeleteActiveProfile()

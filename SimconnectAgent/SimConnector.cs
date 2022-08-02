@@ -153,6 +153,7 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
             _simConnect.OnRecvEvent += HandleOnReceiveSystemEvent;
             _simConnect.OnRecvSimobjectDataBytype += HandleOnRecvSimobjectDataBytype;
             _simConnect.OnRecvEventFilename += HandleOnRecvEventFilename;
+            _simConnect.OnRecvSystemState += HandleOnRecvSystemState;
 
             // Register simConnect system events
             _simConnect.UnsubscribeFromSystemEvent(SimConnectSystemEvent.SIMSTART);
@@ -164,14 +165,29 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
             _simConnect.UnsubscribeFromSystemEvent(SimConnectSystemEvent.AIRCRAFTLOADED);
             _simConnect.SubscribeToSystemEvent(SimConnectSystemEvent.AIRCRAFTLOADED, "AircraftLoaded");
 
-            System.Threading.Thread.Sleep(5000);
-            ReceiveMessage();
-
             AddDataDefinitions();
+
+            for (var i = 0; i < 5; i++)
+            {
+                System.Threading.Thread.Sleep(1000);
+                ReceiveMessage();
+            }
+
+            _simConnect.RequestSystemState(SystemStateRequestId.AIRCRAFTPATH, "AircraftLoaded");
 
             Connected = true;
             OnConnected?.Invoke(this, null);
             StatusMessageWriter.WriteMessage("MSFS is connected", StatusMessageType.Info, false);
+        }
+
+        private void HandleOnRecvSystemState(SimConnect sender, SIMCONNECT_RECV_SYSTEM_STATE data)
+        {
+            switch ((SystemStateRequestId)Enum.Parse(typeof(SystemStateRequestId), data.dwRequestID.ToString()))
+            {
+                case SystemStateRequestId.AIRCRAFTPATH:
+                    SetActiveAircraftTitle(data.szString);
+                    break;
+            }
         }
 
         private void HandleOnRecvEventFilename(SimConnect sender, SIMCONNECT_RECV_EVENT_FILENAME data)
@@ -179,11 +195,7 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
             switch (data.uEventID)
             {
                 case (uint)SimConnectSystemEvent.AIRCRAFTLOADED:
-                    var filePathToken = data.szFileName.Split(@"\");
-                    var aircraftName = filePathToken[filePathToken.Length - 2];
-                    aircraftName = aircraftName.Replace("_", " ").ToUpper();
-
-                    SimConnectDataDefinitions.Find(s => s.PropName == "AircraftName").Value = aircraftName;
+                    SetActiveAircraftTitle(data.szFileName);
                     break;
             }
         }
@@ -295,6 +307,15 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
         {
             var systemEvent = ((SimConnectSystemEvent)data.uEventID);
             OnReceiveSystemEvent?.Invoke(this, systemEvent);
+        }
+
+        private void SetActiveAircraftTitle(string aircraftFilePath)
+        {
+            var filePathToken = aircraftFilePath.Split(@"\");
+            var aircraftName = filePathToken[filePathToken.Length - 2];
+            aircraftName = aircraftName.Replace("_", " ").ToUpper();
+
+            SimConnectDataDefinitions.Find(s => s.PropName == "AircraftName").Value = aircraftName;
         }
     }
 }

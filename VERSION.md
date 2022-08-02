@@ -1,6 +1,13 @@
 # Version History
 <hr/>
 
+## Version 3.4.2
+* Major change in how profile is being bound to aircraft. A profile is no longer bound to a livery but instead it is bound to an aircraft so you do not have to manual activate binding for individual livery for the same plane. This has been a long awaited request.
+
+* Auto assign aircraft binding when profile is initially created if the active aircraft has no previous profile binding specify.
+
+* Implemented work around for SU10+ issue where after panel separation, the panel's size is huge which blocked most of the game window for lower resolution screen and prevented Pop Out Panel Manager from popping out the next panel.
+
 ## Version 3.4.1
 
 This release is solely focused on addressing issues regarding touch panel capabilities as well as making improvements to touch feature. Panels I used for testing are

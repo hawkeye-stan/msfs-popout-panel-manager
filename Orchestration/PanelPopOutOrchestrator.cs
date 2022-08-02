@@ -259,6 +259,9 @@ namespace MSFSPopoutPanelManager.Orchestration
                     return null;
                 }
 
+                // Fix SU10+ bug where pop out window after separation is huge
+                WindowActionManager.MoveWindow(handle, PanelType.CustomPopout, -8, 0, 800, 600);
+
                 var panel = new PanelConfig();
                 panel.PanelHandle = handle;
                 panel.PanelType = PanelType.CustomPopout;

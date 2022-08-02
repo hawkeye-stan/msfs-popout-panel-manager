@@ -68,6 +68,7 @@ namespace MSFSPopoutPanelManager.Orchestration
             ProfileData.ReadProfiles();
 
             Profile.ProfileData = ProfileData;
+            Profile.FlightSimData = FlightSimData;
 
             PanelSource.ProfileData = ProfileData;
             PanelSource.AppSettingData = AppSettingData;

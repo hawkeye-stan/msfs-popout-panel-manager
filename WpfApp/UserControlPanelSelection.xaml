@@ -45,12 +45,12 @@
                 <Separator Margin="5,10,5,5"/>
                 <Label HorizontalAlignment="Left" Margin="0,0,0,0" >
                     <TextBlock TextWrapping="WrapWithOverflow">
-                        2. Bind active aircraft to the selected profile to automatically activate profile and automatically pop out panels when a flight session starts.
+                        2. Bind active aircraft to the selected profile to automatically activate profile and pop out panels when flight session starts.
                     </TextBlock>
                 </Label>
                 <WrapPanel Orientation="Vertical" Margin="15,0,0,0" HorizontalAlignment="Left">
                     <WrapPanel Orientation="Horizontal" Margin="5,5,0,0" HorizontalAlignment="Left">
-                        <Label Content="{c:Binding 'FlightSimData.CurrentMsfsAircraft == null ? &quot;Active aircraft is unavailable&quot; : FlightSimData.CurrentMsfsAircraft'}" HorizontalContentAlignment="Left" HorizontalAlignment="Left" FontStyle="Italic" FontSize="16" Width="447">
+                        <Label Content="{c:Binding 'FlightSimData.CurrentMsfsAircraft == null ? &quot;Aircraft information is currently unavailable&quot; : FlightSimData.CurrentMsfsAircraft'}" HorizontalContentAlignment="Left" HorizontalAlignment="Left" FontStyle="Italic" FontSize="16" Width="447">
                             <Label.Style>
                                 <Style TargetType="{x:Type Label}">
                                     <Style.Triggers>
@@ -58,9 +58,13 @@
                                             <Setter Property="Foreground" Value="LightGreen" ></Setter>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding ProfileData.IsAircraftBoundToProfile}" Value="False">
-                                            <Setter Property="Foreground" Value="AntiqueWhite" ></Setter>
+                                            <Setter Property="Foreground" Value="White" ></Setter>
                                         </DataTrigger>
-                                        <DataTrigger Binding="{c:Binding '!ProfileData.IsAllowedAddAircraftBinding and !ProfileData.IsAllowedDeleteAircraftBinding'}" Value="True">
+                                        <DataTrigger Binding="{c:Binding 'FlightSimData.CurrentMsfsAircraft == null'}" Value="True">
+                                            <Setter Property="Foreground" Value="AntiqueWhite" ></Setter>
+                                            <Setter Property="ToolTip" Value="No aircraft has been loaded by the game yet"></Setter>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{c:Binding 'FlightSimData.CurrentMsfsAircraft != null and !ProfileData.IsAllowedAddAircraftBinding and !ProfileData.IsAllowedDeleteAircraftBinding'}" Value="True">
                                             <Setter Property="Foreground" Value="Red" ></Setter>
                                             <Setter Property="ToolTip" Value="Aircraft is currently bound to another profile"></Setter>
                                         </DataTrigger>

@@ -55,5 +55,10 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
         PAUSED,
         VIEW,
         NONE
-    };
+    }
+
+    public enum SystemStateRequestId
+    {
+        AIRCRAFTPATH
+    }
 }
