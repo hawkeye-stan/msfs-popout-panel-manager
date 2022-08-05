@@ -231,7 +231,7 @@ namespace MSFSPopoutPanelManager.Orchestration
                 {
                     case PInvokeConstant.EVENT_SYSTEM_MOVESIZEEND:
                         // Move window back to original location
-                        PInvoke.MoveWindow(panelConfig.PanelHandle, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height, false);
+                        WindowActionManager.MoveWindow(panelConfig.PanelHandle, panelConfig.PanelType, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height);
                         break;
                     case PInvokeConstant.EVENT_OBJECT_LOCATIONCHANGE:
                         // Detect if window is maximized, if so, save settings

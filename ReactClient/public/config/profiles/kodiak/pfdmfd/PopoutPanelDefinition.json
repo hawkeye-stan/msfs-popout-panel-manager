@@ -351,7 +351,10 @@
                                 "actionType": "EncoderAction"
                             }
                         ],
-                        "useDualEncoder": true
+                        "useDualEncoder": true,
+                        "encoderAction": {
+                            "$ref": "#value.encoderAction.mfdFms"
+                        }
                     }
                 },
                 {

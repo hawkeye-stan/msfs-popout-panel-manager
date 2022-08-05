@@ -129,9 +129,9 @@ namespace MSFSPopoutPanelManager.SimConnectAgent.TouchPanel
 
                 var commandAction = ActionLogicArduino.GetSimConnectCommand(_currentSimConnectEncoderAction, e.InputName, e.InputAction);
 
-                if (e.Acceleration == 1)
+                // do manual arduino joystick acceleration
+                if (e.Acceleration == 1 && e.InputName == InputName.Joystick)
                 {
-                    // do manual acceleration
                     if (_lastCommandAction != null && commandAction.Action == _lastCommandAction.Action)
                         _repeatCommandActionCount++;
                     else
@@ -149,12 +149,16 @@ namespace MSFSPopoutPanelManager.SimConnectAgent.TouchPanel
 
                     _actionQueue.Enqueue(commandAction);
                 }
-                else
+                else if (e.Acceleration > 1)
                 {
                     for (var a = 0; a < e.Acceleration; a++)
                     {
                         _actionQueue.Enqueue(commandAction);
                     }
+                }
+                else
+                {
+                    _actionQueue.Enqueue(commandAction);
                 }
             }
         }

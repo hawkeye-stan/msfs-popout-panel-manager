@@ -69,8 +69,8 @@
                     "width": 1408,
                     "height": 914
                 },
-                "showMenuBar": false,
-                "enableMap": false,
+                "showMenuBar": true,
+                "enableMap": true,
                 "subPanels": [
                     {
                         "panelId": "pfd",

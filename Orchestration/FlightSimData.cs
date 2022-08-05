@@ -10,6 +10,8 @@ namespace MSFSPopoutPanelManager.Orchestration
 
         public string CurrentMsfsAircraft { get; set; }
 
+        public string CurrentMsfsLiveryTitle { get; set; }
+
         public bool HasCurrentMsfsAircraft
         {
             get { return !String.IsNullOrEmpty(CurrentMsfsAircraft); }
@@ -35,6 +37,7 @@ namespace MSFSPopoutPanelManager.Orchestration
         public void ClearData()
         {
             CurrentMsfsAircraft = null;
+            CurrentMsfsLiveryTitle = null;
             ElectricalMasterBatteryStatus = false;
             IsEnteredFlight = false;
         }

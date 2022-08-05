@@ -46,6 +46,16 @@ namespace MSFSPopoutPanelManager.Orchestration
                 var aircraftName = Convert.ToString(e.Find(d => d.PropName == "AircraftName").Value);
                 aircraftName = String.IsNullOrEmpty(aircraftName) ? null : aircraftName;
                 var electricalMasterBattery = Convert.ToBoolean(e.Find(d => d.PropName == "ElectricalMasterBattery").Value);
+                var liveryName = Convert.ToString(e.Find(d => d.PropName == "Title").Value);
+
+                if (electricalMasterBattery != FlightSimData.ElectricalMasterBatteryStatus)
+                    FlightSimData.ElectricalMasterBatteryStatus = electricalMasterBattery;
+
+                if (liveryName != FlightSimData.CurrentMsfsLiveryTitle)
+                {
+                    FlightSimData.CurrentMsfsLiveryTitle = liveryName;
+                    ProfileData.MigrateLiveryToAircraftBinding(liveryName, aircraftName);
+                }
 
                 // Automatic switching of active profile when SimConnect active aircraft change
                 if (FlightSimData.CurrentMsfsAircraft != aircraftName)
@@ -53,9 +63,6 @@ namespace MSFSPopoutPanelManager.Orchestration
                     FlightSimData.CurrentMsfsAircraft = aircraftName;
                     ProfileData.AutoSwitchProfile(aircraftName);
                 }
-
-                if (electricalMasterBattery != FlightSimData.ElectricalMasterBatteryStatus)
-                    FlightSimData.ElectricalMasterBatteryStatus = electricalMasterBattery;
             };
             _simConnectProvider.OnFlightStarted += (sender, e) => OnFlightStarted?.Invoke(this, null);
             _simConnectProvider.OnFlightStopped += HandleOnFlightStopped;

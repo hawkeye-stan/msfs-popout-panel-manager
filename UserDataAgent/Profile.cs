@@ -14,6 +14,9 @@ namespace MSFSPopoutPanelManager.UserDataAgent
             PanelSourceCoordinates = new ObservableCollection<PanelSourceCoordinate>();
             TouchPanelBindings = new ObservableCollection<TouchPanelBinding>();
             IsLocked = false;
+
+            // Legacy data
+            BindingAircraftLiveries = new ObservableCollection<string>();
         }
 
         public int ProfileId { get; set; }
@@ -28,6 +31,10 @@ namespace MSFSPopoutPanelManager.UserDataAgent
         public ObservableCollection<PanelConfig> PanelConfigs { get; set; }
 
         public ObservableCollection<TouchPanelBinding> TouchPanelBindings { get; set; }
+
+        // Legacy data
+        [JsonConverter(typeof(SingleValueArrayConvertor<string>))]
+        public ObservableCollection<string> BindingAircraftLiveries { get; set; }
 
         public bool IsLocked { get; set; }
 

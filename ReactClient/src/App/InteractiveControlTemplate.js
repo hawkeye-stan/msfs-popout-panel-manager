@@ -31,6 +31,7 @@ const getImagePath = (panelInfo) => {
 const playSound = (isEnabledSound) => {
     if (isEnabledSound) {
         let audio = new Audio('/sound/button-click.mp3');
+        audio.volume = 0.5;
         audio.play();
     }
 }
@@ -53,7 +54,6 @@ const execActions = (event, action, simConnectData, showEncoder) => {
                     actionType: curAction.actionType,
                     encoderAction: action.encoderAction === undefined ? null : action.encoderAction
                 }), 200 * i);
-            
 
             if(action.useEncoder)
             {
@@ -123,7 +123,7 @@ const ImageButton = ({ctrl, panelInfo, showEncoder}) => {
             setTimeout(() => { isHighlighted.current = false; }, 2000);
         }
 
-        if (ctrl.actions != null && ctrl.actions.length > 0)
+        if (ctrl.action != null)
             playSound(isEnabledSound);
 
         if (!isUsedArduino && (ctrl.action.useEncoder || ctrl.action.useDualEncoder))
@@ -176,7 +176,7 @@ const BindableImageButton = ({ctrl, panelInfo, showEncoder}) => {
             setTimeout(() => { isHighlighted.current = false; }, 2000);
         }
 
-        if (ctrl.actions != null && ctrl.actions.length > 0)
+        if (ctrl.action != null)
             playSound(isEnabledSound);
 
         if (!isUsedArduino && (ctrl.action.useEncoder || ctrl.action.useDualEncoder))

@@ -170,5 +170,20 @@ namespace MSFSPopoutPanelManager.Orchestration
                     UpdateActiveProfile(matchedProfile.ProfileId);
             }
         }
+
+        // This is to migrate profile binding from aircraft livery to aircraft name
+        // Started in v3.4.2
+        public void MigrateLiveryToAircraftBinding(string liveryName, string aircraftName)
+        {
+            if (Profiles != null)
+            {
+                var matchedProfile = Profiles.FirstOrDefault(p => p.BindingAircraftLiveries.Any(t => t == liveryName));
+                if (matchedProfile != null && !matchedProfile.BindingAircrafts.Any(a => a == aircraftName))
+                {
+                    matchedProfile.BindingAircrafts.Add(aircraftName);
+                    WriteProfiles();
+                }
+            }
+        }
     }
 }
