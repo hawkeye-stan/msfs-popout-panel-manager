@@ -38,6 +38,11 @@ namespace MSFSPopoutPanelManager.WpfApp
         {
             webView.Source = new Uri($"{Constants.WEB_HOST_URI}/{_planeId.ToLower()}/{_panelId.ToLower()}");
         }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            webView.Dispose();
+        }
     }
 
     internal static class WindowExtensions

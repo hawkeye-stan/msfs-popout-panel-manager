@@ -14,12 +14,18 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
         {
             _orchestrator = orchestrator;
 
-            AddProfileCommand = new DelegateCommand(OnAddProfile);
+            AddProfileCommand = new DelegateCommand(OnAddProfile, () => FlightSimData.HasCurrentMsfsAircraft && FlightSimData.IsSimulatorStarted)
+                                                                                .ObservesProperty(() => FlightSimData.HasCurrentMsfsAircraft)
+                                                                                .ObservesProperty(() => FlightSimData.IsSimulatorStarted);
 
-            DeleteProfileCommand = new DelegateCommand(OnDeleteProfile, () => ProfileData.HasActiveProfile)
-                                                                                .ObservesProperty(() => ProfileData.ActiveProfile);
+            DeleteProfileCommand = new DelegateCommand(OnDeleteProfile, () => ProfileData.HasActiveProfile && FlightSimData.HasCurrentMsfsAircraft && FlightSimData.IsSimulatorStarted)
+                                                                                .ObservesProperty(() => ProfileData.HasActiveProfile)
+                                                                                .ObservesProperty(() => FlightSimData.HasCurrentMsfsAircraft)
+                                                                                .ObservesProperty(() => FlightSimData.IsSimulatorStarted);
 
-            ChangeProfileCommand = new DelegateCommand<object>(OnChangeProfile);
+            ChangeProfileCommand = new DelegateCommand<object>(OnChangeProfile, (obj) => FlightSimData.HasCurrentMsfsAircraft && FlightSimData.IsSimulatorStarted)
+                                                                                .ObservesProperty(() => FlightSimData.HasCurrentMsfsAircraft)
+                                                                                .ObservesProperty(() => FlightSimData.IsSimulatorStarted);
 
             AddProfileBindingCommand = new DelegateCommand(OnAddProfileBinding, () => ProfileData.HasActiveProfile && FlightSimData.HasCurrentMsfsAircraft && ProfileData.IsAllowedAddAircraftBinding && FlightSimData.IsSimulatorStarted)
                                                                                 .ObservesProperty(() => ProfileData.ActiveProfile)
@@ -58,9 +64,12 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
                                                                                 .ObservesProperty(() => ProfileData.ActiveProfile.PanelSourceCoordinates.Count)
                                                                                 .ObservesProperty(() => FlightSimData.IsSimulatorStarted);
 
-            OpenTouchPanelBindingCommand = new DelegateCommand(OnOpenTouchPanelBinding, () => ProfileData.HasActiveProfile && AppSettingData.AppSetting.TouchPanelSettings.EnableTouchPanelIntegration)
-                                                                    .ObservesProperty(() => ProfileData.HasActiveProfile)
-                                                                    .ObservesProperty(() => AppSettingData.AppSetting.TouchPanelSettings.EnableTouchPanelIntegration);
+            OpenTouchPanelBindingCommand = new DelegateCommand(OnOpenTouchPanelBinding, () => FlightSimData.HasCurrentMsfsAircraft && FlightSimData.IsSimulatorStarted && ProfileData.HasActiveProfile && AppSettingData.AppSetting.TouchPanelSettings.EnableTouchPanelIntegration)
+                                                                                .ObservesProperty(() => ProfileData.HasActiveProfile)
+                                                                                .ObservesProperty(() => AppSettingData.AppSetting.TouchPanelSettings.EnableTouchPanelIntegration)
+                                                                                .ObservesProperty(() => FlightSimData.HasCurrentMsfsAircraft)
+                                                                                .ObservesProperty(() => FlightSimData.IsSimulatorStarted);
+            ;
 
             TouchPanelBindingViewModel = new TouchPanelBindingViewModel(_orchestrator);
         }

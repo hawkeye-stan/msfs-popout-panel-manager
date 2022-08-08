@@ -177,6 +177,9 @@ namespace MSFSPopoutPanelManager.Orchestration
 
         private void HookWinEvent()
         {
+            if (ActiveProfile == null || ActiveProfile.PanelConfigs == null || ActiveProfile.PanelConfigs.Count == 0)
+                return;
+
             // Setup panel config event hooks
             _winEventHook = PInvoke.SetWinEventHook(PInvokeConstant.EVENT_SYSTEM_MOVESIZEEND, PInvokeConstant.EVENT_OBJECT_LOCATIONCHANGE, IntPtr.Zero, _winEvent, 0, 0, PInvokeConstant.WINEVENT_OUTOFCONTEXT);
         }
@@ -193,19 +196,9 @@ namespace MSFSPopoutPanelManager.Orchestration
             {
                 case PInvokeConstant.EVENT_OBJECT_LOCATIONCHANGE:
                 case PInvokeConstant.EVENT_SYSTEM_MOVESIZEEND:
-                case PInvokeConstant.EVENT_SYSTEM_CAPTURESTART:
-                case PInvokeConstant.EVENT_SYSTEM_CAPTUREEND:
                     // check by priority to speed up comparing of escaping constraints
-                    if (hwnd == IntPtr.Zero
-                        || idObject != 0
-                        || hWinEventHook != _winEventHook
-                        || !AllowEdit
-                        || ActiveProfile == null
-                        || ActiveProfile.PanelConfigs == null
-                        || ActiveProfile.PanelConfigs.Count == 0)
-                    {
+                    if (hwnd == IntPtr.Zero || idObject != 0 || hWinEventHook != _winEventHook || !AllowEdit)
                         return;
-                    }
 
                     HandleEventCallback(hwnd, iEvent);
                     break;
@@ -234,7 +227,6 @@ namespace MSFSPopoutPanelManager.Orchestration
                         WindowActionManager.MoveWindow(panelConfig.PanelHandle, panelConfig.PanelType, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height);
                         break;
                     case PInvokeConstant.EVENT_OBJECT_LOCATIONCHANGE:
-                        // Detect if window is maximized, if so, save settings
                         WINDOWPLACEMENT wp = new WINDOWPLACEMENT();
                         wp.length = System.Runtime.InteropServices.Marshal.SizeOf(wp);
                         PInvoke.GetWindowPlacement(hwnd, ref wp);

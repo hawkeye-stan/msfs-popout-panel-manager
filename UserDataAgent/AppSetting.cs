@@ -14,6 +14,7 @@ namespace MSFSPopoutPanelManager.UserDataAgent
             MinimizeToTray = false;
             AlwaysOnTop = true;
             UseAutoPanning = true;
+            MinimizeAfterPopOut = false;
             AutoPanningKeyBinding = "0";
             StartMinimized = false;
             AutoDisableTrackIR = true;
@@ -21,6 +22,7 @@ namespace MSFSPopoutPanelManager.UserDataAgent
             OnScreenMessageDuration = 1;
             UseLeftRightControlToPopOut = false;
             IsEnabledTouchPanelServer = false;
+
 
             AfterPopOutCameraView = new AfterPopOutCameraView();
             AfterPopOutCameraView.PropertyChanged += (source, e) =>
@@ -53,6 +55,8 @@ namespace MSFSPopoutPanelManager.UserDataAgent
         public bool AlwaysOnTop { get; set; }
 
         public bool UseAutoPanning { get; set; }
+
+        public bool MinimizeAfterPopOut { get; set; }
 
         public string AutoPanningKeyBinding { get; set; }
 

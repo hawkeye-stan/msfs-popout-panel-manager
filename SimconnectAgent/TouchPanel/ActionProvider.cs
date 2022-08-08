@@ -20,6 +20,7 @@ namespace MSFSPopoutPanelManager.SimConnectAgent.TouchPanel
         private bool _isUsedArduino;
         private CommandAction _lastCommandAction;
         private int _repeatCommandActionCount;
+        private bool _isExecutingCommand;
 
         private SimConnectEncoderAction _currentSimConnectEncoderAction;
         private System.Timers.Timer _actionExecutionTimer;
@@ -63,6 +64,8 @@ namespace MSFSPopoutPanelManager.SimConnectAgent.TouchPanel
 
             if (_isSimConnected && actionData.Action != null)
             {
+                _isExecutingCommand = true;
+
                 try
                 {
                     if (actionData.Action == "NO_ACTION") return;
@@ -106,13 +109,17 @@ namespace MSFSPopoutPanelManager.SimConnectAgent.TouchPanel
                                 Task.Run(() =>
                                 {
                                     Thread.Sleep(500);
-                                    InputEmulationManager.LeftClickGameWindow();
+                                    if (!_isExecutingCommand)
+                                    {
+                                        InputEmulationManager.RefocusGameWindow();
+                                    }
                                 });
                             }
                             break;
                     }
 
                     ExecuteCommand(commandAction);
+                    _isExecutingCommand = false;
                 }
                 catch (Exception ex)
                 {
@@ -202,12 +209,6 @@ namespace MSFSPopoutPanelManager.SimConnectAgent.TouchPanel
                     _simConnector.SetSimVar(simConnectCommand);
                     break;
             }
-        }
-
-        private void RefocusMsfs()
-        {
-            Thread.Sleep(250);
-            InputEmulationManager.LeftClickGameWindow();
         }
     }
 }

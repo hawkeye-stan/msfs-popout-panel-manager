@@ -191,5 +191,18 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             PInvoke.keybd_event(Convert.ToByte(VK_ENT), 0, KEYEVENTF_KEYUP, 0);
             PInvoke.keybd_event(Convert.ToByte(VK_RMENU), 0, KEYEVENTF_KEYUP, 0);
         }
+
+        public static void RefocusGameWindow()
+        {
+            var simualatorProcess = WindowProcessManager.GetSimulatorProcess();
+            if (simualatorProcess == null)
+                return;
+
+            var rectangle = WindowActionManager.GetWindowRect(simualatorProcess.Handle);
+            var clientRectangle = WindowActionManager.GetClientRect(simualatorProcess.Handle);
+
+            PInvoke.SetCursorPos(rectangle.X + clientRectangle.Width / 2, rectangle.Y + clientRectangle.Height / 2);
+        }
+
     }
 }

@@ -8,7 +8,9 @@
 
 * Implemented work around for SU10+ issue where after panel separation, the panel's size is huge which blocked most of the game window for lower resolution screen and prevented Pop Out Panel Manager from popping out the next panel.
 
-* Implement key binding to move and resize pop out
+* Implement key binding to move and resize pop outs.
+
+* Added setting to minimize pop out manager after panels have been popped out.
 
 Known issue:
 

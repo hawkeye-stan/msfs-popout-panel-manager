@@ -6,7 +6,7 @@
                  xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
                  mc:Ignorable="d"
         Title="Preferences" 
-        Height="670" 
+        Height="700" 
         Width="900"
         ResizeMode="NoResize" 
         Background="Transparent">
@@ -65,171 +65,186 @@
                 <TreeViewItem Header="Touch Settings" Selected="TreeViewItem_Selected" Margin="0,0,0,10"></TreeViewItem>
                 <TreeViewItem Header="MSFS Touch Panel Settings" Selected="TreeViewItem_Selected" Margin="0,0,0,10" Visibility="{Binding Path=AppSettingData.AppSetting.IsEnabledTouchPanelServer, Converter={StaticResource VisibleIfTrueConverter}, Mode=OneWay}"></TreeViewItem>
             </TreeView>
-            <WrapPanel DockPanel.Dock="Right" Margin="20,10,20,0">
-                <WrapPanel Orientation="Vertical" Visibility="{Binding ApplicationSettingsVisible, Converter={StaticResource VisibleIfTrueConverter}, Mode=OneWay}">
-                    <WrapPanel Orientation="Vertical" Width="Auto" Margin="0,0,0,20">
-                        <TextBlock Style="{StaticResource TextBlockHeading}">Always on Top</TextBlock>
-                        <Line Stretch="Fill" Stroke="Gray" X2="1"/>
-                        <CheckBox IsChecked="{Binding AppSettingData.AppSetting.AlwaysOnTop, Mode=TwoWay}">
-                            <AccessText>Pin the application on top of all open windows.</AccessText>
-                        </CheckBox>
-                    </WrapPanel>
-                    <WrapPanel Orientation="Vertical" Margin="0,0,0,20">
-                        <TextBlock Style="{StaticResource TextBlockHeading}">Auto Start</TextBlock>
-                        <Line Stretch="Fill" Stroke="Gray" X2="1"/>
-                        <CheckBox IsChecked="{Binding AppSettingData.AppSetting.AutoStart, Mode=TwoWay}" >
-                            <AccessText TextWrapping="Wrap">Enable auto start application when MSFS starts. This adds a XML config entry in EXE.xml file.</AccessText>
-                        </CheckBox>
-                    </WrapPanel>
-                    <WrapPanel Orientation="Vertical" Margin="0,0,0,20">
-                        <TextBlock Style="{StaticResource TextBlockHeading}">Minimize to Tray</TextBlock>
-                        <Line Stretch="Fill" Stroke="Gray" X2="1"/>
-                        <CheckBox IsChecked="{Binding AppSettingData.AppSetting.MinimizeToTray, Mode=TwoWay}" >
-                            <AccessText TextWrapping="Wrap">Minimize the application to system tray.</AccessText>
-                        </CheckBox>
-                    </WrapPanel>
-                    <WrapPanel Orientation="Vertical" Margin="0,0,0,20">
-                        <TextBlock Style="{StaticResource TextBlockHeading}">Start Minimized</TextBlock>
-                        <Line Stretch="Fill" Stroke="Gray" X2="1"/>
-                        <CheckBox IsChecked="{Binding AppSettingData.AppSetting.StartMinimized, Mode=TwoWay}" >
-                            <AccessText TextWrapping="Wrap">Start the application in minimized mode in system tray.</AccessText>
-                        </CheckBox>
-                    </WrapPanel>
-                </WrapPanel>
-
-                <WrapPanel Orientation="Vertical" Visibility="{Binding PopOutSettingsVisible, Converter={StaticResource VisibleIfTrueConverter}, Mode=OneWay}">
-                    <WrapPanel Orientation="Vertical" Margin="0,0,0,20">
-                        <WrapPanel Orientation="Vertical">
-                            <TextBlock Style="{StaticResource TextBlockHeading}">Enable Auto Panning</TextBlock>
+            <WrapPanel DockPanel.Dock="Right" Margin="20,10,0,0">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <WrapPanel Orientation="Vertical" Visibility="{Binding ApplicationSettingsVisible, Converter={StaticResource VisibleIfTrueConverter}, Mode=OneWay}">
+                        <WrapPanel Orientation="Vertical" Width="Auto" Margin="0,0,20,20">
+                            <TextBlock Style="{StaticResource TextBlockHeading}">Always on Top</TextBlock>
                             <Line Stretch="Fill" Stroke="Gray" X2="1"/>
-                            <CheckBox IsChecked="{Binding AppSettingData.AppSetting.UseAutoPanning, Mode=TwoWay}">
-                                <AccessText>Enable automatic panning of cockpit view when popping out panels. Auto Panning remembers the custom cockpit camera angle you used when defining the locations of pop out panel.</AccessText>
+                            <CheckBox IsChecked="{Binding AppSettingData.AppSetting.AlwaysOnTop, Mode=TwoWay}">
+                                <AccessText>Pin the application on top of all open windows.</AccessText>
                             </CheckBox>
                         </WrapPanel>
-                        <WrapPanel Orientation="Vertical" Visibility="{Binding AppSettingData.AppSetting.UseAutoPanning, Converter={StaticResource VisibleIfTrueConverter}, Mode=OneWay}">
-                            <WrapPanel Orientation="Horizontal" Margin="24,15,0,0" VerticalAlignment="Top">
-                                <Label Content="Ctrl-Alt-" FontSize="14"></Label>
-                                <ComboBox HorizontalAlignment="Left" 
+                        <WrapPanel Orientation="Vertical" Margin="0,0,20,20">
+                            <TextBlock Style="{StaticResource TextBlockHeading}">Auto Start</TextBlock>
+                            <Line Stretch="Fill" Stroke="Gray" X2="1"/>
+                            <CheckBox IsChecked="{Binding AppSettingData.AppSetting.AutoStart, Mode=TwoWay}" >
+                                <AccessText TextWrapping="Wrap">Enable auto start application when MSFS starts. This adds a XML config entry in EXE.xml file.</AccessText>
+                            </CheckBox>
+                        </WrapPanel>
+                        <WrapPanel Orientation="Vertical" Margin="0,0,20,20">
+                            <TextBlock Style="{StaticResource TextBlockHeading}">Minimize to Tray</TextBlock>
+                            <Line Stretch="Fill" Stroke="Gray" X2="1"/>
+                            <CheckBox IsChecked="{Binding AppSettingData.AppSetting.MinimizeToTray, Mode=TwoWay}" >
+                                <AccessText TextWrapping="Wrap">Minimize the application to system tray.</AccessText>
+                            </CheckBox>
+                        </WrapPanel>
+                        <WrapPanel Orientation="Vertical" Margin="0,0,20,20">
+                            <TextBlock Style="{StaticResource TextBlockHeading}">Start Minimized</TextBlock>
+                            <Line Stretch="Fill" Stroke="Gray" X2="1"/>
+                            <CheckBox IsChecked="{Binding AppSettingData.AppSetting.StartMinimized, Mode=TwoWay}" >
+                                <AccessText TextWrapping="Wrap">Start the application in minimized mode in system tray.</AccessText>
+                            </CheckBox>
+                        </WrapPanel>
+                    </WrapPanel>
+                </ScrollViewer>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <WrapPanel Orientation="Vertical" Visibility="{Binding PopOutSettingsVisible, Converter={StaticResource VisibleIfTrueConverter}, Mode=OneWay}">
+                        <WrapPanel Orientation="Vertical" Margin="0,0,20,20">
+                            <WrapPanel Orientation="Vertical">
+                                <TextBlock Style="{StaticResource TextBlockHeading}">Enable Auto Panning</TextBlock>
+                                <Line Stretch="Fill" Stroke="Gray" X2="1"/>
+                                <CheckBox IsChecked="{Binding AppSettingData.AppSetting.UseAutoPanning, Mode=TwoWay}">
+                                    <AccessText>Enable automatic panning of cockpit view when popping out panels. Auto Panning remembers the custom cockpit camera angle you used when defining the locations of pop out panel.</AccessText>
+                                </CheckBox>
+                            </WrapPanel>
+                            <WrapPanel Orientation="Vertical" Visibility="{Binding AppSettingData.AppSetting.UseAutoPanning, Converter={StaticResource VisibleIfTrueConverter}, Mode=OneWay}">
+                                <WrapPanel Orientation="Horizontal" Margin="24,15,0,0" VerticalAlignment="Top">
+                                    <Label Content="Ctrl-Alt-" FontSize="14"></Label>
+                                    <ComboBox HorizontalAlignment="Left" 
                                     VerticalAlignment="top" 
                                     Width="60"
                                     SelectedValuePath="Tag" 
                                     SelectedValue="{Binding AppSettingData.AppSetting.AutoPanningKeyBinding, Mode=TwoWay}" >
-                                    <ComboBoxItem Content="0" Tag="0"></ComboBoxItem>
-                                    <ComboBoxItem Content="1" Tag="1"></ComboBoxItem>
-                                    <ComboBoxItem Content="2" Tag="2"></ComboBoxItem>
-                                    <ComboBoxItem Content="3" Tag="3"></ComboBoxItem>
-                                    <ComboBoxItem Content="4" Tag="4"></ComboBoxItem>
-                                    <ComboBoxItem Content="5" Tag="5"></ComboBoxItem>
-                                    <ComboBoxItem Content="6" Tag="6"></ComboBoxItem>
-                                    <ComboBoxItem Content="7" Tag="7"></ComboBoxItem>
-                                    <ComboBoxItem Content="8" Tag="8"></ComboBoxItem>
-                                    <ComboBoxItem Content="9" Tag="9"></ComboBoxItem>
-                                </ComboBox>
-                                <AccessText Margin="10,0,0,0" Width="420">
-                                    Configure key binding for saving and recalling of custom MSFS cockpit camera view when defining the locations of pop out panel. Requires binding keystroke to custom camera in MSFS control setting. (Default: Ctrl-Alt-0 to save and Alt-0 to load).
-                                </AccessText>
+                                        <ComboBoxItem Content="0" Tag="0"></ComboBoxItem>
+                                        <ComboBoxItem Content="1" Tag="1"></ComboBoxItem>
+                                        <ComboBoxItem Content="2" Tag="2"></ComboBoxItem>
+                                        <ComboBoxItem Content="3" Tag="3"></ComboBoxItem>
+                                        <ComboBoxItem Content="4" Tag="4"></ComboBoxItem>
+                                        <ComboBoxItem Content="5" Tag="5"></ComboBoxItem>
+                                        <ComboBoxItem Content="6" Tag="6"></ComboBoxItem>
+                                        <ComboBoxItem Content="7" Tag="7"></ComboBoxItem>
+                                        <ComboBoxItem Content="8" Tag="8"></ComboBoxItem>
+                                        <ComboBoxItem Content="9" Tag="9"></ComboBoxItem>
+                                    </ComboBox>
+                                    <AccessText Margin="10,0,0,0" Width="420">
+                                        Configure key binding for saving and recalling of custom MSFS cockpit camera view when defining the locations of pop out panel. Requires binding keystroke to custom camera in MSFS control setting. (Default: Ctrl-Alt-0 to save and Alt-0 to load).
+                                    </AccessText>
+                                </WrapPanel>
                             </WrapPanel>
                         </WrapPanel>
-                    </WrapPanel>
-
-                    <WrapPanel Orientation="Vertical" Margin="0,0,0,20">
-                        <WrapPanel Orientation="Vertical">
-                            <TextBlock Style="{StaticResource TextBlockHeading}">Enable Return to Predefined Camera View After Pop Out</TextBlock>
+                        <WrapPanel Orientation="Vertical" Margin="0,0,20,20">
+                            <TextBlock Style="{StaticResource TextBlockHeading}">Minimize Pop Out Panel Manager After Pop Out</TextBlock>
                             <Line Stretch="Fill" Stroke="Gray" X2="1"/>
-                            <CheckBox IsChecked="{Binding AppSettingData.AppSetting.AfterPopOutCameraView.EnableReturnToCameraView, Mode=TwoWay}">
-                                <AccessText>Enable return to a camera view after pop out. Default is return to cockpit center view by emulating Ctrl-Space keystroke.</AccessText>
-                            </CheckBox>
+                            <WrapPanel>
+                                <CheckBox IsChecked="{Binding AppSettingData.AppSetting.MinimizeAfterPopOut, Mode=TwoWay}">
+                                    <AccessText Margin="10,0,0,0" Width="510">Minimize Pop Out Panel Manager after pop out. When creating a new profile and during initial pop out, this setting has no effect.</AccessText>
+                                </CheckBox>
+                            </WrapPanel>
                         </WrapPanel>
-                        <WrapPanel Orientation="Vertical" Visibility="{Binding AppSettingData.AppSetting.AfterPopOutCameraView.EnableReturnToCameraView, Converter={StaticResource VisibleIfTrueConverter}, Mode=OneWay}">
-                            <WrapPanel Orientation="Horizontal" Margin="28,10,0,15">
-                                <ComboBox HorizontalAlignment="Left" 
+                        <WrapPanel Orientation="Vertical" Margin="0,0,20,20">
+                            <WrapPanel Orientation="Vertical">
+                                <TextBlock Style="{StaticResource TextBlockHeading}">Enable Return to Predefined Camera View After Pop Out</TextBlock>
+                                <Line Stretch="Fill" Stroke="Gray" X2="1"/>
+                                <CheckBox IsChecked="{Binding AppSettingData.AppSetting.AfterPopOutCameraView.EnableReturnToCameraView, Mode=TwoWay}">
+                                    <AccessText>Enable return to a camera view after pop out. Default is return to cockpit center view by emulating Ctrl-Space keystroke.</AccessText>
+                                </CheckBox>
+                            </WrapPanel>
+                            <WrapPanel Orientation="Vertical" Visibility="{Binding AppSettingData.AppSetting.AfterPopOutCameraView.EnableReturnToCameraView, Converter={StaticResource VisibleIfTrueConverter}, Mode=OneWay}">
+                                <WrapPanel Orientation="Horizontal" Margin="28,10,0,15">
+                                    <ComboBox HorizontalAlignment="Left" 
                                 VerticalAlignment="Center" 
                                 Width="200"
                                 SelectedValuePath="Tag" 
                                 SelectedValue="{Binding AppSettingData.AppSetting.AfterPopOutCameraView.CameraView, Mode=TwoWay}" >
-                                    <ComboBoxItem Content="Cockpit Center View" Tag="CockpitCenterView"></ComboBoxItem>
-                                    <ComboBoxItem Content="Custom Camera View" Tag="CustomCameraView"></ComboBoxItem>
-                                </ComboBox>
+                                        <ComboBoxItem Content="Cockpit Center View" Tag="CockpitCenterView"></ComboBoxItem>
+                                        <ComboBoxItem Content="Custom Camera View" Tag="CustomCameraView"></ComboBoxItem>
+                                    </ComboBox>
+                                </WrapPanel>
                             </WrapPanel>
-                        </WrapPanel>
-                        <WrapPanel Orientation="Vertical" Visibility="{Binding AppSettingData.AppSetting.AfterPopOutCameraView.IsEnabledCustomCameraKeyBinding, Converter={StaticResource VisibleIfTrueConverter}, Mode=OneWay}">
-                            <WrapPanel Orientation="Horizontal" Margin="20,10,0,0">
-                                <Label Content="Alt-" FontSize="14"></Label>
-                                <ComboBox HorizontalAlignment="Left" 
+                            <WrapPanel Orientation="Vertical" Visibility="{Binding AppSettingData.AppSetting.AfterPopOutCameraView.IsEnabledCustomCameraKeyBinding, Converter={StaticResource VisibleIfTrueConverter}, Mode=OneWay}">
+                                <WrapPanel Orientation="Horizontal" Margin="20,10,0,0">
+                                    <Label Content="Alt-" FontSize="14"></Label>
+                                    <ComboBox HorizontalAlignment="Left" 
                                     VerticalAlignment="Top" 
                                     Width="60"
                                     SelectedValuePath="Tag" 
                                     SelectedValue="{Binding AppSettingData.AppSetting.AfterPopOutCameraView.CustomCameraKeyBinding, Mode=TwoWay}" >
-                                    <ComboBoxItem Content="0" Tag="0"></ComboBoxItem>
-                                    <ComboBoxItem Content="1" Tag="1"></ComboBoxItem>
-                                    <ComboBoxItem Content="2" Tag="2"></ComboBoxItem>
-                                    <ComboBoxItem Content="3" Tag="3"></ComboBoxItem>
-                                    <ComboBoxItem Content="4" Tag="4"></ComboBoxItem>
-                                    <ComboBoxItem Content="5" Tag="5"></ComboBoxItem>
-                                    <ComboBoxItem Content="6" Tag="6"></ComboBoxItem>
-                                    <ComboBoxItem Content="7" Tag="7"></ComboBoxItem>
-                                    <ComboBoxItem Content="8" Tag="8"></ComboBoxItem>
-                                    <ComboBoxItem Content="9" Tag="9"></ComboBoxItem>
-                                </ComboBox>
-                                <AccessText Margin="10,0,0,0" Width="480">
-                                    Configure key binding for custom camera view to load. Requires binding keystroke to custom camera in MSFS control setting. (Default: Alt-1 to load).
-                                </AccessText>
+                                        <ComboBoxItem Content="0" Tag="0"></ComboBoxItem>
+                                        <ComboBoxItem Content="1" Tag="1"></ComboBoxItem>
+                                        <ComboBoxItem Content="2" Tag="2"></ComboBoxItem>
+                                        <ComboBoxItem Content="3" Tag="3"></ComboBoxItem>
+                                        <ComboBoxItem Content="4" Tag="4"></ComboBoxItem>
+                                        <ComboBoxItem Content="5" Tag="5"></ComboBoxItem>
+                                        <ComboBoxItem Content="6" Tag="6"></ComboBoxItem>
+                                        <ComboBoxItem Content="7" Tag="7"></ComboBoxItem>
+                                        <ComboBoxItem Content="8" Tag="8"></ComboBoxItem>
+                                        <ComboBoxItem Content="9" Tag="9"></ComboBoxItem>
+                                    </ComboBox>
+                                    <AccessText Margin="10,0,0,0" Width="480">
+                                        Configure key binding for custom camera view to load. Requires binding keystroke to custom camera in MSFS control setting. (Default: Alt-1 to load).
+                                    </AccessText>
+                                </WrapPanel>
+                            </WrapPanel>
+                        </WrapPanel>
+
+                        <WrapPanel Orientation="Vertical" Margin="0,0,20,20">
+                            <TextBlock Style="{StaticResource TextBlockHeading}">On Screen Message Dialog Duration</TextBlock>
+                            <Line Stretch="Fill" Stroke="Gray" X2="1"/>
+                            <WrapPanel>
+                                <mah:NumericUpDown Width="80" Minimum="0" Maximum="10" FontSize="16" Height="32" Value="{Binding AppSettingData.AppSetting.OnScreenMessageDuration, Mode=TwoWay}"></mah:NumericUpDown>
+                                <AccessText Margin="10,0,0,0" Width="510">Amount of time to show on screen message dialog before it disappears from view. Set it to zero to hide on screen message. (Default: 1 second)</AccessText>
+                            </WrapPanel>
+                        </WrapPanel>
+
+                        <WrapPanel Orientation="Vertical" Margin="0,0,20,20">
+                            <TextBlock Style="{StaticResource TextBlockHeading}">Use Left Control + Right Control to Pop Out Panel (SU 10+ option)</TextBlock>
+                            <Line Stretch="Fill" Stroke="Gray" X2="1"/>
+                            <WrapPanel>
+                                <CheckBox IsChecked="{Binding AppSettingData.AppSetting.UseLeftRightControlToPopOut, Mode=TwoWay}">
+                                    <AccessText Margin="10,0,0,0" Width="510">If your keyboard does not have a Right-Alt key in order to perform left click to pop out panel, you can map Left Ctrl + Right Ctrl in MSFS control setting to pop out 
+                                panel instead. For this feature to work, please map (CTRL + RIGHT CTRL) in Control Options => Miscellaneous => New UI Window Mode in the game</AccessText>
+                                </CheckBox>
                             </WrapPanel>
                         </WrapPanel>
                     </WrapPanel>
-
-                    <WrapPanel Orientation="Vertical" Margin="0,0,0,20">
-                        <TextBlock Style="{StaticResource TextBlockHeading}">On Screen Message Dialog Duration</TextBlock>
-                        <Line Stretch="Fill" Stroke="Gray" X2="1"/>
-                        <WrapPanel>
-                            <mah:NumericUpDown Width="80" Minimum="0" Maximum="10" FontSize="16" Height="32" Value="{Binding AppSettingData.AppSetting.OnScreenMessageDuration, Mode=TwoWay}"></mah:NumericUpDown>
-                            <AccessText Margin="10,0,0,0" Width="510">Amount of time to show on screen message dialog before it disappears from view. Set it to zero to hide on screen message. (Default: 1 second)</AccessText>
+                </ScrollViewer>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <WrapPanel Orientation="Vertical" Visibility="{Binding AutoPopOutSettingsVisible, Converter={StaticResource VisibleIfTrueConverter}, Mode=OneWay}">
+                        <WrapPanel Orientation="Vertical" Margin="0,0,20,20">
+                            <TextBlock Style="{StaticResource TextBlockHeading}">Enable Auto Pop Out Panels</TextBlock>
+                            <Line Stretch="Fill" Stroke="Gray" X2="1"/>
+                            <CheckBox IsChecked="{Binding AppSettingData.AppSetting.AutoPopOutPanels, Mode=TwoWay}" >
+                                <AccessText TextWrapping="Wrap">Automatic pop out panels when an aircraft livery is bound to a profile. The following steps will be performed.</AccessText>
+                            </CheckBox>
+                            <AccessText Margin="24,10,0,0">
+                                1. Detect flight start signal using SimConnect.
+                            </AccessText>
+                            <AccessText Margin="24,10,0,0">
+                                2. Wait for cockpit view to appear before executing pop out panel sequence.
+                            </AccessText>
+                            <AccessText Margin="24,10,0,0">
+                                3. If configured for profile on cold start, execute and detect instrumentation power on before executing pop out panel sequence.
+                            </AccessText>
                         </WrapPanel>
                     </WrapPanel>
+                </ScrollViewer>
 
-                    <WrapPanel Orientation="Vertical" Margin="0,0,0,20">
-                        <TextBlock Style="{StaticResource TextBlockHeading}">Use Left Control + Right Control to Pop Out Panel (SU 10+ option)</TextBlock>
-                        <Line Stretch="Fill" Stroke="Gray" X2="1"/>
-                        <WrapPanel>
-                            <CheckBox IsChecked="{Binding AppSettingData.AppSetting.UseLeftRightControlToPopOut, Mode=TwoWay}">
-                                <AccessText Margin="10,0,0,0" Width="510">If your keyboard does not have a Right-Alt key in order to perform left click to pop out panel, you can map Left Ctrl + Right Ctrl in MSFS control setting to pop out 
-                                panel instead. For this feature to work, please map (CTRL + RIGHT CTRL) in Control Options => Miscellaneous => New UI Window Mode in the game</AccessText>
-                            </CheckBox>                            
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <WrapPanel Orientation="Vertical" Visibility="{Binding TrackIRSettingsVisible, Converter={StaticResource VisibleIfTrueConverter}, Mode=OneWay}">
+                        <WrapPanel Orientation="Vertical" Margin="0,0,20,20">
+                            <TextBlock Style="{StaticResource TextBlockHeading}">Auto Disable Track IR</TextBlock>
+                            <Line Stretch="Fill" Stroke="Gray" X2="1"/>
+                            <CheckBox IsChecked="{Binding AppSettingData.AppSetting.AutoDisableTrackIR, Mode=TwoWay}" >
+                                <AccessText TextWrapping="Wrap">Automactically disable Track IR during panel selections and pop out process. Track IR will be re-enabled once these processes are completed.</AccessText>
+                            </CheckBox>
                         </WrapPanel>
                     </WrapPanel>
-                </WrapPanel>
+                </ScrollViewer>
 
-                <WrapPanel Orientation="Vertical" Visibility="{Binding AutoPopOutSettingsVisible, Converter={StaticResource VisibleIfTrueConverter}, Mode=OneWay}">
-                    <WrapPanel Orientation="Vertical" Margin="0,0,0,20">
-                        <TextBlock Style="{StaticResource TextBlockHeading}">Enable Auto Pop Out Panels</TextBlock>
-                        <Line Stretch="Fill" Stroke="Gray" X2="1"/>
-                        <CheckBox IsChecked="{Binding AppSettingData.AppSetting.AutoPopOutPanels, Mode=TwoWay}" >
-                            <AccessText TextWrapping="Wrap">Automatic pop out panels when an aircraft livery is bound to a profile. The following steps will be performed.</AccessText>
-                        </CheckBox>
-                        <AccessText Margin="24,10,0,0">
-                        1. Detect flight start signal using SimConnect.
-                        </AccessText>
-                        <AccessText Margin="24,10,0,0">
-                        2. Wait for cockpit view to appear before executing pop out panel sequence.
-                        </AccessText>
-                        <AccessText Margin="24,10,0,0">
-                        3. If configured for profile on cold start, execute and detect instrumentation power on before executing pop out panel sequence.
-                        </AccessText>
-                    </WrapPanel>
-                </WrapPanel>
-
-                <WrapPanel Orientation="Vertical" Visibility="{Binding TrackIRSettingsVisible, Converter={StaticResource VisibleIfTrueConverter}, Mode=OneWay}">
-                    <WrapPanel Orientation="Vertical" Margin="0,0,0,20">
-                        <TextBlock Style="{StaticResource TextBlockHeading}">Auto Disable Track IR</TextBlock>
-                        <Line Stretch="Fill" Stroke="Gray" X2="1"/>
-                        <CheckBox IsChecked="{Binding AppSettingData.AppSetting.AutoDisableTrackIR, Mode=TwoWay}" >
-                            <AccessText TextWrapping="Wrap">Automactically disable Track IR during panel selections and pop out process. Track IR will be re-enabled once these processes are completed.</AccessText>
-                        </CheckBox>
-                    </WrapPanel>
-                </WrapPanel>
-
-                <WrapPanel Orientation="Vertical" Visibility="{Binding TouchSettingsVisible, Converter={StaticResource VisibleIfTrueConverter}, Mode=OneWay}">
-                    <WrapPanel Orientation="Vertical" Margin="0,0,0,20">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <WrapPanel Orientation="Vertical" Visibility="{Binding TouchSettingsVisible, Converter={StaticResource VisibleIfTrueConverter}, Mode=OneWay}">
+                    <WrapPanel Orientation="Vertical" Margin="0,0,20,20">
                         <TextBlock Style="{StaticResource TextBlockHeading}">Refocus Game Window</TextBlock>
                         <Line Stretch="Fill" Stroke="Gray" X2="1"/>
                         <CheckBox IsChecked="{Binding AppSettingData.AppSetting.TouchScreenSettings.RefocusGameWindow, Mode=TwoWay}" >
@@ -240,7 +255,7 @@
                             <AccessText Margin="10,0,0,0" Width="490">Amount of time in milliseconds to wait for touch inactivity before input focus goes back to game window.</AccessText>
                         </WrapPanel>
                     </WrapPanel>
-                    <WrapPanel Orientation="Vertical" Margin="0,0,0,20">
+                    <WrapPanel Orientation="Vertical" Margin="0,0,20,20">
                         <TextBlock Style="{StaticResource TextBlockHeading}">Touch Down Touch Up Delay</TextBlock>
                         <Line Stretch="Fill" Stroke="Gray" X2="1"/>
                         <WrapPanel>
@@ -254,9 +269,10 @@
                         </WrapPanel>
                     </WrapPanel>
                 </WrapPanel>
-
-                <WrapPanel Orientation="Vertical" Visibility="{Binding MSFSTouchPanelSettingsVisible, Converter={StaticResource VisibleIfTrueConverter}, Mode=OneWay}">
-                    <WrapPanel Orientation="Vertical" Margin="0,0,0,20">
+                </ScrollViewer>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <WrapPanel Orientation="Vertical" Visibility="{Binding MSFSTouchPanelSettingsVisible, Converter={StaticResource VisibleIfTrueConverter}, Mode=OneWay}">
+                    <WrapPanel Orientation="Vertical" Margin="0,0,20,20">
                         <TextBlock Style="{StaticResource TextBlockHeading}">Enable Touch Panel Integration (Experimental Feature - Unsupported)</TextBlock>
                         <Line Stretch="Fill" Stroke="Gray" X2="1"/>
                         <CheckBox IsChecked="{Binding AppSettingData.AppSetting.TouchPanelSettings.EnableTouchPanelIntegration, Mode=TwoWay}" >
@@ -267,22 +283,22 @@
                     <WrapPanel Visibility="{Binding AppSettingData.AppSetting.TouchPanelSettings.EnableTouchPanelIntegration, Converter={StaticResource VisibleIfTrueConverter}, Mode=OneWay}">
                         <TextBlock FontStyle="Italic">
                             Restart is require for all changes below to take effect.
-                        </TextBlock> 
-                        <WrapPanel Orientation="Vertical" Margin="0,0,0,20">
+                        </TextBlock>
+                        <WrapPanel Orientation="Vertical" Margin="0,0,20,20">
                             <TextBlock Style="{StaticResource TextBlockHeading}">Enable Use of Arduino</TextBlock>
                             <Line Stretch="Fill" Stroke="Gray" X2="1"/>
                             <CheckBox IsChecked="{Binding AppSettingData.AppSetting.TouchPanelSettings.UseArduino, Mode=TwoWay}" >
                                 <AccessText TextWrapping="Wrap">Use of Arduino encoders to control touch panel.</AccessText>
                             </CheckBox>
                         </WrapPanel>
-                        <WrapPanel Orientation="Vertical" Margin="0,0,0,20">
+                        <WrapPanel Orientation="Vertical" Margin="0,0,20,20">
                             <TextBlock Style="{StaticResource TextBlockHeading}">Enable Sound</TextBlock>
                             <Line Stretch="Fill" Stroke="Gray" X2="1"/>
                             <CheckBox IsChecked="{Binding AppSettingData.AppSetting.TouchPanelSettings.EnableSound, Mode=TwoWay}" >
                                 <AccessText TextWrapping="Wrap">Enable playing of button click sound when using touch panel.</AccessText>
                             </CheckBox>
                         </WrapPanel>
-                        <WrapPanel Orientation="Vertical" Margin="0,0,0,20">
+                        <WrapPanel Orientation="Vertical" Margin="0,0,20,20">
                             <TextBlock Style="{StaticResource TextBlockHeading}">Data Refresh Interval</TextBlock>
                             <Line Stretch="Fill" Stroke="Gray" X2="1"/>
                             <WrapPanel>
@@ -290,7 +306,7 @@
                                 <AccessText Margin="10,0,0,0" Width="490">Time interval for touch panel to refresh SimConnect data. (Default: 200 miliseconds)</AccessText>
                             </WrapPanel>
                         </WrapPanel>
-                        <WrapPanel Orientation="Vertical" Margin="0,0,0,20">
+                        <WrapPanel Orientation="Vertical" Margin="0,0,20,20">
                             <TextBlock Style="{StaticResource TextBlockHeading}">Map Refresh Interval</TextBlock>
                             <Line Stretch="Fill" Stroke="Gray" X2="1"/>
                             <WrapPanel>
@@ -300,7 +316,7 @@
                         </WrapPanel>
                     </WrapPanel>
                 </WrapPanel>
-
+                </ScrollViewer>
                 <WrapPanel Orientation="Vertical" Visibility="Visible">
                 </WrapPanel>
             </WrapPanel>

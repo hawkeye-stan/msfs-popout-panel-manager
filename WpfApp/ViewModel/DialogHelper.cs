@@ -8,7 +8,7 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
     {
         public static bool ConfirmDialog(string title, string message)
         {
-            ConfirmationDialog dialog = new ConfirmationDialog(title, message);
+            var dialog = new ConfirmationDialog(title, message);
             dialog.Owner = Application.Current.MainWindow;
             dialog.Topmost = true;
             dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
@@ -18,7 +18,7 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
 
         public static AddProfileDialogResult AddProfileDialog(List<Profile> profiles)
         {
-            AddProfileDialog dialog = new AddProfileDialog(profiles);
+            var dialog = new AddProfileDialog(profiles);
             dialog.Owner = Application.Current.MainWindow;
             dialog.Topmost = true;
             dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
@@ -33,7 +33,16 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
 
         public static void PreferencesDialog(PreferencesViewModel preferencesViewModel)
         {
-            PreferencesDialog dialog = new PreferencesDialog(preferencesViewModel);
+            var dialog = new PreferencesDialog(preferencesViewModel);
+            dialog.Owner = Application.Current.MainWindow;
+            dialog.Topmost = true;
+            dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            dialog.ShowDialog();
+        }
+
+        public static void PanelConfigurationInstructionDialog()
+        {
+            var dialog = new PanelConfigurationInstructionDialog();
             dialog.Owner = Application.Current.MainWindow;
             dialog.Topmost = true;
             dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;

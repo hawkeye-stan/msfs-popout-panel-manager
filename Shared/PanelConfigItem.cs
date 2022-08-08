@@ -19,7 +19,8 @@
         FullScreen,
         TouchEnabled,
         DisableGameRefocus,
+        RowHeader,
+        None,
         Invalid,
-        RowHeader
     }
 }

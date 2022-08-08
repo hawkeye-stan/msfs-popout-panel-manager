@@ -32,7 +32,8 @@
                         ItemsSource="{Binding Source={StaticResource UserProfilesViewSource}}" 
                         SelectedItem="{Binding Path=ProfileData.ActiveProfile, Mode=OneWay}"
                         DisplayMemberPath="ProfileName"
-                        SelectedValuePath="ProfileId">
+                        SelectedValuePath="ProfileId"
+                        IsEnabled="{c:Binding 'FlightSimData.IsSimulatorStarted and FlightSimData.HasCurrentMsfsAircraft'}">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="SelectionChanged">
                                 <i:InvokeCommandAction Command="{Binding ChangeProfileCommand}" CommandParameter="{Binding ElementName=cmbProfile, Path=SelectedValue}" />

@@ -131,12 +131,12 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
             });
         }
 
-        private void HandleOnPopOutCompleted(object sender, EventArgs e)
+        private void HandleOnPopOutCompleted(object sender, bool isFirstTime)
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
                 // Restore window state
-                if (_minimizeForPopOut)
+                if (_minimizeForPopOut && (isFirstTime || !_orchestrator.AppSettingData.AppSetting.MinimizeAfterPopOut))
                 {
                     WindowActionManager.BringWindowToForeground(_orchestrator.ApplicationHandle);
                     ApplicationWindow.Show();

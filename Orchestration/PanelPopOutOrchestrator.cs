@@ -33,7 +33,7 @@ namespace MSFSPopoutPanelManager.Orchestration
         private AppSetting AppSetting { get { return AppSettingData == null ? null : AppSettingData.AppSetting; } }
 
         public event EventHandler OnPopOutStarted;
-        public event EventHandler OnPopOutCompleted;
+        public event EventHandler<bool> OnPopOutCompleted;
         public event EventHandler<TouchPanelOpenEventArg> OnTouchPanelOpened;
 
         public void ManualPopOut()
@@ -188,7 +188,7 @@ namespace MSFSPopoutPanelManager.Orchestration
 
             if (panelConfigs.Count == 0)
             {
-                OnPopOutCompleted?.Invoke(this, null);
+                OnPopOutCompleted?.Invoke(this, false);
                 StatusMessageWriter.WriteMessage("No panels have been found. Please select at least one in-game panel.", StatusMessageType.Error, false);
                 return;
             }
@@ -204,19 +204,21 @@ namespace MSFSPopoutPanelManager.Orchestration
                 }
             }
 
-            if (panelConfigs.Count > 0 || ActiveProfile.PanelConfigs.Count > 0)
+            if (panelConfigs.Count > 0)
             {
-
-                LoadAndApplyPanelConfigs(panelConfigs);
-                ActiveProfile.PanelConfigs = new ObservableCollection<PanelConfig>(panelConfigs);
-                StatusMessageWriter.WriteMessage("Panels have been popped out succesfully and saved panel settings have been applied.", StatusMessageType.Info, true);
-                OnPopOutCompleted?.Invoke(this, null);
-            }
-            else
-            {
-                ActiveProfile.PanelConfigs = new ObservableCollection<PanelConfig>(panelConfigs);
-                StatusMessageWriter.WriteMessage("Panels have been popped out succesfully.", StatusMessageType.Info, true);
-                OnPopOutCompleted?.Invoke(this, null);
+                if (ActiveProfile.PanelConfigs.Count > 0)
+                {
+                    LoadAndApplyPanelConfigs(panelConfigs);
+                    ActiveProfile.PanelConfigs = new ObservableCollection<PanelConfig>(panelConfigs);
+                    StatusMessageWriter.WriteMessage("Panels have been popped out succesfully and saved panel settings have been applied.", StatusMessageType.Info, true);
+                    OnPopOutCompleted?.Invoke(this, false);
+                }
+                else
+                {
+                    ActiveProfile.PanelConfigs = new ObservableCollection<PanelConfig>(panelConfigs);
+                    StatusMessageWriter.WriteMessage("Panels have been popped out succesfully.", StatusMessageType.Info, true);
+                    OnPopOutCompleted?.Invoke(this, true);
+                }
             }
         }
 

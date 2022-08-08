@@ -173,7 +173,17 @@ namespace MSFSPopoutPanelManager.WpfApp
 
                     break;
             }
+        }
 
+        private void Instruction_Click(object sender, RoutedEventArgs e)
+        {
+            DialogHelper.PanelConfigurationInstructionDialog();
+        }
+
+        private void PanelConfigGrid_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            _panelConfigurationViewModel.SelectedPanelConfigItem = null;
+            this.PanelConfigGrid.Focus();
         }
     }
 }

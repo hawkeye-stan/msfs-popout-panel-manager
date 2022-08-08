@@ -10,7 +10,8 @@
         Height="450" 
         Width="800"
         WindowStyle="None"
-        AllowsTransparency="True">
+        AllowsTransparency="True"
+        Closing="Window_Closing">
     <Window.Background>
         <SolidColorBrush Color="#FFF0F0F0" Opacity="0.01" />
     </Window.Background>
