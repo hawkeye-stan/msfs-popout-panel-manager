@@ -1,5 +1,4 @@
-﻿using MSFSPopoutPanelManager.Shared;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
@@ -176,19 +175,19 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
 
         private void HandleSimConnected(object source, EventArgs e)
         {
-            OnConnected?.Invoke(this, null);
-
             // Start data request timer
             _requestDataTimer = new System.Timers.Timer();
             _requestDataTimer.Interval = MSFS_DATA_REFRESH_TIMEOUT;
             _requestDataTimer.Enabled = true;
             _requestDataTimer.Elapsed += HandleDataRequested;
             _requestDataTimer.Elapsed += HandleMessageReceived;
+
+            OnConnected?.Invoke(this, null);
         }
 
         private void HandleSimDisonnected(object source, EventArgs e)
         {
-            FileLogger.WriteLog($"MSFS is closed.", StatusMessageType.Info);
+            _requestDataTimer.Enabled = false;
             OnDisconnected?.Invoke(this, null);
             StopAndReconnect();
         }

@@ -29,6 +29,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\info_icon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="logo.ico" />
   </ItemGroup>
 
@@ -43,6 +47,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\info.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\info_icon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="resources\logo.png">
@@ -62,15 +69,16 @@
   <ItemGroup>
     <PackageReference Include="Autoupdater.NET.Official" Version="1.7.0" />
     <PackageReference Include="CalcBinding" Version="2.5.2" />
+    <PackageReference Include="CoordinateSharp" Version="2.13.1.1" />
     <PackageReference Include="Fody" Version="6.6.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="1.1.0" />
+    <PackageReference Include="ini-parser-netcore3.1" Version="3.0.0" />
     <PackageReference Include="InputSimulatorCore" Version="1.0.5" />
     <PackageReference Include="log4net" Version="2.0.14" />
     <PackageReference Include="MahApps.Metro" Version="2.4.9" />
-    <PackageReference Include="MahApps.Metro.IconPacks" Version="4.11.0" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Prism.Core" Version="8.1.97" />

@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const PopoutPanelContainer = ({panelInfo}) => {
+const PopoutPanelContainer = ({panelInfo, highLightedControlId, highlightedControlChanged}) => {
     const { simConnectSystemEvent } = useSimConnectData();
     const { isUsedArduino } = useLocalStorageData().configurationData;
     const classes = useStyles(panelInfo);
@@ -78,9 +78,11 @@ const PopoutPanelContainer = ({panelInfo}) => {
                             key={ctrl.id} 
                             ctrl={ctrl}
                             panelInfo={panelInfo}
-                            showEncoder={(e, useDualEncoder) => handleShowEncoder(e, useDualEncoder)}>                    
+                            showEncoder={(e, useDualEncoder) => handleShowEncoder(e, useDualEncoder)}
+                            highLightedControlId={highLightedControlId}
+                            highlightedControlChanged={(ctrlId) => highlightedControlChanged(ctrlId)}
+                            >
                         </InteractiveControlTemplate>
-
                     )}
                 </div>
             }
@@ -94,7 +96,7 @@ const PopoutPanelContainer = ({panelInfo}) => {
                 </KnobPadOverlay>
             }
         </div>
-    ), [panelInfo, keyPadOpen, isUsedArduino])
+    ), [panelInfo, keyPadOpen, isUsedArduino, highLightedControlId])
 }
 
 export default PopoutPanelContainer;

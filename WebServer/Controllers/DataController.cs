@@ -43,7 +43,7 @@ namespace MSFSPopoutPanelManager.WebServer.Controllers
             }
             catch
             {
-                return new SimConnectData { Data = null, MsfsStatus = false, ArduinoStatus = false, SystemEvent = null, G1000NxiFlightPlan = null };
+                return new SimConnectData { Data = null, MsfsStatus = false, ArduinoStatus = false, SystemEvent = null };
             }
         }
 
@@ -99,6 +99,12 @@ namespace MSFSPopoutPanelManager.WebServer.Controllers
 
             return new TouchPanelConfigSetting();
         }
+
+        [HttpGet("/getflightplan")]
+        public string GetFlightPlan()
+        {
+            return _simConnectService.GetFlightPlan();
+        }
     }
 
     public class SimConnectData
@@ -110,8 +116,6 @@ namespace MSFSPopoutPanelManager.WebServer.Controllers
         public bool ArduinoStatus { get; set; }
 
         public string SystemEvent { get; set; }
-
-        public string G1000NxiFlightPlan { get; set; }
     }
 
     public class TouchPanelLoadedPostData

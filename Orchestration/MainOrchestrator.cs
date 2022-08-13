@@ -20,7 +20,8 @@ namespace MSFSPopoutPanelManager.Orchestration
             TouchPanel = new TouchPanelOrchestrator();
 
             FlightSimData = new FlightSimData();
-            FlightSimData.CurrentMsfsAircraftChanged += (sernder, e) => ProfileData.RefreshProfile();
+            FlightSimData.CurrentMsfsAircraftChanged += (sernder, e) => { ProfileData.RefreshProfile(); ProfileData.AutoSwitchProfile(); };
+            FlightSimData.CurrentMsfsLiveryTitleChanged += (sernder, e) => { ProfileData.MigrateLiveryToAircraftBinding(); ProfileData.AutoSwitchProfile(); };
 
             AppSettingData = new AppSettingData();
             AppSettingData.AutoPopOutPanelsChanged += (sender, e) => FlightSim.AutoPanelPopOutActivation(e);

@@ -7,6 +7,7 @@ namespace MSFSPopoutPanelManager.Orchestration
     public class FlightSimData : ObservableObject
     {
         public event PropertyChangedEventHandler CurrentMsfsAircraftChanged;
+        public event PropertyChangedEventHandler CurrentMsfsLiveryTitleChanged;
 
         public string CurrentMsfsAircraft { get; set; }
 
@@ -27,10 +28,13 @@ namespace MSFSPopoutPanelManager.Orchestration
         {
             if (oldValue != newValue)
             {
+                base.OnPropertyChanged(propertyName, oldValue, newValue);
+
                 if (propertyName == "CurrentMsfsAircraft")
                     CurrentMsfsAircraftChanged?.Invoke(this, null);
 
-                base.OnPropertyChanged(propertyName, oldValue, newValue);
+                if (propertyName == "CurrentMsfsLiveryTitle")
+                    CurrentMsfsLiveryTitleChanged?.Invoke(this, null);
             }
         }
 

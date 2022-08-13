@@ -24,10 +24,6 @@ namespace MSFSPopoutPanelManager.WindowsAgent
 
         public static void ApplyAlwaysOnTop(IntPtr hwnd, PanelType panelType, bool alwaysOnTop, Rectangle panelRectangle)
         {
-            // Override weird size adjustment for Touch Panel WPF window
-            int newWidth = panelType == PanelType.MSFSTouchPanel ? panelRectangle.Width - 16 : panelRectangle.Width;
-            int newHeight = panelType == PanelType.MSFSTouchPanel ? panelRectangle.Height - 39 : panelRectangle.Height;
-
             if (panelType == PanelType.PopOutManager)
             {
                 OnPopOutManagerAlwaysOnTopChanged?.Invoke(null, alwaysOnTop);
@@ -35,9 +31,9 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             else
             {
                 if (alwaysOnTop)
-                    PInvoke.SetWindowPos(hwnd, new IntPtr(PInvokeConstant.HWND_TOPMOST), panelRectangle.Left, panelRectangle.Top, newWidth, newHeight, PInvokeConstant.SWP_ALWAYS_ON_TOP);
+                    PInvoke.SetWindowPos(hwnd, new IntPtr(PInvokeConstant.HWND_TOPMOST), panelRectangle.Left, panelRectangle.Top, panelRectangle.Width, panelRectangle.Height, PInvokeConstant.SWP_ALWAYS_ON_TOP);
                 else
-                    PInvoke.SetWindowPos(hwnd, new IntPtr(PInvokeConstant.HWND_NOTOPMOST), panelRectangle.Left, panelRectangle.Top, newWidth, newHeight, 0);
+                    PInvoke.SetWindowPos(hwnd, new IntPtr(PInvokeConstant.HWND_NOTOPMOST), panelRectangle.Left, panelRectangle.Top, panelRectangle.Width, panelRectangle.Height, 0);
             }
         }
 
@@ -64,24 +60,16 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             PInvoke.MoveWindow(hwnd, x, y, rectangle.Width, rectangle.Height, true);
         }
 
-        public static void MoveWindow(IntPtr hwnd, PanelType panelType, int x, int y, int width, int height)
+        public static void MoveWindow(IntPtr hwnd, int x, int y, int width, int height)
         {
-            // Override weird size adjustment for Touch Panel WPF window
-            int newWidth = panelType == PanelType.MSFSTouchPanel ? width - 16 : width;
-            int newHeight = panelType == PanelType.MSFSTouchPanel ? height - 39 : height;
-
-            PInvoke.MoveWindow(hwnd, x, y, newWidth, newHeight, true);
+            PInvoke.MoveWindow(hwnd, x, y, width, height, true);
         }
 
-        public static void MoveWindowWithMsfsBugOverrirde(IntPtr hwnd, PanelType panelType, int x, int y, int width, int height)
+        public static void MoveWindowWithMsfsBugOverrirde(IntPtr hwnd, int x, int y, int width, int height)
         {
             int originalX = x;
 
-            // Override weird size adjustment for Touch Panel WPF window
-            int newWidth = panelType == PanelType.MSFSTouchPanel ? width - 16 : width;
-            int newHeight = panelType == PanelType.MSFSTouchPanel ? height - 39 : height;
-
-            PInvoke.MoveWindow(hwnd, x, y, newWidth, newHeight, true);
+            PInvoke.MoveWindow(hwnd, x, y, width, height, true);
 
             // Fixed MSFS bug, create workaround where on 2nd or later instance of width adjustment, the panel shift to the left by itself
             // Wait for system to catch up on panel coordinate that were just applied
@@ -91,7 +79,7 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             PInvoke.GetWindowRect(hwnd, out rectangle);
 
             if (rectangle.Left != originalX)
-                PInvoke.MoveWindow(hwnd, originalX, y, newWidth, newHeight, false);
+                PInvoke.MoveWindow(hwnd, originalX, y, width, height, false);
         }
 
         public static void MinimizeWindow(IntPtr hwnd)

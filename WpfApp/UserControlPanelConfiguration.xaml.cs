@@ -127,6 +127,9 @@ namespace MSFSPopoutPanelManager.WpfApp
 
         private void PanelConfigGrid_KeyDown(object sender, KeyEventArgs e)
         {
+            if (_panelConfigurationViewModel.SelectedPanelConfigItem == null)
+                return;
+
             var isControlKeyHeld = (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control;
             var isShiftKeyHeld = (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift;
 

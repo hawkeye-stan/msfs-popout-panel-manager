@@ -32,6 +32,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="CoordinateSharp" Version="2.13.1.1" />
+    <PackageReference Include="ini-parser-netcore3.1" Version="3.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="StringMath" Version="3.0.2" />
   </ItemGroup>

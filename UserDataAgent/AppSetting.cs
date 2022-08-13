@@ -152,7 +152,7 @@ namespace MSFSPopoutPanelManager.UserDataAgent
             // Default values
             EnableTouchPanelIntegration = false;
             DataRefreshInterval = 200;
-            MapRefreshInterval = 250;
+            MapRefreshInterval = 1000;
             UseArduino = false;
             EnableSound = true;
         }

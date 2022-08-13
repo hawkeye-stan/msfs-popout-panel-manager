@@ -3,6 +3,8 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
+using System.IO;
 using System.Timers;
 
 namespace MSFSPopoutPanelManager.SimConnectAgent.TouchPanel
@@ -42,6 +44,29 @@ namespace MSFSPopoutPanelManager.SimConnectAgent.TouchPanel
                 _simConnector.OnReceivedData -= HandleDataReceived;
                 OnDataRefreshed?.Invoke(this, null);
             }
+        }
+
+        public string GetFlightPlan()
+        {
+            // MSFS 2020 Windows Store version: C:\Users\{username}\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalState\MISSIONS\Custom\CustomFlight\CustomFlight.FLT
+            // MSFS 2020 Steam version: C:\Users\{username}\AppData\Roaming\Microsoft Flight Simulator\MISSIONS\Custom\CustomFlight\CustomFlight.FLT
+            var filePathMSStore = Environment.ExpandEnvironmentVariables("%LocalAppData%") + @"\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalState\MISSIONS\Custom\CustomFlight\CustomFlight.FLT";
+            var filePathSteam = Environment.ExpandEnvironmentVariables("%AppData%") + @"\Microsoft Flight Simulator\MISSIONS\Custom\CustomFlight\CustomFlight.FLT";
+
+            string filePath;
+
+            if (File.Exists(filePathMSStore))
+                filePath = filePathMSStore;
+            else if (File.Exists(filePathSteam))
+                filePath = filePathSteam;
+            else
+                filePath = null;
+
+            // cannot find CustomFlight.PLN, return empty set of waypoints
+            if (filePath == null)
+                return JsonConvert.SerializeObject(new List<ExpandoObject>());
+
+            return FlightPlanProvider.ParseCustomFLT(filePath);
         }
 
         private void HandleDataRequested(object sender, ElapsedEventArgs e)

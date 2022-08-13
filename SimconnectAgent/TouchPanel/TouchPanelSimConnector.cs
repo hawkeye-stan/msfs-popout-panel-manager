@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
 namespace MSFSPopoutPanelManager.SimConnectAgent.TouchPanel
 {
@@ -147,7 +148,6 @@ namespace MSFSPopoutPanelManager.SimConnectAgent.TouchPanel
 
         private void InitializeSimConnect()
         {
-            // The constructor is similar to SimConnect_Open in the native API
             _simConnect = new SimConnect("TouchPanel Simconnect - Touch Panel Server", Process.GetCurrentProcess().MainWindowHandle, WM_USER_SIMCONNECT, null, 0);
 
             _connectionTimer.Enabled = false;
@@ -167,11 +167,28 @@ namespace MSFSPopoutPanelManager.SimConnectAgent.TouchPanel
             _simConnect.UnsubscribeFromSystemEvent(SimConnectSystemEvent.VIEW);
             _simConnect.SubscribeToSystemEvent(SimConnectSystemEvent.VIEW, "View");
 
-            for (var i = 0; i < 5; i++)
+            Task.Run(() =>
             {
-                System.Threading.Thread.Sleep(1000);
-                ReceiveMessage();
-            }
+                for (var i = 0; i < 5; i++)
+                {
+                    System.Threading.Thread.Sleep(1000);
+                    ReceiveMessage();
+                }
+            });
+
+            MobilFlightInitialize();
+
+            if (_planeId != null)
+                ResetSimConnectDataArea(_planeId);
+
+            // MobiFlight wasm event
+            _simConnect.OnRecvClientData -= HandleOnRecvClientData;
+            _simConnect.OnRecvClientData += HandleOnRecvClientData;
+
+            Connected = true;
+
+            OnConnected?.Invoke(this, null);
+            MobiFlightWasmClient.Ping(_simConnect);
         }
 
         private void AddDataDefinitions()
@@ -215,19 +232,7 @@ namespace MSFSPopoutPanelManager.SimConnectAgent.TouchPanel
 
         private void HandleOnRecvOpen(SimConnect sender, SIMCONNECT_RECV_OPEN data)
         {
-            MobilFlightInitialize();
-
-            if (_planeId != null)
-                ResetSimConnectDataArea(_planeId);
-
-            // MobiFlight wasm event
-            _simConnect.OnRecvClientData -= HandleOnRecvClientData;
-            _simConnect.OnRecvClientData += HandleOnRecvClientData;
-
-            Connected = true;
-
-            OnConnected?.Invoke(this, null);
-            MobiFlightWasmClient.Ping(_simConnect);
+            ReceiveMessage();
         }
 
         private void HandleOnRecvQuit(SimConnect sender, SIMCONNECT_RECV data)

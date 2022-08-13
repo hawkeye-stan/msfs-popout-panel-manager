@@ -73,6 +73,11 @@ namespace MSFSPopoutPanelManager.WebServer
         {
             _simConnectorProvider.ResetSimConnectDataArea(planeId);
         }
+
+        public string GetFlightPlan()
+        {
+            return _simConnectorProvider.GetFlightPlan();
+        }
     }
 
     public interface ISimConnectService
@@ -86,6 +91,8 @@ namespace MSFSPopoutPanelManager.WebServer
         public void ExecAction(SimConnectActionData data);
 
         public void ResetSimConnectDataArea(string planeId);
+
+        public string GetFlightPlan();
 
         public TouchPanelConfigSetting TouchPanelConfigSetting { get; set; }
     }

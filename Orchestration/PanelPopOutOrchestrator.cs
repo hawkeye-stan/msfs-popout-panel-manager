@@ -55,7 +55,7 @@ namespace MSFSPopoutPanelManager.Orchestration
             if (ActiveProfile == null)
                 return;
 
-            ProfileData.AutoSwitchProfile(FlightSimData.CurrentMsfsAircraft);
+            ProfileData.AutoSwitchProfile();
 
             FlightSimData.IsEnteredFlight = true;
 
@@ -198,7 +198,7 @@ namespace MSFSPopoutPanelManager.Orchestration
             {
                 if (panelConfigs[i].PanelType == PanelType.CustomPopout)
                 {
-                    WindowActionManager.MoveWindow(panelConfigs[i].PanelHandle, panelConfigs[i].PanelType, panelConfigs[i].Top, panelConfigs[i].Left, panelConfigs[i].Width, panelConfigs[i].Height);
+                    WindowActionManager.MoveWindow(panelConfigs[i].PanelHandle, panelConfigs[i].Top, panelConfigs[i].Left, panelConfigs[i].Width, panelConfigs[i].Height);
                     PInvoke.SetForegroundWindow(panelConfigs[i].PanelHandle);
                     Thread.Sleep(200);
                 }
@@ -237,7 +237,7 @@ namespace MSFSPopoutPanelManager.Orchestration
 
                 // Need to move the window to upper left corner first. There is a possible bug in the game that panel pop out to full screen that prevents further clicking.
                 if (handle != IntPtr.Zero)
-                    WindowActionManager.MoveWindow(handle, PanelType.CustomPopout, 0, 0, 800, 600);
+                    WindowActionManager.MoveWindow(handle, 0, 0, 800, 600);
 
                 // Make window always on top to make sure it is clickable and not obstruct by other user windows
                 //WindowActionManager.ApplyAlwaysOnTop(handle, PanelType.WPFWindow, true);
@@ -260,7 +260,7 @@ namespace MSFSPopoutPanelManager.Orchestration
                 }
 
                 // Fix SU10+ bug where pop out window after separation is huge
-                WindowActionManager.MoveWindow(handle, PanelType.CustomPopout, -8, 0, 800, 600);
+                WindowActionManager.MoveWindow(handle, -8, 0, 800, 600);
 
                 var panel = new PanelConfig();
                 panel.PanelHandle = handle;
@@ -296,7 +296,7 @@ namespace MSFSPopoutPanelManager.Orchestration
             // MSFS draws popout panel differently at different time for same panel
 
             // ToDo: Need to figure mouse click code to separate window
-            WindowActionManager.MoveWindow(hwnd, PanelType.CustomPopout, -8, 0, 800, 600);
+            WindowActionManager.MoveWindow(hwnd, -8, 0, 800, 600);
             PInvoke.SetForegroundWindow(hwnd);
             Thread.Sleep(500);
 
@@ -410,7 +410,7 @@ namespace MSFSPopoutPanelManager.Orchestration
                 {
                     PInvoke.ShowWindow(panel.PanelHandle, PInvokeConstant.SW_RESTORE);
                     Thread.Sleep(250);
-                    WindowActionManager.MoveWindow(panel.PanelHandle, panel.PanelType, panel.Left, panel.Top, panel.Width, panel.Height);
+                    WindowActionManager.MoveWindow(panel.PanelHandle, panel.Left, panel.Top, panel.Width, panel.Height);
                     Thread.Sleep(1000);
                 }
 

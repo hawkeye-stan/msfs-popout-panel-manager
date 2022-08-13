@@ -157,3 +157,15 @@ export const getLocalPopoutPanelDefinitions = async (panelRootPath, subPanelRoot
         return null;
     }
 }
+
+export const simConnectGetFlightPlan = async () => {
+    try {
+        let response = await fetch(`${API_URL.url}/getflightplan`);
+        let result = await response.json();
+
+        return result;
+    }
+    catch {
+        console.error('MSFS unable to load flight plan.')
+    }
+}

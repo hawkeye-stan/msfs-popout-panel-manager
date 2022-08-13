@@ -14,7 +14,7 @@ const useStyles = makeStyles(() => ({
         height: '100%'
     },
     iconImageHighlight: {
-        filter: 'sepia(80%)'
+        filter: 'brightness(1.5) sepia(1)'
     },
     controlBase: {
         position: 'absolute',
@@ -83,7 +83,6 @@ const setupControlWidthHeightStyle = (ctrl, panelInfo) => {
 const ImageControl = ({ctrl, panelInfo}) => {
     const classes = useStyles();
     const imagePath = getImagePath(panelInfo);
-    const isHighlighted = useRef(false);
 
     const setupBackgroundImageStyle = () => {
         if (ctrl.image === undefined) {
@@ -95,18 +94,17 @@ const ImageControl = ({ctrl, panelInfo}) => {
     }
 
     return useMemo(() =>(
-        <div className={[classes.controlBase, ctrl.highlight && isHighlighted.current ? classes.iconImageHighlight : ''].join(' ')} style={{ ...setupControlLocationStyle(ctrl, panelInfo), ...setupBackgroundImageStyle(ctrl, panelInfo), ...setupControlWidthHeightStyle(ctrl, panelInfo) }}>
+        <div className={classes.controlBase} style={{ ...setupControlLocationStyle(ctrl, panelInfo), ...setupBackgroundImageStyle(ctrl, panelInfo), ...setupControlWidthHeightStyle(ctrl, panelInfo) }}>
             <IconButton className={classes.iconButton} />
         </div>
-    ), [ctrl, isHighlighted.current])
+    ), [ctrl])
 }
 
-const ImageButton = ({ctrl, panelInfo, showEncoder}) => {
+const ImageButton = ({ctrl, panelInfo, showEncoder, highLightedControlId, highlightedControlChanged}) => {
     const classes = useStyles();
     const { simConnectData } = useSimConnectData();
     const { isUsedArduino, isEnabledSound } = useLocalStorageData().configurationData;
     const imagePath = getImagePath(panelInfo);
-    const isHighlighted = useRef(false);
 
     const setupBackgroundImageStyle = () => {
         if (ctrl.image === undefined) {
@@ -118,10 +116,10 @@ const ImageButton = ({ctrl, panelInfo, showEncoder}) => {
     }
 
     const handleOnClick = (event) => {
-        if (ctrl.highlight === undefined || ctrl.highlight) {
-            isHighlighted.current = true;
-            setTimeout(() => { isHighlighted.current = false; }, 2000);
-        }
+        if (ctrl.highlight === undefined || ctrl.highlight && highlightedControlChanged !== null)
+            highlightedControlChanged(ctrl.id);
+        else
+            highlightedControlChanged(null);
 
         if (ctrl.action != null)
             playSound(isEnabledSound);
@@ -133,18 +131,17 @@ const ImageButton = ({ctrl, panelInfo, showEncoder}) => {
     }
 
     return useMemo(() =>(
-        <div className={[classes.controlBase, ctrl.highlight && isHighlighted.current ? classes.iconImageHighlight : ''].join(' ')} style={{ ...setupControlLocationStyle(ctrl, panelInfo), ...setupBackgroundImageStyle(ctrl, panelInfo), ...setupControlWidthHeightStyle(ctrl, panelInfo) }}>
+        <div className={[classes.controlBase, ctrl.highlight && highLightedControlId === ctrl.id ? classes.iconImageHighlight : ''].join(' ')} style={{ ...setupControlLocationStyle(ctrl, panelInfo), ...setupBackgroundImageStyle(ctrl, panelInfo), ...setupControlWidthHeightStyle(ctrl, panelInfo) }}>
             <IconButton className={classes.iconButton} onClick={(event) => handleOnClick(event)} />
         </div>
-    ), [ctrl, isHighlighted.current, isUsedArduino, isEnabledSound])
+    ), [ctrl, isUsedArduino, isEnabledSound, highLightedControlId])
 }
 
-const BindableImageButton = ({ctrl, panelInfo, showEncoder}) => {
+const BindableImageButton = ({ctrl, panelInfo, showEncoder, highLightedControlId, highlightedControlChanged}) => {
     const classes = useStyles();
     const { simConnectData } = useSimConnectData();
     const { isUsedArduino, isEnabledSound } = useLocalStorageData().configurationData;
     const imagePath = getImagePath(panelInfo);
-    const isHighlighted = useRef(false);
     const dataBindingValue = simConnectData[ctrl.binding?.variable];
 
     const setupBackgroundImageStyle = () => {
@@ -171,10 +168,10 @@ const BindableImageButton = ({ctrl, panelInfo, showEncoder}) => {
     }
 
     const handleOnClick = (event) => {
-        if (ctrl.highlight === undefined || ctrl.highlight) {
-            isHighlighted.current = true;
-            setTimeout(() => { isHighlighted.current = false; }, 2000);
-        }
+        if (ctrl.highlight === undefined || ctrl.highlight && highlightedControlChanged !== null)
+            highlightedControlChanged(ctrl.id);
+        else
+            highlightedControlChanged(null);
 
         if (ctrl.action != null)
             playSound(isEnabledSound);
@@ -186,10 +183,10 @@ const BindableImageButton = ({ctrl, panelInfo, showEncoder}) => {
     }
 
     return useMemo(() =>(
-        <div className={[classes.controlBase, ctrl.highlight && isHighlighted.current ? classes.iconImageHighlight : ''].join(' ')} style={{ ...setupControlLocationStyle(ctrl, panelInfo), ...setupBackgroundImageStyle(ctrl, panelInfo, dataBindingValue), ...setupControlWidthHeightStyle(ctrl, panelInfo) }}>
+        <div className={[classes.controlBase, ctrl.highlight && highLightedControlId === ctrl.id ? classes.iconImageHighlight : ''].join(' ')} style={{ ...setupControlLocationStyle(ctrl, panelInfo), ...setupBackgroundImageStyle(ctrl, panelInfo, dataBindingValue), ...setupControlWidthHeightStyle(ctrl, panelInfo) }}>
             <IconButton className={classes.iconButton} onClick={(event) => handleOnClick(event)} />
         </div>
-    ), [ctrl, dataBindingValue, isHighlighted.current, isUsedArduino, isEnabledSound])
+    ), [ctrl, dataBindingValue, isUsedArduino, isEnabledSound, highLightedControlId])
 }
 
 const DigitDisplay = ({ctrl, panelInfo}) => {
@@ -248,7 +245,7 @@ const TextBlock = ({ctrl, panelInfo}) => {
 }
 
 
-const InteractiveControlTemplate = ({ ctrl, panelInfo, showEncoder }) => {
+const InteractiveControlTemplate = ({ ctrl, panelInfo, showEncoder, highLightedControlId, highlightedControlChanged }) => {
     // preload all dynamic bindable images for control
     useEffect(() => {
         let imagePath = getImagePath(panelInfo);
@@ -263,16 +260,16 @@ const InteractiveControlTemplate = ({ ctrl, panelInfo, showEncoder }) => {
         }
     }, [])
 
-    return (
+    return useMemo(() =>(
         <>
             {ctrl.type === 'image' && 
                 <ImageControl ctrl={ctrl} panelInfo={panelInfo}></ImageControl>
             }
             {ctrl.type === 'imageButton' && 
-                <ImageButton ctrl={ctrl} panelInfo={panelInfo} showEncoder={showEncoder}></ImageButton>
+                <ImageButton ctrl={ctrl} panelInfo={panelInfo} showEncoder={showEncoder} highLightedControlId={highLightedControlId} highlightedControlChanged={highlightedControlChanged}></ImageButton>
             }
             {ctrl.type === 'bindableImageButton' && 
-                <BindableImageButton ctrl={ctrl} panelInfo={panelInfo} showEncoder={showEncoder}></BindableImageButton>
+                <BindableImageButton ctrl={ctrl} panelInfo={panelInfo} showEncoder={showEncoder} highLightedControlId={highLightedControlId} highlightedControlChanged={highlightedControlChanged}></BindableImageButton>
             }
             {ctrl.type === 'digitDisplay' && 
                 <DigitDisplay ctrl={ctrl} panelInfo={panelInfo}></DigitDisplay>
@@ -284,7 +281,7 @@ const InteractiveControlTemplate = ({ ctrl, panelInfo, showEncoder }) => {
                 <TextBlock ctrl={ctrl} panelInfo={panelInfo}></TextBlock>
             }
         </>
-    )
+    ), [highLightedControlId])
 }
 
 export default InteractiveControlTemplate;

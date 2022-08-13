@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using System.Threading.Tasks;
 using System.Timers;
 
 namespace MSFSPopoutPanelManager.SimConnectAgent
@@ -15,6 +16,7 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
 
         private SimConnect _simConnect;
         private Timer _connectionTimer;
+        private bool _isDisabledReconnect;
 
         public event EventHandler<string> OnException;
         public event EventHandler<List<SimConnectDataDefinition>> OnReceivedData;
@@ -79,7 +81,8 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
 
             foreach (var definition in SimConnectDataDefinitions)
             {
-                _simConnect.RequestDataOnSimObjectType(definition.RequestId, definition.DefineId, 0, SIMCONNECT_SIMOBJECT_TYPE.USER);
+                if (definition.DataDefinitionType == DataDefinitionType.SimConnect)
+                    _simConnect.RequestDataOnSimObjectType(definition.RequestId, definition.DefineId, 0, SIMCONNECT_SIMOBJECT_TYPE.USER);
             }
         }
 
@@ -90,14 +93,20 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
 
             try
             {
-                _simConnect.ReceiveMessage();
+                if (!_isDisabledReconnect)
+                    _simConnect.ReceiveMessage();
             }
             catch (Exception ex)
             {
                 if (ex.Message != "0xC00000B0")
                 {
                     FileLogger.WriteLog($"SimConnector: SimConnect receive message exception - {ex.Message}", StatusMessageType.Error);
+                }
 
+                if (!_isDisabledReconnect)
+                {
+                    // Prevent multiple reconnects from running
+                    _isDisabledReconnect = true;
                     // Need to stop and reconnect server since the data is SimConnect connection or data is probably corrupted.
                     StopAndReconnect();
                 }
@@ -167,16 +176,21 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
 
             AddDataDefinitions();
 
-            for (var i = 0; i < 5; i++)
-            {
-                System.Threading.Thread.Sleep(1000);
-                ReceiveMessage();
-            }
-
             _simConnect.RequestSystemState(SystemStateRequestId.AIRCRAFTPATH, "AircraftLoaded");
 
-            Connected = true;
+            _isDisabledReconnect = false;
+
+            Task.Run(() =>
+            {
+                for (var i = 0; i < 5; i++)
+                {
+                    System.Threading.Thread.Sleep(1000);
+                    ReceiveMessage();
+                }
+            });
+
             OnConnected?.Invoke(this, null);
+            Connected = true;
             StatusMessageWriter.WriteMessage("MSFS is connected", StatusMessageType.Info, false);
         }
 
@@ -312,10 +326,16 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
         private void SetActiveAircraftTitle(string aircraftFilePath)
         {
             var filePathToken = aircraftFilePath.Split(@"\");
-            var aircraftName = filePathToken[filePathToken.Length - 2];
-            aircraftName = aircraftName.Replace("_", " ").ToUpper();
 
-            SimConnectDataDefinitions.Find(s => s.PropName == "AircraftName").Value = aircraftName;
+            if (filePathToken.Length > 1)
+            {
+                var aircraftName = filePathToken[filePathToken.Length - 2];
+                aircraftName = aircraftName.Replace("_", " ").ToUpper();
+
+                SimConnectDataDefinitions.Find(s => s.PropName == "AircraftName").Value = aircraftName;
+
+                OnReceivedData?.Invoke(this, SimConnectDataDefinitions);
+            }
         }
     }
 }

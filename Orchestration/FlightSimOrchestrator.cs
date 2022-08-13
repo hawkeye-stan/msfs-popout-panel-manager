@@ -61,7 +61,7 @@ namespace MSFSPopoutPanelManager.Orchestration
                 if (FlightSimData.CurrentMsfsAircraft != aircraftName)
                 {
                     FlightSimData.CurrentMsfsAircraft = aircraftName;
-                    ProfileData.AutoSwitchProfile(aircraftName);
+                    ProfileData.AutoSwitchProfile();
                 }
             };
             _simConnectProvider.OnFlightStarted += (sender, e) => OnFlightStarted?.Invoke(this, null);

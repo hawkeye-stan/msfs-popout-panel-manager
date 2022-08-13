@@ -15,7 +15,7 @@ Please follow [FlightSimulator.com](https://forums.flightsimulator.com/t/msfs-po
 <hr>
 
 ## Touch Panel Feature
-With SU10 Beta v1.27.11, Asobo seems to have fix a major [bug](#touch-enable-pop-out-feature) (in SU9 and before) that stops Pop Out Manager's touch panel feature from working reliably. I'm happy to announce touch enabled feature works pretty well out of the box on either direct connected touch monitor or on pop out window that is displayed on tablet using software tool such as SpaceDesk. Until Asobo actually allow touch passthrough for panels, this tool can serve as a stopgap solution.
+With SU10 Beta v1.27.11, Asobo seems to have fix a major [bug](#touch-enable-pop-out-feature) (in SU9 and before) that stops Pop Out Panel Manager's touch panel feature from working reliably. I'm happy to announce touch enabled feature works pretty well out of the box on either direct connected touch monitor or on pop out window that is displayed on tablet using software tool such as SpaceDesk. Until Asobo actually allow touch passthrough for panels, this tool can serve as a stopgap solution.
 
 I've tested touch operation on GTN750, GTN530, KingAir PFD/MFD, TMB 930 FMS, Flybywire A32NX EFB and they are operational. Please report any issues that you encounter when using touch enable feature. There is still lots of room for improvement and I'll continue my effort to make touch work better and better.
 
@@ -27,8 +27,6 @@ Things that work out of the box:
 * Flight control will be regained after 0.5 second (adjustable) of touch inactivity on a panel. This will minimize the lost of flight control when when operating touch panel.
 
 If using SpaceDesk to host pop out panel display, since there is a latency for touch response in wireless display, your touch may not register consistently. Please go to Preferences => Touch Settings => Touch Down Touch Up Delay, and increase the value to 25ms or higher to increase touch sensitivity.
-
-
 
 ## Application Features
 * Display resolution independent. Supports 1080p/1440p/4k display and ultrawide displays.
@@ -55,7 +53,7 @@ If using SpaceDesk to host pop out panel display, since there is a latency for t
 
 * Auto update feature. Application can auto-update itself when new version becomes available.
 
-* **Experimental Feature**: Enable touch support for pop outs on touch capable  display. Please see [Touch Enable Pop Out Feature](#touch-enable-pop-out-feature) for more information.
+* Enable touch support for pop outs on touch capable  display. Please see [Touch Enable Pop Out Feature](#touch-enable-pop-out-feature) for more information.
 
 <hr>
 
@@ -96,7 +94,7 @@ What if you can do the setup once by defining on screen where the pop out panels
 <img src="assets/readme/images/add_profile.png" width="900" hspace="10"/>
 </p>
 
-2. For step 2, if you want to associate the profile to the current aircraft to use in [Auto Pop Out](#auto-pop-out-feature) feature or for automatic profile switching when selecting a different aircraft, click the "plus" button next to the aircraft name. The aircraft title will become green once the it is bound to the profile. Your chosen aircraft may not be available to select in the application for your newly selected plane until a flight is started.
+2. If you want to associate the profile to the current aircraft to use in [Auto Pop Out](#auto-pop-out-feature) feature or for automatic profile switching when selecting a different aircraft, click the "plus" button next to the aircraft name. The aircraft title will become green once  it is bound to the profile. Your chosen aircraft may not be available to select in the application for your newly selected plane until a flight is started. If the current aircraft has not been bound to another profile, it will be bound to your newly created profile automatically.
 
  <p align="center">
 <img src="assets/readme/images/bind_profile_to_livery.png" width="900" hspace="10"/>
@@ -138,11 +136,9 @@ The app will try to find a matching profile with the current selected aircraft. 
 
 * In File->Preferences->Auto Pop Out Panel Settings, "Enable Auto Pop Out Panels" option is turned on. You can also adjust wait delay settings if you've a fast computer.
 
-* For existing profile to use Auto Pop Out feature, just click the plus sign in the bind active aircraft to profile section. This will bind the active aircraft being displayed to the profile. Any bound aircraft will appear in GREEN color. Unbound ones will be in WHITE, and bound aircraft in another profile will be in RED. You can bind as many liveries to a profile as you desire but an aircraft can only bind to a single profile so Auto Pop Out knows which profile to start when a flight session starts.
+* For existing profile to use Auto Pop Out feature, just click the plus sign in the bind active aircraft to profile section. This will bind the active aircraft being displayed to the profile. Any bound aircraft will appear in GREEN color. Unbound ones will be in WHITE, and bound aircraft in another profile will be in RED. You can bind as many aircrafts to a profile as you desire but an aircraft can only bind to a single profile so Auto Pop Out knows which profile to start when a flight session starts.
 
-* During my testing, instrumentations only need to be powered on for Auto Pop Out to work for G1000/G1000 NXi plane during cold start. (There seems to be a bug in the game that you can't do Alt-Right click to pop out cold start panel for this particular plane variant). For other plane instrumentations I've tested (G3000, CJ4, Aerosoft CRJ 550/700, FBW A32NX), panels can be popped out without powering on. So please make sure the checkbox "Power on required to pop out panels on cold start" is checked for G1000 related profiles.
-
-* **TIPS:** You can go to the preference settings to configure the time delay for each steps for the Auto Pop Out process based on the speed of your computer if things do not work correctly or if you want to speed up the Auto Pop Out process.
+* During my testing, instrumentations only need to be powered on for Auto Pop Out to work for G1000/G1000 NXi plane during cold start. There seems to be a bug in the game that you can't do Alt-Right click to pop out cold start panel for this particular plane variant. For other plane instrumentations I've tested (G3000, CJ4, Aerosoft CRJ 550/700, FBW A32NX), panels can be popped out without powering on. So please make sure the checkbox "Power on required to pop out panels on cold start" is checked for G1000 related profiles.
 
 * **TIPS:** One trick to force SimConnect to update the current selected aircraft so you can do the binding immediately after selecting a new aircraft in the World Map is to click the "Go Back" button at the lower left of your screen.  You should see aircraft title changes to the active ones. Or you can wait until the flight is almost fully loaded and you will see the current aircraft name gets updated.
 
@@ -166,18 +162,12 @@ In MSFS, when operating the above panels with pop outs, there are currently 2 li
 
 - Limitation #2 - When you click or hover your mouse over any pop out panels on your main monitor or on another monitor, the game main window will lose focus and you can’t operate flight control without clicking the game window again.
 
-**EDITED (July 31st)** - Asobo have fixed the below bug in SU10 Beta v1.27.11. And hopefuly it won't be broken again.
+**EDITED (July 31st)** - Asobo have fixed the below bug in SU10 Beta v1.27.11. And hopefully it won't be broken again.
 - ~~Bug -  If the pop out panel is also display on the main screen, a click through at incorrect coordinate will occur at the relative position where the pop out panel is located. If you click at this particular location in the pop out panel, the click event will register at the wrong coordinate. I haven’t been able to figure out how to work around this issue yet since the bug is deep in the closed source CoherentGT code in how MSFS implements the internal browser control to display to pop out panel. So touch will not work in the relative position of the pop out panel where panel appears on the main screen. This only affects instrumentation pop outs. The built-in ones such as ATC and checklist are fine since once they’re popped out, they no longer appear on the main screen. Below is the screenshot where click through at incorrect coordinate occurs. See the relative position (red box) in the pop out where the same instrumentation appears on the main screen.~~
 
 <p align="center">
 <img src="assets/readme/images/touch_support_bug.png" width="900" hspace="10"/>
 </p>
-
-  If you're a home cockpit builder and your main screen has a view that looks like something below, than touch enable feature will work almost 100% of the time since there is no click through target on your main screen.
-
-<p align="center">
-<img src="assets/readme/images/touch_support_bug_2.png" width="900" hspace="10"/>
-</p>  
 
 #### How to enable touch support
 
@@ -185,9 +175,9 @@ Perform your regular panel selection and once your touch capable panel has been 
 
 #### Known Issues
 
-~~- A MSFS click through bug where pop out panel also appears on the main game screen. Touch will not register correctly in the section of the pop out panel where the relative position of the panel corresponds to where the panel is located on the main game screen.~~  **Asobo fixed in SU10 Beta 1.27.11.**
+~~- A MSFS click through bug where pop out panel also appears on the main game screen. Touch will not register correctly in the section of the pop out panel where the relative position of the panel corresponds to where the panel is located on the main game screen.~~  **Fixed in SU10 Beta 1.27.11.**
 
-~~- When a click through occurs on non-instrumentation panel items such as throttle or switches, even though the switches will not accidentally get clicked, touch response in pop out panel may not work. Just touching a little bit to the left/right in the pop out panel may register your touch event correctly and trigger your intend target.~~  **Asobo fixed in SU10 Beta 1.27.11.**
+~~- When a click through occurs on non-instrumentation panel items such as throttle or switches, even though the switches will not accidentally get clicked, touch response in pop out panel may not work. Just touching a little bit to the left/right in the pop out panel may register your touch event correctly and trigger your intend target.~~  **Fixed in SU10 Beta 1.27.11.**
 
 - If touch suddenly becomes unresponsive, please try to change the main view of the game such as looking left/right using keyboard shortcut. This will sometime reset the mouse coordinate where you touch the pop out panel.
 
@@ -239,7 +229,7 @@ You can backup this folder and restore this folder if you want to uninstall and 
 
   ERROR MSFSPopoutPanelManager.WpfApp.App - Could not load file or assembly 'Microsoft.FlightSimulator.SimConnect, Version=11.0.62651.3, Culture=neutral, PublicKeyToken=baf445ffb3a06b5c'. An attempt was made to load a program with an incorrect format. System.BadImageFormatException: 
 
-  This usually happens on clean Windows installation. Pop Out Panel Manager uses x64 version of SimConnect.dll to perform its function and a Visaul C++ redistributable is required for SimConnect to run correctly. Please download and install the following [VC++ redistributable](https://aka.ms/vs/17/release/vc_redist.x64.exe) on your PC to resolve this issue. Further information can be obtained in this [support ticket](https://github.com/hawkeye-stan/msfs-popout-panel-manager/issues/21). 
+  This usually happens on clean Windows installation. Pop Out Panel Manager uses x64 version of SimConnect.dll to perform its function and a Visual C++ redistributable is required for SimConnect to run correctly. Please download and install the following [VC++ redistributable](https://aka.ms/vs/17/release/vc_redist.x64.exe) on your PC to resolve this issue. Further information can be obtained in this [support ticket](https://github.com/hawkeye-stan/msfs-popout-panel-manager/issues/21). 
 
 ## Author
 Stanley Kwok

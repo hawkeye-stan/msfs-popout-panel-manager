@@ -12,6 +12,7 @@ namespace MSFSPopoutPanelManager.Orchestration
         private static PInvoke.WinEventProc _winEvent;      // keep this as static to prevent garbage collect or the app will crash
         private static IntPtr _winEventHook;
         private Rectangle _lastWindowRectangle;
+        private IntPtr _panelHandleDisableRefresh = IntPtr.Zero;
 
         public PanelConfigurationOrchestrator()
         {
@@ -83,14 +84,17 @@ namespace MSFSPopoutPanelManager.Orchestration
                     {
                         case PanelConfigPropertyName.Left:
                         case PanelConfigPropertyName.Top:
-                            WindowActionManager.MoveWindow(panelConfig.PanelHandle, panelConfig.PanelType, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height);
+                            _panelHandleDisableRefresh = panelConfig.PanelHandle;
+                            WindowActionManager.MoveWindow(panelConfig.PanelHandle, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height);
                             break;
                         case PanelConfigPropertyName.Width:
                         case PanelConfigPropertyName.Height:
+                            _panelHandleDisableRefresh = panelConfig.PanelHandle;
+
                             if (panelConfig.HideTitlebar)
                                 WindowActionManager.ApplyHidePanelTitleBar(panelConfig.PanelHandle, false);
 
-                            WindowActionManager.MoveWindowWithMsfsBugOverrirde(panelConfig.PanelHandle, panelConfig.PanelType, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height);
+                            WindowActionManager.MoveWindowWithMsfsBugOverrirde(panelConfig.PanelHandle, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height);
 
                             if (panelConfig.HideTitlebar)
                                 WindowActionManager.ApplyHidePanelTitleBar(panelConfig.PanelHandle, true);
@@ -100,6 +104,7 @@ namespace MSFSPopoutPanelManager.Orchestration
                             WindowActionManager.ApplyAlwaysOnTop(panelConfig.PanelHandle, panelConfig.PanelType, panelConfig.AlwaysOnTop, new Rectangle(panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height));
                             break;
                         case PanelConfigPropertyName.HideTitlebar:
+                            _panelHandleDisableRefresh = panelConfig.PanelHandle;
                             WindowActionManager.ApplyHidePanelTitleBar(panelConfig.PanelHandle, panelConfig.HideTitlebar);
                             break;
                         case PanelConfigPropertyName.TouchEnabled:
@@ -136,32 +141,36 @@ namespace MSFSPopoutPanelManager.Orchestration
                 switch (configPropertyName)
                 {
                     case PanelConfigPropertyName.Left:
+                        _panelHandleDisableRefresh = panelConfig.PanelHandle;
                         panelConfig.Left += changeAmount;
-                        WindowActionManager.MoveWindow(panelConfig.PanelHandle, panelConfig.PanelType, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height);
+                        WindowActionManager.MoveWindow(panelConfig.PanelHandle, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height);
                         break;
                     case PanelConfigPropertyName.Top:
+                        _panelHandleDisableRefresh = panelConfig.PanelHandle;
                         panelConfig.Top += changeAmount;
-                        WindowActionManager.MoveWindow(panelConfig.PanelHandle, panelConfig.PanelType, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height);
+                        WindowActionManager.MoveWindow(panelConfig.PanelHandle, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height);
                         break;
                     case PanelConfigPropertyName.Width:
+                        _panelHandleDisableRefresh = panelConfig.PanelHandle;
                         panelConfig.Width += changeAmount;
 
                         if (panelConfig.HideTitlebar)
                             WindowActionManager.ApplyHidePanelTitleBar(panelConfig.PanelHandle, false);
 
-                        WindowActionManager.MoveWindowWithMsfsBugOverrirde(panelConfig.PanelHandle, panelConfig.PanelType, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height);
+                        WindowActionManager.MoveWindowWithMsfsBugOverrirde(panelConfig.PanelHandle, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height);
 
                         if (panelConfig.HideTitlebar)
                             WindowActionManager.ApplyHidePanelTitleBar(panelConfig.PanelHandle, true);
 
                         break;
                     case PanelConfigPropertyName.Height:
+                        _panelHandleDisableRefresh = panelConfig.PanelHandle;
                         panelConfig.Height += changeAmount;
 
                         if (panelConfig.HideTitlebar)
                             WindowActionManager.ApplyHidePanelTitleBar(panelConfig.PanelHandle, false);
 
-                        WindowActionManager.MoveWindowWithMsfsBugOverrirde(panelConfig.PanelHandle, panelConfig.PanelType, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height);
+                        WindowActionManager.MoveWindowWithMsfsBugOverrirde(panelConfig.PanelHandle, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height);
 
                         if (panelConfig.HideTitlebar)
                             WindowActionManager.ApplyHidePanelTitleBar(panelConfig.PanelHandle, true);
@@ -224,7 +233,7 @@ namespace MSFSPopoutPanelManager.Orchestration
                 {
                     case PInvokeConstant.EVENT_SYSTEM_MOVESIZEEND:
                         // Move window back to original location
-                        WindowActionManager.MoveWindow(panelConfig.PanelHandle, panelConfig.PanelType, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height);
+                        WindowActionManager.MoveWindow(panelConfig.PanelHandle, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height);
                         break;
                     case PInvokeConstant.EVENT_OBJECT_LOCATIONCHANGE:
                         WINDOWPLACEMENT wp = new WINDOWPLACEMENT();
@@ -249,21 +258,25 @@ namespace MSFSPopoutPanelManager.Orchestration
                             return;
 
                         _lastWindowRectangle = winRectangle;
-                        Rectangle clientRectangle;
-                        PInvoke.GetClientRect(panelConfig.PanelHandle, out clientRectangle);
+
+                        if (_panelHandleDisableRefresh != IntPtr.Zero)
+                        {
+                            _panelHandleDisableRefresh = IntPtr.Zero;
+                            return;
+                        }
 
                         panelConfig.Left = winRectangle.Left;
                         panelConfig.Top = winRectangle.Top;
 
-                        if (panelConfig.HideTitlebar)
+                        if (!panelConfig.HideTitlebar)
                         {
-                            panelConfig.Width = clientRectangle.Width;
-                            panelConfig.Height = clientRectangle.Height;
+                            panelConfig.Width = winRectangle.Width - winRectangle.Left;
+                            panelConfig.Height = winRectangle.Height - winRectangle.Top;
                         }
                         else
                         {
-                            panelConfig.Width = clientRectangle.Width + 16;
-                            panelConfig.Height = clientRectangle.Height + 39;
+                            panelConfig.Width = winRectangle.Width - winRectangle.Left - 16;
+                            panelConfig.Height = winRectangle.Height - winRectangle.Top - 39;
                         }
 
                         // Detect if window is maximized, if so, save settings

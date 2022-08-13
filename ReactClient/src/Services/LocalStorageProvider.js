@@ -14,8 +14,6 @@ const LocalStorageProvider = ({ initialData, children }) => {
         // Set default map config
         setMapConfig({
             flightFollowing: true,
-            showFlightPlan: true,
-            showFlightPlanLabel: false,
             currentLayer: 'Bing Roads'
         });       
 

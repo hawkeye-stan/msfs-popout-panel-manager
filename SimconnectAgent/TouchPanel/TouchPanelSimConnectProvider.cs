@@ -70,6 +70,12 @@ namespace MSFSPopoutPanelManager.SimConnectAgent.TouchPanel
             _simConnector.ResetSimConnectDataArea(planeId);
         }
 
+        public string GetFlightPlan()
+        {
+            return _dataProvider.GetFlightPlan();
+        }
+
+
         private void InitializeProviders()
         {
             _dataProvider = new DataProvider(_simConnector);

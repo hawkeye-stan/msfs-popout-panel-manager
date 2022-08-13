@@ -1,13 +1,14 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
-import { useSimConnectData } from '../../Services/SimConnectDataProvider';
+import { useSimConnectData, simConnectGetFlightPlan } from '../../Services/SimConnectDataProvider';
 import { useLocalStorageData } from '../../Services/LocalStorageProvider';
 import { useInterval } from '../Util/hooks';
-import { LayersControl, TileLayer, useMapEvents } from 'react-leaflet'
+import { LayersControl, LayerGroup, TileLayer, useMapEvents } from 'react-leaflet'
 import L from 'leaflet';
 import 'leaflet.marker.slideto';
 import 'leaflet-marker-rotation';
 import 'leaflet-easybutton';
 import '@elfalem/leaflet-curve';
+import { getDistance } from 'geolib';
 import {BingLayer} from 'react-leaflet-bing-v2';
 
 const MAP_TYPE_DEFAULTS = { zoomLevel: 12, flightFollowing: true, showFlightPlan: true, uiZoomFactor: 1, planeRadiusCircleRange: 2.5};
@@ -74,6 +75,82 @@ const drawPlaneCircleRadius = (map, planePosition, scaleInNm = 2.5, isCreated, m
     return marker;
 }
 
+const getControlPoints = (waypoints) => {
+    // This is to create two control points XXXX meters away any give waypoint to give flight path
+    // a smooth quadratic bezier curve transition. You can adjust the bezier curve radius with the constant below
+    const bezierCurveRadius = 100;
+
+    let controlPoints = [];
+        for (var i = 0; i < waypoints.length; i++) {
+            let prevWp = i === 0 ? null : waypoints[i - 1].latLong;
+            let curWp = waypoints[i].latLong;
+            let nextWp = i === waypoints.length - 1 ? null : waypoints[i + 1].latLong;
+
+            var distance1 = prevWp === null ? null : getDistance({ latitude: prevWp[0], longitude: prevWp[1] }, { latitude: curWp[0], longitude: curWp[1] });
+            var distance2 = nextWp === null ? null : getDistance({ latitude: curWp[0], longitude: curWp[1] }, { latitude: nextWp[0], longitude: nextWp[1] });
+
+            let ratio1 = (distance1 / bezierCurveRadius) > 2 ? (distance1 / bezierCurveRadius) : 2;
+            let ratio2 = (distance2 / bezierCurveRadius) > 2 ? (distance2 / bezierCurveRadius) : 2;
+
+            var p1 = prevWp === null ? null : [(prevWp[0] - curWp[0]) / ratio1 + curWp[0], (prevWp[1] - curWp[1]) / ratio1 + curWp[1]];
+            var p2 = nextWp === null ? null : [(nextWp[0] - curWp[0]) / ratio2 + curWp[0], (nextWp[1] - curWp[1]) / ratio2 + curWp[1]];
+
+            controlPoints.push({ p1: p1, p2: p2 });
+        }
+
+    return controlPoints;
+}
+
+const drawFlightPath = (waypoints, layerGroup, scaleInNm) => {
+    let scale = 2.5 / scaleInNm;
+    let path, line, marker, tooltip;
+    let controlPoints = getControlPoints(waypoints);
+
+    waypoints.forEach((waypoint, index) => {
+        let controlPoint = controlPoints[index];
+        let nextControlPoint = controlPoints[index + 1];
+
+        let lineColor = Boolean(waypoint.isActiveLeg) ? 'magenta' : 'magenta'
+
+        // First waypoint
+        if (controlPoint.p1 === null) {
+            path = [waypoint.latLong, controlPoint.p2];
+            line = new L.Polyline(path, {color: lineColor});
+            layerGroup.addLayer(line);
+        }
+        // Last waypoint
+        else if (controlPoint.p2 === null) {
+            path = [controlPoint.p1, waypoint.latLong];
+            line = new L.Polyline(path, {color: lineColor});
+            layerGroup.addLayer(line);
+        }
+        // All other waypoints inbetween, draw bezier curve
+        else {
+            path = ['M', controlPoint.p1, 'Q', waypoint.latLong, controlPoint.p2];
+            line = L.curve(path, {color: 'white'});
+            layerGroup.addLayer(line);
+        }
+
+        // Waypoint marker
+        tooltip = getFullmapTooltip(waypoint);
+        marker = L.circleMarker(waypoint.latLong, {radius: 6, color: 'purple'}).bindTooltip(tooltip, { permanent: true, interactive: true, offset: [-50 * scale, -15 * scale] });
+        
+        layerGroup.addLayer(marker);
+
+        // Draw inbetween control points line
+        if (index < waypoints.length - 1) {
+            path = [controlPoint.p2, nextControlPoint.p1];
+            line = new L.Polyline(path, {color: lineColor});
+            layerGroup.addLayer(line);
+        }
+    })
+}
+
+const getFullmapTooltip = (waypoint) => {
+    let tooltip = `<div style="padding: 3px; font-size:1em; font-weight: bold">${waypoint.id}</div>`;
+    return tooltip;
+}
+
 const centerPlaneToMap = (map, mapPosition, planePosition) => {
     mapPosition.current = planePosition.current;
     if (mapPosition.current !== null)
@@ -103,7 +180,7 @@ const formatLatLong = (lat, lon) => {
 let centerPlaneIcon, flightFollowingIcon, showFlightPlanIcon;
 
 const MapDisplay = ({refresh}) => {
-    const { simConnectData } = useSimConnectData();
+    const { simConnectData, simConnectSystemEvent } = useSimConnectData();
     const { PLANE_HEADING_TRUE, GPS_LAT, GPS_LON } = simConnectData;
     const { mapConfig, configurationData } = useLocalStorageData();
     const { mapRefreshInterval } = configurationData;
@@ -111,6 +188,7 @@ const MapDisplay = ({refresh}) => {
     const [ mapDefaults ] = useState(MAP_TYPE_DEFAULTS);
     const [ flightFollowing, setFlightFollowing ] = useState(MAP_TYPE_DEFAULTS.flightFollowing);  
     const [ showFlightPlan, setShowFlightPlan ] = useState(MAP_TYPE_DEFAULTS.showFlightPlan);
+    const [ waypoints, setWaypoints] = useState([]);
 
     const planePosition = useRef(formatLatLong(GPS_LAT, GPS_LON));
     const mapPosition = useRef(formatLatLong(GPS_LAT, GPS_LON));
@@ -236,6 +314,27 @@ const MapDisplay = ({refresh}) => {
         }
     }, [flightFollowing, planePosition.current])
 
+    useEffect(async() => {
+        let data = await simConnectGetFlightPlan();
+          
+        if (data !== undefined && data !== null) {
+            setWaypoints(data.waypoints);
+        }
+    }, [simConnectSystemEvent, refresh])
+
+    useEffect(() => {
+        if(waypoints != null && waypoints.length > 1)
+        {
+            layerGroupFlightPlan.current.clearLayers();
+       
+            if(showFlightPlan)
+                drawFlightPath(waypoints, layerGroupFlightPlan.current, mapDefaults.planeRadiusCircleRange)
+            else
+                layerGroupFlightPlan.current.clearLayers();
+        
+        }
+    }, [showFlightPlan, waypoints])
+
     return useMemo(() => (
         <LayersControl>
             <LayersControl.BaseLayer name='Open Topo' checked={activeMapLayer.current === 'Open Topo'}>
@@ -270,6 +369,9 @@ const MapDisplay = ({refresh}) => {
             </LayersControl.BaseLayer>
             <LayersControl.Overlay name='Aviation'>
                 <TileLayer url={MAP_PROVIDER.aviation} tms={true} detectRetina={true} subdomains='12' />
+            </LayersControl.Overlay>
+            <LayersControl.Overlay checked={showFlightPlan} name='Flight Plan'>
+                <LayerGroup id='lgFlightPlan' ref={layerGroupFlightPlan} />
             </LayersControl.Overlay>
         </LayersControl>
     ), [showFlightPlan, flightFollowing, layerGroupFlightPlan.current])

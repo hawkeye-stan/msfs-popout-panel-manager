@@ -67,6 +67,7 @@ const WebPanel = ({ planeId, panelId }) => {
     const classes = useStyles(useWindowDimensions())();
     const [mapOpen, setMapOpen] = useState(false);
     const [panelProfile, setPanelProfile] = useState();
+    const [highLightedControlId, setHighLightedControlId] = useState(null);
 
     document.body.style.backgroundColor = 'transparent';
 
@@ -128,9 +129,13 @@ const WebPanel = ({ planeId, panelId }) => {
                             <div className={classes.mapPanel} style={{ ...setupMapDisplayStyle() }}>
                                 <MapPanel refresh={mapOpen} />
                             </div>
-                            {panelProfile.subPanels.map(subPanel =>
+                            {!mapOpen && panelProfile.subPanels.map(subPanel =>
                                 <div key={subPanel.panelId} className={setupSubPanelClasses()} style={{...setupSubPanelDisplayStyle() , ...setupSubPanelLocationStyle(subPanel), ...setupSubPanelWidthHeightStyle(subPanel)} }>
-                                    <PopoutPanelContainer panelInfo={subPanel} />
+                                    <PopoutPanelContainer 
+                                    panelInfo={subPanel}
+                                    highLightedControlId={highLightedControlId}
+                                    highlightedControlChanged={(ctrlId) => setHighLightedControlId(ctrlId)}
+                                    />
                                 </div>
                             )}
                         </div>

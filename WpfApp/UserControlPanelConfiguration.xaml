@@ -35,12 +35,16 @@
     <Grid KeyboardNavigation.DirectionalNavigation="None">
         <DockPanel>
             <WrapPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="19,10,0,0" HorizontalAlignment="Left">
-                <Label Content="Panel Locations and Settings   -" Margin="0,0,0,0" HorizontalAlignment="Left"/>
-                <Label Content="{Binding ProfileData.ActiveProfile.ProfileName}" Margin="0,0,0,0" HorizontalAlignment="Left"/>
-                <controls:Tile Foreground="LightSkyBlue" Background="Transparent" HorizontalAlignment="Right" VerticalAlignment="Center" Width="30" Height="30"
-                               controls:ControlsHelper.MouseOverBorderBrush="{DynamicResource MahApps.Brushes.Button.Border}" Margin="565,0,0,0" Click="Instruction_Click" >
-                    <iconPacks:PackIconMaterial Width="22" Height="22" Kind="Information" VerticalAlignment="Center"></iconPacks:PackIconMaterial>
-                </controls:Tile>
+                <WrapPanel Width="850">
+                    <Label Content="Panel Locations and Settings  -" Margin="0,0,0,0" HorizontalAlignment="Left"/>
+                    <Label Content="{Binding ProfileData.ActiveProfile.ProfileName}" Margin="0,0,0,0" HorizontalAlignment="Left"/>
+                </WrapPanel>
+                <WrapPanel>
+                    <controls:Tile Foreground="LightSkyBlue" Background="Transparent" VerticalAlignment="Center" Width="30" Height="30"
+                                   controls:ControlsHelper.MouseOverBorderBrush="{DynamicResource MahApps.Brushes.Button.Border}" Click="Instruction_Click" >
+                        <Image Width="22" Height="22" VerticalAlignment="Center" Source="Resources\info_icon.png"></Image>
+                    </controls:Tile>
+                </WrapPanel>
                 <DataGrid Name="PanelConfigGrid" HorizontalAlignment="Center" Width="882" Height="430" Margin="0 10 0 0" AutoGenerateColumns="False" CanUserResizeColumns="False" HorizontalScrollBarVisibility="Disabled" 
                           CanUserReorderColumns="False" CanUserResizeRows="False" HorizontalGridLinesBrush="#B9B9B9" VerticalGridLinesBrush="#B9B9B9" GridLinesVisibility="Horizontal" SelectionUnit="Cell"   
                           BorderThickness="1" CanUserAddRows="False" CanUserSortColumns="False" KeyboardNavigation.TabNavigation="None" KeyboardNavigation.IsTabStop="False"

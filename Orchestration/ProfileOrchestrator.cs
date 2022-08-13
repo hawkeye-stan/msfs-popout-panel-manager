@@ -40,13 +40,13 @@ namespace MSFSPopoutPanelManager.Orchestration
 
         public void AddProfileBinding(string bindingAircraft)
         {
-            if (ProfileData.ActiveProfile != null)
+            if (ProfileData.ActiveProfile != null && bindingAircraft != null)
                 ProfileData.AddProfileBinding(bindingAircraft, ProfileData.ActiveProfile.ProfileId);
         }
 
         public void DeleteProfileBinding(string bindingAircraft)
         {
-            if (ProfileData.ActiveProfile != null)
+            if (ProfileData.ActiveProfile != null && bindingAircraft != null)
                 ProfileData.DeleteProfileBinding(bindingAircraft, ProfileData.ActiveProfile.ProfileId);
         }
     }

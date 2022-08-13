@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useMemo} from 'react';
 import makeStyles from '@mui/styles/makeStyles';
 import { MapContainer } from 'react-leaflet';
 import { useSimConnectData } from '../Services/SimConnectDataProvider';
@@ -20,7 +20,7 @@ const MapPanel = ({refresh}) => {
     const { simConnectSystemEvent } = useSimConnectData();
     const classes = useStyles();
     const [reload, setReload] = useState(true);
-    
+
     useEffect(() =>{
         if(simConnectSystemEvent !== null)
         {
@@ -31,7 +31,7 @@ const MapPanel = ({refresh}) => {
         }
     }, [simConnectSystemEvent])
 
-    return (
+    return useMemo(() => (
         <div className={classes.root}>
             { reload && 
                 <MapContainer zoom={15} scrollWheelZoom={true} style={{ height: '100%'}}>
@@ -39,7 +39,7 @@ const MapPanel = ({refresh}) => {
                 </MapContainer>
             }
         </div>
-    )
+    ), [refresh])
 }
 
 export default MapPanel;

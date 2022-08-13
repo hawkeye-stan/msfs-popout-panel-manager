@@ -43,7 +43,7 @@ namespace MSFSPopoutPanelManager.WpfApp
                             var x = Convert.ToInt32(rectangle.X + clientRectangle.Width / 2 - this.Width / 2);
                             var y = Convert.ToInt32(rectangle.Y + clientRectangle.Height / 2 - this.Height / 2);
 
-                            WindowActionManager.MoveWindow(dialogHandle, PanelType.WPFWindow, x, y, Convert.ToInt32(this.Width), Convert.ToInt32(this.Height));
+                            WindowActionManager.MoveWindow(dialogHandle, x, y, Convert.ToInt32(this.Width), Convert.ToInt32(this.Height));
                         }
                         else
                         {

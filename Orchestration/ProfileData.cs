@@ -160,12 +160,12 @@ namespace MSFSPopoutPanelManager.Orchestration
             UpdateActiveProfile(currentProfileId);
         }
 
-        public void AutoSwitchProfile(string activeAircraft)
+        public void AutoSwitchProfile()
         {
             // Automatic switching of active profile when SimConnect active aircraft changes
-            if (Profiles != null)
+            if (Profiles != null && !string.IsNullOrEmpty(FlightSimData.CurrentMsfsAircraft))
             {
-                var matchedProfile = Profiles.FirstOrDefault(p => p.BindingAircrafts.Any(t => t == activeAircraft));
+                var matchedProfile = Profiles.FirstOrDefault(p => p.BindingAircrafts.Any(t => t == FlightSimData.CurrentMsfsAircraft));
                 if (matchedProfile != null)
                     UpdateActiveProfile(matchedProfile.ProfileId);
             }
@@ -175,15 +175,21 @@ namespace MSFSPopoutPanelManager.Orchestration
         // Started in v3.4.2
         public void MigrateLiveryToAircraftBinding(string liveryName, string aircraftName)
         {
-            if (Profiles != null)
+            if (Profiles != null && !string.IsNullOrEmpty(liveryName) && !string.IsNullOrEmpty(aircraftName))
             {
                 var matchedProfile = Profiles.FirstOrDefault(p => p.BindingAircraftLiveries.Any(t => t == liveryName));
                 if (matchedProfile != null && !matchedProfile.BindingAircrafts.Any(a => a == aircraftName))
                 {
                     matchedProfile.BindingAircrafts.Add(aircraftName);
                     WriteProfiles();
+                    RefreshProfile();
                 }
             }
+        }
+
+        public void MigrateLiveryToAircraftBinding()
+        {
+            MigrateLiveryToAircraftBinding(FlightSimData.CurrentMsfsLiveryTitle, FlightSimData.CurrentMsfsAircraft);
         }
     }
 }

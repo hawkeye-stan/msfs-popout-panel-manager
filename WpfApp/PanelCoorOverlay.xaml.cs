@@ -56,7 +56,7 @@ namespace MSFSPopoutPanelManager.WpfApp
         {
             // Fixed broken window left/top coordinate for DPI Awareness Per Monitor
             var handle = new WindowInteropHelper(this).Handle;
-            WindowActionManager.MoveWindow(handle, PanelType.WPFWindow, _xCoor, _yCoor, Convert.ToInt32(this.Width), Convert.ToInt32(this.Height));
+            WindowActionManager.MoveWindow(handle, _xCoor, _yCoor, Convert.ToInt32(this.Width), Convert.ToInt32(this.Height));
 
             WindowActionManager.ApplyAlwaysOnTop(handle, PanelType.WPFWindow, true);
         }

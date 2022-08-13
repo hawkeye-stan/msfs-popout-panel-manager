@@ -343,7 +343,7 @@
                     "controlSize": {
                         "$ref": "#value.controlSize.regularKnob"
                     },
-                    "highlight": false,
+                    "highlight": true,
                     "action": {
                         "touchActions": [
                             {
@@ -571,7 +571,7 @@
                     "controlSize": {
                         "$ref": "#value.controlSize.speedKnob"
                     },
-                    "highlight": false,
+                    "highlight": true,
                     "action": {
                         "touchActions": [
                             {
@@ -1589,7 +1589,7 @@
                     "controlSize": {
                         "$ref": "#value.controlSize.regularKnob"
                     },
-                    "highlight": false,
+                    "highlight": true,
                     "action": {
                         "touchActions": [
                             {
@@ -1814,7 +1814,7 @@
                     "controlSize": {
                         "$ref": "#value.controlSize.speedKnob"
                     },
-                    "highlight": false,
+                    "highlight": true,
                     "action": {
                         "touchActions": [
                             {
@@ -2568,7 +2568,7 @@
                     "controlSize": {
                         "$ref": "#value.controlSize.regularKnob"
                     },
-                    "highlight": false,
+                    "highlight": true,
                     "action": {
                         "touchActions": [
                             {
@@ -2793,7 +2793,7 @@
                     "controlSize": {
                         "$ref": "#value.controlSize.speedKnob"
                     },
-                    "highlight": false,
+                    "highlight": true,
                     "action": {
                         "touchActions": [
                             {

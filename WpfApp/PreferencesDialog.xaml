@@ -260,7 +260,7 @@
                         <Line Stretch="Fill" Stroke="Gray" X2="1"/>
                         <WrapPanel>
                             <mah:NumericUpDown Width="100" Minimum="0" Maximum="50" Interval="25" FontSize="16" Height="32" Value="{Binding AppSettingData.AppSetting.TouchScreenSettings.TouchDownUpDelay, Mode=TwoWay}"></mah:NumericUpDown>
-                            <AccessText Margin="10,0,0,0" Width="490">Amount of time to delay touch down and then touch up event when operating touch enabled panel. If your touch is not registering consistently, increasing this value will help.</AccessText>
+                            <AccessText Margin="10,0,0,0" Width="490">Amount of time in milliseconds to delay touch down and then touch up event when operating touch enabled panel. If your touch is not registering consistently, increasing this value will help.</AccessText>
 
                             <TextBlock FontSize="14" TextWrapping="Wrap" Margin="0,10,0,0">
                             For panel display on direct connected touch monitor, 0 milliseconds work really well.<LineBreak/><LineBreak/>
@@ -310,8 +310,8 @@
                             <TextBlock Style="{StaticResource TextBlockHeading}">Map Refresh Interval</TextBlock>
                             <Line Stretch="Fill" Stroke="Gray" X2="1"/>
                             <WrapPanel>
-                                <mah:NumericUpDown Width="100" Minimum="200" Maximum="3000" Interval="50" FontSize="16" Height="32" Value="{Binding AppSettingData.AppSetting.TouchPanelSettings.MapRefreshInterval, Mode=TwoWay}"></mah:NumericUpDown>
-                                <AccessText Margin="10,0,0,0" Width="490">Time interval for touch panel's map to refresh SimConnect data. (Default: 250 miliseconds)</AccessText>
+                                <mah:NumericUpDown Width="100" Minimum="200" Maximum="3000" Interval="200" FontSize="16" Height="32" Value="{Binding AppSettingData.AppSetting.TouchPanelSettings.MapRefreshInterval, Mode=TwoWay}"></mah:NumericUpDown>
+                                <AccessText Margin="10,0,0,0" Width="490">Time interval for touch panel's map to refresh SimConnect data. (Default: 1000 miliseconds)</AccessText>
                             </WrapPanel>
                         </WrapPanel>
                     </WrapPanel>
