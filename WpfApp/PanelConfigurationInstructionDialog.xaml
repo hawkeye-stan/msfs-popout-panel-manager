@@ -12,7 +12,7 @@
         Background="Transparent">
     <Grid Margin="20,10,20,0">
         <WrapPanel>
-            <TextBlock Margin="0,10,0,10">To configure a panel, first click on the arrow to the left of the panel name. When panel is selected, the arrow will turn red.</TextBlock>
+            <TextBlock Margin="0,10,0,10" TextWrapping="Wrap">To configure a panel, first click on the arrow to the left of the panel name. When panel is selected, the arrow will turn red. To end panel configuration using keyboard shortcuts, just click anywhere in the panel configuration grid.</TextBlock>
             <TextBlock>
                 <Run Foreground="LightSkyBlue">Up Arrow</Run> - Move panel up by 10 pixels<LineBreak/>
                 <Run Foreground="LightSkyBlue">Down Arrow</Run> - Move panel down by 10 pixels<LineBreak/>

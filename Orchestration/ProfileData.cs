@@ -181,6 +181,7 @@ namespace MSFSPopoutPanelManager.Orchestration
                 if (matchedProfile != null && !matchedProfile.BindingAircrafts.Any(a => a == aircraftName))
                 {
                     matchedProfile.BindingAircrafts.Add(aircraftName);
+                    matchedProfile.BindingAircraftLiveries.Remove(liveryName);
                     WriteProfiles();
                     RefreshProfile();
                 }

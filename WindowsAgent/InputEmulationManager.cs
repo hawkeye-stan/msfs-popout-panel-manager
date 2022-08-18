@@ -68,7 +68,7 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             InputSimulator.Mouse.LeftButtonUp();
         }
 
-        public static void PopOutPanel(int x, int y, bool useCtrlShift)
+        public static void PopOutPanel(int x, int y, bool useSecondaryKeys)
         {
             LeftClick(x, y);
             Thread.Sleep(300);
@@ -77,7 +77,7 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             PInvoke.SetCursorPos(x, y);
             Thread.Sleep(300);
 
-            if (useCtrlShift)
+            if (useSecondaryKeys)
             {
                 InputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.LCONTROL);
                 InputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.RCONTROL);

@@ -2,19 +2,21 @@
 <hr/>
 
 ## Version 3.4.2
-* Major change in how profile is being bound to aircraft. A profile is no longer bound to a livery but instead it is bound to an aircraft so you do not have to manual activate binding for individual livery for the same plane. This has been a long awaited request.
+* Major change in how profile is bound to an aircraft. Previously, a profile is bound to an aircraft livery which requires you to activate binding when switching livery for the same aircraft. With this update, a profile is now bound to an aircraft so you no longer need to perform the binding step when switching livery. As you change active aircraft to fly, all existing livery binding will be automatically converted to aircraft binding if one exists. Also, a profile can still be bound to multiple aircrafts if you so choose such as when flying multiple variations of Cessna 172. This change has been a long awaited request to simplify your profile bindings. 
 
-* Auto assign aircraft binding when profile is initially created if the active aircraft has no previous profile binding specify.
+* Added auto assignment of aircraft binding for a newly created profile if the active aircraft has no previous profile binding specified.
 
-* Implemented work around for SU10+ issue where after panel separation, the panel's size is huge which blocked most of the game window for lower resolution screen and prevented Pop Out Panel Manager from popping out the next panel.
+* Added new keyboard shortcuts to move and resize pop outs. Please click on a new information icon in the upper right corner of panel configuration screen for instruction in how to use these new keyboard shortcuts.
 
-* Implement key binding to move and resize pop outs.
+* Added new setting to minimize pop out manager after panels have been popped out.
 
-* Added setting to minimize pop out manager after panels have been popped out.
+* Added work around for SU10 Beta issue when after panel separations, panels' size become so big and they block most of the game window for lower resolution screen and prevented Pop Out Panel Manager from popping out the next panel. 
+
+* Made improvement to how panels are separated when using multiple monitors.
 
 Known issue:
 
-* When changing the width or height of a pop up that has Hide Title Bar enable, it will sometime break the Hide Title Bar setting and the only way to fix is to re-pop out the panel.
+* When changing the width or height of a pop up that has Hide Title Bar enable, it will sometime break the Hide Title Bar setting and the only way to fix this is to re-pop out the panel. Currently, this is a bug in MSFS in how it handles the sizing and rendering of pop outs window.
 
 ## Version 3.4.1
 

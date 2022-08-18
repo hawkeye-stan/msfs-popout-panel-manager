@@ -28,11 +28,11 @@ namespace MSFSPopoutPanelManager.Orchestration
 
             var panelsStartingLeft = GetPanelMenubarStartingLeft(sourceImage, rectangle, panelMenubarTop + 5);
 
-            // The center of magnifying glass icon is around (3.2 x height of menubar) to the right of the panel menubar starting left
+            // The center of magnifying glass icon is around (2.8 x height of menubar) to the right of the panel menubar starting left
             // But need to use higher number here to click the left side of magnifying glass icon because on some panel, the ratio is smaller
             var menubarHeight = panelMenubarBottom - panelMenubarTop;
-            var magnifyingIconXCoor = panelsStartingLeft - Convert.ToInt32(menubarHeight * 3.2);        // ToDo: play around with this multiplier to find the best for all resolutions
-            var magnifyingIconYCoor = panelMenubarTop + Convert.ToInt32(menubarHeight / 2);
+            var magnifyingIconXCoor = panelsStartingLeft - Convert.ToInt32(menubarHeight * 2.8);        // ToDo: play around with this multiplier to find the best for all resolutions
+            var magnifyingIconYCoor = panelMenubarTop + Convert.ToInt32(menubarHeight / 2.2);
 
             return new Point(magnifyingIconXCoor, magnifyingIconYCoor);
         }

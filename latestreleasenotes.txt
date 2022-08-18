@@ -1,34 +1,36 @@
-Version 3.4.1.0 
+Version 3.4.2.0 
 
-This release is optional and changes in this release is solely focused on addressing issues
-regarding touch panel capabilities as well as making improvements to touch feature. Panels
-I used for testing are PMT GTN750, WT G3X mod, PMS GTN530, FBW A32NX EFB, King Air 350 
-PFD/MFD touch screen.
-
-When using SpaceDesk, if touch is not registering consistently, please increase touch down 
-touch up delay to 25ms or higher in preferences touch settings to improve sensitivity for 
-touch input.
+This release is optional and please feel to skip this update.
 
 Change Log:
 
-* Implemented new algorithm to improve general performance for touch panel.
+* Major change in how profile is bound to an aircraft. Previously, a profile is bound to an
+aircraft livery which requires you to activate binding when switching livery for the same 
+aircraft. With this update, a profile is now bound to an aircraft so you no longer need to 
+perform the binding step when switching livery. As you change active aircraft to fly, all 
+existing livery binding will be automatically converted to aircraft binding if one exists. 
+Also, a profile can still be bound to multiple aircrafts if you so choose such as when 
+flying multiple variations of Cessna 172. This change has been a long awaited request to 
+simplify your profile bindings. 
 
-* Button touches are now more responsive. On touch monitor, lag after touch had been 
-minimized and is now performing much closer to a mouse click. On SpaceDesk, the lag is more 
-in line with latency of remote display technology. When using SpaceDesk, you can increase 
-touch delay to 25ms in preference settings to account for the latency if your touch is not 
-register consistently.
+* Added auto assignment of aircraft binding for a newly created profile if the active 
+aircraft has no previous profile binding specified.
 
-* You can now slide your finger to pan map in panel. There is still a slight delay but touch
-response is much improved.
+* Added new keyboard shortcuts to move and resize pop outs. Please click on a new 
+information icon in the upper right corner of panel configuration screen for instruction in 
+how to use these new keyboard shortcuts.
 
-* Full screen mode for touch panel can now be turned on.
+* Added new setting to minimize pop out manager after panels have been popped out.
 
-* Improved scroll bars touch response. They can be dragged and moved much more easily.
+* Added work around for SU10 Beta issue when after panel separations, panels' size become 
+so big and they block most of the game window for lower resolution screen and prevented Pop 
+Out Panel Manager from popping out the next panel. 
 
-* Added adjustable flight control refocus (0.5 sec to 2 sec). The lowest setting makes flight
-control input refocus seems instantaneous after touch inactivity.
+* Made improvement to how panels are separated when using multiple monitors.
 
-* Added ability to disable flight control refocus for a panel. Set panel to "Disable Game 
-Refocus" will be useful in panel such as Flybywire A32NX EFB since textbox entries in this 
-panel will lose focus if mouse cursor moves away from EFB. 
+Known issue:
+
+* When changing the width or height of a pop up that has Hide Title Bar enable, it will 
+sometime break the Hide Title Bar setting and the only way to fix this is to re-pop out the
+panel. Currently, this is a bug in MSFS in how it handles the sizing and rendering of pop 
+outs window.

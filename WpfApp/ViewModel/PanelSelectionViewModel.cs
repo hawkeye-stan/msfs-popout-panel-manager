@@ -45,29 +45,33 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
                                                                                 .ObservesProperty(() => ProfileData.ActiveProfile)
                                                                                 .ObservesProperty(() => FlightSimData.IsSimulatorStarted);
 
-            StartPanelSelectionCommand = new DelegateCommand(OnStartPanelSelection, () => FlightSimData.HasCurrentMsfsAircraft && ProfileData.HasActiveProfile && ProfileData.ActiveProfile != null && FlightSimData.IsSimulatorStarted)
+            StartPanelSelectionCommand = new DelegateCommand(OnStartPanelSelection, () => FlightSimData.HasCurrentMsfsAircraft && ProfileData.HasActiveProfile && ProfileData.ActiveProfile != null && FlightSimData.IsSimulatorStarted && FlightSimData.IsEnteredFlight)
                                                                                 .ObservesProperty(() => FlightSimData.HasCurrentMsfsAircraft)
                                                                                 .ObservesProperty(() => ProfileData.ActiveProfile)
-                                                                                .ObservesProperty(() => FlightSimData.IsSimulatorStarted);
+                                                                                .ObservesProperty(() => FlightSimData.IsSimulatorStarted)
+                                                                                .ObservesProperty(() => FlightSimData.IsEnteredFlight);
 
-            StartPopOutCommand = new DelegateCommand(OnStartPopOut, () => FlightSimData.HasCurrentMsfsAircraft && ProfileData.HasActiveProfile && (ProfileData.ActiveProfile.PanelSourceCoordinates.Count > 0 || ProfileData.ActiveProfile.TouchPanelBindings.Count > 0) && FlightSimData.IsSimulatorStarted)
+            StartPopOutCommand = new DelegateCommand(OnStartPopOut, () => FlightSimData.HasCurrentMsfsAircraft && ProfileData.HasActiveProfile && (ProfileData.ActiveProfile.PanelSourceCoordinates.Count > 0 || ProfileData.ActiveProfile.TouchPanelBindings.Count > 0) && FlightSimData.IsSimulatorStarted && FlightSimData.IsEnteredFlight)
                                                                                 .ObservesProperty(() => FlightSimData.HasCurrentMsfsAircraft)
                                                                                 .ObservesProperty(() => ProfileData.ActiveProfile)
                                                                                 .ObservesProperty(() => ProfileData.ActiveProfile.PanelSourceCoordinates.Count)
                                                                                 .ObservesProperty(() => ProfileData.ActiveProfile.TouchPanelBindings.Count)
-                                                                                .ObservesProperty(() => FlightSimData.IsSimulatorStarted);
+                                                                                .ObservesProperty(() => FlightSimData.IsSimulatorStarted)
+                                                                                .ObservesProperty(() => FlightSimData.IsEnteredFlight);
 
-            SaveAutoPanningCameraCommand = new DelegateCommand(OnSaveAutoPanningCamera, () => FlightSimData.HasCurrentMsfsAircraft && ProfileData.HasActiveProfile && ProfileData.ActiveProfile.PanelSourceCoordinates.Count > 0 && FlightSimData.IsSimulatorStarted)
+            SaveAutoPanningCameraCommand = new DelegateCommand(OnSaveAutoPanningCamera, () => FlightSimData.HasCurrentMsfsAircraft && ProfileData.HasActiveProfile && ProfileData.ActiveProfile.PanelSourceCoordinates.Count > 0 && FlightSimData.IsSimulatorStarted && FlightSimData.IsEnteredFlight)
                                                                                 .ObservesProperty(() => FlightSimData.HasCurrentMsfsAircraft)
                                                                                 .ObservesProperty(() => ProfileData.ActiveProfile)
                                                                                 .ObservesProperty(() => ProfileData.ActiveProfile.PanelSourceCoordinates.Count)
-                                                                                .ObservesProperty(() => FlightSimData.IsSimulatorStarted);
+                                                                                .ObservesProperty(() => FlightSimData.IsSimulatorStarted)
+                                                                                .ObservesProperty(() => FlightSimData.IsEnteredFlight);
 
-            EditPanelSourceCommand = new DelegateCommand(EditPanelSource, () => FlightSimData.HasCurrentMsfsAircraft && ProfileData.HasActiveProfile && ProfileData.ActiveProfile.PanelSourceCoordinates.Count > 0 && FlightSimData.IsSimulatorStarted)
+            EditPanelSourceCommand = new DelegateCommand(EditPanelSource, () => FlightSimData.HasCurrentMsfsAircraft && ProfileData.HasActiveProfile && ProfileData.ActiveProfile.PanelSourceCoordinates.Count > 0 && FlightSimData.IsSimulatorStarted && FlightSimData.IsEnteredFlight)
                                                                                 .ObservesProperty(() => FlightSimData.HasCurrentMsfsAircraft)
                                                                                 .ObservesProperty(() => ProfileData.ActiveProfile)
                                                                                 .ObservesProperty(() => ProfileData.ActiveProfile.PanelSourceCoordinates.Count)
-                                                                                .ObservesProperty(() => FlightSimData.IsSimulatorStarted);
+                                                                                .ObservesProperty(() => FlightSimData.IsSimulatorStarted)
+                                                                                .ObservesProperty(() => FlightSimData.IsEnteredFlight);
 
             OpenTouchPanelBindingCommand = new DelegateCommand(OnOpenTouchPanelBinding, () => FlightSimData.HasCurrentMsfsAircraft && FlightSimData.IsSimulatorStarted && ProfileData.HasActiveProfile && AppSettingData.AppSetting.TouchPanelSettings.EnableTouchPanelIntegration)
                                                                                 .ObservesProperty(() => FlightSimData.HasCurrentMsfsAircraft)

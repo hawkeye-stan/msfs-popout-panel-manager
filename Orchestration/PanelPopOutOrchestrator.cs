@@ -237,11 +237,7 @@ namespace MSFSPopoutPanelManager.Orchestration
 
                 // Need to move the window to upper left corner first. There is a possible bug in the game that panel pop out to full screen that prevents further clicking.
                 if (handle != IntPtr.Zero)
-                    WindowActionManager.MoveWindow(handle, 0, 0, 800, 600);
-
-                // Make window always on top to make sure it is clickable and not obstruct by other user windows
-                //WindowActionManager.ApplyAlwaysOnTop(handle, PanelType.WPFWindow, true);
-                //Thread.Sleep(500);
+                    WindowActionManager.MoveWindow(handle, 0, 0, 1000, 500);
 
                 if (i > 1)
                     SeparatePanel(panels[0].PanelHandle);       // The joined panel is always the first panel that got popped out
@@ -260,7 +256,8 @@ namespace MSFSPopoutPanelManager.Orchestration
                 }
 
                 // Fix SU10+ bug where pop out window after separation is huge
-                WindowActionManager.MoveWindow(handle, -8, 0, 800, 600);
+                if (i > 1)
+                    WindowActionManager.MoveWindow(handle, -8, 0, 800, 600);
 
                 var panel = new PanelConfig();
                 panel.PanelHandle = handle;
@@ -276,11 +273,7 @@ namespace MSFSPopoutPanelManager.Orchestration
                 PInvoke.SetWindowText(panel.PanelHandle, panel.PanelName + " (Custom)");
             }
 
-            // Remove window always on top setting
-            //WindowActionManager.ApplyAlwaysOnTop(panels[0].PanelHandle, PanelType.WPFWindow, false);
-            //Thread.Sleep(500);
-
-            //Performance validation, make sure the number of pop out panels is equal to the number of selected panel
+            //Perform validation, make sure the number of pop out panels is equal to the number of selected panel
             if (WindowActionManager.GetWindowsCountByPanelType(new List<PanelType>() { PanelType.CustomPopout }) != ActiveProfile.PanelSourceCoordinates.Count)
             {
                 StatusMessageWriter.WriteMessage("Unable to pop out all panels. Please align all panel number circles with in-game panel locations.", StatusMessageType.Error, false);
@@ -292,11 +285,7 @@ namespace MSFSPopoutPanelManager.Orchestration
 
         private void SeparatePanel(IntPtr hwnd)
         {
-            // Resize all windows to 800x600 when separating and shimmy the panel
-            // MSFS draws popout panel differently at different time for same panel
-
             // ToDo: Need to figure mouse click code to separate window
-            WindowActionManager.MoveWindow(hwnd, -8, 0, 800, 600);
             PInvoke.SetForegroundWindow(hwnd);
             Thread.Sleep(500);
 
