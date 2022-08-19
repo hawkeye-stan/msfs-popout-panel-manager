@@ -24,7 +24,6 @@ namespace MSFSPopoutPanelManager.Orchestration
             FlightSimData.CurrentMsfsLiveryTitleChanged += (sernder, e) => { ProfileData.MigrateLiveryToAircraftBinding(); ProfileData.AutoSwitchProfile(); };
 
             AppSettingData = new AppSettingData();
-            AppSettingData.AutoPopOutPanelsChanged += (sender, e) => FlightSim.AutoPanelPopOutActivation(e);
             AppSettingData.TouchPanelIntegrationChanged += async (sender, e) =>
             {
                 await TouchPanel.TouchPanelIntegrationUpdated(e);
@@ -99,7 +98,6 @@ namespace MSFSPopoutPanelManager.Orchestration
             CheckForAutoUpdate();
 
             ProfileData.UpdateActiveProfile(AppSettingData.AppSetting.LastUsedProfileId);     // Load last used profile
-            FlightSim.AutoPanelPopOutActivation(AppSettingData.AppSetting.AutoPopOutPanels);  // Activate auto pop out panel if defined in preferences
             FlightSim.StartSimConnectServer();                                                // Start the SimConnect server
 
             // Enable/Disable touch panel feature (Personal use only feature)

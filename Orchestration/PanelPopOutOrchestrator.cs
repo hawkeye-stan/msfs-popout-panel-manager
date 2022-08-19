@@ -57,8 +57,6 @@ namespace MSFSPopoutPanelManager.Orchestration
 
             ProfileData.AutoSwitchProfile();
 
-            FlightSimData.IsEnteredFlight = true;
-
             // find the profile with the matching binding aircraft
             var profile = ProfileData.Profiles.FirstOrDefault(p => p.BindingAircrafts.Any(p => p == FlightSimData.CurrentMsfsAircraft));
 

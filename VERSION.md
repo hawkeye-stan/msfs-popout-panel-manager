@@ -12,7 +12,9 @@
 
 * Added work around for SU10 Beta issue when after panel separations, panels' size become so big and they block most of the game window for lower resolution screen and prevented Pop Out Panel Manager from popping out the next panel. 
 
-* Made improvement to how panels are separated when using multiple monitors.
+* Made improvements to how panels are separated during pop out process.
+
+* Fixed an issue when adjusting position and size of a pop out, it may not work correctly on some PC configuration.
 
 Known issue:
 

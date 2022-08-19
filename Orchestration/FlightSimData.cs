@@ -22,7 +22,7 @@ namespace MSFSPopoutPanelManager.Orchestration
 
         public bool IsSimulatorStarted { get; set; }
 
-        public bool IsEnteredFlight { get; set; }
+        public bool IsInCockpit { get; set; }
 
         public new void OnPropertyChanged(string propertyName, object oldValue, object newValue)
         {
@@ -43,7 +43,6 @@ namespace MSFSPopoutPanelManager.Orchestration
             CurrentMsfsAircraft = null;
             CurrentMsfsLiveryTitle = null;
             ElectricalMasterBatteryStatus = false;
-            IsEnteredFlight = false;
         }
     }
 }

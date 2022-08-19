@@ -175,13 +175,25 @@ namespace MSFSPopoutPanelManager.Orchestration
         // Started in v3.4.2
         public void MigrateLiveryToAircraftBinding(string liveryName, string aircraftName)
         {
+            bool hasChanges = false;
             if (Profiles != null && !string.IsNullOrEmpty(liveryName) && !string.IsNullOrEmpty(aircraftName))
             {
                 var matchedProfile = Profiles.FirstOrDefault(p => p.BindingAircraftLiveries.Any(t => t == liveryName));
+
                 if (matchedProfile != null && !matchedProfile.BindingAircrafts.Any(a => a == aircraftName))
                 {
                     matchedProfile.BindingAircrafts.Add(aircraftName);
+                    hasChanges = true;
+                }
+
+                if (matchedProfile != null)
+                {
                     matchedProfile.BindingAircraftLiveries.Remove(liveryName);
+                    hasChanges = true;
+                }
+
+                if (hasChanges)
+                {
                     WriteProfiles();
                     RefreshProfile();
                 }

@@ -64,8 +64,9 @@ namespace MSFSPopoutPanelManager.Orchestration
                     ProfileData.AutoSwitchProfile();
                 }
             };
-            _simConnectProvider.OnFlightStarted += (sender, e) => OnFlightStarted?.Invoke(this, null);
+            _simConnectProvider.OnFlightStarted += HandleOnFlightStarted;
             _simConnectProvider.OnFlightStopped += HandleOnFlightStopped;
+            _simConnectProvider.OnIsInCockpitChanged += (sender, e) => FlightSimData.IsInCockpit = e;
             _simConnectProvider.Start();
         }
 
@@ -110,22 +111,16 @@ namespace MSFSPopoutPanelManager.Orchestration
                 _simConnectProvider.TurnOffAvionics(ProfileData.ActiveProfile.PowerOnRequiredForColdStart);
         }
 
-        public void AutoPanelPopOutActivation(bool activate)
+        private void HandleOnFlightStarted(object sender, EventArgs e)
         {
-            if (activate)
-                _simConnectProvider.OnFlightStarted += HandleOnFlightStartedForAutoPopOut;
-            else
-                _simConnectProvider.OnFlightStarted -= HandleOnFlightStartedForAutoPopOut;
-        }
+            OnFlightStarted?.Invoke(this, null);
 
-        private void HandleOnFlightStartedForAutoPopOut(object sender, EventArgs e)
-        {
-            OnFlightStartedForAutoPopOut?.Invoke(this, null);
+            if (AppSettingData.AppSetting.AutoPopOutPanels)
+                OnFlightStartedForAutoPopOut?.Invoke(this, null);
         }
 
         private void HandleOnFlightStopped(object sender, EventArgs e)
         {
-            FlightSimData.IsEnteredFlight = false;
             OnFlightStopped?.Invoke(this, null);
         }
     }

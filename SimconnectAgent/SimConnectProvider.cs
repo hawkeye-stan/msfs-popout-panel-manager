@@ -22,6 +22,7 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
 
         public event EventHandler OnConnected;
         public event EventHandler OnDisconnected;
+        public event EventHandler<bool> OnIsInCockpitChanged;
         public event EventHandler OnFlightStarted;
         public event EventHandler OnFlightStopped;
         public event EventHandler<List<SimConnectDataDefinition>> OnSimConnectDataRefreshed;
@@ -227,7 +228,6 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
             DetectFlightStartedOrStopped();
         }
 
-        private const int CAMERA_STATE_INIT = 0;
         private const int CAMERA_STATE_COCKPIT = 2;
         private const int CAMERA_STATE_LOAD_SCREEN = 11;
         private const int CAMERA_STATE_HOME_SCREEN = 15;
@@ -241,9 +241,11 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
             if (_currentCameraState == cameraState)
                 return;
 
+            if (cameraState == CAMERA_STATE_COCKPIT)
+                OnIsInCockpitChanged?.Invoke(this, true);
+
             switch (_currentCameraState)
             {
-                case CAMERA_STATE_INIT:
                 case CAMERA_STATE_HOME_SCREEN:
                 case CAMERA_STATE_LOAD_SCREEN:
                     if (cameraState == CAMERA_STATE_COCKPIT)
@@ -254,16 +256,17 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
 
                     break;
                 case CAMERA_STATE_COCKPIT:
-                    if ((cameraState == CAMERA_STATE_LOAD_SCREEN || cameraState == CAMERA_STATE_HOME_SCREEN))
+                    if (cameraState == CAMERA_STATE_LOAD_SCREEN || cameraState == CAMERA_STATE_HOME_SCREEN)
                     {
                         _currentCameraState = cameraState;
                         OnFlightStopped?.Invoke(this, null);
+                        OnIsInCockpitChanged?.Invoke(this, false);
                     }
 
                     break;
             }
 
-            if (cameraState == CAMERA_STATE_INIT || cameraState == CAMERA_STATE_COCKPIT || cameraState == CAMERA_STATE_HOME_SCREEN || cameraState == CAMERA_STATE_LOAD_SCREEN)
+            if (cameraState == CAMERA_STATE_COCKPIT || cameraState == CAMERA_STATE_HOME_SCREEN || cameraState == CAMERA_STATE_LOAD_SCREEN)
                 _currentCameraState = cameraState;
         }
 
