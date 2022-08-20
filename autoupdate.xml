@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <item>
-	<version>3.4.1</version>
-	<url>https://github.com/hawkeye-stan/msfs-popout-panel-manager/releases/download/v3.4.1/msfs-popout-panel-manager.zip</url>
+	<version>3.4.2</version>
+	<url>https://github.com/hawkeye-stan/msfs-popout-panel-manager/releases/download/v3.4.2/msfs-popout-panel-manager.zip</url>
 	<changelog>https://raw.githubusercontent.com/hawkeye-stan/msfs-popout-panel-manager/master/latestreleasenotes.txt</changelog>
 	<mandatory>false</mandatory>
 </item>
