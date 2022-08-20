@@ -14,7 +14,7 @@
 
 * Made improvements to how panels are separated during pop out process.
 
-* Fixed an issue when adjusting position and size of a pop out, it may not work correctly on some PC configuration.
+* Fixed an issue when adjusting position and size of a pop out panel on some PC configuration.
 
 Known issue:
 
