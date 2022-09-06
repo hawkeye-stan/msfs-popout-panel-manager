@@ -1,6 +1,7 @@
 ﻿using MSFSPopoutPanelManager.Orchestration;
 using MSFSPopoutPanelManager.Shared;
 using Prism.Commands;
+using System.Windows;
 
 namespace MSFSPopoutPanelManager.WpfApp.ViewModel
 {
@@ -20,6 +21,8 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
             SectionSelectCommand = new DelegateCommand<object>(OnSectionSelected);
         }
 
+        public Window Window { get; set; }
+
         public DelegateCommand<object> SectionSelectCommand { get; private set; }
 
         public AppSettingData AppSettingData { get { return _orchestrator.AppSettingData; } }
@@ -36,6 +39,8 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
 
         public bool MSFSTouchPanelSettingsVisible { get; private set; }
 
+        public bool WindowedModeSettingsVisible { get; private set; }
+
         private void OnSectionSelected(object commandParameter)
         {
             ApplicationSettingsVisible = false;
@@ -44,6 +49,7 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
             TrackIRSettingsVisible = false;
             TouchSettingsVisible = false;
             MSFSTouchPanelSettingsVisible = false;
+            WindowedModeSettingsVisible = false;
 
             switch (commandParameter.ToString())
             {
@@ -64,6 +70,9 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
                     break;
                 case "MSFS Touch Panel Settings":
                     MSFSTouchPanelSettingsVisible = true;
+                    break;
+                case "Windowed Mode Settings":
+                    WindowedModeSettingsVisible = true;
                     break;
             }
         }

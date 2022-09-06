@@ -15,6 +15,7 @@ namespace MSFSPopoutPanelManager.Orchestration
     {
         // This will be replaced by a signal from Ready to Fly Skipper into webserver in version 4.0
         private const int READY_TO_FLY_BUTTON_APPEARANCE_DELAY = 2000;
+        private int _builtInPanelConfigDelay;
 
         internal ProfileData ProfileData { get; set; }
 
@@ -35,6 +36,7 @@ namespace MSFSPopoutPanelManager.Orchestration
         public event EventHandler OnPopOutStarted;
         public event EventHandler<bool> OnPopOutCompleted;
         public event EventHandler<TouchPanelOpenEventArg> OnTouchPanelOpened;
+        public event EventHandler<PanelSourceCoordinate> OnPanelSourceOverlayFlashed;
 
         public void ManualPopOut()
         {
@@ -43,9 +45,10 @@ namespace MSFSPopoutPanelManager.Orchestration
 
             InputHookManager.EndHook();
 
-            if (ActiveProfile.PanelSourceCoordinates.Count > 0 || ActiveProfile.TouchPanelBindings.Count > 0)
+            if (ActiveProfile.PanelSourceCoordinates.Count > 0 || ActiveProfile.TouchPanelBindings.Count > 0 || ActiveProfile.IncludeInGamePanels)
             {
                 StatusMessageWriter.WriteMessage($"Panels pop out in progress for profile:\n{ActiveProfile.ProfileName}", StatusMessageType.Info, true);
+                _builtInPanelConfigDelay = 0;
                 CorePopOutSteps();
             }
         }
@@ -67,19 +70,24 @@ namespace MSFSPopoutPanelManager.Orchestration
             // Match the delay for Ready to Fly button to disappear
             Thread.Sleep(READY_TO_FLY_BUTTON_APPEARANCE_DELAY);
 
-            if (ActiveProfile.PanelSourceCoordinates.Count > 0 || ActiveProfile.TouchPanelBindings.Count > 0)
+            if (ActiveProfile.PanelSourceCoordinates.Count > 0 || ActiveProfile.TouchPanelBindings.Count > 0 || ActiveProfile.IncludeInGamePanels)
             {
                 StatusMessageWriter.WriteMessage($"Automatic pop out is starting for profile:\n{profile.ProfileName}", StatusMessageType.Info, true);
 
                 // Extra wait for cockpit view to appear and align
                 Thread.Sleep(2000);
 
+                _builtInPanelConfigDelay = 4000;
                 CorePopOutSteps();
             }
         }
 
         private void CorePopOutSteps()
         {
+            // Set Windowed Display Mode window's configuration if needed
+            if (AppSettingData.AppSetting.AutoResizeMsfsGameWindow)
+                WindowActionManager.SetMsfsGameWindowLocation(ActiveProfile.MsfsGameWindowConfig);
+
             // Has custom pop out panels
             if (ActiveProfile.PanelSourceCoordinates.Count > 0)
             {
@@ -141,7 +149,7 @@ namespace MSFSPopoutPanelManager.Orchestration
                 return;
             }
 
-            if (ActiveProfile.PanelSourceCoordinates.Count == 0 && ActiveProfile.TouchPanelBindings.Count == 0)
+            if (ActiveProfile.PanelSourceCoordinates.Count == 0 && ActiveProfile.TouchPanelBindings.Count == 0 && !ActiveProfile.IncludeInGamePanels)
             {
                 StatusMessageWriter.WriteMessage("No panel has been selected for the profile. Please select at least one panel to continue.", StatusMessageType.Error, false);
                 return;
@@ -179,14 +187,24 @@ namespace MSFSPopoutPanelManager.Orchestration
             // Add the MSFS Touch Panel (My other github project) windows to the panel list
             if (AppSetting.TouchPanelSettings.EnableTouchPanelIntegration)
             {
-                var panelResults = AddMsfsTouchPanels(panelConfigs.Count + 1);
+                var panelResults = AddMsfsTouchPanels(panelConfigs.Count + 100);     // add a panelIndex gap
+                if (panelResults != null)
+                    panelConfigs.AddRange(panelResults);
+            }
+
+            // Add the built-in panels from toolbar menu (ie. VFR Map, Check List, Weather, etc)
+            if (ActiveProfile.IncludeInGamePanels)
+            {
+                // Allow delay to wait for in game built-in pop outs to appear
+                Thread.Sleep(_builtInPanelConfigDelay);
+
+                var panelResults = AddBuiltInPanels(panelConfigs.Count + 200);       // add a panelIndex gap
                 if (panelResults != null)
                     panelConfigs.AddRange(panelResults);
             }
 
             if (panelConfigs.Count == 0)
             {
-                OnPopOutCompleted?.Invoke(this, false);
                 StatusMessageWriter.WriteMessage("No panels have been found. Please select at least one in-game panel.", StatusMessageType.Error, false);
                 return;
             }
@@ -217,6 +235,13 @@ namespace MSFSPopoutPanelManager.Orchestration
                     StatusMessageWriter.WriteMessage("Panels have been popped out succesfully.", StatusMessageType.Info, true);
                     OnPopOutCompleted?.Invoke(this, true);
                 }
+
+                if (!ActiveProfile.IsLocked)
+                    ProfileData.WriteProfiles();
+
+                // For migrating existing profile, if using windows mode, save MSFS game window configuration
+                if (AppSettingData.AppSetting.AutoResizeMsfsGameWindow && !ActiveProfile.MsfsGameWindowConfig.IsValid)
+                    ProfileData.SaveMsfsGameWindowConfig();
             }
         }
 
@@ -229,18 +254,25 @@ namespace MSFSPopoutPanelManager.Orchestration
             {
                 var x = ActiveProfile.PanelSourceCoordinates[i - 1].X;
                 var y = ActiveProfile.PanelSourceCoordinates[i - 1].Y;
+
+                // show the panel source overlay for split second
+                Task task = new Task(() => OnPanelSourceOverlayFlashed?.Invoke(this, ActiveProfile.PanelSourceCoordinates[i - 1]));
+                task.RunSynchronously();
+
                 InputEmulationManager.PopOutPanel(x, y, AppSetting.UseLeftRightControlToPopOut);
 
-                var handle = PInvoke.FindWindow("AceApp", String.Empty);    // Get an AceApp window with empty title
+                // Get an AceApp window with empty title
+                var handle = PInvoke.FindWindow("AceApp", String.Empty);
 
                 // Need to move the window to upper left corner first. There is a possible bug in the game that panel pop out to full screen that prevents further clicking.
                 if (handle != IntPtr.Zero)
                     WindowActionManager.MoveWindow(handle, 0, 0, 1000, 500);
 
+                // The joined panel is always the first panel that got popped out
                 if (i > 1)
-                    SeparatePanel(panels[0].PanelHandle);       // The joined panel is always the first panel that got popped out
+                    SeparatePanel(panels[0].PanelHandle);
 
-                handle = PInvoke.FindWindow("AceApp", String.Empty);    // Get an AceApp window with empty title
+                handle = PInvoke.FindWindow("AceApp", String.Empty);
 
                 if (handle == IntPtr.Zero && i == 1)
                 {
@@ -291,6 +323,35 @@ namespace MSFSPopoutPanelManager.Orchestration
             var point = PanelAnalyzer.GetMagnifyingGlassIconCoordinate(hwnd);
 
             InputEmulationManager.LeftClick(point.X, point.Y);
+        }
+
+        private List<PanelConfig> AddBuiltInPanels(int panelIndex)
+        {
+            List<PanelConfig> builtinPanels = new List<PanelConfig>();
+
+            var panelHandles = WindowActionManager.GetWindowsByPanelType(new List<PanelType>() { PanelType.BuiltInPopout });
+
+            foreach (var panelHandle in panelHandles)
+            {
+                var rectangle = WindowActionManager.GetWindowRect(panelHandle);
+                var clientRectangle = WindowActionManager.GetClientRect(panelHandle);
+
+                builtinPanels.Add(new PanelConfig()
+                {
+                    PanelIndex = panelIndex,
+                    PanelHandle = panelHandle,
+                    PanelType = PanelType.BuiltInPopout,
+                    PanelName = WindowActionManager.GetWindowCaption(panelHandle),
+                    Top = rectangle.Top,
+                    Left = rectangle.Left,
+                    Width = clientRectangle.Width,
+                    Height = clientRectangle.Height
+                });
+
+                panelIndex++;
+            }
+
+            return builtinPanels.Count == 0 ? null : builtinPanels;
         }
 
         private List<PanelConfig> AddMsfsTouchPanels(int panelIndex)
@@ -357,7 +418,7 @@ namespace MSFSPopoutPanelManager.Orchestration
                 }
             }
 
-            return touchPanels;
+            return touchPanels.Count == 0 ? null : touchPanels;
         }
 
         private void LoadAndApplyPanelConfigs(List<PanelConfig> panelResults)
@@ -368,7 +429,18 @@ namespace MSFSPopoutPanelManager.Orchestration
                 if (panel.PanelHandle == IntPtr.Zero)
                     return;
 
-                var savedPanelConfig = ActiveProfile.PanelConfigs.FirstOrDefault(s => s.PanelIndex == panel.PanelIndex);
+                PanelConfig savedPanelConfig = null;
+
+                if (panel.PanelType == PanelType.CustomPopout || panel.PanelType == PanelType.MSFSTouchPanel)
+                    savedPanelConfig = ActiveProfile.PanelConfigs.FirstOrDefault(s => s.PanelIndex == panel.PanelIndex);
+                else if (panel.PanelType == PanelType.BuiltInPopout)
+                    savedPanelConfig = ActiveProfile.PanelConfigs.FirstOrDefault(s => s.PanelName == panel.PanelName);
+
+                if (savedPanelConfig == null)
+                {
+                    panel.PanelHandle = IntPtr.Zero;
+                    return;
+                }
 
                 // Assign previous saved values
                 if (savedPanelConfig != null)
@@ -401,6 +473,14 @@ namespace MSFSPopoutPanelManager.Orchestration
                     Thread.Sleep(1000);
                 }
 
+                // Apply window size again to overcome a bug in MSFS that when moving panel between monitors, panel automatic resize for no reason
+                if (panel.PanelType == PanelType.BuiltInPopout)
+                {
+                    Thread.Sleep(2000);     // Overcome GTN750 bug
+                    WindowActionManager.MoveWindow(panel.PanelHandle, panel.Left, panel.Top, panel.Width, panel.Height);
+                    Thread.Sleep(1000);
+                }
+
                 if (!panel.FullScreen)
                 {
                     // Apply always on top
@@ -428,6 +508,10 @@ namespace MSFSPopoutPanelManager.Orchestration
                     Thread.Sleep(250);
                 }
             });
+
+            // If profile is locked, remove all panels without handle
+            if (ActiveProfile.IsLocked)
+                panelResults.RemoveAll(p => p.PanelHandle == IntPtr.Zero);
         }
 
         private void ReturnToAfterPopOutCameraView()

@@ -45,17 +45,23 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
                                                                                 .ObservesProperty(() => ProfileData.ActiveProfile)
                                                                                 .ObservesProperty(() => FlightSimData.IsSimulatorStarted);
 
+            SetIncludeInGamePanelsCommand = new DelegateCommand(() => ProfileData.WriteProfiles(), () => FlightSimData.HasCurrentMsfsAircraft && ProfileData.HasActiveProfile && FlightSimData.IsSimulatorStarted)
+                                                                                .ObservesProperty(() => FlightSimData.HasCurrentMsfsAircraft)
+                                                                                .ObservesProperty(() => ProfileData.ActiveProfile)
+                                                                                .ObservesProperty(() => FlightSimData.IsSimulatorStarted);
+
             StartPanelSelectionCommand = new DelegateCommand(OnStartPanelSelection, () => FlightSimData.HasCurrentMsfsAircraft && ProfileData.HasActiveProfile && ProfileData.ActiveProfile != null && FlightSimData.IsSimulatorStarted && FlightSimData.IsInCockpit)
                                                                                 .ObservesProperty(() => FlightSimData.HasCurrentMsfsAircraft)
                                                                                 .ObservesProperty(() => ProfileData.ActiveProfile)
                                                                                 .ObservesProperty(() => FlightSimData.IsSimulatorStarted)
                                                                                 .ObservesProperty(() => FlightSimData.IsInCockpit);
 
-            StartPopOutCommand = new DelegateCommand(OnStartPopOut, () => FlightSimData.HasCurrentMsfsAircraft && ProfileData.HasActiveProfile && (ProfileData.ActiveProfile.PanelSourceCoordinates.Count > 0 || ProfileData.ActiveProfile.TouchPanelBindings.Count > 0) && FlightSimData.IsSimulatorStarted && FlightSimData.IsInCockpit)
+            StartPopOutCommand = new DelegateCommand(OnStartPopOut, () => FlightSimData.HasCurrentMsfsAircraft && ProfileData.HasActiveProfile && (ProfileData.ActiveProfile.PanelSourceCoordinates.Count > 0 || ProfileData.ActiveProfile.TouchPanelBindings.Count > 0 || ProfileData.ActiveProfile.IncludeInGamePanels) && FlightSimData.IsSimulatorStarted && FlightSimData.IsInCockpit)
                                                                                 .ObservesProperty(() => FlightSimData.HasCurrentMsfsAircraft)
                                                                                 .ObservesProperty(() => ProfileData.ActiveProfile)
                                                                                 .ObservesProperty(() => ProfileData.ActiveProfile.PanelSourceCoordinates.Count)
                                                                                 .ObservesProperty(() => ProfileData.ActiveProfile.TouchPanelBindings.Count)
+                                                                                .ObservesProperty(() => ProfileData.ActiveProfile.IncludeInGamePanels)
                                                                                 .ObservesProperty(() => FlightSimData.IsSimulatorStarted)
                                                                                 .ObservesProperty(() => FlightSimData.IsInCockpit);
 
@@ -93,6 +99,8 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
         public DelegateCommand DeleteProfileBindingCommand { get; private set; }
 
         public DelegateCommand SetPowerOnRequiredCommand { get; private set; }
+
+        public DelegateCommand SetIncludeInGamePanelsCommand { get; private set; }
 
         public DelegateCommand StartPanelSelectionCommand { get; private set; }
 

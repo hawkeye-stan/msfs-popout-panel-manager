@@ -14,6 +14,10 @@ namespace MSFSPopoutPanelManager.UserDataAgent
             PanelSourceCoordinates = new ObservableCollection<PanelSourceCoordinate>();
             TouchPanelBindings = new ObservableCollection<TouchPanelBinding>();
             IsLocked = false;
+            PowerOnRequiredForColdStart = false;
+            IncludeInGamePanels = false;
+
+            MsfsGameWindowConfig = new MsfsGameWindowConfig();
 
             // Legacy data
             BindingAircraftLiveries = new ObservableCollection<string>();
@@ -39,6 +43,10 @@ namespace MSFSPopoutPanelManager.UserDataAgent
         public bool IsLocked { get; set; }
 
         public bool PowerOnRequiredForColdStart { get; set; }
+
+        public bool IncludeInGamePanels { get; set; }
+
+        public MsfsGameWindowConfig MsfsGameWindowConfig { get; set; }
 
         [JsonIgnore]
         public bool IsActive { get; set; }
@@ -105,6 +113,9 @@ namespace MSFSPopoutPanelManager.UserDataAgent
         public bool IsCustomPopOut { get { return PanelType == PanelType.CustomPopout; } }
 
         [JsonIgnore]
+        public bool IsBuiltInPopOut { get { return PanelType == PanelType.BuiltInPopout; } }
+
+        [JsonIgnore]
         public IntPtr PanelHandle { get; set; }
 
         [JsonIgnore]
@@ -146,5 +157,41 @@ namespace MSFSPopoutPanelManager.UserDataAgent
         public string PlaneId { get; set; }
 
         public string PanelId { get; set; }
+    }
+
+    public class MsfsGameWindowConfig : ObservableObject
+    {
+        public MsfsGameWindowConfig()
+        {
+            Top = 0;
+            Left = 0;
+            Width = 0;
+            Height = 0;
+        }
+
+        public MsfsGameWindowConfig(int left, int top, int width, int height)
+        {
+            Top = top;
+            Left = left;
+            Width = width;
+            Height = height;
+        }
+
+        public int Top { get; set; }
+
+        public int Left { get; set; }
+
+        public int Width { get; set; }
+
+        public int Height { get; set; }
+
+        [JsonIgnore]
+        public bool IsValid
+        {
+            get
+            {
+                return Width != 0 && Height != 0;
+            }
+        }
     }
 }

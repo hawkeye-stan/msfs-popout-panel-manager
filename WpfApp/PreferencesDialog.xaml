@@ -44,7 +44,7 @@
     </Window.Resources>
     <Grid>
         <DockPanel>
-            <TreeView Width="250" VerticalAlignment="Stretch" DockPanel.Dock="Left">
+            <TreeView Width="240" VerticalAlignment="Stretch" DockPanel.Dock="Left">
                 <TreeView.ItemContainerStyle>
                     <Style TargetType="{x:Type TreeViewItem}">
                         <Setter Property="IsExpanded" Value="True" />
@@ -58,11 +58,12 @@
                         </Style.Resources>
                     </Style>
                 </TreeView.ItemContainerStyle>
-                <TreeViewItem Header="Application Settings" Selected="TreeViewItem_Selected" Margin="0,15,0,10" IsSelected="True"></TreeViewItem>
-                <TreeViewItem Header="Pop Out Settings" Selected="TreeViewItem_Selected" Margin="0,0,0,10"></TreeViewItem>
+                <TreeViewItem Header="Application Settings" Selected="TreeViewItem_Selected" Margin="0,15,0,10" IsSelected="True" Padding="0"></TreeViewItem>
                 <TreeViewItem Header="Auto Pop Out Panel Settings" Selected="TreeViewItem_Selected" Margin="0,0,0,10"></TreeViewItem>
-                <TreeViewItem Header="Track IR Settings" Selected="TreeViewItem_Selected" Margin="0,0,0,10"></TreeViewItem>
+                <TreeViewItem Header="Pop Out Settings" Selected="TreeViewItem_Selected" Margin="0,0,0,10"></TreeViewItem>
                 <TreeViewItem Header="Touch Settings" Selected="TreeViewItem_Selected" Margin="0,0,0,10"></TreeViewItem>
+                <TreeViewItem Header="Track IR Settings" Selected="TreeViewItem_Selected" Margin="0,0,0,10"></TreeViewItem>
+                <TreeViewItem Header="Windowed Mode Settings" Selected="TreeViewItem_Selected" Margin="0,0,0,10"></TreeViewItem>
                 <TreeViewItem Header="MSFS Touch Panel Settings" Selected="TreeViewItem_Selected" Margin="0,0,0,10" Visibility="{Binding Path=AppSettingData.AppSetting.IsEnabledTouchPanelServer, Converter={StaticResource VisibleIfTrueConverter}, Mode=OneWay}"></TreeViewItem>
             </TreeView>
             <WrapPanel DockPanel.Dock="Right" Margin="20,10,0,0">
@@ -95,6 +96,23 @@
                             <CheckBox IsChecked="{Binding AppSettingData.AppSetting.StartMinimized, Mode=TwoWay}" >
                                 <AccessText TextWrapping="Wrap">Start the application in minimized mode in system tray.</AccessText>
                             </CheckBox>
+                        </WrapPanel>
+                       
+                    </WrapPanel>
+                </ScrollViewer>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <WrapPanel Orientation="Vertical" Visibility="{Binding WindowedModeSettingsVisible, Converter={StaticResource VisibleIfTrueConverter}, Mode=OneWay}">
+                        <WrapPanel Orientation="Vertical" Margin="0,0,20,20">
+                            <TextBlock Style="{StaticResource TextBlockHeading}">Auto Resize MSFS Game Window (Used with Windowed Display Mode only)</TextBlock>
+                            <Line Stretch="Fill" Stroke="Gray" X2="1"/>
+                            <CheckBox IsChecked="{Binding AppSettingData.AppSetting.AutoResizeMsfsGameWindow, Mode=TwoWay}" >
+                                <AccessText TextWrapping="Wrap">Enable automatic resize of MSFS game window when using Windowed Display Mode. When playing the game in Windowed Display Mode, this setting is used to resize game window to match original size
+                                and location when panel profile was initially defined. When this setting is first checked, current game window size and location will also be saved automatically.</AccessText>
+                            </CheckBox>
+                            <TextBlock TextWrapping="Wrap" Margin="28,10,0,0" FontSize="14">
+                                To override previously saved MSFS game window size and location, when editing panel location overlay, please also click Override Auto Panning Camera. This will not only save updated panel locations, it will also save MSFS 
+                                game window size and location to be used on subsequent pop out.
+                            </TextBlock>
                         </WrapPanel>
                     </WrapPanel>
                 </ScrollViewer>
@@ -282,7 +300,7 @@
                     </WrapPanel>
                     <WrapPanel Visibility="{Binding AppSettingData.AppSetting.TouchPanelSettings.EnableTouchPanelIntegration, Converter={StaticResource VisibleIfTrueConverter}, Mode=OneWay}">
                         <TextBlock FontStyle="Italic">
-                            Restart is require for all changes below to take effect.
+                            Restart is required for all changes below to take effect.
                         </TextBlock>
                         <WrapPanel Orientation="Vertical" Margin="0,0,20,20">
                             <TextBlock Style="{StaticResource TextBlockHeading}">Enable Use of Arduino</TextBlock>

@@ -9,27 +9,30 @@ namespace MSFSPopoutPanelManager.UserDataAgent
         public AppSetting()
         {
             // Set defaults
-            AutoUpdaterUrl = "https://raw.githubusercontent.com/hawkeye-stan/msfs-popout-panel-manager/master/autoupdate.xml";
             LastUsedProfileId = -1;
-            MinimizeToTray = false;
+            AutoUpdaterUrl = "https://raw.githubusercontent.com/hawkeye-stan/msfs-popout-panel-manager/master/autoupdate.xml";
+
             AlwaysOnTop = true;
-            UseAutoPanning = true;
-            MinimizeAfterPopOut = false;
-            AutoPanningKeyBinding = "0";
+            MinimizeToTray = false;
             StartMinimized = false;
-            AutoDisableTrackIR = true;
+
             AutoPopOutPanels = true;
+
+            UseAutoPanning = true;
+            AutoPanningKeyBinding = "0";
+            MinimizeAfterPopOut = false;
             OnScreenMessageDuration = 1;
             UseLeftRightControlToPopOut = false;
-            IsEnabledTouchPanelServer = false;
-
-
             AfterPopOutCameraView = new AfterPopOutCameraView();
             AfterPopOutCameraView.PropertyChanged += (source, e) =>
             {
                 var arg = e as PropertyChangedExtendedEventArgs;
                 OnPropertyChanged(arg.PropertyName, arg.OldValue, arg.NewValue);
             };
+
+            AutoDisableTrackIR = true;
+
+            AutoResizeMsfsGameWindow = true;
 
             TouchScreenSettings = new TouchScreenSettings();
             TouchScreenSettings.PropertyChanged += (source, e) =>
@@ -38,6 +41,7 @@ namespace MSFSPopoutPanelManager.UserDataAgent
                 OnPropertyChanged(arg.PropertyName, arg.OldValue, arg.NewValue);
             };
 
+            IsEnabledTouchPanelServer = false;
             TouchPanelSettings = new TouchPanelSettings();
             TouchPanelSettings.PropertyChanged += (source, e) =>
             {
@@ -62,8 +66,6 @@ namespace MSFSPopoutPanelManager.UserDataAgent
 
         public bool StartMinimized { get; set; }
 
-        public bool IncludeBuiltInPanel { get; set; }
-
         public bool AutoPopOutPanels { get; set; }
 
         public bool AutoDisableTrackIR { get; set; }
@@ -73,6 +75,8 @@ namespace MSFSPopoutPanelManager.UserDataAgent
         public bool UseLeftRightControlToPopOut { get; set; }
 
         public bool IsEnabledTouchPanelServer { get; set; }
+
+        public bool AutoResizeMsfsGameWindow { get; set; }
 
         public AfterPopOutCameraView AfterPopOutCameraView { get; set; }
 

@@ -16,6 +16,8 @@ namespace MSFSPopoutPanelManager.WpfApp
 
             InitializeComponent();
             this.DataContext = preferencesViewModel;
+
+            _preferencesViewModel.Window = this;
         }
 
         public AppSetting AppSetting { get; set; }
@@ -31,6 +33,8 @@ namespace MSFSPopoutPanelManager.WpfApp
         public bool TouchSettingsVisible { get; set; }
 
         public bool MSFSTouchPanelSettingsVisible { get; set; }
+
+        public bool WindowModeSettingsVisible { get; set; }
 
         private void TreeViewItem_Selected(object sender, RoutedEventArgs e)
         {

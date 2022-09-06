@@ -8,7 +8,7 @@
                  xmlns:shared="clr-namespace:MSFSPopoutPanelManager.Shared;assembly=Shared"
                  mc:Ignorable="d"
         Title="MSFS Pop Out Panel Manager" 
-        Height="710" 
+        Height="740" 
         Width="920"
         WindowStartupLocation="CenterScreen"
         ResizeMode="CanMinimize" 
@@ -72,7 +72,7 @@
                 </Image>
             </DockPanel>
             <DockPanel>
-                <StackPanel Name="panelSteps" DockPanel.Dock="Top" Height="545" Background="#FF323C64">
+                <StackPanel Name="panelSteps" DockPanel.Dock="Top" Height="575" Background="#FF323C64">
                 </StackPanel>
                 <WrapPanel DockPanel.Dock="Top" Orientation="Horizontal" Height="70" Background="#FF252523">
                     <Label Content="Status" Margin="5, 10, 5, 5"/>

@@ -7,7 +7,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
              mc:Ignorable="d" 
-             Height="545"
+             Height="575"
              Width="920"
              Background="#FF323A64">
     <UserControl.Resources>
@@ -45,7 +45,7 @@
                         <Image Width="22" Height="22" VerticalAlignment="Center" Source="Resources\info_icon.png"></Image>
                     </controls:Tile>
                 </WrapPanel>
-                <DataGrid Name="PanelConfigGrid" HorizontalAlignment="Center" Width="882" Height="430" Margin="0 10 0 0" AutoGenerateColumns="False" CanUserResizeColumns="False" HorizontalScrollBarVisibility="Disabled" 
+                <DataGrid Name="PanelConfigGrid" HorizontalAlignment="Center" Width="882" Height="460" Margin="0 10 0 0" AutoGenerateColumns="False" CanUserResizeColumns="False" HorizontalScrollBarVisibility="Disabled" 
                           CanUserReorderColumns="False" CanUserResizeRows="False" HorizontalGridLinesBrush="#B9B9B9" VerticalGridLinesBrush="#B9B9B9" GridLinesVisibility="Horizontal" SelectionUnit="Cell"   
                           BorderThickness="1" CanUserAddRows="False" CanUserSortColumns="False" KeyboardNavigation.TabNavigation="None" KeyboardNavigation.IsTabStop="False"
                           ItemsSource="{Binding ProfileData.ActiveProfile.PanelConfigs}" HeadersVisibility="Column" KeyboardNavigation.DirectionalNavigation="Local" MouseDown="PanelConfigGrid_MouseDown">
@@ -211,7 +211,7 @@
                                               SourceUpdated="GridData_SourceUpdated" 
                                               IsChecked="{Binding HideTitlebar, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}" 
                                               IsEnabled="{c:Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path='!DataContext.ProfileData.ActiveProfile.IsLocked '}"
-                                              IsHitTestVisible="{c:Binding Path='!FullScreen and IsCustomPopOut'}"/>
+                                              IsHitTestVisible="{c:Binding Path='!FullScreen and (IsCustomPopOut or IsBuiltInPopOut)'}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -222,7 +222,7 @@
                                               SourceUpdated="GridData_SourceUpdated" 
                                               IsChecked="{Binding FullScreen, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}" 
                                               IsEnabled="{c:Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path='!DataContext.ProfileData.ActiveProfile.IsLocked'}"
-                                              IsHitTestVisible="{c:Binding Path='IsCustomPopOut'}"/>
+                                              IsHitTestVisible="{c:Binding Path='IsCustomPopOut or IsBuiltInPopOut'}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -233,7 +233,7 @@
                                               SourceUpdated="GridData_SourceUpdated" 
                                               IsChecked="{Binding TouchEnabled, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}" 
                                               IsEnabled="{c:Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path='!DataContext.ProfileData.ActiveProfile.IsLocked'}"
-                                              IsHitTestVisible="{c:Binding Path='!FullScreen and IsCustomPopOut'}"/>
+                                              IsHitTestVisible="{c:Binding Path='!FullScreen and (IsCustomPopOut or IsBuiltInPopOut)'}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -244,7 +244,7 @@
                                               SourceUpdated="GridData_SourceUpdated" 
                                               IsChecked="{Binding DisableGameRefocus, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}" 
                                               IsEnabled="{c:Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path='!DataContext.ProfileData.ActiveProfile.IsLocked'}"
-                                              IsHitTestVisible="{c:Binding Path='!FullScreen and IsCustomPopOut and TouchEnabled'}"/>
+                                              IsHitTestVisible="{c:Binding Path='!FullScreen and (IsCustomPopOut or IsBuiltInPopOut) and TouchEnabled'}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>

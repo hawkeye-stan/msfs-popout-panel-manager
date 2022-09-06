@@ -1,4 +1,5 @@
-﻿using MSFSPopoutPanelManager.Orchestration;
+﻿using Microsoft.Web.WebView2.Core;
+using MSFSPopoutPanelManager.Orchestration;
 using MSFSPopoutPanelManager.Shared;
 using MSFSPopoutPanelManager.UserDataAgent;
 using MSFSPopoutPanelManager.WindowsAgent;
@@ -12,12 +13,13 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
     {
         private MainOrchestrator _orchestrator;
         private bool _minimizeForPopOut;
+        private CoreWebView2Environment _coreWebView2Environment;
 
         public OrchestratorHelper(MainOrchestrator orchestrator)
         {
             _orchestrator = orchestrator;
 
-            _orchestrator.PanelSource.onOverlayShowed += HandleShowOverlay;
+            _orchestrator.PanelSource.OnOverlayShowed += HandleShowOverlay;
             _orchestrator.PanelSource.OnLastOverlayRemoved += (sender, e) => HandleRemovePanelSourceOverlay(false);
             _orchestrator.PanelSource.OnAllOverlaysRemoved += (sender, e) => HandleRemovePanelSourceOverlay(true);
             _orchestrator.PanelSource.OnSelectionStarted += HandlePanelSelectionStarted;
@@ -26,6 +28,7 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
             _orchestrator.PanelPopOut.OnPopOutStarted += HandleOnPopOutStarted;
             _orchestrator.PanelPopOut.OnPopOutCompleted += HandleOnPopOutCompleted;
             _orchestrator.PanelPopOut.OnTouchPanelOpened += HandleOnTouchPanelOpened;
+            _orchestrator.PanelPopOut.OnPanelSourceOverlayFlashed += HandleOnPanelSourceOverlayFlashed;
 
             StatusMessageWriter.OnStatusMessage += HandleOnStatusMessage;
         }
@@ -72,6 +75,16 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
             AddPanelCoorOverlay(e);
         }
 
+        private void HandleOnPanelSourceOverlayFlashed(object sender, PanelSourceCoordinate e)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                AddPanelCoorOverlay(e);
+                System.Threading.Thread.Sleep(750);
+                HandleRemovePanelSourceOverlay(true);
+            });
+        }
+
         private void HandleRemovePanelSourceOverlay(bool removeAll)
         {
             Application.Current.Dispatcher.Invoke(() =>
@@ -113,9 +126,15 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
 
         private void HandleOnTouchPanelOpened(object sender, TouchPanelOpenEventArg e)
         {
-            Application.Current.Dispatcher.Invoke(() =>
+            Application.Current.Dispatcher.Invoke(async () =>
             {
-                TouchPanelWebViewDialog window = new TouchPanelWebViewDialog(e.PlaneId, e.PanelId, e.Caption, e.Width, e.Height);
+                if (_coreWebView2Environment == null)
+                {
+                    var options = new CoreWebView2EnvironmentOptions("--disable-web-security");
+                    _coreWebView2Environment = await CoreWebView2Environment.CreateAsync(null, null, options);
+                }
+
+                TouchPanelWebViewDialog window = new TouchPanelWebViewDialog(e.PlaneId, e.PanelId, e.Caption, e.Width, e.Height, _coreWebView2Environment);
                 window.Show();
             });
         }

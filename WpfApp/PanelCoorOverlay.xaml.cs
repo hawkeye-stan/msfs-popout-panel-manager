@@ -8,8 +8,8 @@ namespace MSFSPopoutPanelManager.WpfApp
 {
     public partial class PanelCoorOverlay : Window
     {
-        private const int TOP_ADJUSTMENT = 23;      // half of window height
-        private const int LEFT_ADJUSTMENT = 27;     // half of window width
+        private const int TOP_ADJUSTMENT = 15;      // half of window height
+        private const int LEFT_ADJUSTMENT = 15;     // half of window width
         private int _xCoor;
         private int _yCoor;
 

@@ -16,6 +16,6 @@
         <SolidColorBrush Color="#FFF0F0F0" Opacity="0.01" />
     </Window.Background>
     <Grid>
-        <wv2:WebView2 Name="webView" DefaultBackgroundColor="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        <wv2:WebView2 Name="webView" DefaultBackgroundColor="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Source=""/>
     </Grid>
 </mah:MetroWindow>

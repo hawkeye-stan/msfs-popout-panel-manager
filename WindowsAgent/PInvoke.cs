@@ -123,6 +123,9 @@ namespace MSFSPopoutPanelManager.WindowsAgent
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern IntPtr SendMessage(IntPtr hwnd, UInt32 Msg, IntPtr wParam, IntPtr lParam);
 
+        [DllImport("user32.dll")]
+        public static extern int ShowCursor(bool bShow);
+
         [DllImport("user32.dll", SetLastError = true)]
         public static extern bool ShowWindowAsync(HandleRef hwnd, int nCmdShow);
 

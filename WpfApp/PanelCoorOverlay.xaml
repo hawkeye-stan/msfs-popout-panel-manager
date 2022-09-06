@@ -7,15 +7,15 @@
         Title="PanelCoorOverlay"
         ResizeMode="NoResize"
         WindowStyle="None"
-        Height="46" 
-        Width="55" 
+        Height="30" 
+        Width="30" 
         SizeToContent="WidthAndHeight"
         Background="#01F0F0FF"
         AllowsTransparency="True"
         MouseMove="Window_MouseMove"
         Loaded="Window_Loaded">
     <Grid>
-        <Label Name="lblPanelIndex" Content="1" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        <Image Height="46" Width="55" HorizontalAlignment="Left" VerticalAlignment="Top" Opacity="1" Source="resources/transparent.png"/>
+        <Label Name="lblPanelIndex" Content="1" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,0,0,2"/>
+        <Image Height="30" Width="30" HorizontalAlignment="Left" VerticalAlignment="Top" Opacity="1" Source="resources/transparent.png"/>
     </Grid>
 </Window>

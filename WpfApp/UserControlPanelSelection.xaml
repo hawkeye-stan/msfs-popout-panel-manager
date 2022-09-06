@@ -8,7 +8,7 @@
              xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
-             Height="545"
+             Height="575"
              Width="920"
              Background="#FF323A64">
     <UserControl.Resources>
@@ -77,6 +77,7 @@
                         <Button Content="-" ToolTip="Delete Binding"  Margin="10,0,0,0" Width="40" Command="{Binding DeleteProfileBindingCommand}"/>
                     </WrapPanel>
                     <CheckBox Margin="10,5,0,0" Content="Power on required to pop out panels on cold start (G1000 / NXi Only)" IsChecked="{Binding ProfileData.ActiveProfile.PowerOnRequiredForColdStart}" Command="{Binding SetPowerOnRequiredCommand}" />
+                    <CheckBox Margin="10,5,0,0" Content="Include in-game menu bar panels (VFR Map, Checklist, ATC, etc)" IsChecked="{Binding ProfileData.ActiveProfile.IncludeInGamePanels}" Command="{Binding SetIncludeInGamePanelsCommand}" />
                     <WrapPanel Name="TouchPanelConfigurationPanel" Orientation="Horizontal" Margin="0,10,0,0" Visibility="{Binding AppSettingData.AppSetting.IsEnabledTouchPanelServer, Converter={StaticResource VisibleIfTrueConverter}, Mode=OneWay}" >
                         <Label Content="Open MSFS touch panel when flight session starts" Margin="5,0,0,0" />
                         <Button Content="+" ToolTip="Add Binding" Margin="94,0,0,0" Width="40" Command="{Binding OpenTouchPanelBindingCommand}"/>
@@ -114,7 +115,7 @@
             </WrapPanel>
             <DockPanel DockPanel.Dock="Right" Width="325" HorizontalAlignment="Center">
                 <Label DockPanel.Dock="Top" Content="Panel Locations" HorizontalAlignment="Center" Margin="0,10,0,0"/>
-                <DataGrid DockPanel.Dock="Top" HorizontalAlignment="Center" Width="290" Height="435" AutoGenerateColumns="False" CanUserResizeColumns="False" HorizontalScrollBarVisibility="Disabled" 
+                <DataGrid DockPanel.Dock="Top" HorizontalAlignment="Center" Width="290" Height="465" AutoGenerateColumns="False" CanUserResizeColumns="False" HorizontalScrollBarVisibility="Disabled" 
                           CanUserReorderColumns="False" CanUserResizeRows="False" IsReadOnly="True" HorizontalGridLinesBrush="#B9B9B9" VerticalGridLinesBrush="#B9B9B9" GridLinesVisibility="Horizontal" BorderThickness="1" 
                           CanUserAddRows="False" CanUserSortColumns="False" ItemsSource="{Binding ProfileData.ActiveProfile.PanelSourceCoordinates}">
                     <DataGrid.CellStyle>

@@ -1,5 +1,5 @@
 ﻿using MahApps.Metro.Controls;
-using Microsoft.Web.WebView2.Wpf;
+using Microsoft.Web.WebView2.Core;
 using MSFSPopoutPanelManager.Shared;
 using System;
 using System.Runtime.InteropServices;
@@ -11,8 +11,9 @@ namespace MSFSPopoutPanelManager.WpfApp
     {
         private string _planeId;
         private string _panelId;
+        private CoreWebView2Environment _webView2Environment;
 
-        public TouchPanelWebViewDialog(string planeId, string panelId, string caption, int width, int height)
+        public TouchPanelWebViewDialog(string planeId, string panelId, string caption, int width, int height, CoreWebView2Environment environment)
         {
             InitializeComponent();
             //this.Topmost = true;
@@ -22,21 +23,22 @@ namespace MSFSPopoutPanelManager.WpfApp
 
             _planeId = planeId;
             _panelId = panelId;
+            _webView2Environment = environment;
 
             Loaded += TouchPanelWebViewDialog_Loaded;
         }
 
-        private void TouchPanelWebViewDialog_Loaded(object sender, System.Windows.RoutedEventArgs e)
+        private async void TouchPanelWebViewDialog_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {
-            StartWebView(webView);
+            await webView.EnsureCoreWebView2Async(_webView2Environment);
 
-            // This somehow fixes webview did not maximize correctly when the host WPF dialog is maximized
+            if (webView != null && webView.CoreWebView2 != null)
+            {
+                webView.CoreWebView2.Navigate($"{Constants.WEB_HOST_URI}/{_planeId.ToLower()}/{_panelId.ToLower()}");
+            }
+
+            // This fixes webview which does not maximize correctly when host WPF dialog is maximized
             WindowExtensions.FixWindowMaximizeCropping(this);
-        }
-
-        private void StartWebView(WebView2 webView)
-        {
-            webView.Source = new Uri($"{Constants.WEB_HOST_URI}/{_planeId.ToLower()}/{_panelId.ToLower()}");
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

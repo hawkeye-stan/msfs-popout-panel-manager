@@ -9,8 +9,12 @@ namespace MSFSPopoutPanelManager.Orchestration
 {
     public class MainOrchestrator : ObservableObject
     {
+        private IntPtr _msfsGameWindowHandle;
+
         public MainOrchestrator()
         {
+            _msfsGameWindowHandle = IntPtr.Zero;
+
             Profile = new ProfileOrchestrator();
             PanelSource = new PanelSourceOrchestrator();
             PanelPopOut = new PanelPopOutOrchestrator();

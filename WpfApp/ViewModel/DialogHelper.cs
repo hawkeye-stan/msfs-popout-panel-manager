@@ -16,6 +16,16 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
             return (bool)dialog.ShowDialog();
         }
 
+        public static bool ConfirmDialog(string title, string message, Window owner)
+        {
+            var dialog = new ConfirmationDialog(title, message);
+            dialog.Owner = owner;
+            dialog.Topmost = true;
+            dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+
+            return (bool)dialog.ShowDialog();
+        }
+
         public static AddProfileDialogResult AddProfileDialog(List<Profile> profiles)
         {
             var dialog = new AddProfileDialog(profiles);

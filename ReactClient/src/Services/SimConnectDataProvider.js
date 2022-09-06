@@ -14,20 +14,31 @@ const SimConnectDataProvider = ({ children }) => {
 
     // request data from SimConnect on timer interval
     useEffect(() => {
-        let requestInterval = null;
-
         let localSettings = localStorage.getItem('settings');
+        let updateInterval = localSettings !== null ? JSON.parse(localSettings).dataRefreshInterval : 500;
+        
+        // Using sharedworker
+        // sharedWorker = new SharedWorker('/sharedworker.js');
+        // sharedWorker.port.start();  
+        // sharedWorker.port.postMessage({apiUrl: API_URL.url, updateInterval: updateInterval});
+        // sharedWorker.port.onmessage = e => {  
+        //     if(e.data !== null && e.data !== undefined)
+        //         setArduinoStatus(Boolean(e.data.arduinoStatus));
+        //         setNetworkStatus(Boolean(e.data.networkStatus));
 
-        if (localSettings !== null)
-            requestInterval = JSON.parse(localStorage.getItem('settings')).dataRefreshInterval;
-        else
-            requestInterval = 500;
+        //         if (e.data.systemEvent !== undefined && e.data.systemEvent !== null)
+        //             setSimConnectSystemEvent(e.data.systemEvent.split('-')[0]);
+        //         else
+        //             setSimConnectSystemEvent(null);
 
+        //         if(e.data.simConnectData !== undefined && e.data.simConnectData !== null)
+        //             setSimConnectData(e.data.simConnectData);
+        // };
+    
         const requestData = async () => {
             try {
                 let response = await fetch(`${API_URL.url}/getdata`).catch(() => {
-                    handleConnectionError('MSFS Touch Panel Server is not available.')
-                    return;
+                    throw('MSFS Touch Panel Server is not available.')
                 });
 
                 if (response !== undefined) {
@@ -36,62 +47,37 @@ const SimConnectDataProvider = ({ children }) => {
                     if (result === undefined)
                         throw new Error('MSFS Touch Panel Server error');
 
-                    if (result.msfsStatus !== null && result.msfsStatus !== undefined)
-                        setNetworkStatus(Boolean(result.msfsStatus));
-                    else
-                        setNetworkStatus(false);
-
-                    if (result.arduinoStatus !== null && result.arduinoStatus !== undefined)
-                        setArduinoStatus(Boolean(result.arduinoStatus));
-                    else
-                        setArduinoStatus(false);
+                    setNetworkStatus(Boolean(result.msfsStatus ?? false));
+                    setArduinoStatus(Boolean(result.arduinoStatus ?? false));
+                    
+                    if (!result.msfsStatus)
+                        throw('MSFS SimConnect is not available.')
 
                     if (result.systemEvent !== null && result.systemEvent !== undefined)
                         setSimConnectSystemEvent(result.systemEvent.split('-')[0]);
                     else
                         setSimConnectSystemEvent(null);
 
-                    if (!result.msfsStatus)
-                    {
-                        handleConnectionError('MSFS SimConnect is not available.')
-                        return;
-                    }
-
-                    if (result.data !== null && result.data !== undefined) {
-                        var simData = JSON.parse(result.data);
-
-                        if ((simData !== null && simData !== [])) {
-                            setSimConnectData(parseRequestData(simData));
-                            clearInterval(requestInterval);
-                            let updateInterval = JSON.parse(localStorage.getItem('settings')).dataRefreshInterval;
-                            requestInterval = setInterval(() => requestData(), updateInterval);
-                        }
-                    }
-                    else {
-                        clearInterval(requestInterval);
-                        let updateInterval = JSON.parse(localStorage.getItem('settings')).dataRefreshInterval;
-                        requestInterval = setInterval(() => requestData(), updateInterval);
-                    }
+                    var simData = JSON.parse(result.data ?? []);
+                        
+                    if ((simData !== null && simData !== []))
+                        setSimConnectData(parseRequestData(simData));
+                    
+                    
+                    setTimeout(() => requestData(), updateInterval);
+                }
+                else {
+                    throw('Empty MSFS Touch Panel Server response.')
                 }
             }
             catch (error) {
                 console.log(error);
                 setNetworkStatus(false);
-                handleConnectionError('MSFS Touch Panel Server is not available.')
+                setTimeout(() => requestData(), SIMCONNECT_DATA_REQUEST_INTERVAL_SLOW);
             }
         }
 
-        const handleConnectionError = (errorMessage) => {
-            console.error(errorMessage);
-            clearInterval(requestInterval);
-            requestInterval = setInterval(() => requestData(), SIMCONNECT_DATA_REQUEST_INTERVAL_SLOW);      // slow down the request data interval until network reconnection
-        }
-
         requestData();
-
-        return () => {
-            clearInterval(requestInterval);
-        }
     }, [])
 
     return (
@@ -106,7 +92,8 @@ export default SimConnectDataProvider;
 // custom hook
 export const useSimConnectData = () => useContext(SimConnectDataContext);
 
-export const simConnectGetPlanePanelProfilesInfo = async () => {
+export const simConnectGetPlanePanelProfilesInfo = async () =>
+ {
     try {
         let response = await fetch(`${API_URL.url}/getplanepanelprofileinfo`);
         let data = await response.json();

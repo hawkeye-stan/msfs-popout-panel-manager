@@ -3,7 +3,8 @@
     "WpfApp": {
       "commandName": "Project",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ENABLE_XAML_DIAGNOSTICS_SOURCE_INFO": "1"
       }
     }
   }

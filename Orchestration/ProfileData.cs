@@ -204,5 +204,18 @@ namespace MSFSPopoutPanelManager.Orchestration
         {
             MigrateLiveryToAircraftBinding(FlightSimData.CurrentMsfsLiveryTitle, FlightSimData.CurrentMsfsAircraft);
         }
+
+        public void SaveMsfsGameWindowConfig()
+        {
+            if (ActiveProfile == null)
+                return;
+
+            var msfsGameWindowConfig = WindowsAgent.WindowActionManager.GetMsfsGameWindowLocation();
+            if (msfsGameWindowConfig.IsValid)
+            {
+                ActiveProfile.MsfsGameWindowConfig = msfsGameWindowConfig;
+                WriteProfiles();
+            }
+        }
     }
 }

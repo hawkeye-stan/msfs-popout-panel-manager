@@ -1,4 +1,5 @@
 ﻿using MSFSPopoutPanelManager.Shared;
+using MSFSPopoutPanelManager.UserDataAgent;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -98,6 +99,11 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             return PInvoke.FindWindowByCaption(IntPtr.Zero, caption);
         }
 
+        public static string GetWindowCaption(IntPtr hwnd)
+        {
+            return PInvoke.GetWindowText(hwnd);
+        }
+
         public static Rectangle GetClientRect(IntPtr hwnd)
         {
             Rectangle rectangle;
@@ -136,6 +142,23 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             return count;
         }
 
+        public static List<IntPtr> GetWindowsByPanelType(List<PanelType> panelTypes)
+        {
+            List<IntPtr> windowHandles = new List<IntPtr>();
+
+            PInvoke.EnumWindows((IntPtr hwnd, int lParam) =>
+            {
+                var panelType = GetWindowPanelType(hwnd);
+
+                if (panelTypes.Contains(panelType))
+                    windowHandles.Add(hwnd);
+
+                return true;
+            }, 0);
+
+            return windowHandles;
+        }
+
         public static PanelType GetWindowPanelType(IntPtr hwnd)
         {
             var className = PInvoke.GetClassName(hwnd);
@@ -170,10 +193,70 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                 var panelType = GetWindowPanelType(hwnd);
 
                 if (panelType == PanelType.CustomPopout || panelType == PanelType.MSFSTouchPanel)
-                    WindowActionManager.CloseWindow(hwnd);
+                    CloseWindow(hwnd);
 
                 return true;
             }, 0);
+        }
+
+        public static MsfsGameWindowConfig GetMsfsGameWindowLocation()
+        {
+            var msfsGameWindowHandle = GetMsfsGameWindowHandle();
+            var isWindowedMode = IsMsfsGameInWindowedMode(msfsGameWindowHandle);
+
+            if (isWindowedMode)
+            {
+                var windowRect = GetWindowRect(msfsGameWindowHandle);
+                var clientRect = GetClientRect(msfsGameWindowHandle);
+                return new MsfsGameWindowConfig(windowRect.Left, windowRect.Top, clientRect.Width + 16, clientRect.Height + 39);
+            }
+
+            return new MsfsGameWindowConfig(0, 0, 0, 0);
+        }
+
+        public static void SetMsfsGameWindowLocation(MsfsGameWindowConfig msfsGameWindowConfig)
+        {
+            var msfsGameWindowHandle = GetMsfsGameWindowHandle();
+            var isWindowedMode = IsMsfsGameInWindowedMode(msfsGameWindowHandle);
+
+            if (isWindowedMode && msfsGameWindowConfig.IsValid)
+                PInvoke.MoveWindow(msfsGameWindowHandle, msfsGameWindowConfig.Left, msfsGameWindowConfig.Top, msfsGameWindowConfig.Width, msfsGameWindowConfig.Height, true);
+        }
+
+        public static bool IsMsfsGameInWindowedMode(IntPtr msfsGameWindowHandle)
+        {
+            if (msfsGameWindowHandle != IntPtr.Zero)
+            {
+                var currentStyle = (uint)PInvoke.GetWindowLong(msfsGameWindowHandle, PInvokeConstant.GWL_STYLE);
+                return (currentStyle & PInvokeConstant.WS_CAPTION) != 0;
+            }
+
+            return false;
+        }
+
+        public static IntPtr GetMsfsGameWindowHandle()
+        {
+            IntPtr msfsGameWindowHandle = IntPtr.Zero;
+
+            // Get game window handle
+            PInvoke.EnumWindows(new PInvoke.CallBack((IntPtr hwnd, int lParam) =>
+            {
+                var className = PInvoke.GetClassName(hwnd);
+
+                if (className == "AceApp")      // MSFS windows designation
+                {
+                    var caption = WindowsAgent.PInvoke.GetWindowText(hwnd);
+
+                    if (caption.IndexOf("Microsoft Flight Simulator") > -1)        // MSFS main game window
+                    {
+                        msfsGameWindowHandle = hwnd;
+                    }
+                }
+
+                return true;
+            }), 0);
+
+            return msfsGameWindowHandle;
         }
     }
 }

@@ -10,6 +10,7 @@ namespace MSFSPopoutPanelManager.WpfApp
             InitializeComponent();
             this.Title = title;
             this.txtMessage.Text = message;
+            this.Topmost = true;
         }
 
         private void btnDialogYes_Click(object sender, RoutedEventArgs e)

@@ -23,7 +23,7 @@ namespace MSFSPopoutPanelManager.Orchestration
 
         private AppSetting AppSetting { get { return AppSettingData == null ? null : AppSettingData.AppSetting; } }
 
-        public event EventHandler<PanelSourceCoordinate> onOverlayShowed;
+        public event EventHandler<PanelSourceCoordinate> OnOverlayShowed;
         public event EventHandler OnLastOverlayRemoved;
         public event EventHandler OnAllOverlaysRemoved;
         public event EventHandler OnSelectionStarted;
@@ -71,6 +71,11 @@ namespace MSFSPopoutPanelManager.Orchestration
             }
 
             InputEmulationManager.SaveCustomView(AppSettingData.AppSetting.AutoPanningKeyBinding);
+
+            // If using windows mode, save MSFS game window configuration
+            if (AppSettingData.AppSetting.AutoResizeMsfsGameWindow)
+                ProfileData.SaveMsfsGameWindowConfig();
+
             StatusMessageWriter.WriteMessage("Auto Panning Camera has been saved succesfully.", StatusMessageType.Info, false);
         }
 
@@ -100,7 +105,7 @@ namespace MSFSPopoutPanelManager.Orchestration
             ActiveProfile.PanelSourceCoordinates.Add(newCoor);
             _panelIndex++;
 
-            onOverlayShowed?.Invoke(this, newCoor);
+            OnOverlayShowed?.Invoke(this, newCoor);
         }
 
         public void HandleOnLastPanelSelectionRemoved(object sender, Point e)
@@ -122,12 +127,16 @@ namespace MSFSPopoutPanelManager.Orchestration
             if (ActiveProfile == null)
                 return;
 
+            // Set Windowed Display Mode window's configuration if needed
+            if (AppSettingData.AppSetting.AutoResizeMsfsGameWindow)
+                WindowActionManager.SetMsfsGameWindowLocation(ActiveProfile.MsfsGameWindowConfig);
+
             // remove all existing panel overlay display
             for (var i = 0; i < ActiveProfile.PanelSourceCoordinates.Count; i++)
                 OnAllOverlaysRemoved?.Invoke(this, null);
 
             foreach (var coor in ActiveProfile.PanelSourceCoordinates)
-                onOverlayShowed?.Invoke(this, new PanelSourceCoordinate() { PanelIndex = coor.PanelIndex, X = coor.X, Y = coor.Y });
+                OnOverlayShowed?.Invoke(this, new PanelSourceCoordinate() { PanelIndex = coor.PanelIndex, X = coor.X, Y = coor.Y });
 
             // Turn off TrackIR if TrackIR is started
             FlightSimOrchestrator.TurnOffTrackIR();
@@ -141,7 +150,7 @@ namespace MSFSPopoutPanelManager.Orchestration
             if (ActiveProfile == null)
                 return;
 
-            // remove all existing panel overlay display
+            // Remove all existing panel overlay display
             for (var i = 0; i < ActiveProfile.PanelSourceCoordinates.Count; i++)
                 OnAllOverlaysRemoved?.Invoke(this, null);
 
@@ -154,11 +163,15 @@ namespace MSFSPopoutPanelManager.Orchestration
             if (ActiveProfile == null)
                 return;
 
-            //If enable, save the current viewport into custom view by Ctrl-Alt-0
+            // If enable, save the current viewport into custom view by Ctrl-Alt-0
             if (AppSetting.UseAutoPanning)
                 InputEmulationManager.SaveCustomView(AppSetting.AutoPanningKeyBinding);
 
             ProfileData.WriteProfiles();
+
+            // If using windows mode, save MSFS game window configuration
+            if (AppSettingData.AppSetting.AutoResizeMsfsGameWindow)
+                ProfileData.SaveMsfsGameWindowConfig();
 
             InputHookManager.EndHook();
 
