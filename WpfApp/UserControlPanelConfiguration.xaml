@@ -27,6 +27,7 @@
                                 </ControlTemplate>
                             </Setter.Value>
                         </Setter>
+                        <Setter Property="Foreground" Value="#FF4D4D4D" />
                     </Trigger>
                 </Style.Triggers>
             </Style>
@@ -48,7 +49,8 @@
                 <DataGrid Name="PanelConfigGrid" HorizontalAlignment="Center" Width="882" Height="460" Margin="0 10 0 0" AutoGenerateColumns="False" CanUserResizeColumns="False" HorizontalScrollBarVisibility="Disabled" 
                           CanUserReorderColumns="False" CanUserResizeRows="False" HorizontalGridLinesBrush="#B9B9B9" VerticalGridLinesBrush="#B9B9B9" GridLinesVisibility="Horizontal" SelectionUnit="Cell"   
                           BorderThickness="1" CanUserAddRows="False" CanUserSortColumns="False" KeyboardNavigation.TabNavigation="None" KeyboardNavigation.IsTabStop="False"
-                          ItemsSource="{Binding ProfileData.ActiveProfile.PanelConfigs}" HeadersVisibility="Column" KeyboardNavigation.DirectionalNavigation="Local" MouseDown="PanelConfigGrid_MouseDown">
+                          ItemsSource="{Binding ProfileData.ActiveProfile.PanelConfigs}" HeadersVisibility="Column" KeyboardNavigation.DirectionalNavigation="Local" MouseDown="PanelConfigGrid_MouseDown"
+                          IsHitTestVisible="{c:Binding Path='!ProfileData.ActiveProfile.IsLocked'}">
                     <DataGrid.RowStyle>
                         <Style TargetType="DataGridRow">
                             <Setter Property="Background" Value="{x:Null}" />
@@ -98,7 +100,7 @@
                                     <TextBox Name="PanelName" Width="30" Height="28" BorderThickness="0" TextAlignment="Left" 
                                              SourceUpdated="GridData_SourceUpdated"
                                              IsReadOnly="True" 
-                                             IsHitTestVisible="{c:Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path='!DataContext.ProfileData.ActiveProfile.IsLocked'}"
+                                             IsHitTestVisible="{Binding IsFound}"
                                              Text="&#x25B6;"
                                              VerticalAlignment="Center"
                                              Padding="5, 3, 0, 0">
@@ -127,8 +129,9 @@
                                              Text="{Binding PanelName, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=LostFocus}" 
                                              SourceUpdated="GridData_SourceUpdated"
                                              Style="{StaticResource TextBoxColumnFocus}" 
-                                             IsReadOnly="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path=DataContext.ProfileData.ActiveProfile.IsLocked}" 
-                                             IsEnabled="{Binding IsCustomPopOut}">
+                                             IsHitTestVisible="{Binding IsCustomPopOut}"
+                                             IsReadOnly="{c:Binding Path='!IsCustomPopOut'}"
+                                             IsEnabled="{Binding IsFound}">
                                     </TextBox>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
@@ -140,8 +143,8 @@
                                              Text="{Binding Left, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=LostFocus}" 
                                              SourceUpdated="GridData_SourceUpdated" 
                                              Style="{StaticResource TextBoxColumnFocus}" 
-                                             IsReadOnly="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path=DataContext.ProfileData.ActiveProfile.IsLocked}" 
                                              IsHitTestVisible="{c:Binding Path='!FullScreen'}"
+                                             IsEnabled="{Binding IsFound}"
                                              GotFocus="NumericDataPoint_GotFocus"
                                              LostFocus="NumericDataPoint_LostFocus"
                                              FontSize="14"/>
@@ -155,8 +158,8 @@
                                              Text="{Binding Top, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=LostFocus}" 
                                              SourceUpdated="GridData_SourceUpdated" 
                                              Style="{StaticResource TextBoxColumnFocus}" 
-                                             IsReadOnly="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path=DataContext.ProfileData.ActiveProfile.IsLocked}" 
                                              IsHitTestVisible="{c:Binding Path='!FullScreen'}"
+                                             IsEnabled="{Binding IsFound}"
                                              GotFocus="NumericDataPoint_GotFocus"
                                              LostFocus="NumericDataPoint_LostFocus"
                                              FontSize="14"/>
@@ -170,8 +173,8 @@
                                              Text="{Binding Width, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=LostFocus}" 
                                              SourceUpdated="GridData_SourceUpdated" 
                                              Style="{StaticResource TextBoxColumnFocus}" 
-                                             IsReadOnly="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path=DataContext.ProfileData.ActiveProfile.IsLocked}" 
                                              IsHitTestVisible="{c:Binding Path='!FullScreen'}"
+                                             IsEnabled="{Binding IsFound}"
                                              GotFocus="NumericDataPoint_GotFocus"
                                              LostFocus="NumericDataPoint_LostFocus"
                                              FontSize="14"/>
@@ -185,11 +188,12 @@
                                              Text="{Binding Height, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=LostFocus}" 
                                              SourceUpdated="GridData_SourceUpdated" 
                                              Style="{StaticResource TextBoxColumnFocus}" 
-                                             IsReadOnly="{c:Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path='DataContext.ProfileData.ActiveProfile.IsLocked'}" 
                                              IsHitTestVisible="{c:Binding Path='!FullScreen'}"
+                                             IsEnabled="{Binding IsFound}"
                                              GotFocus="NumericDataPoint_GotFocus"
                                              LostFocus="NumericDataPoint_LostFocus"
-                                             FontSize="14"/>
+                                             FontSize="14">
+                                    </TextBox>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -199,8 +203,7 @@
                                     <CheckBox Name="AlwaysOnTop" Width="75" Margin="30 0 0 0" 
                                               SourceUpdated="GridData_SourceUpdated" 
                                               IsChecked="{Binding AlwaysOnTop, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}" 
-                                              IsEnabled="{c:Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path='!DataContext.ProfileData.ActiveProfile.IsLocked'}"
-                                              IsHitTestVisible="{c:Binding Path='!FullScreen'}"/>
+                                              IsHitTestVisible="{c:Binding Path='!FullScreen and IsFound'}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -210,8 +213,7 @@
                                     <CheckBox Name="HideTitlebar" Width="75" Margin="30 0 0 0" 
                                               SourceUpdated="GridData_SourceUpdated" 
                                               IsChecked="{Binding HideTitlebar, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}" 
-                                              IsEnabled="{c:Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path='!DataContext.ProfileData.ActiveProfile.IsLocked '}"
-                                              IsHitTestVisible="{c:Binding Path='!FullScreen and (IsCustomPopOut or IsBuiltInPopOut)'}"/>
+                                              IsHitTestVisible="{c:Binding Path='!FullScreen and (IsCustomPopOut or IsBuiltInPopOut) and IsFound'}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -221,19 +223,17 @@
                                     <CheckBox Name="FullScreen" Width="80" Margin="32 0 0 0" 
                                               SourceUpdated="GridData_SourceUpdated" 
                                               IsChecked="{Binding FullScreen, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}" 
-                                              IsEnabled="{c:Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path='!DataContext.ProfileData.ActiveProfile.IsLocked'}"
-                                              IsHitTestVisible="{c:Binding Path='IsCustomPopOut or IsBuiltInPopOut'}"/>
+                                              IsHitTestVisible="{c:Binding Path='(IsCustomPopOut or IsBuiltInPopOut) and IsFound'}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
                         <DataGridTemplateColumn Header="Touch Enabled" Width="70">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <CheckBox Name="TouchEnabled" Width="70" Margin="25 0 0 0" 
+                                    <CheckBox Name="TouchEnabled" Width="70" Margin="25 0 0 0" Foreground="#FFFFFFFF"
                                               SourceUpdated="GridData_SourceUpdated" 
                                               IsChecked="{Binding TouchEnabled, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}" 
-                                              IsEnabled="{c:Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path='!DataContext.ProfileData.ActiveProfile.IsLocked'}"
-                                              IsHitTestVisible="{c:Binding Path='!FullScreen and (IsCustomPopOut or IsBuiltInPopOut)'}"/>
+                                              IsHitTestVisible="{c:Binding Path='(IsCustomPopOut or IsBuiltInPopOut) and IsFound'}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -243,8 +243,7 @@
                                     <CheckBox Name="DisableGameRefocus" Width="70" Margin="25 0 0 0" 
                                               SourceUpdated="GridData_SourceUpdated" 
                                               IsChecked="{Binding DisableGameRefocus, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}" 
-                                              IsEnabled="{c:Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid, AncestorLevel=1}, Path='!DataContext.ProfileData.ActiveProfile.IsLocked'}"
-                                              IsHitTestVisible="{c:Binding Path='!FullScreen and (IsCustomPopOut or IsBuiltInPopOut) and TouchEnabled'}"/>
+                                              IsHitTestVisible="{c:Binding Path='(IsCustomPopOut or IsBuiltInPopOut) and TouchEnabled and IsFound'}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>

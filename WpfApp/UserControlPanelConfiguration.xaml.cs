@@ -30,7 +30,7 @@ namespace MSFSPopoutPanelManager.WpfApp
             var panelConfig = container.Content as PanelConfig;
             var propertyName = (PanelConfigPropertyName)Enum.Parse(typeof(PanelConfigPropertyName), ((Control)sender).Name);
 
-            var panelConfigItem = new PanelConfigItem() { PanelIndex = panelConfig.PanelIndex, PanelConfigProperty = propertyName };
+            var panelConfigItem = new PanelConfigItem() { PanelHandle = panelConfig.PanelHandle, PanelConfigProperty = propertyName };
             _panelConfigurationViewModel.PanelConfigUpdatedCommand.Execute(panelConfigItem);
         }
 
@@ -80,7 +80,7 @@ namespace MSFSPopoutPanelManager.WpfApp
                         break;
                 }
 
-                _panelConfigurationViewModel.SelectedPanelConfigItem = new PanelConfigItem() { PanelIndex = panelConfig.PanelIndex, PanelConfigProperty = selectedProperty };
+                _panelConfigurationViewModel.SelectedPanelConfigItem = new PanelConfigItem() { PanelHandle = panelConfig.PanelHandle, PanelConfigProperty = selectedProperty };
             }
         }
 
@@ -96,7 +96,7 @@ namespace MSFSPopoutPanelManager.WpfApp
                     _panelConfigurationViewModel.NumericDataPointTextBox = textBox;
 
                     var panelConfig = textBox.DataContext as PanelConfig;
-                    _panelConfigurationViewModel.SelectedPanelConfigItem = new PanelConfigItem() { PanelIndex = panelConfig.PanelIndex, PanelConfigProperty = (PanelConfigPropertyName)Enum.Parse(typeof(PanelConfigPropertyName), textBox.Name) };
+                    _panelConfigurationViewModel.SelectedPanelConfigItem = new PanelConfigItem() { PanelHandle = panelConfig.PanelHandle, PanelConfigProperty = (PanelConfigPropertyName)Enum.Parse(typeof(PanelConfigPropertyName), textBox.Name) };
                     return;
             }
 

@@ -29,6 +29,7 @@ namespace MSFSPopoutPanelManager.UserDataAgent
 
             var copiedProfile = matchedProfile.Copy<Profile>();     // Using Shared/ObjectExtensions.cs extension method
             copiedProfile.BindingAircrafts = new ObservableCollection<string>();
+            copiedProfile.IsLocked = false;
 
             return AddProfile(copiedProfile, newProfileName, profiles);
         }

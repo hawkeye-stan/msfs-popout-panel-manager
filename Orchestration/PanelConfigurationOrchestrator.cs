@@ -53,18 +53,27 @@ namespace MSFSPopoutPanelManager.Orchestration
             ProfileData.WriteProfiles();
         }
 
-        public void PanelConfigPropertyUpdated(int panelIndex, PanelConfigPropertyName configPropertyName)
+        public void PanelConfigPropertyUpdated(IntPtr panelHandle, PanelConfigPropertyName configPropertyName)
         {
-            if (panelIndex == -1 || !AllowEdit || ActiveProfile.IsLocked)
+            if (panelHandle == IntPtr.Zero || !AllowEdit || ActiveProfile.IsLocked)
                 return;
 
-            var panelConfig = ActiveProfile.PanelConfigs.FirstOrDefault(p => p.PanelIndex == panelIndex);
+            var panelConfig = ActiveProfile.PanelConfigs.FirstOrDefault(p => p.PanelHandle == panelHandle);
 
             if (panelConfig != null)
             {
                 if (configPropertyName == PanelConfigPropertyName.FullScreen)
                 {
                     InputEmulationManager.ToggleFullScreenPanel(panelConfig.PanelHandle);
+
+                    // Set full screen mode panel coordinate
+                    var windowRectangle = WindowActionManager.GetWindowRect(panelConfig.PanelHandle);
+                    var clientRectangle = WindowActionManager.GetClientRect(panelConfig.PanelHandle);
+                    panelConfig.FullScreenLeft = panelConfig.FullScreen ? windowRectangle.Left : 0;
+                    panelConfig.FullScreenTop = panelConfig.FullScreen ? windowRectangle.Top : 0;
+                    panelConfig.FullScreenWidth = panelConfig.FullScreen ? clientRectangle.Width : 0;
+                    panelConfig.FullScreenHeight = panelConfig.FullScreen ? clientRectangle.Height : 0;
+
                     panelConfig.HideTitlebar = false;
                     panelConfig.AlwaysOnTop = false;
                 }
@@ -123,12 +132,12 @@ namespace MSFSPopoutPanelManager.Orchestration
             }
         }
 
-        public void PanelConfigIncreaseDecrease(int panelIndex, PanelConfigPropertyName configPropertyName, int changeAmount)
+        public void PanelConfigIncreaseDecrease(IntPtr panelHandle, PanelConfigPropertyName configPropertyName, int changeAmount)
         {
-            if (panelIndex == -1 || !AllowEdit || ActiveProfile.IsLocked || ActiveProfile.PanelConfigs == null || ActiveProfile.PanelConfigs.Count == 0)
+            if (panelHandle == IntPtr.Zero || !AllowEdit || ActiveProfile.IsLocked || ActiveProfile.PanelConfigs == null || ActiveProfile.PanelConfigs.Count == 0)
                 return;
 
-            var panelConfig = ActiveProfile.PanelConfigs.FirstOrDefault(p => p.PanelIndex == panelIndex);
+            var panelConfig = ActiveProfile.PanelConfigs.FirstOrDefault(p => p.PanelHandle == panelHandle);
 
             if (panelConfig != null)
             {

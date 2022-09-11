@@ -57,12 +57,12 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
         {
             var panelConfigItem = commandParameter as PanelConfigItem;
             if (panelConfigItem != null)
-                _orchestrator.PanelConfiguration.PanelConfigPropertyUpdated(panelConfigItem.PanelIndex, panelConfigItem.PanelConfigProperty);
+                _orchestrator.PanelConfiguration.PanelConfigPropertyUpdated(panelConfigItem.PanelHandle, panelConfigItem.PanelConfigProperty);
         }
 
         private void OnDataItemIncDec(object commandParameter)
         {
-            _orchestrator.PanelConfiguration.PanelConfigIncreaseDecrease(SelectedPanelConfigItem.PanelIndex, SelectedPanelConfigItem.PanelConfigProperty, Convert.ToInt32(commandParameter));
+            _orchestrator.PanelConfiguration.PanelConfigIncreaseDecrease(SelectedPanelConfigItem.PanelHandle, SelectedPanelConfigItem.PanelConfigProperty, Convert.ToInt32(commandParameter));
 
             Application.Current.Dispatcher.Invoke(() =>
             {
@@ -73,7 +73,7 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
 
         private void OnConfigurePanel(object commandParameter)
         {
-            if (SelectedPanelConfigItem.PanelIndex == -1)
+            if (SelectedPanelConfigItem.PanelHandle == IntPtr.Zero)
                 return;
 
             var keyAction = commandParameter as KeyAction;
@@ -81,28 +81,28 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
             switch (keyAction.Action)
             {
                 case "Up":
-                    _orchestrator.PanelConfiguration.PanelConfigIncreaseDecrease(SelectedPanelConfigItem.PanelIndex, PanelConfigPropertyName.Top, -1 * keyAction.Multiplier);
+                    _orchestrator.PanelConfiguration.PanelConfigIncreaseDecrease(SelectedPanelConfigItem.PanelHandle, PanelConfigPropertyName.Top, -1 * keyAction.Multiplier);
                     break;
                 case "Down":
-                    _orchestrator.PanelConfiguration.PanelConfigIncreaseDecrease(SelectedPanelConfigItem.PanelIndex, PanelConfigPropertyName.Top, 1 * keyAction.Multiplier);
+                    _orchestrator.PanelConfiguration.PanelConfigIncreaseDecrease(SelectedPanelConfigItem.PanelHandle, PanelConfigPropertyName.Top, 1 * keyAction.Multiplier);
                     break;
                 case "Left":
-                    _orchestrator.PanelConfiguration.PanelConfigIncreaseDecrease(SelectedPanelConfigItem.PanelIndex, PanelConfigPropertyName.Left, -1 * keyAction.Multiplier);
+                    _orchestrator.PanelConfiguration.PanelConfigIncreaseDecrease(SelectedPanelConfigItem.PanelHandle, PanelConfigPropertyName.Left, -1 * keyAction.Multiplier);
                     break;
                 case "Right":
-                    _orchestrator.PanelConfiguration.PanelConfigIncreaseDecrease(SelectedPanelConfigItem.PanelIndex, PanelConfigPropertyName.Left, 1 * keyAction.Multiplier);
+                    _orchestrator.PanelConfiguration.PanelConfigIncreaseDecrease(SelectedPanelConfigItem.PanelHandle, PanelConfigPropertyName.Left, 1 * keyAction.Multiplier);
                     break;
                 case "Control-Up":
-                    _orchestrator.PanelConfiguration.PanelConfigIncreaseDecrease(SelectedPanelConfigItem.PanelIndex, PanelConfigPropertyName.Height, -1 * keyAction.Multiplier);
+                    _orchestrator.PanelConfiguration.PanelConfigIncreaseDecrease(SelectedPanelConfigItem.PanelHandle, PanelConfigPropertyName.Height, -1 * keyAction.Multiplier);
                     break;
                 case "Control-Down":
-                    _orchestrator.PanelConfiguration.PanelConfigIncreaseDecrease(SelectedPanelConfigItem.PanelIndex, PanelConfigPropertyName.Height, 1 * keyAction.Multiplier);
+                    _orchestrator.PanelConfiguration.PanelConfigIncreaseDecrease(SelectedPanelConfigItem.PanelHandle, PanelConfigPropertyName.Height, 1 * keyAction.Multiplier);
                     break;
                 case "Control-Left":
-                    _orchestrator.PanelConfiguration.PanelConfigIncreaseDecrease(SelectedPanelConfigItem.PanelIndex, PanelConfigPropertyName.Width, -1 * keyAction.Multiplier);
+                    _orchestrator.PanelConfiguration.PanelConfigIncreaseDecrease(SelectedPanelConfigItem.PanelHandle, PanelConfigPropertyName.Width, -1 * keyAction.Multiplier);
                     break;
                 case "Control-Right":
-                    _orchestrator.PanelConfiguration.PanelConfigIncreaseDecrease(SelectedPanelConfigItem.PanelIndex, PanelConfigPropertyName.Width, 1 * keyAction.Multiplier);
+                    _orchestrator.PanelConfiguration.PanelConfigIncreaseDecrease(SelectedPanelConfigItem.PanelHandle, PanelConfigPropertyName.Width, 1 * keyAction.Multiplier);
                     break;
             }
         }

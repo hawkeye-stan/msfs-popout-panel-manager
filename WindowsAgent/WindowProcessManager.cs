@@ -9,8 +9,8 @@ namespace MSFSPopoutPanelManager.WindowsAgent
         {
             var systemAssemblyVersion = System.Reflection.Assembly.GetEntryAssembly().GetName().Version;
             var appVersion = $"{systemAssemblyVersion.Major}.{systemAssemblyVersion.Minor}.{systemAssemblyVersion.Build}";
-            if (systemAssemblyVersion.Revision > 0)
-                appVersion += "." + systemAssemblyVersion.Revision.ToString("D4"); ;
+            //if (systemAssemblyVersion.Revision > 0)
+            //    appVersion += "." + systemAssemblyVersion.Revision.ToString("D4");
 
             return appVersion;
         }

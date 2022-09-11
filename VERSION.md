@@ -2,9 +2,13 @@
 <hr/>
 
 ## Version 3.4.3
-* Added ability to remember MSFS game window size and location for aircraft profile when running the game in windows display mode. This new setting is used to resize game window to match original size and location of MSFS game window when panel profile was defined initially. For existing aircraft profile, when running the game in windows display mode, the profile will automatically save MSFS game window position after the first successful pop out.
-* Added ability to include in-game menu bar panels such as VFR Map, ATC, Checklist, etc to aircraft profile. During the pop out process, if any in-game menu bar panels are in popped out state, they will be included in panel configurations. This feature will only work if in-game menu bar panels are popped out initially and it also rely on MSFS re-opens these panels when flight starts (SU 10+).
-* Added UI cue to show number circles momentarily when popping out panel to facilitate troubleshooting.
+* Added ability to remember MSFS game window size and location for aircraft profile when running the game in windows display mode. This new preference setting is used to resize game window to match original size and location of MSFS game window when panel profile was defined initially. For existing aircraft profile, when running the game in windows display mode, the profile will automatically save MSFS game window position after the first successful pop out.
+
+* Added ability to include in-game menu bar panels such as VFR Map, ATC, Checklist, etc to aircraft profile. During the pop out process, if any in-game menu bar panels are in popped out state, they will be included in panel configurations. This feature will only work if in-game menu bar panels are popped out if using in conjunction with auto pop out, it relies on MSFS re-opens these panels when flight starts (SU 10+). This also allows in-game menu bar panels to be touch enabled. Toggling the include in-game menu bar panels checkbox for a profile will reset these panels' inclusion and configurations. When using this feature with Auto Pop Out, there will be a delay in the pop out process to allow in-game menu bar panels to appear on screen before they're being configured to previously defined settings.
+
+* Added UI cue to show number circle momentarily when popping out panel.
+
+* Fixed an issue where touch does not work for panel when using full screen mode.
 
 ## Version 3.4.2
 * Major change in how profile is bound to an aircraft. Previously, a profile is bound to an aircraft livery which requires you to activate binding when switching livery for the same aircraft. With this update, a profile is now bound to an aircraft so you no longer need to perform the binding step when switching livery. As you change active aircraft to fly, all existing livery binding will be automatically converted to aircraft binding if one exists. Also, a profile can still be bound to multiple aircrafts if you so choose such as when flying multiple variations of Cessna 172. This change has been a long awaited request to simplify your profile bindings. 

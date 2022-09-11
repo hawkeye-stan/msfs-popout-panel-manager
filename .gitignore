@@ -9,9 +9,6 @@
 *.sln.docstates
 *.backup
 
-# User-specific files (MonoDevelop/Xamarin Studio)
-*.userprefs
-
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
@@ -91,9 +88,6 @@ ClientBin/
 orleans.codegen.cs
 
 /node_modules
-
-# RIA/Silverlight projects
-Generated_Code/
 
 # Backup & report files from converting an old project file
 # to a newer Visual Studio version. Backup files are not needed,

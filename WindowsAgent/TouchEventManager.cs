@@ -18,6 +18,7 @@ namespace MSFSPopoutPanelManager.WindowsAgent
         private static bool _isMouseMoveBlock = false;
         private static object _mouseTouchLock = new object();
         private static bool _isDragged = false;
+        private static bool _refocused = true;
 
         private const int PANEL_MENUBAR_HEIGHT = 31;
         private const uint TOUCH_FLAG = 0xFF515700;
@@ -77,13 +78,19 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                 return PInvoke.CallNextHookEx(_hHook, code, wParam, lParam);
             }
 
-            // Touch
             // If touch point is within pop out panel boundaries and have touch enabled
-            var panelConfig = ActiveProfile.PanelConfigs.FirstOrDefault(p => p.TouchEnabled
-                                                     && info.pt.X > p.Left
+            var panelConfig = ActiveProfile.PanelConfigs.FirstOrDefault(p => p.TouchEnabled &&
+                                                    ((!p.FullScreen &&
+                                                    info.pt.X > p.Left
                                                     && info.pt.X < p.Left + p.Width
-                                                    && info.pt.Y > p.Top + (p.HideTitlebar || p.FullScreen ? 5 : PANEL_MENUBAR_HEIGHT)
-                                                    && info.pt.Y < p.Top + p.Height);
+                                                    && info.pt.Y > p.Top + (p.HideTitlebar ? 5 : PANEL_MENUBAR_HEIGHT)
+                                                    && info.pt.Y < p.Top + p.Height) ||
+                                                    (p.FullScreen &&
+                                                    info.pt.X > p.FullScreenLeft
+                                                    && info.pt.X < p.FullScreenLeft + p.FullScreenWidth
+                                                    && info.pt.Y > p.FullScreenTop + 5
+                                                    && info.pt.Y < p.FullScreenTop + p.FullScreenHeight
+                                                    )));
 
             if (panelConfig == null)
                 return PInvoke.CallNextHookEx(_hHook, code, wParam, lParam);
@@ -97,6 +104,7 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                 case WM_LBUTTONDOWN:
                     if (!_isTouchDown)
                     {
+                        _refocused = false;
                         _isTouchDown = true;
                         _isMouseMoveBlock = true;
 
@@ -153,8 +161,9 @@ namespace MSFSPopoutPanelManager.WindowsAgent
         {
             Thread.Sleep(AppSetting.TouchScreenSettings.RefocusGameWindowDelay);
 
-            if (!_isTouchDown && AppSetting.TouchScreenSettings.RefocusGameWindow && !panelConfig.DisableGameRefocus)
+            if (!_refocused && !_isTouchDown && AppSetting.TouchScreenSettings.RefocusGameWindow && !panelConfig.DisableGameRefocus)
             {
+                _refocused = true;
                 var rectangle = WindowActionManager.GetWindowRect(_simulatorProcess.Handle);
                 var clientRectangle = WindowActionManager.GetClientRect(_simulatorProcess.Handle);
 

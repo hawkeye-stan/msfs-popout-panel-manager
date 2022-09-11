@@ -3,7 +3,6 @@ using MSFSPopoutPanelManager.UserDataAgent;
 using MSFSPopoutPanelManager.WindowsAgent;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
@@ -198,14 +197,14 @@ namespace MSFSPopoutPanelManager.Orchestration
                 // Allow delay to wait for in game built-in pop outs to appear
                 Thread.Sleep(_builtInPanelConfigDelay);
 
-                var panelResults = AddBuiltInPanels(panelConfigs.Count + 200);       // add a panelIndex gap
+                var panelResults = AddBuiltInPanels();
                 if (panelResults != null)
                     panelConfigs.AddRange(panelResults);
             }
 
             if (panelConfigs.Count == 0)
             {
-                StatusMessageWriter.WriteMessage("No panels have been found. Please select at least one in-game panel.", StatusMessageType.Error, false);
+                StatusMessageWriter.WriteMessage("No panels have been found. Please select at least one in-game panel.", StatusMessageType.Error, true);
                 return;
             }
 
@@ -225,13 +224,12 @@ namespace MSFSPopoutPanelManager.Orchestration
                 if (ActiveProfile.PanelConfigs.Count > 0)
                 {
                     LoadAndApplyPanelConfigs(panelConfigs);
-                    ActiveProfile.PanelConfigs = new ObservableCollection<PanelConfig>(panelConfigs);
                     StatusMessageWriter.WriteMessage("Panels have been popped out succesfully and saved panel settings have been applied.", StatusMessageType.Info, true);
                     OnPopOutCompleted?.Invoke(this, false);
                 }
                 else
                 {
-                    ActiveProfile.PanelConfigs = new ObservableCollection<PanelConfig>(panelConfigs);
+                    LoadAndApplyPanelConfigs(panelConfigs);
                     StatusMessageWriter.WriteMessage("Panels have been popped out succesfully.", StatusMessageType.Info, true);
                     OnPopOutCompleted?.Invoke(this, true);
                 }
@@ -325,7 +323,7 @@ namespace MSFSPopoutPanelManager.Orchestration
             InputEmulationManager.LeftClick(point.X, point.Y);
         }
 
-        private List<PanelConfig> AddBuiltInPanels(int panelIndex)
+        private List<PanelConfig> AddBuiltInPanels()
         {
             List<PanelConfig> builtinPanels = new List<PanelConfig>();
 
@@ -338,7 +336,7 @@ namespace MSFSPopoutPanelManager.Orchestration
 
                 builtinPanels.Add(new PanelConfig()
                 {
-                    PanelIndex = panelIndex,
+                    PanelIndex = -1,
                     PanelHandle = panelHandle,
                     PanelType = PanelType.BuiltInPopout,
                     PanelName = WindowActionManager.GetWindowCaption(panelHandle),
@@ -347,8 +345,6 @@ namespace MSFSPopoutPanelManager.Orchestration
                     Width = clientRectangle.Width,
                     Height = clientRectangle.Height
                 });
-
-                panelIndex++;
             }
 
             return builtinPanels.Count == 0 ? null : builtinPanels;
@@ -423,6 +419,8 @@ namespace MSFSPopoutPanelManager.Orchestration
 
         private void LoadAndApplyPanelConfigs(List<PanelConfig> panelResults)
         {
+            ActiveProfile.PanelConfigs.ToList().ForEach(p => p.PanelHandle = IntPtr.Zero);
+
             Parallel.ForEach(panelResults, panel =>
             {
                 // Something is wrong here where panel has no window handle
@@ -436,82 +434,94 @@ namespace MSFSPopoutPanelManager.Orchestration
                 else if (panel.PanelType == PanelType.BuiltInPopout)
                     savedPanelConfig = ActiveProfile.PanelConfigs.FirstOrDefault(s => s.PanelName == panel.PanelName);
 
-                if (savedPanelConfig == null)
-                {
-                    panel.PanelHandle = IntPtr.Zero;
-                    return;
-                }
+                if (savedPanelConfig == null) return;
 
-                // Assign previous saved values
-                if (savedPanelConfig != null)
-                {
-                    panel.PanelName = savedPanelConfig.PanelName;
-                    panel.Top = savedPanelConfig.Top;
-                    panel.Left = savedPanelConfig.Left;
-                    panel.Width = savedPanelConfig.Width;
-                    panel.Height = savedPanelConfig.Height;
-                    panel.FullScreen = savedPanelConfig.FullScreen;
-                    panel.AlwaysOnTop = savedPanelConfig.AlwaysOnTop;
-                    panel.HideTitlebar = savedPanelConfig.HideTitlebar;
-                    panel.TouchEnabled = savedPanelConfig.TouchEnabled;
-                }
+                // Assign window handle to panel config
+                savedPanelConfig.PanelHandle = panel.PanelHandle;
 
                 // Apply panel name
-                if (panel.PanelType == PanelType.CustomPopout)
+                if (savedPanelConfig.PanelType == PanelType.CustomPopout)
                 {
-                    var caption = panel.PanelName + " (Custom)";
-                    PInvoke.SetWindowText(panel.PanelHandle, caption);
+                    var caption = savedPanelConfig.PanelName + " (Custom)";
+                    PInvoke.SetWindowText(savedPanelConfig.PanelHandle, caption);
                     Thread.Sleep(500);
                 }
 
                 // Apply locations
-                if (panel.Width != 0 && panel.Height != 0)
+                if (savedPanelConfig.Width != 0 && savedPanelConfig.Height != 0)
                 {
-                    PInvoke.ShowWindow(panel.PanelHandle, PInvokeConstant.SW_RESTORE);
+                    PInvoke.ShowWindow(savedPanelConfig.PanelHandle, PInvokeConstant.SW_RESTORE);
                     Thread.Sleep(250);
-                    WindowActionManager.MoveWindow(panel.PanelHandle, panel.Left, panel.Top, panel.Width, panel.Height);
+                    WindowActionManager.MoveWindow(savedPanelConfig.PanelHandle, savedPanelConfig.Left, savedPanelConfig.Top, savedPanelConfig.Width, savedPanelConfig.Height);
                     Thread.Sleep(1000);
                 }
 
                 // Apply window size again to overcome a bug in MSFS that when moving panel between monitors, panel automatic resize for no reason
-                if (panel.PanelType == PanelType.BuiltInPopout)
+                if (savedPanelConfig.PanelType == PanelType.BuiltInPopout)
                 {
                     Thread.Sleep(2000);     // Overcome GTN750 bug
-                    WindowActionManager.MoveWindow(panel.PanelHandle, panel.Left, panel.Top, panel.Width, panel.Height);
+                    WindowActionManager.MoveWindow(savedPanelConfig.PanelHandle, savedPanelConfig.Left, savedPanelConfig.Top, savedPanelConfig.Width, savedPanelConfig.Height);
                     Thread.Sleep(1000);
                 }
 
-                if (!panel.FullScreen)
+                if (!savedPanelConfig.FullScreen)
                 {
                     // Apply always on top
-                    if (panel.AlwaysOnTop)
+                    if (savedPanelConfig.AlwaysOnTop)
                     {
-                        WindowActionManager.ApplyAlwaysOnTop(panel.PanelHandle, panel.PanelType, true, new Rectangle(panel.Left, panel.Top, panel.Width, panel.Height));
+                        WindowActionManager.ApplyAlwaysOnTop(savedPanelConfig.PanelHandle, savedPanelConfig.PanelType, true, new Rectangle(savedPanelConfig.Left, savedPanelConfig.Top, savedPanelConfig.Width, savedPanelConfig.Height));
                         Thread.Sleep(1000);
                     }
 
                     // Apply hide title bar
-                    if (panel.HideTitlebar)
-                        WindowActionManager.ApplyHidePanelTitleBar(panel.PanelHandle, true);
+                    if (savedPanelConfig.HideTitlebar)
+                        WindowActionManager.ApplyHidePanelTitleBar(savedPanelConfig.PanelHandle, true);
                 }
 
-                PInvoke.ShowWindow(panel.PanelHandle, PInvokeConstant.SW_RESTORE);
+                PInvoke.ShowWindow(savedPanelConfig.PanelHandle, PInvokeConstant.SW_RESTORE);
             });
+
+            // If profile is unlocked, add any new panel into profile
+            if (!ActiveProfile.IsLocked)
+            {
+                var isAdded = false;
+
+                panelResults.ForEach(panel =>
+                {
+                    if (panel.PanelType == PanelType.BuiltInPopout && !ActiveProfile.PanelConfigs.Any(s => s.PanelName == panel.PanelName))
+                    {
+                        ActiveProfile.PanelConfigs.Add(panel);
+                        isAdded = true;
+                    }
+                    else if (panel.PanelType == PanelType.CustomPopout && !ActiveProfile.PanelConfigs.Any(s => s.PanelIndex == panel.PanelIndex))
+                    {
+                        ActiveProfile.PanelConfigs.Add(panel);
+                        isAdded = true;
+                    }
+                });
+
+                if (isAdded)
+                    ProfileData.WriteProfiles();
+            }
 
             // Apply full screen (cannot combine with always on top or hide title bar)
             // Cannot run in parallel process
-            panelResults.ForEach(panel =>
+            ActiveProfile.PanelConfigs.ToList().ForEach(panel =>
             {
                 if (panel.FullScreen && (!panel.AlwaysOnTop && !panel.HideTitlebar))
                 {
                     InputEmulationManager.ToggleFullScreenPanel(panel.PanelHandle);
                     Thread.Sleep(250);
+
+                    // Set full screen mode panel coordinate
+                    var windowRectangle = WindowActionManager.GetWindowRect(panel.PanelHandle);
+                    var clientRectangle = WindowActionManager.GetClientRect(panel.PanelHandle);
+                    panel.FullScreenLeft = windowRectangle.Left;
+                    panel.FullScreenTop = windowRectangle.Top;
+                    panel.FullScreenWidth = clientRectangle.Width;
+                    panel.FullScreenHeight = clientRectangle.Height;
                 }
             });
-
-            // If profile is locked, remove all panels without handle
-            if (ActiveProfile.IsLocked)
-                panelResults.RemoveAll(p => p.PanelHandle == IntPtr.Zero);
         }
 
         private void ReturnToAfterPopOutCameraView()

@@ -110,6 +110,9 @@ namespace MSFSPopoutPanelManager.UserDataAgent
         public bool DisableGameRefocus { get; set; }
 
         [JsonIgnore]
+        public bool IsFound { get { return PanelHandle != IntPtr.Zero; } }
+
+        [JsonIgnore]
         public bool IsCustomPopOut { get { return PanelType == PanelType.CustomPopout; } }
 
         [JsonIgnore]
@@ -150,6 +153,18 @@ namespace MSFSPopoutPanelManager.UserDataAgent
                 }
             }
         }
+
+        [JsonIgnore]
+        public int FullScreenTop { get; set; }
+
+        [JsonIgnore]
+        public int FullScreenLeft { get; set; }
+
+        [JsonIgnore]
+        public int FullScreenWidth { get; set; }
+
+        [JsonIgnore]
+        public int FullScreenHeight { get; set; }
     }
 
     public class TouchPanelBinding : ObservableObject

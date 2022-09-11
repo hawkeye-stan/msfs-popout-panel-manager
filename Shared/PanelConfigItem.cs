@@ -1,8 +1,15 @@
-﻿namespace MSFSPopoutPanelManager.Shared
+﻿using System;
+
+namespace MSFSPopoutPanelManager.Shared
 {
     public class PanelConfigItem
     {
-        public int PanelIndex { get; set; }
+        public PanelConfigItem()
+        {
+            PanelHandle = IntPtr.Zero;
+        }
+
+        public IntPtr PanelHandle { get; set; }
 
         public PanelConfigPropertyName PanelConfigProperty { get; set; }
     }

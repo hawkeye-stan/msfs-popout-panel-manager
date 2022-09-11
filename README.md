@@ -14,8 +14,9 @@ Please follow [FlightSimulator.com](https://forums.flightsimulator.com/t/msfs-po
 
 <hr>
 
+
 ## Touch Panel Feature
-With SU10 Beta v1.27.11, Asobo seems to have fix a major [bug](#touch-enable-pop-out-feature) (in SU9 and before) that stops Pop Out Panel Manager's touch panel feature from working reliably. I'm happy to announce touch enabled feature works pretty well out of the box on either direct connected touch monitor or on pop out window that is displayed on tablet using software tool such as SpaceDesk. Until Asobo actually allow touch passthrough for panels, this tool can serve as a stopgap solution.
+With SU10 Beta v1.27.11+, Asobo seems to have fix a major [bug](#touch-enable-pop-out-feature) (in SU9 and before) that stops Pop Out Panel Manager's touch panel feature from working reliably. I'm happy to announce touch enabled feature works pretty well out of the box on either direct connected touch monitor or on pop out window that is displayed on tablet using software tool such as SpaceDesk. Until Asobo actually allow touch passthrough for panels, this tool can serve as a stopgap solution.
 
 I've tested touch operation on GTN750, GTN530, KingAir PFD/MFD, TMB 930 FMS, Flybywire A32NX EFB and they are operational. Please report any issues that you encounter when using touch enable feature. There is still lots of room for improvement and I'll continue my effort to make touch work better and better.
 

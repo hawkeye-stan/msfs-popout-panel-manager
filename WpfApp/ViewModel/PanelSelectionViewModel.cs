@@ -45,7 +45,7 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
                                                                                 .ObservesProperty(() => ProfileData.ActiveProfile)
                                                                                 .ObservesProperty(() => FlightSimData.IsSimulatorStarted);
 
-            SetIncludeInGamePanelsCommand = new DelegateCommand(() => ProfileData.WriteProfiles(), () => FlightSimData.HasCurrentMsfsAircraft && ProfileData.HasActiveProfile && FlightSimData.IsSimulatorStarted)
+            SetIncludeInGamePanelsCommand = new DelegateCommand(OnSetIncludeInGamePanels, () => FlightSimData.HasCurrentMsfsAircraft && ProfileData.HasActiveProfile && FlightSimData.IsSimulatorStarted)
                                                                                 .ObservesProperty(() => FlightSimData.HasCurrentMsfsAircraft)
                                                                                 .ObservesProperty(() => ProfileData.ActiveProfile)
                                                                                 .ObservesProperty(() => FlightSimData.IsSimulatorStarted);
@@ -192,6 +192,15 @@ namespace MSFSPopoutPanelManager.WpfApp.ViewModel
         private void OnOpenTouchPanelBinding()
         {
             OpenTouchPanelBindingDialog?.Invoke(this, null);
+        }
+
+        private void OnSetIncludeInGamePanels()
+        {
+            // Reset all in-game panels configuration
+            if (!ProfileData.ActiveProfile.IncludeInGamePanels)
+                ProfileData.ActiveProfile.PanelConfigs.RemoveAll(c => c.PanelType == PanelType.BuiltInPopout);
+
+            ProfileData.WriteProfiles();
         }
     }
 }
