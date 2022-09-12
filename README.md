@@ -6,7 +6,7 @@
 
 MSFS Pop Out Panel Manager is an application for MSFS 2020 which helps pop out, save and position pop out panels to be used by utilities such as Sim Innovations Air Manager or to place pop out panels onto your screen or another monitor at predetermined locations automatically.
 
-Please follow [FlightSimulator.com](https://forums.flightsimulator.com/t/msfs-pop-out-panel-manager-automatically-pop-out-and-save-panel-position/460613)  forum thread regarding this project
+Please follow [FlightSimulator.com](https://forums.flightsimulator.com/t/msfs-pop-out-panel-manager-automatically-pop-out-and-save-panel-position/460613) forum thread regarding this project or comments at [Flightsim.to](https://flightsim.to/file/35759/msfs-pop-out-panel-manager). 
 
 [Online video - How to use](https://vimeo.com/723158934) 
 
