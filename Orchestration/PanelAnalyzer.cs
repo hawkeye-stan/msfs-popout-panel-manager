@@ -28,10 +28,10 @@ namespace MSFSPopoutPanelManager.Orchestration
 
             var panelsStartingLeft = GetPanelMenubarStartingLeft(sourceImage, rectangle, panelMenubarTop + 5);
 
-            // The center of magnifying glass icon is around (2.8 x height of menubar) to the right of the panel menubar starting left
+            // The center of magnifying glass icon is around (2.7 x height of menubar) to the right of the panel menubar starting left
             // But need to use higher number here to click the left side of magnifying glass icon because on some panel, the ratio is smaller
             var menubarHeight = panelMenubarBottom - panelMenubarTop;
-            var magnifyingIconXCoor = panelsStartingLeft - Convert.ToInt32(menubarHeight * 2.8);        // ToDo: play around with this multiplier to find the best for all resolutions
+            var magnifyingIconXCoor = panelsStartingLeft - Convert.ToInt32(menubarHeight * 2.7);        // ToDo: play around with this multiplier to find the best for all resolutions
             var magnifyingIconYCoor = panelMenubarTop + Convert.ToInt32(menubarHeight / 2.2);
 
             return new Point(magnifyingIconXCoor, magnifyingIconYCoor);
@@ -80,14 +80,13 @@ namespace MSFSPopoutPanelManager.Orchestration
             // Get a snippet of 1 pixel wide vertical strip of windows. We will choose the strip left of center.
             // This is to determine when the actual panel's vertical pixel starts in the window. This will allow accurate sizing of the template image
             var left = Convert.ToInt32((rectangle.Width) * 0.70);  // look at around 70% from the left
-            var top = sourceImage.Height - rectangle.Height;
 
-            if (top < 0 || left < 0)
+            if (left < 0)
                 return -1;
 
             unsafe
             {
-                var stripData = sourceImage.LockBits(new Rectangle(left, top, 1, rectangle.Height), ImageLockMode.ReadWrite, sourceImage.PixelFormat);
+                var stripData = sourceImage.LockBits(new Rectangle(left, 0, 1, rectangle.Height), ImageLockMode.ReadWrite, sourceImage.PixelFormat);
 
                 int bytesPerPixel = Bitmap.GetPixelFormatSize(stripData.PixelFormat) / 8;
                 int heightInPixels = stripData.Height;
@@ -106,7 +105,7 @@ namespace MSFSPopoutPanelManager.Orchestration
                         if (red == 255 && green == 255 && blue == 255)
                         {
                             sourceImage.UnlockBits(stripData);
-                            return y + top;
+                            return y;
                         }
                     }
                 }
