@@ -14,9 +14,9 @@
     <RootNamespace>MSFSPopoutPanelManager.WpfApp</RootNamespace>
     <ApplicationIcon>logo.ico</ApplicationIcon>
     <Platforms>x64</Platforms>
-    <Version>3.4.3.0911</Version>
-    <AssemblyVersion>3.4.3.0911</AssemblyVersion>
-    <FileVersion>3.4.3.0911</FileVersion>
+    <Version>3.4.4.0925</Version>
+    <AssemblyVersion>3.4.4.0925</AssemblyVersion>
+    <FileVersion>3.4.4.0925</FileVersion>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <DebugType>embedded</DebugType>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>

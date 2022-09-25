@@ -16,6 +16,7 @@ namespace MSFSPopoutPanelManager.UserDataAgent
             IsLocked = false;
             PowerOnRequiredForColdStart = false;
             IncludeInGamePanels = false;
+            RealSimGearGTN750Gen1Override = false;
 
             MsfsGameWindowConfig = new MsfsGameWindowConfig();
 
@@ -45,6 +46,8 @@ namespace MSFSPopoutPanelManager.UserDataAgent
         public bool PowerOnRequiredForColdStart { get; set; }
 
         public bool IncludeInGamePanels { get; set; }
+
+        public bool RealSimGearGTN750Gen1Override { get; set; }
 
         public MsfsGameWindowConfig MsfsGameWindowConfig { get; set; }
 
