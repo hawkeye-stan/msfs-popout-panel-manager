@@ -4,6 +4,8 @@ using MSFSPopoutPanelManager.WindowsAgent;
 using System;
 using System.Drawing;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MSFSPopoutPanelManager.Orchestration
 {
@@ -13,6 +15,11 @@ namespace MSFSPopoutPanelManager.Orchestration
         private static IntPtr _winEventHook;
         private Rectangle _lastWindowRectangle;
         private IntPtr _panelHandleDisableRefresh = IntPtr.Zero;
+
+        private uint _prevWinEvent = PInvokeConstant.EVENT_SYSTEM_CAPTUREEND;
+        private int _winEventClickLock = 0;
+        private object _hookLock = new object();
+        private bool _isHookMouseDown = false;
 
         public PanelConfigurationOrchestrator()
         {
@@ -199,7 +206,10 @@ namespace MSFSPopoutPanelManager.Orchestration
                 return;
 
             // Setup panel config event hooks
-            _winEventHook = PInvoke.SetWinEventHook(PInvokeConstant.EVENT_SYSTEM_MOVESIZEEND, PInvokeConstant.EVENT_OBJECT_LOCATIONCHANGE, IntPtr.Zero, _winEvent, 0, 0, PInvokeConstant.WINEVENT_OUTOFCONTEXT);
+            if (!ActiveProfile.RealSimGearGTN750Gen1Override)
+                _winEventHook = PInvoke.SetWinEventHook(PInvokeConstant.EVENT_SYSTEM_MOVESIZEEND, PInvokeConstant.EVENT_OBJECT_LOCATIONCHANGE, IntPtr.Zero, _winEvent, 0, 0, PInvokeConstant.WINEVENT_OUTOFCONTEXT);
+            else
+                _winEventHook = PInvoke.SetWinEventHook(PInvokeConstant.EVENT_SYSTEM_CAPTURESTART, PInvokeConstant.EVENT_OBJECT_LOCATIONCHANGE, IntPtr.Zero, _winEvent, 0, 0, PInvokeConstant.WINEVENT_OUTOFCONTEXT);
         }
 
         private void UnhookWinEvent()
@@ -214,6 +224,8 @@ namespace MSFSPopoutPanelManager.Orchestration
             {
                 case PInvokeConstant.EVENT_OBJECT_LOCATIONCHANGE:
                 case PInvokeConstant.EVENT_SYSTEM_MOVESIZEEND:
+                case PInvokeConstant.EVENT_SYSTEM_CAPTURESTART:
+                case PInvokeConstant.EVENT_SYSTEM_CAPTUREEND:
                     // check by priority to speed up comparing of escaping constraints
                     if (hwnd == IntPtr.Zero || idObject != 0 || hWinEventHook != _winEventHook || !AllowEdit)
                         return;
@@ -252,6 +264,17 @@ namespace MSFSPopoutPanelManager.Orchestration
                         {
                             PInvoke.ShowWindow(hwnd, PInvokeConstant.SW_RESTORE);
                         }
+                        break;
+                    case PInvokeConstant.EVENT_SYSTEM_CAPTURESTART:
+                        if (!panelConfig.HasTouchableEvent || _prevWinEvent == PInvokeConstant.EVENT_SYSTEM_CAPTURESTART)
+                            break;
+
+                        HandleTouchDownEvent(panelConfig);
+                        break;
+                    case PInvokeConstant.EVENT_SYSTEM_CAPTUREEND:
+                        if (!panelConfig.TouchEnabled || _prevWinEvent == PInvokeConstant.EVENT_OBJECT_LOCATIONCHANGE)
+                            break;
+                        HandleTouchUpEvent(panelConfig);
                         break;
                 }
             }
@@ -301,6 +324,75 @@ namespace MSFSPopoutPanelManager.Orchestration
                     case PInvokeConstant.EVENT_SYSTEM_MOVESIZEEND:
                         ProfileData.WriteProfiles();
                         break;
+                    case PInvokeConstant.EVENT_SYSTEM_CAPTURESTART:
+                        if (!panelConfig.HasTouchableEvent || _prevWinEvent == PInvokeConstant.EVENT_SYSTEM_CAPTURESTART)
+                            break;
+
+                        HandleTouchDownEvent(panelConfig);
+                        break;
+                    case PInvokeConstant.EVENT_SYSTEM_CAPTUREEND:
+                        if (!panelConfig.TouchEnabled || _prevWinEvent == PInvokeConstant.EVENT_OBJECT_LOCATIONCHANGE)
+                            break;
+                        HandleTouchUpEvent(panelConfig);
+                        break;
+                }
+            }
+        }
+
+        private void HandleTouchDownEvent(PanelConfig panelConfig)
+        {
+            if (!_isHookMouseDown)
+            {
+                lock (_hookLock)
+                {
+                    Point point;
+                    PInvoke.GetCursorPos(out point);
+
+                    // Disable left clicking if user is touching the title bar area
+                    if (point.Y - panelConfig.Top > (panelConfig.HideTitlebar ? 5 : 31))
+                        _isHookMouseDown = true;
+                }
+            }
+        }
+
+
+        private void HandleTouchUpEvent(PanelConfig panelConfig)
+        {
+            if (_isHookMouseDown)
+            {
+                Thread.Sleep(AppSettingData.AppSetting.TouchScreenSettings.TouchDownUpDelay);
+
+                lock (_hookLock)
+                {
+                    _isHookMouseDown = false;
+
+                    Point point;
+                    PInvoke.GetCursorPos(out point);
+
+                    // Disable left clicking if user is touching the title bar area
+                    if (point.Y - panelConfig.Top > (panelConfig.HideTitlebar ? 5 : 31))
+                    {
+                        var prevWinEventClickLock = ++_winEventClickLock;
+
+                        if (prevWinEventClickLock == _winEventClickLock && AppSettingData.AppSetting.TouchScreenSettings.RefocusGameWindow)
+                        {
+                            Task.Run(() => RefocusMsfs(panelConfig.PanelHandle, prevWinEventClickLock));
+                        }
+                    }
+                }
+            }
+        }
+
+        private void RefocusMsfs(IntPtr panelConfigHandle, int prevWinEventClickLock)
+        {
+            Thread.Sleep(AppSettingData.AppSetting.TouchScreenSettings.RefocusGameWindowDelay);
+
+            if (prevWinEventClickLock == _winEventClickLock)
+            {
+                if (!_isHookMouseDown)
+                {
+                    var rectangle = WindowActionManager.GetWindowRect(panelConfigHandle);
+                    PInvoke.SetCursorPos(rectangle.X - 5, rectangle.Y + 5);
                 }
             }
         }

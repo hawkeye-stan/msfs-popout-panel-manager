@@ -15,10 +15,9 @@ namespace MSFSPopoutPanelManager.WindowsAgent
         private static PInvoke.WindowsHookExProc callbackDelegate = HookCallBack;
         private static bool _isTouchDown;
         private static int _mouseMoveCount;
-        private static bool _isMouseMoveBlock = false;
         private static object _mouseTouchLock = new object();
         private static bool _isDragged = false;
-        private static bool _refocused = true;
+        private static int _refocusedTaskIndex = 0;
 
         private const int PANEL_MENUBAR_HEIGHT = 31;
         private const uint TOUCH_FLAG = 0xFF515700;
@@ -37,18 +36,30 @@ namespace MSFSPopoutPanelManager.WindowsAgent
 
         public static void Hook()
         {
+            // If using RSG GT750 Gen 1, disable touch support
+            if (ActiveProfile != null && ActiveProfile.RealSimGearGTN750Gen1Override)
+                return;
+
             _simulatorProcess = WindowProcessManager.GetSimulatorProcess();
 
             Process curProcess = Process.GetCurrentProcess();
             ProcessModule curModule = curProcess.MainModule;
             var hookWindowPtr = PInvoke.GetModuleHandle(Process.GetCurrentProcess().MainModule.ModuleName);
+
             _hHook = PInvoke.SetWindowsHookEx(HookType.WH_MOUSE_LL, callbackDelegate, hookWindowPtr, 0);
         }
 
         public static void UnHook()
         {
-            PInvoke.UnhookWindowsHookEx(_hHook);
-            _hHook = IntPtr.Zero;
+            // If using RSG GT750 Gen 1, disable touch support
+            if (ActiveProfile != null && ActiveProfile.RealSimGearGTN750Gen1Override)
+                return;
+
+            if (_hHook != IntPtr.Zero)
+            {
+                PInvoke.UnhookWindowsHookEx(_hHook);
+                _hHook = IntPtr.Zero;
+            }
         }
 
         public static bool IsHooked { get { return _hHook != IntPtr.Zero; } }
@@ -57,7 +68,6 @@ namespace MSFSPopoutPanelManager.WindowsAgent
         {
             if (code != 0)
                 return PInvoke.CallNextHookEx(_hHook, code, wParam, lParam);
-
 
             var info = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT));
             var extraInfo = (uint)info.dwExtraInfo;
@@ -104,9 +114,7 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                 case WM_LBUTTONDOWN:
                     if (!_isTouchDown)
                     {
-                        _refocused = false;
                         _isTouchDown = true;
-                        _isMouseMoveBlock = true;
 
                         lock (_mouseTouchLock)
                         {
@@ -121,7 +129,6 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                                 Thread.Sleep(AppSetting.TouchScreenSettings.TouchDownUpDelay + 25);
                                 PInvoke.mouse_event(MOUSEEVENTF_LEFTDOWN, info.pt.X, info.pt.Y, 0, 0);
                                 Thread.Sleep(AppSetting.TouchScreenSettings.TouchDownUpDelay + 50);
-                                _isMouseMoveBlock = false;
                                 _isTouchDown = false;
                             });
                         }
@@ -142,11 +149,25 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                             _isDragged = false;
                         }
                         _mouseMoveCount = 0;
-                        RefocusMsfsGameWindow(panelConfig);
+
+                        // Refocus game window
+                        if (AppSetting.TouchScreenSettings.RefocusGameWindow && !panelConfig.DisableGameRefocus)
+                        {
+                            _refocusedTaskIndex++;
+                            var currentRefocusIndex = _refocusedTaskIndex;
+
+                            Thread.Sleep(AppSetting.TouchScreenSettings.RefocusGameWindowDelay);
+
+                            if (currentRefocusIndex == _refocusedTaskIndex)
+                            {
+                                var rectangle = WindowActionManager.GetWindowRect(panelConfig.PanelHandle);
+                                PInvoke.SetCursorPos(rectangle.X - 5, rectangle.Y + 5);
+                            }
+                        }
                     });
                     return 1;
                 case WM_MOUSEMOVE:
-                    if (_isMouseMoveBlock)
+                    if (_isTouchDown)
                         return 1;
 
                     _mouseMoveCount++;
@@ -155,20 +176,6 @@ namespace MSFSPopoutPanelManager.WindowsAgent
 
             return PInvoke.CallNextHookEx(_hHook, code, wParam, lParam);
 
-        }
-
-        private static void RefocusMsfsGameWindow(PanelConfig panelConfig)
-        {
-            Thread.Sleep(AppSetting.TouchScreenSettings.RefocusGameWindowDelay);
-
-            if (!_refocused && !_isTouchDown && AppSetting.TouchScreenSettings.RefocusGameWindow && !panelConfig.DisableGameRefocus)
-            {
-                _refocused = true;
-                var rectangle = WindowActionManager.GetWindowRect(_simulatorProcess.Handle);
-                var clientRectangle = WindowActionManager.GetClientRect(_simulatorProcess.Handle);
-
-                PInvoke.SetCursorPos(rectangle.X + clientRectangle.Width / 2, rectangle.Y + clientRectangle.Height / 2);
-            }
         }
     }
 }

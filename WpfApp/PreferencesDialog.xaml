@@ -262,17 +262,22 @@
 
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <WrapPanel Orientation="Vertical" Visibility="{Binding TouchSettingsVisible, Converter={StaticResource VisibleIfTrueConverter}, Mode=OneWay}">
-                    <WrapPanel Orientation="Vertical" Margin="0,0,20,20">
-                        <TextBlock Style="{StaticResource TextBlockHeading}">Refocus Game Window</TextBlock>
-                        <Line Stretch="Fill" Stroke="Gray" X2="1"/>
-                        <CheckBox IsChecked="{Binding AppSettingData.AppSetting.TouchScreenSettings.RefocusGameWindow, Mode=TwoWay}" >
-                            <AccessText TextWrapping="Wrap">Automactically set focus back to game window after a period of inactivity on touch enabled panel. This will give your flight control back when using pop out panel.</AccessText>
-                        </CheckBox>
-                        <WrapPanel Margin="0,10,0,0">
-                            <mah:NumericUpDown Width="100" Minimum="500" Maximum="2000" Interval="500" FontSize="16" Height="32" Value="{Binding AppSettingData.AppSetting.TouchScreenSettings.RefocusGameWindowDelay, Mode=TwoWay}"></mah:NumericUpDown>
-                            <AccessText Margin="10,0,0,0" Width="490">Amount of time in milliseconds to wait for touch inactivity before input focus goes back to game window.</AccessText>
+                        <WrapPanel Orientation="Vertical" Margin="0,0,20,20">
+                            <TextBlock Style="{StaticResource TextBlockHeading}">Refocus Game Window</TextBlock>
+                            <Line Stretch="Fill" Stroke="Gray" X2="1"/>
+                            <CheckBox IsChecked="{Binding AppSettingData.AppSetting.TouchScreenSettings.RefocusGameWindow, Mode=TwoWay}" >
+                                <AccessText TextWrapping="Wrap">Automactically set focus back to game window after a period of inactivity on touch enabled panel. This will give your flight control back when using pop out panel.</AccessText>
+                            </CheckBox>
+                            <WrapPanel Margin="0,10,0,0">
+                                <mah:NumericUpDown Width="100" Minimum="500" Maximum="10000" Interval="500" FontSize="16" Height="32" Value="{Binding AppSettingData.AppSetting.TouchScreenSettings.RefocusGameWindowDelay, Mode=TwoWay}"></mah:NumericUpDown>
+                                <AccessText Margin="10,0,0,0" Width="490">Amount of time in milliseconds to wait for touch inactivity before input focus goes back to game window.</AccessText>
+                            </WrapPanel>
+                            <WrapPanel Margin="0,10,0,0">
+                                <CheckBox IsChecked="{Binding AppSettingData.AppSetting.TouchScreenSettings.RealSimGearGTN750Gen1Override, Mode=TwoWay}" >
+                                    <AccessText Margin="10,0,0,0" Width="490">Use custom refocus logic for RealSimGear GTN750 Gen1.</AccessText>
+                                </CheckBox>
+                            </WrapPanel>
                         </WrapPanel>
-                    </WrapPanel>
                     <WrapPanel Orientation="Vertical" Margin="0,0,20,20">
                         <TextBlock Style="{StaticResource TextBlockHeading}">Touch Down Touch Up Delay</TextBlock>
                         <Line Stretch="Fill" Stroke="Gray" X2="1"/>

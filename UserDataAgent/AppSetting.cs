@@ -140,6 +140,7 @@ namespace MSFSPopoutPanelManager.UserDataAgent
             TouchDownUpDelay = 0;
             RefocusGameWindow = true;
             RefocusGameWindowDelay = 500;
+            RealSimGearGTN750Gen1Override = false;
         }
 
         public int TouchDownUpDelay { get; set; }
@@ -147,6 +148,8 @@ namespace MSFSPopoutPanelManager.UserDataAgent
         public bool RefocusGameWindow { get; set; }
 
         public int RefocusGameWindowDelay { get; set; }
+
+        public bool RealSimGearGTN750Gen1Override { get; set; }
     }
 
     public class TouchPanelSettings : ObservableObject

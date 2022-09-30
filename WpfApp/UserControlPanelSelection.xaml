@@ -78,6 +78,9 @@
                     </WrapPanel>
                     <CheckBox Margin="10,5,0,0" Content="Power on required to pop out panels on cold start (G1000 / NXi Only)" IsChecked="{Binding ProfileData.ActiveProfile.PowerOnRequiredForColdStart}" Command="{Binding SetPowerOnRequiredCommand}" />
                     <CheckBox Margin="10,5,0,0" Content="Include in-game menu bar panels (VFR Map, Checklist, ATC, etc)" IsChecked="{Binding ProfileData.ActiveProfile.IncludeInGamePanels}" Command="{Binding SetIncludeInGamePanelsCommand}" />
+                    <WrapPanel Orientation="Horizontal" Visibility="{Binding AppSettingData.AppSetting.TouchScreenSettings.RealSimGearGTN750Gen1Override, Converter={StaticResource VisibleIfTrueConverter}, Mode=OneWay}" >
+                        <CheckBox Margin="10,5,0,0" Content="RealSimGear GTN750 Gen1" IsChecked="{Binding ProfileData.ActiveProfile.RealSimGearGTN750Gen1Override}" Command="{Binding SetIncludeInGamePanelsCommand}" />
+                    </WrapPanel>
                     <WrapPanel Name="TouchPanelConfigurationPanel" Orientation="Horizontal" Margin="0,10,0,0" Visibility="{Binding AppSettingData.AppSetting.IsEnabledTouchPanelServer, Converter={StaticResource VisibleIfTrueConverter}, Mode=OneWay}" >
                         <Label Content="Open MSFS touch panel when flight session starts" Margin="5,0,0,0" />
                         <Button Content="+" ToolTip="Add Binding" Margin="94,0,0,0" Width="40" Command="{Binding OpenTouchPanelBindingCommand}"/>
