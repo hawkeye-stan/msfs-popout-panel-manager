@@ -1,6 +1,14 @@
 # Version History
 <hr/>
 
+## Version 3.4.4
+* Updated pop out panels separation reliability on all monitor resolutions during panel pop out process. A new algorithm had been implemented to improve Pop Out Panel Manager accuracy when it tries to click on panel's "magnifying glass" icon to separate panels.
+
+* Added flight control refocus support for RealSimGear GTN750 Generation 1 when using touch enabled feature.
+
+* Increased configurable maximum flight control refocus delay from 2 seconds to 10 seconds.
+ 
+
 ## Version 3.4.3
 * Added ability to remember MSFS game window size and location for aircraft profile when running the game in windows display mode. This new preference setting is used to resize game window to match original size and location of MSFS game window when panel profile was defined initially. For existing aircraft profile, when running the game in windows display mode, the profile will automatically save MSFS game window position after the first successful pop out.
 
