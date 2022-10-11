@@ -1,6 +1,9 @@
 # Version History
 <hr/>
 
+## Version 3.4.4.1011
+* Hot fix: Reverted to previous implementation of touch setting's mouse cursor automatic refocus to center of MSFS game screen instead to the upper left corner of the pop out panel where it is being touched.
+
 ## Version 3.4.4
 * Updated pop out panels separation reliability on all monitor resolutions during panel pop out process. A new algorithm had been implemented to improve Pop Out Panel Manager accuracy when it tries to click on panel's "magnifying glass" icon to separate panels.
 

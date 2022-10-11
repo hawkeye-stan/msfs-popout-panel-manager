@@ -160,8 +160,9 @@ namespace MSFSPopoutPanelManager.WindowsAgent
 
                             if (currentRefocusIndex == _refocusedTaskIndex)
                             {
-                                var rectangle = WindowActionManager.GetWindowRect(panelConfig.PanelHandle);
-                                PInvoke.SetCursorPos(rectangle.X - 5, rectangle.Y + 5);
+                                var rectangle = WindowActionManager.GetWindowRect(_simulatorProcess.Handle);
+                                var clientRectangle = WindowActionManager.GetClientRect(_simulatorProcess.Handle);
+                                PInvoke.SetCursorPos(rectangle.X + clientRectangle.Width / 2, rectangle.Y + clientRectangle.Height / 2);
                             }
                         }
                     });

@@ -11,6 +11,7 @@ namespace MSFSPopoutPanelManager.Orchestration
 {
     public class PanelConfigurationOrchestrator : ObservableObject
     {
+        private static WindowProcess _simulatorProcess;
         private static PInvoke.WinEventProc _winEvent;      // keep this as static to prevent garbage collect or the app will crash
         private static IntPtr _winEventHook;
         private Rectangle _lastWindowRectangle;
@@ -37,6 +38,8 @@ namespace MSFSPopoutPanelManager.Orchestration
 
         public void StartConfiguration()
         {
+            _simulatorProcess = WindowProcessManager.GetSimulatorProcess();
+
             HookWinEvent();
 
             TouchEventManager.ActiveProfile = ProfileData.ActiveProfile;
@@ -206,10 +209,10 @@ namespace MSFSPopoutPanelManager.Orchestration
                 return;
 
             // Setup panel config event hooks
-            if (!ActiveProfile.RealSimGearGTN750Gen1Override)
-                _winEventHook = PInvoke.SetWinEventHook(PInvokeConstant.EVENT_SYSTEM_MOVESIZEEND, PInvokeConstant.EVENT_OBJECT_LOCATIONCHANGE, IntPtr.Zero, _winEvent, 0, 0, PInvokeConstant.WINEVENT_OUTOFCONTEXT);
-            else
+            if (ActiveProfile.RealSimGearGTN750Gen1Override && AppSettingData.AppSetting.TouchScreenSettings.RealSimGearGTN750Gen1Override)
                 _winEventHook = PInvoke.SetWinEventHook(PInvokeConstant.EVENT_SYSTEM_CAPTURESTART, PInvokeConstant.EVENT_OBJECT_LOCATIONCHANGE, IntPtr.Zero, _winEvent, 0, 0, PInvokeConstant.WINEVENT_OUTOFCONTEXT);
+            else
+                _winEventHook = PInvoke.SetWinEventHook(PInvokeConstant.EVENT_SYSTEM_MOVESIZEEND, PInvokeConstant.EVENT_OBJECT_LOCATIONCHANGE, IntPtr.Zero, _winEvent, 0, 0, PInvokeConstant.WINEVENT_OUTOFCONTEXT);
         }
 
         private void UnhookWinEvent()
@@ -376,14 +379,14 @@ namespace MSFSPopoutPanelManager.Orchestration
 
                         if (prevWinEventClickLock == _winEventClickLock && AppSettingData.AppSetting.TouchScreenSettings.RefocusGameWindow)
                         {
-                            Task.Run(() => RefocusMsfs(panelConfig.PanelHandle, prevWinEventClickLock));
+                            Task.Run(() => RefocusMsfs(prevWinEventClickLock));
                         }
                     }
                 }
             }
         }
 
-        private void RefocusMsfs(IntPtr panelConfigHandle, int prevWinEventClickLock)
+        private void RefocusMsfs(int prevWinEventClickLock)
         {
             Thread.Sleep(AppSettingData.AppSetting.TouchScreenSettings.RefocusGameWindowDelay);
 
@@ -391,8 +394,9 @@ namespace MSFSPopoutPanelManager.Orchestration
             {
                 if (!_isHookMouseDown)
                 {
-                    var rectangle = WindowActionManager.GetWindowRect(panelConfigHandle);
-                    PInvoke.SetCursorPos(rectangle.X - 5, rectangle.Y + 5);
+                    var rectangle = WindowActionManager.GetWindowRect(_simulatorProcess.Handle);
+                    var clientRectangle = WindowActionManager.GetClientRect(_simulatorProcess.Handle);
+                    PInvoke.SetCursorPos(rectangle.X + clientRectangle.Width / 2, rectangle.Y + clientRectangle.Height / 2);
                 }
             }
         }
