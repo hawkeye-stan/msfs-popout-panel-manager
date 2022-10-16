@@ -97,6 +97,13 @@
                                 <AccessText TextWrapping="Wrap">Start the application in minimized mode in system tray.</AccessText>
                             </CheckBox>
                         </WrapPanel>
+                        <WrapPanel Orientation="Vertical" Margin="0,0,20,20">
+                            <TextBlock Style="{StaticResource TextBlockHeading}">Auto Close When Exiting MSFS</TextBlock>
+                            <Line Stretch="Fill" Stroke="Gray" X2="1"/>
+                            <CheckBox IsChecked="{Binding AppSettingData.AppSetting.AutoClose, Mode=TwoWay}" >
+                                <AccessText TextWrapping="Wrap">Automatically close the application when exiting MSFS.</AccessText>
+                            </CheckBox>
+                        </WrapPanel>
                        
                     </WrapPanel>
                 </ScrollViewer>

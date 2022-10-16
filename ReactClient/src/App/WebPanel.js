@@ -57,9 +57,8 @@ const useStyles = props => makeStyles((theme) => ({
         position: 'absolute',
         backgroundRepeat: 'no-repeat',
         backgroundSize: '100%',
-        width: '80%',
-        height: '80%',
-        
+        width: '100%',
+        height: '100%'
     },
 }));
 
@@ -97,6 +96,10 @@ const WebPanel = ({ planeId, panelId }) => {
         styleClasses.push(classes.subPanelBase);
         return styleClasses;
     }
+    
+    // const setupSubPanelLocationStyle = (subPanel) => {
+    //     return { left: subPanel.left + '%', top: subPanel.top  + '%' };
+    // }
 
     const setupSubPanelLocationStyle = (subPanel) => {
         return { left: (subPanel.left / panelProfile.panelSize.width * 100.0) + '%', top: (subPanel.top / panelProfile.panelSize.height * 100.0) + '%' };

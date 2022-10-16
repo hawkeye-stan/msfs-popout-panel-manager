@@ -15,6 +15,7 @@ namespace MSFSPopoutPanelManager.UserDataAgent
             AlwaysOnTop = true;
             MinimizeToTray = false;
             StartMinimized = false;
+            AutoClose = true;
 
             AutoPopOutPanels = true;
 
@@ -57,6 +58,8 @@ namespace MSFSPopoutPanelManager.UserDataAgent
         public bool MinimizeToTray { get; set; }
 
         public bool AlwaysOnTop { get; set; }
+
+        public bool AutoClose { get; set; }
 
         public bool UseAutoPanning { get; set; }
 

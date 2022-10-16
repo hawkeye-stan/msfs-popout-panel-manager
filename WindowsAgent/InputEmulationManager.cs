@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MSFSPopoutPanelManager.Shared;
+using System;
 using System.Drawing;
 using System.Threading;
 using WindowsInput;
@@ -194,7 +195,7 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             PInvoke.keybd_event(Convert.ToByte(VK_RMENU), 0, KEYEVENTF_KEYUP, 0);
         }
 
-        public static void RefocusGameWindow()
+        public static void RefocusGameWindow(PanelType panelType)
         {
             var simualatorProcess = WindowProcessManager.GetSimulatorProcess();
             if (simualatorProcess == null)
@@ -203,7 +204,10 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             var rectangle = WindowActionManager.GetWindowRect(simualatorProcess.Handle);
             var clientRectangle = WindowActionManager.GetClientRect(simualatorProcess.Handle);
 
-            PInvoke.SetCursorPos(rectangle.X + clientRectangle.Width / 2, rectangle.Y + clientRectangle.Height / 2);
+            if (panelType == PanelType.MSFSTouchPanel)
+                InputEmulationManager.LeftClick(rectangle.X + clientRectangle.Width / 2, rectangle.Y + clientRectangle.Height / 2);
+            else
+                PInvoke.SetCursorPos(rectangle.X + clientRectangle.Width / 2, rectangle.Y + clientRectangle.Height / 2);
         }
 
     }

@@ -18,6 +18,7 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: theme.palette.background,
         backgroundImage: (props) => `url(/config/profiles/${props.parentRootPath}/${props.rootPath}/img/${props.backgroundImage})`,
         aspectRatio: (props) => `${props.panelSize.width}/${props.panelSize.height}`,
+        width: (props) => `calc(${props.panelSize.width} / ${props.parentPanelSize.width} * ${props.scale} * 100vw)`,
         backgroundRepeat: 'no-repeat',
         backgroundSize: '100% 100%',
         zIndex: 1000

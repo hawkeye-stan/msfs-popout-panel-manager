@@ -1,6 +1,11 @@
 # Version History
 <hr/>
 
+## Version 3.4.5
+* Added new preference option by default to auto close MSFS Pop Out Manager when MSFS exits.
+
+* Fixed an issue when using "Power on required to pop out panels for cold start" for G1000 and G3000 equipped aircraft, the pop out process gets stuck during the final step after panels have been popped out but before battery and avionics are to be turned off.
+
 ## Version 3.4.4.1011
 * Hot fix: Reverted to previous implementation of touch setting's mouse cursor automatic refocus to center of MSFS game screen instead to the upper left corner of the pop out panel where it is being touched.
 

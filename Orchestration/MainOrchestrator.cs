@@ -9,12 +9,11 @@ namespace MSFSPopoutPanelManager.Orchestration
 {
     public class MainOrchestrator : ObservableObject
     {
-        private IntPtr _msfsGameWindowHandle;
+        private const int MSFS_GAME_EXIT_DETECTION_INTERVAL = 3000;
+        private System.Timers.Timer _msfsGameExitDetectionTimer;
 
         public MainOrchestrator()
         {
-            _msfsGameWindowHandle = IntPtr.Zero;
-
             Profile = new ProfileOrchestrator();
             PanelSource = new PanelSourceOrchestrator();
             PanelPopOut = new PanelPopOutOrchestrator();
@@ -94,6 +93,7 @@ namespace MSFSPopoutPanelManager.Orchestration
             FlightSim.AppSettingData = AppSettingData;
             FlightSim.FlightSimData = FlightSimData;
             FlightSim.OnFlightStartedForAutoPopOut += (sender, e) => PanelPopOut.AutoPopOut();
+            FlightSim.OnSimulatorStarted += (sender, e) => DetectMsfsExit();
 
             TouchPanel.ProfileData = ProfileData;
             TouchPanel.AppSettingData = AppSettingData;
@@ -136,6 +136,21 @@ namespace MSFSPopoutPanelManager.Orchestration
             AutoUpdater.RunUpdateAsAdmin = false;
             AutoUpdater.UpdateFormSize = new System.Drawing.Size(930, 675);
             AutoUpdater.Start(AppSettingData.AppSetting.AutoUpdaterUrl);
+        }
+
+        private void DetectMsfsExit()
+        {
+            _msfsGameExitDetectionTimer = new System.Timers.Timer();
+            _msfsGameExitDetectionTimer.Interval = MSFS_GAME_EXIT_DETECTION_INTERVAL;
+            _msfsGameExitDetectionTimer.Enabled = true;
+            _msfsGameExitDetectionTimer.Elapsed += async (source, e) =>
+            {
+                if (WindowsAgent.WindowProcessManager.GetSimulatorProcess() == null)
+                {
+                    await ApplicationClose();
+                    Environment.Exit(0);
+                }
+            };
         }
     }
 }

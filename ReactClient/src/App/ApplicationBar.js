@@ -29,8 +29,8 @@ const useStyles = makeStyles(() => ({
         alignItems: 'center',
     },
     menuButton: {
-        marginRight: '0.5em',
-        marginLeft: '0.5em'
+        marginRight: '0.25em',
+        marginLeft: '0.25em'
     },
     networkConnected: {
         color: 'lightgreen'

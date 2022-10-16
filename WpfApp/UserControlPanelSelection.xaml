@@ -76,7 +76,7 @@
                         <Button Content="+" ToolTip="Add Binding" Margin="10,0,0,0" Width="40" Command="{Binding AddProfileBindingCommand}"/>
                         <Button Content="-" ToolTip="Delete Binding"  Margin="10,0,0,0" Width="40" Command="{Binding DeleteProfileBindingCommand}"/>
                     </WrapPanel>
-                    <CheckBox Margin="10,5,0,0" Content="Power on required to pop out panels on cold start (G1000 / NXi Only)" IsChecked="{Binding ProfileData.ActiveProfile.PowerOnRequiredForColdStart}" Command="{Binding SetPowerOnRequiredCommand}" />
+                    <CheckBox Margin="10,5,0,0" Content="Power on required to pop out panels on cold start (G1000/G3000)" IsChecked="{Binding ProfileData.ActiveProfile.PowerOnRequiredForColdStart}" Command="{Binding SetPowerOnRequiredCommand}" />
                     <CheckBox Margin="10,5,0,0" Content="Include in-game menu bar panels (VFR Map, Checklist, ATC, etc)" IsChecked="{Binding ProfileData.ActiveProfile.IncludeInGamePanels}" Command="{Binding SetIncludeInGamePanelsCommand}" />
                     <WrapPanel Orientation="Horizontal" Visibility="{Binding AppSettingData.AppSetting.TouchScreenSettings.RealSimGearGTN750Gen1Override, Converter={StaticResource VisibleIfTrueConverter}, Mode=OneWay}" >
                         <CheckBox Margin="10,5,0,0" Content="Use with RealSimGear GTN750 Gen1 Display Panel" IsChecked="{Binding ProfileData.ActiveProfile.RealSimGearGTN750Gen1Override}" Command="{Binding SetIncludeInGamePanelsCommand}" />

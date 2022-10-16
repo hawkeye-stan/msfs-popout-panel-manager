@@ -111,7 +111,7 @@ namespace MSFSPopoutPanelManager.SimConnectAgent.TouchPanel
                                     Thread.Sleep(500);
                                     if (!_isExecutingCommand)
                                     {
-                                        InputEmulationManager.RefocusGameWindow();
+                                        InputEmulationManager.RefocusGameWindow(PanelType.MSFSTouchPanel);
                                     }
                                 });
                             }

@@ -22,9 +22,8 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingLeft: '30px',
-        paddingRight: '30px',
+        justifyContent: 'space-around',
+
         minHeight: '1.5em',
         borderLeft: '1px solid gray',
         borderRight: '1px solid gray',
@@ -72,7 +71,7 @@ const Telemetry = () => {
         <Grid container className={classes.root}>
             <Grid item xs={5} className={classes.sectionTelemetry}>
                 <Grid item xs={4} className={classes.sectionSmall}>
-                    <Typography variant='body1'>Elevator Trim:</Typography>
+                    <Typography variant='body1'>Elev Trim:</Typography>
                     <Typography variant='body1' className={classes.dataLabel}>{ELEVATOR_TRIM === undefined ? 0 : ELEVATOR_TRIM}</Typography>
                 </Grid>
                 <Grid item xs={4} className={classes.sectionSmall}>

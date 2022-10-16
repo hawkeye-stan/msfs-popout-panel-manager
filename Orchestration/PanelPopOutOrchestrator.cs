@@ -3,6 +3,7 @@ using MSFSPopoutPanelManager.UserDataAgent;
 using MSFSPopoutPanelManager.WindowsAgent;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
@@ -77,6 +78,7 @@ namespace MSFSPopoutPanelManager.Orchestration
                 Thread.Sleep(2000);
 
                 _builtInPanelConfigDelay = 4000;
+
                 CorePopOutSteps();
             }
         }
@@ -484,24 +486,30 @@ namespace MSFSPopoutPanelManager.Orchestration
             // If profile is unlocked, add any new panel into profile
             if (!ActiveProfile.IsLocked)
             {
+                // Need this to fix collectionview modification thread issue
+                var finalPanelConfigs = ActiveProfile.PanelConfigs.ToList();
+
                 var isAdded = false;
 
-                panelResults.ForEach(panel =>
+                foreach (var panel in panelResults)
                 {
-                    if (panel.PanelType == PanelType.BuiltInPopout && !ActiveProfile.PanelConfigs.Any(s => s.PanelName == panel.PanelName))
+                    if ((panel.PanelType == PanelType.BuiltInPopout || panel.PanelType == PanelType.MSFSTouchPanel) && !ActiveProfile.PanelConfigs.Any(s => s.PanelName == panel.PanelName))
                     {
-                        ActiveProfile.PanelConfigs.Add(panel);
+                        finalPanelConfigs.Add(panel);
                         isAdded = true;
                     }
                     else if (panel.PanelType == PanelType.CustomPopout && !ActiveProfile.PanelConfigs.Any(s => s.PanelIndex == panel.PanelIndex))
                     {
-                        ActiveProfile.PanelConfigs.Add(panel);
+                        finalPanelConfigs.Add(panel);
                         isAdded = true;
                     }
-                });
+                }
 
                 if (isAdded)
+                {
+                    ActiveProfile.PanelConfigs = new ObservableCollection<PanelConfig>(finalPanelConfigs);
                     ProfileData.WriteProfiles();
+                }
             }
 
             // Apply full screen (cannot combine with always on top or hide title bar)
