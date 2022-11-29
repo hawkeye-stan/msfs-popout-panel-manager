@@ -145,7 +145,10 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                             Thread.Sleep(AppSetting.TouchScreenSettings.TouchDownUpDelay + 50);
                             PInvoke.SetCursorPos(info.pt.X, info.pt.Y);
                             Thread.Sleep(100);
-                            InputEmulationManager.LeftClickFast(info.pt.X, info.pt.Y);
+                            if (!ActiveProfile.PreventDoubleTap)
+                            {
+                                InputEmulationManager.LeftClickFast(info.pt.X, info.pt.Y);
+                            }
                             _isDragged = false;
                         }
                         _mouseMoveCount = 0;
