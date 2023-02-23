@@ -1,12 +1,10 @@
-Version 3.4.5.0
+Version 3.4.6.0
 
-This release is optional and please feel to skip this update.
+** IMPORTANT ** 
+This release should only be used with MSFS SU12 (1.31.18.0 or higher). Since SU12
+has breaking changes that affect how pop out works, this release is not compatible 
+with earlier version of MSFS.
 
 Change Log:
 
-* Added new preference option by default to auto close MSFS Pop Out Manager when MSFS
-exits.
-
-* Fixed an issue when using "Power on required to pop out panels for cold start" for G1000 
-and G3000 equipped aircraft, the pop out process gets stuck during the final step after 
-panels have been popped out but before battery and avionics are to be turned off.
+* Added SU12 compatibility. (Not compatible with current AAU1 MSFS release)
