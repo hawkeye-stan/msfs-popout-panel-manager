@@ -405,7 +405,14 @@ namespace MSFSPopoutPanelManager.Orchestration
                 else if (panel.PanelType == PanelType.BuiltInPopout)
                     savedPanelConfig = ActiveProfile.PanelConfigs.FirstOrDefault(s => s.PanelName == panel.PanelName);
 
-                if (savedPanelConfig == null) return;
+                // Apply MSFS saved panel location if available since this panel is newly profiled
+                if (savedPanelConfig == null)
+                {
+                    var rect = WindowActionManager.GetWindowRect(panel.PanelHandle);
+                    panel.Top = rect.Top;
+                    panel.Left = rect.Left;
+                    return;
+                }
 
                 // Assign window handle to panel config
                 savedPanelConfig.PanelHandle = panel.PanelHandle;
