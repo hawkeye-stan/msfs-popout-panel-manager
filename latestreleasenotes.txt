@@ -1,10 +1,10 @@
-Version 3.4.6.0
+Version 3.4.6.0321
 
 ** IMPORTANT ** 
-This release should only be used with MSFS SU12 (1.31.18.0 or higher). Since SU12
-has breaking changes that affect how pop out works, this release is not compatible 
-with earlier version of MSFS.
+This release is a mandatory update for MSFS SU12. Since SU12 has breaking changes 
+that affect how pop out works, this release is not compatible with earlier version
+of MSFS.
 
 Change Log:
 
-* Added SU12 compatibility. (Not compatible with current AAU1 MSFS release)
+* Added SU12 compatibility
