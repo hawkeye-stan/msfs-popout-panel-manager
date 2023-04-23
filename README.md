@@ -171,7 +171,7 @@ Perform your regular panel selection and once your touch capable panel has been 
 
 ## User Profile Data Files
 
-The user plane profile data and application settings data are stored as JSON files under your "Documents" folder. (%userprofile%\Documents\MSFS Pop Out Manager)
+The user plane profile data and application settings data are stored as JSON files under your "Documents" folder. (%userprofile%\Documents\MSFS Pop Out Panel Manager)
 
 * userprofiledata.json
 
