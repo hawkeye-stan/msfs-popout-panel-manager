@@ -43,7 +43,6 @@ namespace MSFSPopoutPanelManager.WindowsAgent
 
         public static void LeftClick(int x, int y)
         {
-            PInvoke.SetCursorPos(x, y);     // Need to do this twice to overcome MSFS bug for separating pop out panels
             PInvoke.SetCursorPos(x, y);
             Thread.Sleep(300);
 
@@ -77,8 +76,7 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             Thread.Sleep(300);
 
             PInvoke.SetCursorPos(x, y);
-            PInvoke.SetCursorPos(x, y);
-            Thread.Sleep(300);
+            Thread.Sleep(500);
 
             if (useSecondaryKeys)
             {

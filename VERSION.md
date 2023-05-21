@@ -1,6 +1,9 @@
 # Version History
 <hr/>
 
+## Version 3.4.6.0321
+* Added SU12 compatibility. This version is required for MSFS SU12 and is not compatible with earlier MSFS releases.
+
 ## Version 3.4.5
 * Added new preference option by default to auto close MSFS Pop Out Manager when MSFS exits.
 

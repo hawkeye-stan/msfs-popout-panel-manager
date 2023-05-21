@@ -14,7 +14,7 @@ namespace MSFSPopoutPanelManager.Orchestration
     public class PanelPopOutOrchestrator : ObservableObject
     {
         // This will be replaced by a signal from Ready to Fly Skipper into webserver in version 4.0
-        private const int READY_TO_FLY_BUTTON_APPEARANCE_DELAY = 2000;
+        private const int READY_TO_FLY_BUTTON_APPEARANCE_DELAY = 4000;
         private int _builtInPanelConfigDelay;
 
         internal ProfileData ProfileData { get; set; }
@@ -177,7 +177,7 @@ namespace MSFSPopoutPanelManager.Orchestration
                 if (AppSetting.UseAutoPanning)
                     InputEmulationManager.LoadCustomView(AppSetting.AutoPanningKeyBinding);
 
-                var panelResults = ExecutePopoutAndSeparation();
+                var panelResults = ExecutePopout();
 
                 if (panelResults == null)
                     return;
@@ -203,22 +203,10 @@ namespace MSFSPopoutPanelManager.Orchestration
                 if (panelResults != null)
                     panelConfigs.AddRange(panelResults);
             }
-
             if (panelConfigs.Count == 0)
             {
                 StatusMessageWriter.WriteMessage("No panels have been found. Please select at least one in-game panel.", StatusMessageType.Error, true);
                 return;
-            }
-
-            // Line up all the panels
-            for (var i = panelConfigs.Count - 1; i >= 0; i--)
-            {
-                if (panelConfigs[i].PanelType == PanelType.CustomPopout)
-                {
-                    WindowActionManager.MoveWindow(panelConfigs[i].PanelHandle, panelConfigs[i].Top, panelConfigs[i].Left, panelConfigs[i].Width, panelConfigs[i].Height);
-                    PInvoke.SetForegroundWindow(panelConfigs[i].PanelHandle);
-                    Thread.Sleep(200);
-                }
             }
 
             if (panelConfigs.Count > 0)
@@ -245,7 +233,7 @@ namespace MSFSPopoutPanelManager.Orchestration
             }
         }
 
-        private List<PanelConfig> ExecutePopoutAndSeparation()
+        private List<PanelConfig> ExecutePopout()
         {
             List<PanelConfig> panels = new List<PanelConfig>();
 
@@ -261,18 +249,13 @@ namespace MSFSPopoutPanelManager.Orchestration
 
                 InputEmulationManager.PopOutPanel(x, y, AppSetting.UseLeftRightControlToPopOut);
 
-                // Get an AceApp window with empty title
-                var handle = PInvoke.FindWindow("AceApp", String.Empty);
+                // Get an AceApp window with non Microsoft Flight Simulator as window title
+                var handle = PInvoke.FindWindow("AceApp", null);
 
-                // Need to move the window to upper left corner first. There is a possible bug in the game that panel pop out to full screen that prevents further clicking.
-                if (handle != IntPtr.Zero)
-                    WindowActionManager.MoveWindow(handle, 0, 0, 1000, 500);
-
-                // The joined panel is always the first panel that got popped out
-                if (i > 1)
-                    SeparatePanel(panels[0].PanelHandle);
-
-                handle = PInvoke.FindWindow("AceApp", String.Empty);
+                // Unable to find pop out window because of application delay
+                var simulatorProcess = WindowProcessManager.GetSimulatorProcess();
+                if (handle.Equals(simulatorProcess.Handle))
+                    handle = IntPtr.Zero;
 
                 if (handle == IntPtr.Zero && i == 1)
                 {
@@ -285,9 +268,7 @@ namespace MSFSPopoutPanelManager.Orchestration
                     return null;
                 }
 
-                // Fix SU10+ bug where pop out window after separation is huge
-                if (i > 1)
-                    WindowActionManager.MoveWindow(handle, -8, 0, 800, 600);
+                var clientRect = WindowActionManager.GetClientRect(handle);
 
                 var panel = new PanelConfig();
                 panel.PanelHandle = handle;
@@ -296,8 +277,8 @@ namespace MSFSPopoutPanelManager.Orchestration
                 panel.PanelName = $"Panel{i}";
                 panel.Top = (i - 1) * 30;
                 panel.Left = (i - 1) * 30;
-                panel.Width = 800;
-                panel.Height = 600;
+                panel.Width = clientRect.Width;
+                panel.Height = clientRect.Height;
                 panels.Add(panel);
 
                 PInvoke.SetWindowText(panel.PanelHandle, panel.PanelName + " (Custom)");
@@ -311,18 +292,6 @@ namespace MSFSPopoutPanelManager.Orchestration
             }
 
             return panels;
-        }
-
-        private void SeparatePanel(IntPtr hwnd)
-        {
-            // ToDo: Need to figure mouse click code to separate window
-            PInvoke.SetForegroundWindow(hwnd);
-            Thread.Sleep(500);
-
-            // Find the magnifying glass coordinate    
-            var point = PanelAnalyzer.GetMagnifyingGlassIconCoordinate(hwnd);
-
-            InputEmulationManager.LeftClick(point.X, point.Y);
         }
 
         private List<PanelConfig> AddBuiltInPanels()
@@ -436,7 +405,14 @@ namespace MSFSPopoutPanelManager.Orchestration
                 else if (panel.PanelType == PanelType.BuiltInPopout)
                     savedPanelConfig = ActiveProfile.PanelConfigs.FirstOrDefault(s => s.PanelName == panel.PanelName);
 
-                if (savedPanelConfig == null) return;
+                // Apply MSFS saved panel location if available since this panel is newly profiled
+                if (savedPanelConfig == null)
+                {
+                    var rect = WindowActionManager.GetWindowRect(panel.PanelHandle);
+                    panel.Top = rect.Top;
+                    panel.Left = rect.Left;
+                    return;
+                }
 
                 // Assign window handle to panel config
                 savedPanelConfig.PanelHandle = panel.PanelHandle;

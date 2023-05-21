@@ -141,10 +141,9 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                         PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, info.pt.X, info.pt.Y, 0, 0);
                         if (_isDragged)
                         {
-                            // Override GTN750 bug - must execute this to fix GTN750 cursor moving offscreen issue when doing touch and drag
                             Thread.Sleep(AppSetting.TouchScreenSettings.TouchDownUpDelay + 50);
                             PInvoke.SetCursorPos(info.pt.X, info.pt.Y);
-                            Thread.Sleep(100);
+                            Thread.Sleep(AppSetting.TouchScreenSettings.TouchDownUpDelay + 50);
                             InputEmulationManager.LeftClickFast(info.pt.X, info.pt.Y);
                             _isDragged = false;
                         }
