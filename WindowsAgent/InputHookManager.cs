@@ -7,30 +7,38 @@ namespace MSFSPopoutPanelManager.WindowsAgent
 {
     public class InputHookManager
     {
+        // Mouse hooks
         private static IKeyboardMouseEvents _mouseHook;
-
-        public static event EventHandler<Point> OnCtrlLeftClick;
-        public static event EventHandler<Point> OnShiftLeftClick;
         public static event EventHandler<Point> OnLeftClick;
 
-        public static void StartHook()
+        // Keyboard hooks
+        private static IKeyboardMouseEvents _keyboardHook;
+        public static event EventHandler<KeyUpEventArgs> OnKeyUp;
+
+        public static void StartMouseHook()
         {
             if (_mouseHook == null)
             {
-                Debug.WriteLine("Start Mouse Hook.........");
+                Debug.WriteLine("Start Mouse Hook...");
                 _mouseHook = Hook.GlobalEvents();
                 _mouseHook.MouseDownExt += HandleMouseHookMouseDownExt;
             }
         }
 
-        public static void EndHook()
+        public static void EndMouseHook()
         {
             if (_mouseHook != null)
             {
-                Debug.WriteLine("End Mouse Hook.........");
+                Debug.WriteLine("End Mouse Hook...");
                 _mouseHook.MouseDownExt -= HandleMouseHookMouseDownExt;
                 _mouseHook.Dispose();
                 _mouseHook = null;
+            }
+
+            if (OnLeftClick != null)
+            {
+                foreach (Delegate d in OnLeftClick.GetInvocationList())
+                    OnLeftClick -= (EventHandler<Point>)d;
             }
         }
 
@@ -40,17 +48,52 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                 return;
 
             if (e.Button == MouseButtons.Left)
-            {
-                var shiftPress = PInvoke.GetAsyncKeyState(0xA0) <= -127 || PInvoke.GetAsyncKeyState(0xA1) <= -127;
-                var ctrlPress = PInvoke.GetAsyncKeyState(0xA2) <= -127 || PInvoke.GetAsyncKeyState(0xA3) <= -127;
+                OnLeftClick?.Invoke(null, new Point(e.X, e.Y));
+        }
 
-                if (ctrlPress)
-                    OnCtrlLeftClick?.Invoke(null, new Point(e.X, e.Y));
-                else if (shiftPress)
-                    OnShiftLeftClick?.Invoke(null, new Point(e.X, e.Y));
-                else
-                    OnLeftClick?.Invoke(null, new Point(e.X, e.Y));
+        public static void StartKeyboardHook()
+        {
+            if (_keyboardHook != null)
+                EndKeyboardHook();
+
+            if (_keyboardHook == null)
+            {
+                Debug.WriteLine("Starting Keyboard Hook...");
+
+                _keyboardHook = Hook.GlobalEvents();
+                _keyboardHook.KeyUp += HandleKeyboardHookKeyUp;
             }
         }
+
+        public static void EndKeyboardHook()
+        {
+            if (_keyboardHook != null)
+            {
+                Debug.WriteLine("Ending Keyboard Hook...");
+                _keyboardHook.KeyUp -= HandleKeyboardHookKeyUp;
+                _keyboardHook.Dispose();
+                _keyboardHook = null;
+            }
+
+            if (OnKeyUp != null)
+            {
+                foreach (Delegate d in OnKeyUp.GetInvocationList())
+                    OnKeyUp -= (EventHandler<KeyUpEventArgs>)d;
+            }
+        }
+
+        private static void HandleKeyboardHookKeyUp(object sender, KeyEventArgs e)
+        {
+            OnKeyUp?.Invoke(null, new KeyUpEventArgs() { KeyCode = e.KeyCode.ToString(), IsHoldControl = e.Control, IsHoldShift = e.Shift });
+        }
+    }
+
+    public class KeyUpEventArgs : EventArgs
+    {
+        public string KeyCode { get; set; }
+
+        public bool IsHoldControl { get; set; }
+
+        public bool IsHoldShift { get; set; }
     }
 }

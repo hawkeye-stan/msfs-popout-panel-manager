@@ -2,43 +2,38 @@
 using MSFSPopoutPanelManager.Shared;
 using System;
 using System.IO;
-using System.Reflection;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace MSFSPopoutPanelManager.Orchestration
 {
     public class MainOrchestrator : ObservableObject
     {
-        private const int MSFS_GAME_EXIT_DETECTION_INTERVAL = 3000;
-        private System.Timers.Timer _msfsGameExitDetectionTimer;
-
         public MainOrchestrator()
         {
-            Profile = new ProfileOrchestrator();
-            PanelSource = new PanelSourceOrchestrator();
-            PanelPopOut = new PanelPopOutOrchestrator();
-            PanelConfiguration = new PanelConfigurationOrchestrator();
-            FlightSim = new FlightSimOrchestrator();
-            OnlineFeature = new OnlineFeatureOrchestrator();
-            TouchPanel = new TouchPanelOrchestrator();
-
-            FlightSimData = new FlightSimData();
-            FlightSimData.CurrentMsfsAircraftChanged += (sernder, e) => { ProfileData.RefreshProfile(); ProfileData.AutoSwitchProfile(); };
-            FlightSimData.CurrentMsfsLiveryTitleChanged += (sernder, e) => { ProfileData.MigrateLiveryToAircraftBinding(); ProfileData.AutoSwitchProfile(); };
-
             AppSettingData = new AppSettingData();
-            AppSettingData.TouchPanelIntegrationChanged += async (sender, e) =>
-            {
-                await TouchPanel.TouchPanelIntegrationUpdated(e);
-            };
-
             ProfileData = new ProfileData();
-            ProfileData.FlightSimData = FlightSimData;
-            ProfileData.AppSettingData = AppSettingData;
-            ProfileData.ActiveProfileChanged += (sender, e) =>
-            {
-                PanelSource.CloseAllPanelSource();
-            };
+            FlightSimData = new FlightSimData();
+            ProfileData.FlightSimDataRef = FlightSimData;
+            ProfileData.AppSettingDataRef = AppSettingData;
+            FlightSimData.ProfileDataRef = ProfileData;
+
+            Profile = new ProfileOrchestrator(ProfileData, FlightSimData);
+            PanelSource = new PanelSourceOrchestrator(ProfileData, AppSettingData);
+            PanelPopOut = new PanelPopOutOrchestrator(ProfileData, AppSettingData, FlightSimData);
+            PanelConfiguration = new PanelConfigurationOrchestrator(ProfileData, AppSettingData, FlightSimData);
+            FlightSim = new FlightSimOrchestrator(ProfileData, AppSettingData, FlightSimData);
+            Help = new HelpOrchestrator();
+
+            PanelSource.FlightSimOrchestrator = FlightSim;
+
+            PanelPopOut.FlightSimOrchestrator = FlightSim;
+            PanelPopOut.PanelSourceOrchestrator = PanelSource;
+            PanelPopOut.PanelConfigurationOrchestrator = PanelConfiguration;
+
+            FlightSim.PanelPopOutOrchestrator = PanelPopOut;
+            FlightSim.PanelConfigurationOrchestrator = PanelConfiguration;
+            FlightSim.OnSimulatorExited += (sender, e) => { ApplicationClose(); Environment.Exit(0); };
         }
 
         public ProfileOrchestrator Profile { get; set; }
@@ -49,8 +44,6 @@ namespace MSFSPopoutPanelManager.Orchestration
 
         public PanelConfigurationOrchestrator PanelConfiguration { get; set; }
 
-        public TouchPanelOrchestrator TouchPanel { get; set; }
-
         public ProfileData ProfileData { get; set; }
 
         public AppSettingData AppSettingData { get; private set; }
@@ -59,72 +52,33 @@ namespace MSFSPopoutPanelManager.Orchestration
 
         public FlightSimOrchestrator FlightSim { get; set; }
 
-        public OnlineFeatureOrchestrator OnlineFeature { get; set; }
+        public HelpOrchestrator Help { get; set; }
 
         public IntPtr ApplicationHandle { get; set; }
 
-        public async void Initialize()
-        {
-            MigrateData.MigrateUserDataFiles();
+        public Window ApplicationWindow { get; set; }
 
+        public void Initialize()
+        {
             AppSettingData.ReadSettings();
             ProfileData.ReadProfiles();
 
-            Profile.ProfileData = ProfileData;
-            Profile.FlightSimData = FlightSimData;
+            PanelSource.ApplicationHandle = ApplicationHandle;
 
-            PanelSource.ProfileData = ProfileData;
-            PanelSource.AppSettingData = AppSettingData;
-            PanelSource.FlightSimData = FlightSimData;
-            PanelSource.FlightSimOrchestrator = FlightSim;
+            if (AppSettingData.ApplicationSetting.GeneralSetting.CheckForUpdate)
+                CheckForAutoUpdate();
 
-            PanelPopOut.ProfileData = ProfileData;
-            PanelPopOut.AppSettingData = AppSettingData;
-            PanelPopOut.FlightSimData = FlightSimData;
-            PanelPopOut.FlightSimOrchestrator = FlightSim;
-            PanelPopOut.PanelSourceOrchestrator = PanelSource;
-            PanelPopOut.TouchPanelOrchestrator = TouchPanel;
-            PanelPopOut.OnPopOutCompleted += (sender, e) => TouchPanel.ReloadTouchPanelSimConnectDataDefinition();
+            ProfileData.SetActiveProfile(AppSettingData.ApplicationSetting.SystemSetting.LastUsedProfileId);     // Load last used profile
 
-            PanelConfiguration.ProfileData = ProfileData;
-            PanelConfiguration.AppSettingData = AppSettingData;
-
-            FlightSim.ProfileData = ProfileData;
-            FlightSim.AppSettingData = AppSettingData;
-            FlightSim.FlightSimData = FlightSimData;
-            FlightSim.OnFlightStartedForAutoPopOut += (sender, e) => PanelPopOut.AutoPopOut();
-            FlightSim.OnSimulatorStarted += (sender, e) => DetectMsfsExit();
-
-            TouchPanel.ProfileData = ProfileData;
-            TouchPanel.AppSettingData = AppSettingData;
-            TouchPanel.ApplicationHandle = ApplicationHandle;
-
-            CheckForAutoUpdate();
-
-            ProfileData.UpdateActiveProfile(AppSettingData.AppSetting.LastUsedProfileId);     // Load last used profile
-            FlightSim.StartSimConnectServer();                                                // Start the SimConnect server
-
-            // Enable/Disable touch panel feature (Personal use only feature)
-            try
-            {
-                var assembly = Assembly.LoadFrom(Path.Combine(AppContext.BaseDirectory, "WebServer.dll"));
-                if (assembly != null)
-                    AppSettingData.AppSetting.IsEnabledTouchPanelServer = true;
-
-                if (AppSettingData.AppSetting.TouchPanelSettings.EnableTouchPanelIntegration)
-                    await TouchPanel.StartServer();
-
-                assembly = null;
-            }
-            catch { }
+            Task.Run(() => FlightSim.StartSimConnectServer());                                                   // Start the SimConnect server
         }
 
-        public async Task ApplicationClose()
+        public void ApplicationClose()
         {
             // Force unhook all win events 
             PanelConfiguration.EndConfiguration();
+            PanelConfiguration.EndTouchHook();
             FlightSim.EndSimConnectServer(true);
-            await TouchPanel.StopServer();
         }
 
         private void CheckForAutoUpdate()
@@ -134,23 +88,8 @@ namespace MSFSPopoutPanelManager.Orchestration
             AutoUpdater.Synchronous = true;
             AutoUpdater.AppTitle = "MSFS Pop Out Panel Manager";
             AutoUpdater.RunUpdateAsAdmin = false;
-            AutoUpdater.UpdateFormSize = new System.Drawing.Size(930, 675);
-            AutoUpdater.Start(AppSettingData.AppSetting.AutoUpdaterUrl);
-        }
-
-        private void DetectMsfsExit()
-        {
-            _msfsGameExitDetectionTimer = new System.Timers.Timer();
-            _msfsGameExitDetectionTimer.Interval = MSFS_GAME_EXIT_DETECTION_INTERVAL;
-            _msfsGameExitDetectionTimer.Enabled = true;
-            _msfsGameExitDetectionTimer.Elapsed += async (source, e) =>
-            {
-                if (WindowsAgent.WindowProcessManager.GetSimulatorProcess() == null)
-                {
-                    await ApplicationClose();
-                    Environment.Exit(0);
-                }
-            };
+            AutoUpdater.UpdateFormSize = new System.Drawing.Size(1024, 660);
+            AutoUpdater.Start(AppSettingData.ApplicationSetting.SystemSetting.AutoUpdaterUrl);
         }
     }
 }

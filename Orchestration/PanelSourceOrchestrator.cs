@@ -1,186 +1,176 @@
-﻿using MSFSPopoutPanelManager.Shared;
-using MSFSPopoutPanelManager.UserDataAgent;
+﻿using MSFSPopoutPanelManager.DomainModel.Profile;
+using MSFSPopoutPanelManager.DomainModel.Setting;
+using MSFSPopoutPanelManager.Shared;
 using MSFSPopoutPanelManager.WindowsAgent;
 using System;
-using System.Collections.ObjectModel;
-using System.Drawing;
+using System.Threading.Tasks;
+using Point = System.Drawing.Point;
 
 namespace MSFSPopoutPanelManager.Orchestration
 {
     public class PanelSourceOrchestrator : ObservableObject
     {
-        private int _panelIndex;
+        private ProfileData _profileData;
+        private AppSettingData _appSettingData;
 
-        internal ProfileData ProfileData { get; set; }
+        public PanelSourceOrchestrator(ProfileData profileData, AppSettingData appSettingData)
+        {
+            _profileData = profileData;
+            _appSettingData = appSettingData;
 
-        internal AppSettingData AppSettingData { get; set; }
-
-        internal FlightSimData FlightSimData { get; set; }
+            _profileData.ActiveProfileChanged += (sender, e) => { CloseAllPanelSource(); };
+        }
 
         internal FlightSimOrchestrator FlightSimOrchestrator { get; set; }
 
-        private Profile ActiveProfile { get { return ProfileData == null ? null : ProfileData.ActiveProfile; } }
+        internal IntPtr ApplicationHandle { get; set; }
 
-        private AppSetting AppSetting { get { return AppSettingData == null ? null : AppSettingData.AppSetting; } }
+        private UserProfile ActiveProfile { get { return _profileData == null ? null : _profileData.ActiveProfile; } }
 
-        public event EventHandler<PanelSourceCoordinate> OnOverlayShowed;
-        public event EventHandler OnLastOverlayRemoved;
-        public event EventHandler OnAllOverlaysRemoved;
-        public event EventHandler OnSelectionStarted;
-        public event EventHandler OnSelectionCompleted;
+        private ApplicationSetting AppSetting { get { return _appSettingData == null ? null : _appSettingData.ApplicationSetting; } }
 
-        public bool IsEditingPanelSource { get; set; }
+        public event EventHandler<PanelConfig> OnOverlayShowed;
+        public event EventHandler<PanelConfig> OnOverlayRemoved;
+        public event EventHandler OnPanelSourceSelectionStarted;
+        public event EventHandler OnPanelSourceSelectionCompleted;
 
-        public void StartPanelSelection()
+        public void StartPanelSelectionEvent()
         {
-            if (ActiveProfile == null)
-                return;
-
-            _panelIndex = 1;
-
-            // remove all existing panel overlay display
-            for (var i = 0; i < ActiveProfile.PanelSourceCoordinates.Count; i++)
-                OnLastOverlayRemoved?.Invoke(this, null);
-
-            ActiveProfile.PanelSourceCoordinates = new ObservableCollection<PanelSourceCoordinate>();
-            ActiveProfile.PanelConfigs.Clear();
-            ActiveProfile.IsLocked = false;
-
-            InputHookManager.OnLeftClick -= HandleOnPanelSelectionAdded;
-            InputHookManager.OnLeftClick += HandleOnPanelSelectionAdded;
-            InputHookManager.OnShiftLeftClick -= HandleOnLastPanelSelectionRemoved;
-            InputHookManager.OnShiftLeftClick += HandleOnLastPanelSelectionRemoved;
-            InputHookManager.OnCtrlLeftClick -= HandleOnPanelSelectionCompleted;
-            InputHookManager.OnCtrlLeftClick += HandleOnPanelSelectionCompleted;
-
-            // Turn off TrackIR if TrackIR is started
-            FlightSimOrchestrator.TurnOffTrackIR();
-
-            OnSelectionStarted?.Invoke(this, null);
-
-            InputHookManager.StartHook();
+            OnPanelSourceSelectionStarted?.Invoke(this, null);
         }
 
-        public void SaveAutoPanningCamera()
+        public void StartPanelSelection(PanelConfig panelConfig)
         {
-            var simualatorProcess = WindowProcessManager.GetSimulatorProcess();
-            if (simualatorProcess == null)
+            _profileData.ActiveProfile.IsEditingPanelSource = true;
+
+            InputHookManager.OnLeftClick += (sender, e) => HandleOnPanelSelectionAdded(panelConfig, e);
+            InputHookManager.StartMouseHook();
+        }
+
+        public async Task StartEditPanelSources()
+        {
+            await Task.Run(() =>
             {
-                StatusMessageWriter.WriteMessage("MSFS/SimConnect has not been started. Please try again at a later time.", StatusMessageType.Error, false);
-                return;
+                // Set Windowed Display Mode window's configuration if needed
+                if (_appSettingData.ApplicationSetting.WindowedModeSetting.AutoResizeMsfsGameWindow)
+                    WindowActionManager.SetMsfsGameWindowLocation(ActiveProfile.MsfsGameWindowConfig);
+
+                if (AppSetting.PopOutSetting.AutoPanning.IsEnabled)
+                {
+                    InputEmulationManager.LoadCustomView(AppSetting.PopOutSetting.AutoPanning.KeyBinding);
+                    WindowActionManager.BringWindowToForeground(ApplicationHandle);
+                }
+            });
+
+            foreach (var panel in _profileData.ActiveProfile.PanelConfigs)
+            {
+                if (panel.HasPanelSource)
+                    OnOverlayShowed?.Invoke(this, panel);
             }
 
-            InputEmulationManager.SaveCustomView(AppSettingData.AppSetting.AutoPanningKeyBinding);
-
-            // If using windows mode, save MSFS game window configuration
-            if (AppSettingData.AppSetting.AutoResizeMsfsGameWindow)
-                ProfileData.SaveMsfsGameWindowConfig();
-
-            StatusMessageWriter.WriteMessage("Auto Panning Camera has been saved succesfully.", StatusMessageType.Info, false);
+            // Turn off TrackIR if TrackIR is started
+            FlightSimOrchestrator.TurnOffTrackIR(false);
         }
 
-        public void EditPanelSource()
+        public async Task EndEditPanelSources()
         {
-            IsEditingPanelSource = !IsEditingPanelSource;
+            foreach (var panel in _profileData.ActiveProfile.PanelConfigs)
+            {
+                OnOverlayRemoved?.Invoke(this, panel);
+            }
 
-            if (IsEditingPanelSource)
-                StartEditPanelSource();
-            else
-                EndEditPanelSource();
+            // Save last auto panning camera angle
+            if (AppSetting.PopOutSetting.AutoPanning.IsEnabled)
+            {
+                InputEmulationManager.SaveCustomView(AppSetting.PopOutSetting.AutoPanning.KeyBinding);
+
+                // If using windows mode, save MSFS game window configuration
+                if (_appSettingData.ApplicationSetting.WindowedModeSetting.AutoResizeMsfsGameWindow)
+                    _profileData.SaveMsfsGameWindowConfig();
+            }
+
+            await Task.Run(() =>
+            {
+                // Recenter game or return to after pop out camera view
+                if (!AppSetting.PopOutSetting.AfterPopOutCameraView.IsEnabled)
+                    InputEmulationManager.CenterView();
+                else
+                {
+                    switch (AppSetting.PopOutSetting.AfterPopOutCameraView.CameraView)
+                    {
+                        case AfterPopOutCameraViewType.CockpitCenterView:
+                            InputEmulationManager.CenterView();
+                            break;
+                        case AfterPopOutCameraViewType.CustomCameraView:
+                            InputEmulationManager.LoadCustomView(AppSetting.PopOutSetting.AfterPopOutCameraView.KeyBinding);
+                            break;
+                    }
+                }
+
+                WindowActionManager.BringWindowToForeground(ApplicationHandle);
+
+                // Turn TrackIR back on
+                FlightSimOrchestrator.TurnOnTrackIR(false);
+            });
+        }
+
+        public void ShowPanelSourceNonEdit(PanelConfig panel)
+        {
+            if (panel.HasPanelSource)
+                OnOverlayShowed?.Invoke(this, panel);
+        }
+
+        public void ClosePanelSourceNonEdit(PanelConfig panel)
+        {
+            OnOverlayRemoved?.Invoke(this, panel);
         }
 
         public void CloseAllPanelSource()
         {
-            IsEditingPanelSource = false;
-            OnAllOverlaysRemoved?.Invoke(this, null);
-        }
-
-        public void HandleOnPanelSelectionAdded(object sender, Point e)
-        {
-            if (ActiveProfile == null)
-                return;
-
-            var newCoor = new PanelSourceCoordinate() { PanelIndex = _panelIndex, X = e.X, Y = e.Y };
-
-            ActiveProfile.PanelSourceCoordinates.Add(newCoor);
-            _panelIndex++;
-
-            OnOverlayShowed?.Invoke(this, newCoor);
-        }
-
-        public void HandleOnLastPanelSelectionRemoved(object sender, Point e)
-        {
-            if (ActiveProfile == null)
-                return;
-
-            if (ActiveProfile.PanelSourceCoordinates.Count > 0)
+            if (ActiveProfile != null)
             {
-                ActiveProfile.PanelSourceCoordinates.RemoveAt(ActiveProfile.PanelSourceCoordinates.Count - 1);
-                _panelIndex--;
+                ActiveProfile.IsEditingPanelSource = false;
 
-                OnLastOverlayRemoved?.Invoke(this, null);
+                foreach (var panelConfig in ActiveProfile.PanelConfigs)
+                    OnOverlayRemoved?.Invoke(this, panelConfig);
             }
         }
 
-        private void StartEditPanelSource()
+        public void HandleOnPanelSelectionAdded(PanelConfig panelConfig, Point e)
         {
+            OnPanelSourceSelectionCompleted?.Invoke(this, null);
+
+            InputHookManager.EndMouseHook();
+
             if (ActiveProfile == null)
                 return;
 
-            // Set Windowed Display Mode window's configuration if needed
-            if (AppSettingData.AppSetting.AutoResizeMsfsGameWindow)
-                WindowActionManager.SetMsfsGameWindowLocation(ActiveProfile.MsfsGameWindowConfig);
+            panelConfig.PanelSource.X = e.X;
+            panelConfig.PanelSource.Y = e.Y;
 
-            // remove all existing panel overlay display
-            for (var i = 0; i < ActiveProfile.PanelSourceCoordinates.Count; i++)
-                OnAllOverlaysRemoved?.Invoke(this, null);
+            _profileData.WriteProfiles();
 
-            foreach (var coor in ActiveProfile.PanelSourceCoordinates)
-                OnOverlayShowed?.Invoke(this, new PanelSourceCoordinate() { PanelIndex = coor.PanelIndex, X = coor.X, Y = coor.Y });
-
-            // Turn off TrackIR if TrackIR is started
-            FlightSimOrchestrator.TurnOffTrackIR();
-
-            if (AppSetting.UseAutoPanning)
-                InputEmulationManager.LoadCustomView(AppSetting.AutoPanningKeyBinding);
-        }
-
-        private void EndEditPanelSource()
-        {
-            if (ActiveProfile == null)
-                return;
-
-            // Remove all existing panel overlay display
-            for (var i = 0; i < ActiveProfile.PanelSourceCoordinates.Count; i++)
-                OnAllOverlaysRemoved?.Invoke(this, null);
-
-            // Turn TrackIR back on
-            FlightSimOrchestrator.TurnOnTrackIR();
-        }
-
-        private void HandleOnPanelSelectionCompleted(object sender, Point e)
-        {
-            if (ActiveProfile == null)
-                return;
-
-            // If enable, save the current viewport into custom view by Ctrl-Alt-0
-            if (AppSetting.UseAutoPanning)
-                InputEmulationManager.SaveCustomView(AppSetting.AutoPanningKeyBinding);
-
-            ProfileData.WriteProfiles();
+            // Show source circle on screen
+            OnOverlayShowed?.Invoke(this, panelConfig);
 
             // If using windows mode, save MSFS game window configuration
-            if (AppSettingData.AppSetting.AutoResizeMsfsGameWindow)
-                ProfileData.SaveMsfsGameWindowConfig();
+            if (_appSettingData.ApplicationSetting.WindowedModeSetting.AutoResizeMsfsGameWindow)
+                _profileData.SaveMsfsGameWindowConfig();
 
-            InputHookManager.EndHook();
+            panelConfig.IsSelectedPanelSource = false;
+        }
 
-            // Turn TrackIR back on
-            FlightSimOrchestrator.TurnOnTrackIR();
+        public void RemovePanelSource(PanelConfig panelConfig)
+        {
+            // Disable hooks if active
+            InputHookManager.EndMouseHook();
+            InputHookManager.EndKeyboardHook();
 
-            IsEditingPanelSource = false;
+            _profileData.ActiveProfile.CurrentMoveResizePanelId = Guid.Empty;
 
-            OnSelectionCompleted?.Invoke(this, null);
+            OnOverlayRemoved?.Invoke(this, panelConfig);
+
+            _profileData.ActiveProfile.PanelConfigs.Remove(panelConfig);
         }
     }
 }

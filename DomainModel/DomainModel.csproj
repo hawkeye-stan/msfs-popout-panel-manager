@@ -1,0 +1,46 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net7.0-windows</TargetFramework>
+		<AssemblyName>DomainModel</AssemblyName>
+		<PackageId>MSFS 2020 Popout Panel Manager Domain Model</PackageId>
+		<Product>MSFS 2020 Popout Panel Manager Domain Model</Product>
+		<Authors>Stanley Kwok</Authors>
+		<Company>Stanley Kwok</Company>
+		<Copyright>Stanley Kwok 2021</Copyright>
+		<PackageProjectUrl>https://github.com/hawkeye-stan/msfs-popout-panel-manager</PackageProjectUrl>
+		<RootNamespace>MSFSPopoutPanelManager.DomainModel</RootNamespace>
+		<Platforms>x64</Platforms>
+		<Version>4.0.0.0</Version>
+		<AssemblyVersion>4.0.0.0</AssemblyVersion>
+		<FileVersion>4.0.0.0</FileVersion>
+		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+		<DebugType>Embedded</DebugType>
+		<Configurations>Debug;Release;Local</Configurations>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseTouchPanel|x64'">
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugTouchPanel|x64'">
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\Shared\Shared.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Fody" Version="6.7.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="PropertyChanged.Fody" Version="4.1.0" PrivateAssets="All" />
+	</ItemGroup>
+
+</Project>

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+	  <TargetFramework>net7.0-windows</TargetFramework>
     <AssemblyName>Shared</AssemblyName>
     <PackageId>MSFS 2020 Popout Panel Manager Shared</PackageId>
     <Product>MSFS 2020 Popout Panel Manager Shared</Product>
@@ -11,22 +11,22 @@
     <PackageProjectUrl>https://github.com/hawkeye-stan/msfs-popout-panel-manager</PackageProjectUrl>
     <RootNamespace>MSFSPopoutPanelManager.Shared</RootNamespace>
     <Platforms>x64</Platforms>
-    <Version>3.4.6.0321</Version>
-    <AssemblyVersion>3.4.6.0321</AssemblyVersion>
-    <FileVersion>3.4.6.0321</FileVersion>
+    <Version>4.0.0.0</Version>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+    <FileVersion>4.0.0.0</FileVersion>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <DebugType>Embedded</DebugType>
-    <Configurations>Debug;Release;DebugTouchPanel;ReleaseTouchPanel</Configurations>
+    <Configurations>Debug;Release;Local</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Fody" Version="6.6.3">
+    <PackageReference Include="Fody" Version="6.7.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="log4net" Version="2.0.14" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="PropertyChanged.Fody" Version="3.4.1" />
+    <PackageReference Include="log4net" Version="2.0.15" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" PrivateAssets="All" />
   </ItemGroup>
 
 </Project>

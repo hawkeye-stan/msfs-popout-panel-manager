@@ -1,9 +1,10 @@
-﻿using MSFSPopoutPanelManager.Shared;
-using MSFSPopoutPanelManager.UserDataAgent;
+﻿using MSFSPopoutPanelManager.DomainModel.Profile;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace MSFSPopoutPanelManager.WindowsAgent
 {
@@ -13,6 +14,15 @@ namespace MSFSPopoutPanelManager.WindowsAgent
 
         public static void ApplyHidePanelTitleBar(IntPtr hwnd, bool hideTitleBar)
         {
+            if (hideTitleBar)
+            {
+                var rect = WindowActionManager.GetWindowRectangle(hwnd);
+                var rectShadow = PInvoke.GetWindowRectShadow(hwnd);
+
+                MoveWindow(hwnd, rect.Left - rectShadow.Left, rect.Top, rect.Width - rectShadow.Width, rect.Height - rectShadow.Height);
+                Thread.Sleep(250);
+            }
+
             var currentStyle = (uint)PInvoke.GetWindowLong(hwnd, PInvokeConstant.GWL_STYLE);
 
             if (hideTitleBar)
@@ -21,32 +31,39 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                 currentStyle |= (PInvokeConstant.WS_CAPTION | PInvokeConstant.WS_SIZEBOX);
 
             PInvoke.SetWindowLong(hwnd, PInvokeConstant.GWL_STYLE, currentStyle);
-        }
+            Thread.Sleep(250);
 
-        public static void ApplyAlwaysOnTop(IntPtr hwnd, PanelType panelType, bool alwaysOnTop, Rectangle panelRectangle)
-        {
-            if (panelType == PanelType.PopOutManager)
+            if (!hideTitleBar)
             {
-                OnPopOutManagerAlwaysOnTopChanged?.Invoke(null, alwaysOnTop);
-            }
-            else
-            {
-                if (alwaysOnTop)
-                    PInvoke.SetWindowPos(hwnd, new IntPtr(PInvokeConstant.HWND_TOPMOST), panelRectangle.Left, panelRectangle.Top, panelRectangle.Width, panelRectangle.Height, PInvokeConstant.SWP_ALWAYS_ON_TOP);
-                else
-                    PInvoke.SetWindowPos(hwnd, new IntPtr(PInvokeConstant.HWND_NOTOPMOST), panelRectangle.Left, panelRectangle.Top, panelRectangle.Width, panelRectangle.Height, 0);
+                var rect = WindowActionManager.GetWindowRectangle(hwnd);
+                var rectShadow = PInvoke.GetWindowRectShadow(hwnd);
+                MoveWindow(hwnd, rect.Left + rectShadow.Left, rect.Top, rect.Width + rectShadow.Width, rect.Height + rectShadow.Height);
             }
         }
 
         public static void ApplyAlwaysOnTop(IntPtr hwnd, PanelType panelType, bool alwaysOnTop)
         {
-            Rectangle rect;
-            PInvoke.GetWindowRect(hwnd, out rect);
+            var rectangle = WindowActionManager.GetWindowRectangle(hwnd);
 
-            Rectangle clientRectangle;
-            PInvoke.GetClientRect(hwnd, out clientRectangle);
+            if (panelType == PanelType.PopOutManager)
+            {
+                OnPopOutManagerAlwaysOnTopChanged?.Invoke(null, alwaysOnTop);
+                return;
+            }
 
-            ApplyAlwaysOnTop(hwnd, panelType, alwaysOnTop, new Rectangle(rect.X, rect.Y, clientRectangle.Width, clientRectangle.Height));
+            if (alwaysOnTop)
+                PInvoke.SetWindowPos(hwnd, new IntPtr(PInvokeConstant.HWND_TOPMOST), 0, 0, 0, 0, PInvokeConstant.SWP_ALWAYS_ON_TOP);
+            else
+            {
+                PInvoke.SetWindowPos(hwnd, new IntPtr(PInvokeConstant.HWND_NOTOPMOST), rectangle.Left, rectangle.Top, rectangle.Width, rectangle.Height, 0);
+                Thread.Sleep(250);
+                MoveWindow(hwnd, rectangle.Left, rectangle.Top, rectangle.Width, rectangle.Height);
+            }
+        }
+
+        public static IntPtr FindWindowByClass(string className)
+        {
+            return PInvoke.FindWindow(className, null);
         }
 
         public static void CloseWindow(IntPtr hwnd)
@@ -54,33 +71,16 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             PInvoke.SendMessage(hwnd, PInvokeConstant.WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
         }
 
-        public static void MoveWindow(IntPtr hwnd, int x, int y)
-        {
-            Rectangle rectangle;
-            PInvoke.GetClientRect(hwnd, out rectangle);
-            PInvoke.MoveWindow(hwnd, x, y, rectangle.Width, rectangle.Height, true);
-        }
-
         public static void MoveWindow(IntPtr hwnd, int x, int y, int width, int height)
         {
-            PInvoke.MoveWindow(hwnd, x, y, width, height, true);
+            var rectShadow = PInvoke.GetWindowRectShadow(hwnd);
+            PInvoke.MoveWindow(hwnd, x + rectShadow.Left, y + rectShadow.Top, width + rectShadow.Width, height + rectShadow.Height, true);
         }
 
-        public static void MoveWindowWithMsfsBugOverrirde(IntPtr hwnd, int x, int y, int width, int height)
+        public static void MoveWindow(IntPtr hwnd, Rectangle rect)
         {
-            int originalX = x;
-
-            PInvoke.MoveWindow(hwnd, x, y, width, height, true);
-
-            // Fixed MSFS bug, create workaround where on 2nd or later instance of width adjustment, the panel shift to the left by itself
-            // Wait for system to catch up on panel coordinate that were just applied
-            System.Threading.Thread.Sleep(200);
-
-            Rectangle rectangle;
-            PInvoke.GetWindowRect(hwnd, out rectangle);
-
-            if (rectangle.Left != originalX)
-                PInvoke.MoveWindow(hwnd, originalX, y, width, height, false);
+            var rectShadow = PInvoke.GetWindowRectShadow(hwnd);
+            PInvoke.MoveWindow(hwnd, rect.Left + rectShadow.Left, rect.Top + rectShadow.Top, rect.Width + rectShadow.Width, rect.Height + rectShadow.Height, true);
         }
 
         public static void MinimizeWindow(IntPtr hwnd)
@@ -94,6 +94,33 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             PInvoke.SetForegroundWindow(hwnd);
         }
 
+        public static void SetWindowFocus(IntPtr hwnd)
+        {
+            var style = (uint) PInvoke.GetWindowLong(hwnd, PInvokeConstant.GWL_STYLE);
+
+            // Minimize and restore to be able to make it active.
+            if ((style & PInvokeConstant.SW_MINIMIZE) == PInvokeConstant.SW_MINIMIZE)
+            {
+                PInvoke.ShowWindow(hwnd, PInvokeConstant.SW_RESTORE);
+            }
+
+            uint currentlyFocusedWindowProcessId = PInvoke.GetWindowThreadProcessId(PInvoke.GetForegroundWindow(), IntPtr.Zero);
+            uint appThread = PInvoke.GetCurrentThreadId();
+
+            if (currentlyFocusedWindowProcessId != appThread)
+            {
+                PInvoke.AttachThreadInput(currentlyFocusedWindowProcessId, appThread, true);
+                PInvoke.BringWindowToTop(hwnd);
+                PInvoke.ShowWindow(hwnd, PInvokeConstant.SW_SHOW);
+                PInvoke.AttachThreadInput(currentlyFocusedWindowProcessId, appThread, false);
+            }
+            else
+            {
+                PInvoke.BringWindowToTop(hwnd);
+                PInvoke.ShowWindow(hwnd, PInvokeConstant.SW_SHOW);
+            }
+        }
+
         public static IntPtr FindWindowByCaption(string caption)
         {
             return PInvoke.FindWindowByCaption(IntPtr.Zero, caption);
@@ -101,23 +128,26 @@ namespace MSFSPopoutPanelManager.WindowsAgent
 
         public static string GetWindowCaption(IntPtr hwnd)
         {
-            return PInvoke.GetWindowText(hwnd);
+            try { return PInvoke.GetWindowText(hwnd); }
+            catch { return string.Empty; }
         }
 
-        public static Rectangle GetClientRect(IntPtr hwnd)
+        public static void SetWindowCaption(IntPtr hwnd, string caption)
         {
-            Rectangle rectangle;
-            PInvoke.GetClientRect(hwnd, out rectangle);
-
-            return rectangle;
+            PInvoke.SetWindowText(hwnd, caption);
         }
 
-        public static Rectangle GetWindowRect(IntPtr hwnd)
+        public static Rectangle GetWindowRectangle(IntPtr hwnd)
         {
-            Rectangle rectangle;
-            PInvoke.GetWindowRect(hwnd, out rectangle);
+            return PInvoke.GetWindowRectangleDwm(hwnd);
+        }
 
-            return rectangle;
+        public static Rectangle GetClientRectangle(IntPtr hwnd)
+        {
+            Rectangle rect;
+            PInvoke.GetClientRect(hwnd, out rect);
+
+            return rect;
         }
 
         public static bool IsWindow(IntPtr hwnd)
@@ -162,11 +192,11 @@ namespace MSFSPopoutPanelManager.WindowsAgent
         public static PanelType GetWindowPanelType(IntPtr hwnd)
         {
             var className = PInvoke.GetClassName(hwnd);
-            var caption = PInvoke.GetWindowText(hwnd);
+            var caption = GetWindowCaption(hwnd);
 
             if (className == "AceApp")      // MSFS windows designation
             {
-                if (String.IsNullOrEmpty(caption) || caption.IndexOf("(Custom)") > -1)        // Pop Out window
+                if (String.IsNullOrEmpty(caption) || caption.IndexOf("(Custom)") > -1)      // Pop Out window
                     return PanelType.CustomPopout;
                 else if (caption.IndexOf("Microsoft Flight Simulator") > -1)                // MSFS main game window
                     return PanelType.FlightSimMainWindow;
@@ -177,8 +207,8 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             }
             else if (className.IndexOf("HwndWrapper[MSFSPopoutPanelManager") > -1)
             {
-                if (caption.IndexOf("(Touch Panel)") > -1)
-                    return PanelType.MSFSTouchPanel;
+                if (caption.IndexOf("HudBar") > -1)
+                    return PanelType.HudBarWindow;
                 else
                     return PanelType.PopOutManager;
             }
@@ -192,7 +222,7 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             {
                 var panelType = GetWindowPanelType(hwnd);
 
-                if (panelType == PanelType.CustomPopout || panelType == PanelType.MSFSTouchPanel)
+                if (panelType == PanelType.CustomPopout || panelType == PanelType.HudBarWindow)
                     CloseWindow(hwnd);
 
                 return true;
@@ -201,14 +231,13 @@ namespace MSFSPopoutPanelManager.WindowsAgent
 
         public static MsfsGameWindowConfig GetMsfsGameWindowLocation()
         {
-            var msfsGameWindowHandle = GetMsfsGameWindowHandle();
-            var isWindowedMode = IsMsfsGameInWindowedMode(msfsGameWindowHandle);
+            var isWindowedMode = IsMsfsGameInWindowedMode();
 
             if (isWindowedMode)
             {
-                var windowRect = GetWindowRect(msfsGameWindowHandle);
-                var clientRect = GetClientRect(msfsGameWindowHandle);
-                return new MsfsGameWindowConfig(windowRect.Left, windowRect.Top, clientRect.Width + 16, clientRect.Height + 39);
+                var msfsGameWindowHandle = GetMsfsGameWindowHandle();
+                var rect = WindowActionManager.GetWindowRectangle(msfsGameWindowHandle);
+                return new MsfsGameWindowConfig(rect.Left, rect.Top, rect.Width, rect.Height);
             }
 
             return new MsfsGameWindowConfig(0, 0, 0, 0);
@@ -216,15 +245,19 @@ namespace MSFSPopoutPanelManager.WindowsAgent
 
         public static void SetMsfsGameWindowLocation(MsfsGameWindowConfig msfsGameWindowConfig)
         {
-            var msfsGameWindowHandle = GetMsfsGameWindowHandle();
-            var isWindowedMode = IsMsfsGameInWindowedMode(msfsGameWindowHandle);
+            var isWindowedMode = IsMsfsGameInWindowedMode();
 
             if (isWindowedMode && msfsGameWindowConfig.IsValid)
+            {
+                var msfsGameWindowHandle = GetMsfsGameWindowHandle();
                 PInvoke.MoveWindow(msfsGameWindowHandle, msfsGameWindowConfig.Left, msfsGameWindowConfig.Top, msfsGameWindowConfig.Width, msfsGameWindowConfig.Height, true);
+            }
         }
 
-        public static bool IsMsfsGameInWindowedMode(IntPtr msfsGameWindowHandle)
+        public static bool IsMsfsGameInWindowedMode()
         {
+            var msfsGameWindowHandle = GetMsfsGameWindowHandle();
+
             if (msfsGameWindowHandle != IntPtr.Zero)
             {
                 var currentStyle = (uint)PInvoke.GetWindowLong(msfsGameWindowHandle, PInvokeConstant.GWL_STYLE);
@@ -245,7 +278,7 @@ namespace MSFSPopoutPanelManager.WindowsAgent
 
                 if (className == "AceApp")      // MSFS windows designation
                 {
-                    var caption = WindowsAgent.PInvoke.GetWindowText(hwnd);
+                    var caption = GetWindowCaption(hwnd);
 
                     if (caption.IndexOf("Microsoft Flight Simulator") > -1)        // MSFS main game window
                     {
@@ -257,6 +290,13 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             }), 0);
 
             return msfsGameWindowHandle;
+        }
+
+        public static void SetWindowTitleBarColor(IntPtr hwnd, string hexColor)
+        {
+            int color;
+            if (int.TryParse(hexColor, NumberStyles.HexNumber, null, out color))
+                PInvoke.DwmSetWindowAttribute(hwnd, DwmWindowAttribute.DWMWA_CAPTION_COLOR, ref color, sizeof(Int32));
         }
     }
 }

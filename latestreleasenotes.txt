@@ -1,7 +1,0 @@
-Version 3.4.6.0321
-
-This release is a mandatory update for MSFS SU12.
-
-Change Log:
-
-* Added SU12 compatibility. This version is required for MSFS SU12 and is not compatible with earlier MSFS releases.

@@ -1,0 +1,343 @@
+﻿<UserControl
+    x:Class="MSFSPopoutPanelManager.MainApp.HelpDrawer"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodel="clr-namespace:MSFSPopoutPanelManager.MainApp.ViewModel"
+    Width="1024"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style
+            x:Key="TextBlockHeading"
+            BasedOn="{StaticResource {x:Type TextBlock}}"
+            TargetType="TextBlock">
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Width" Value="Auto" />
+            <Setter Property="Margin" Value="0,5,0,0" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontWeight" Value="Bold" />
+        </Style>
+        <Style
+            x:Key="TextBlockSubheading"
+            BasedOn="{StaticResource {x:Type TextBlock}}"
+            TargetType="TextBlock">
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Width" Value="Auto" />
+            <Setter Property="Margin" Value="0,5,0,5" />
+        </Style>
+        <Style TargetType="AccessText">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Width" Value="Auto" />
+            <Setter Property="Margin" Value="5,-2,0,0" />
+        </Style>
+        <Style TargetType="Line">
+            <Setter Property="Margin" Value="0,5,0,5" />
+        </Style>
+        <Style TargetType="{x:Type ScrollViewer}">
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ScrollViewer}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <ScrollContentPresenter Grid.Column="0" />
+                            <ScrollBar
+                                Name="PART_VerticalScrollBar"
+                                Grid.Column="1"
+                                Width="10"
+                                MinWidth="10"
+                                Maximum="{TemplateBinding ScrollableHeight}"
+                                Opacity="0.5"
+                                ViewportSize="{TemplateBinding ViewportHeight}"
+                                Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
+                                Value="{TemplateBinding VerticalOffset}" />
+                            <ScrollBar
+                                Name="PART_HorizontalScrollBar"
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                Height="10"
+                                MinHeight="10"
+                                Maximum="{TemplateBinding ScrollableWidth}"
+                                Opacity="0.5"
+                                Orientation="Horizontal"
+                                ViewportSize="{TemplateBinding ViewportWidth}"
+                                Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"
+                                Value="{TemplateBinding HorizontalOffset}" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </UserControl.Resources>
+    <DockPanel d:DataContext="{d:DesignInstance viewmodel:HelpViewModel}">
+        <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
+            <TreeView
+                Width="210"
+                VerticalAlignment="Stretch"
+                DockPanel.Dock="Left">
+                <TreeView.ItemContainerStyle>
+                    <Style TargetType="{x:Type TreeViewItem}">
+                        <Setter Property="IsExpanded" Value="True" />
+                        <Setter Property="Foreground" Value="#666666" />
+                        <Setter Property="Background" Value="Transparent" />
+                        <Style.Resources>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent" />
+                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="White" />
+                            <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="Transparent" />
+                            <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="White" />
+                        </Style.Resources>
+                    </Style>
+                </TreeView.ItemContainerStyle>
+                <TreeViewItem
+                    Margin="-5,0,0,10"
+                    FontSize="14"
+                    FontWeight="Bold"
+                    Foreground="Gray"
+                    Header="Help"
+                    IsHitTestVisible="False" />
+                <TreeViewItem
+                    x:Name="CategoryKeyboardCommands"
+                    Margin="0,0,0,10"
+                    Header="Keyboard Commands"
+                    IsSelected="True" />
+                <TreeViewItem
+                    x:Name="CategoryUserGuide"
+                    Margin="0,0,0,10"
+                    Header="User Guide" />
+                <TreeViewItem
+                    x:Name="CategoryDownloadLatestRelease"
+                    Margin="0,0,0,10"
+                    Header="Download Latest Release" />
+                <TreeViewItem
+                    x:Name="CategorySupport"
+                    Margin="0,0,0,10"
+                    Header="Support" />
+                <TreeViewItem
+                    x:Name="CategoryAbout"
+                    Margin="0,0,0,10"
+                    Header="About" />
+            </TreeView>
+        </ScrollViewer>
+        <ScrollViewer
+            Width="780"
+            Height="565"
+            VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="0,-5,0,0">
+                <!--  Keyboard Commands  -->
+                <WrapPanel Orientation="Vertical" Visibility="{Binding ElementName=CategoryKeyboardCommands, Path=IsSelected, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                    <WrapPanel Margin="0,0,20,0" Orientation="Vertical">
+                        <TextBlock Style="{StaticResource TextBlockHeading}">Keyboard Commands</TextBlock>
+                        <Line
+                            Stretch="Fill"
+                            Stroke="Gray"
+                            X2="1" />
+                        <WrapPanel>
+                            <TextBlock Margin="0,0,0,20" TextWrapping="Wrap">
+                                To configure a pop out panel, first click on the move and resize icon<InlineUIContainer>
+                                    <materialDesign:PackIcon Kind="MoveResize" />
+                                </InlineUIContainer>
+                                for the panel. You can then use keyboard commands below to adjust pop out panel when the icon turns green. To end panel configuration using keyboard commands, just click the icon<InlineUIContainer>
+                                    <materialDesign:PackIcon Kind="MoveResize" />
+                                </InlineUIContainer>
+                                again to end panel adjustment.</TextBlock>
+                            <TextBlock>
+                                <Run Foreground="LightSkyBlue">Up Arrow</Run>
+                                - Move panel up by 10 pixels<LineBreak />
+                                <Run Foreground="LightSkyBlue">Down Arrow</Run>
+                                - Move panel down by 10 pixels<LineBreak />
+                                <Run Foreground="LightSkyBlue">Left Arrow</Run>
+                                - Move panel left by 10 pixels<LineBreak />
+                                <Run Foreground="LightSkyBlue">Right Arrow</Run>
+                                - Move panel right by 10 pixels<LineBreak /><LineBreak />
+
+                                <Run Foreground="LightSkyBlue">Shift + Up Arrow</Run>
+                                - Move panel up by 1 pixel<LineBreak />
+                                <Run Foreground="LightSkyBlue">Shift + Down Arrow</Run>
+                                - Move panel down by 1 pixel<LineBreak />
+                                <Run Foreground="LightSkyBlue">Shift + Left Arrow</Run>
+                                - Move panel left by 1 pixel<LineBreak />
+                                <Run Foreground="LightSkyBlue">Shift + Right Arrow</Run>
+                                - Move panel right by 1 pixel<LineBreak /><LineBreak />
+
+                                <Run Foreground="LightSkyBlue">Ctrl + Up Arrow</Run>
+                                - Decrease height by 10 pixels<LineBreak />
+                                <Run Foreground="LightSkyBlue">Ctrl + Down Arrow</Run>
+                                - Increase height by 10 pixels<LineBreak />
+                                <Run Foreground="LightSkyBlue">Ctrl + Left Arrow</Run>
+                                - Decrease width by 10 pixels<LineBreak />
+                                <Run Foreground="LightSkyBlue">Ctrl + Right Arrow</Run>
+                                - Increase width by 10 pixels<LineBreak /><LineBreak />
+
+                                <Run Foreground="LightSkyBlue">Shift + Ctrl + Up Arrow</Run>
+                                - Decrease height by 1 pixel<LineBreak />
+                                <Run Foreground="LightSkyBlue">Shift + Ctrl + Down Arrow</Run>
+                                - Increase height by 1 pixel<LineBreak />
+                                <Run Foreground="LightSkyBlue">Shift + Ctrl + Left Arrow</Run>
+                                - Decrease width by 1 pixel<LineBreak />
+                                <Run Foreground="LightSkyBlue">Shift + Ctrl + Right Arrow</Run>
+                                - Increase width by 1 pixel<LineBreak />
+                            </TextBlock>
+                        </WrapPanel>
+                    </WrapPanel>
+                </WrapPanel>
+
+                <!--  User Guide  -->
+                <WrapPanel Orientation="Vertical" Visibility="{Binding ElementName=CategoryUserGuide, Path=IsSelected, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                    <WrapPanel Margin="0,0,20,0" Orientation="Vertical">
+                        <TextBlock Style="{StaticResource TextBlockHeading}">User Guide</TextBlock>
+                        <Line
+                            Stretch="Fill"
+                            Stroke="Gray"
+                            X2="1" />
+                    </WrapPanel>
+                    <TextBlock Width="Auto">
+                        <Hyperlink
+                            NavigateUri="Getting Started"
+                            RequestNavigate="Hyperlink_RequestNavigate"
+                            Style="{StaticResource MaterialDesignBody2Hyperlink}">
+                            <TextBlock Text="Getting Started" />
+                        </Hyperlink>
+                    </TextBlock>
+                    <TextBlock Width="Auto" Margin="0,10,0,0">
+                        <Hyperlink
+                            NavigateUri="User Guide"
+                            RequestNavigate="Hyperlink_RequestNavigate"
+                            Style="{StaticResource MaterialDesignBody2Hyperlink}">
+                            <TextBlock Text="User Guide" />
+                        </Hyperlink>
+                    </TextBlock>
+                </WrapPanel>
+
+                <!--  Download Latest  -->
+                <WrapPanel Orientation="Vertical" Visibility="{Binding ElementName=CategoryDownloadLatestRelease, Path=IsSelected, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                    <WrapPanel Margin="0,0,20,0" Orientation="Vertical">
+                        <TextBlock Style="{StaticResource TextBlockHeading}">Download Latest Release</TextBlock>
+                        <Line
+                            Stretch="Fill"
+                            Stroke="Gray"
+                            X2="1" />
+                    </WrapPanel>
+                    <TextBlock Width="Auto">
+                        <Hyperlink
+                            NavigateUri="Download Latest GitHub"
+                            RequestNavigate="Hyperlink_RequestNavigate"
+                            Style="{StaticResource MaterialDesignBody2Hyperlink}">
+                            <TextBlock Text="Download latest release (GitHub)" />
+                        </Hyperlink>
+                    </TextBlock>
+                    <TextBlock Width="Auto" Margin="0,10,0,0">
+                        <Hyperlink
+                            NavigateUri="Download Latest FlightsimTo"
+                            RequestNavigate="Hyperlink_RequestNavigate"
+                            Style="{StaticResource MaterialDesignBody2Hyperlink}">
+                            <TextBlock Text="Download latest release (Flightsim.to)" />
+                        </Hyperlink>
+                    </TextBlock>
+                </WrapPanel>
+
+                <!--  Support  -->
+                <WrapPanel Orientation="Vertical" Visibility="{Binding ElementName=CategorySupport, Path=IsSelected, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                    <WrapPanel Margin="0,0,20,0" Orientation="Vertical">
+                        <TextBlock Style="{StaticResource TextBlockHeading}">Support</TextBlock>
+                        <Line
+                            Stretch="Fill"
+                            Stroke="Gray"
+                            X2="1" />
+                    </WrapPanel>
+                    <TextBlock Width="Auto" Margin="0,0,0,0">
+                        <Hyperlink
+                            NavigateUri="Open Data Folder"
+                            RequestNavigate="Hyperlink_RequestNavigate"
+                            Style="{StaticResource MaterialDesignBody2Hyperlink}">
+                            <TextBlock Text="Open application data file folder" />
+                        </Hyperlink>
+                    </TextBlock>
+                    <TextBlock Width="Auto" Margin="0,10,0,0">
+                        <Hyperlink
+                            NavigateUri="Download VCC Library"
+                            RequestNavigate="Hyperlink_RequestNavigate"
+                            Style="{StaticResource MaterialDesignBody2Hyperlink}">
+                            <TextBlock Text="Download VC++ Library that is required by SimConnect to establish connection to MSFS" />
+                        </Hyperlink>
+                    </TextBlock>
+                    <Button
+                        Width="190"
+                        Margin="0,10,0,0"
+                        HorizontalAlignment="Left"
+                        Command="{Binding DeleteAppCacheCommand}"
+                        Content="Delete Application Cache"
+                        IsEnabled="{Binding HasOrphanAppCache}"
+                        KeyboardNavigation.AcceptsReturn="False"
+                        Style="{StaticResource MaterialDesignOutlinedButton}"
+                        ToolTip="This will delete all orphan application cache files in your Windows user account 'AppData/Local/Temp/.net/MSFSPopoutPanelManager' folder" />
+                    <Button
+                        Width="280"
+                        Margin="0,10,0,0"
+                        HorizontalAlignment="Left"
+                        Command="{Binding RollBackCommand}"
+                        Content="Rollback to previous version 3.4.6.0321"
+                        KeyboardNavigation.AcceptsReturn="False"
+                        Style="{StaticResource MaterialDesignOutlinedButton}"
+                        ToolTip="This will rollback the application to previous version 3.4.6.0321. All changes since installing the latest v4.0.0 update will be lost."
+                        Visibility="{Binding IsRollBackCommandVisible, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" />
+                </WrapPanel>
+
+                <!--  About  -->
+                <WrapPanel Orientation="Vertical" Visibility="{Binding ElementName=CategoryAbout, Path=IsSelected, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                    <WrapPanel Margin="0,0,20,0" Orientation="Vertical">
+                        <TextBlock Style="{StaticResource TextBlockHeading}">About</TextBlock>
+                        <Line
+                            Stretch="Fill"
+                            Stroke="Gray"
+                            X2="1" />
+                    </WrapPanel>
+                    <TextBlock Width="Auto" Margin="0,0,0,0">
+                        <Hyperlink
+                            NavigateUri="Version Info"
+                            RequestNavigate="Hyperlink_RequestNavigate"
+                            Style="{StaticResource MaterialDesignBody2Hyperlink}">
+                            <WrapPanel>
+
+                                <WrapPanel Margin="0">
+                                    <Label
+                                        Margin="0"
+                                        Padding="0"
+                                        Content="Version" />
+                                    <Label
+                                        Margin="5,0,0,0"
+                                        Padding="0"
+                                        Content="{Binding ApplicationVersion}" />
+                                </WrapPanel>
+                            </WrapPanel>
+                        </Hyperlink>
+                    </TextBlock>
+                    <Label
+                        Margin="0,5,0,0"
+                        Padding="0"
+                        Content="© 2022 Stanley Kwok. All rights reserved." />
+                    <TextBlock Width="Auto" Margin="0,10,0,0">
+                        <Hyperlink
+                            NavigateUri="License"
+                            RequestNavigate="Hyperlink_RequestNavigate"
+                            Style="{StaticResource MaterialDesignBody2Hyperlink}">
+                            <TextBlock Text="Public Release License" />
+                        </Hyperlink>
+                    </TextBlock>
+                </WrapPanel>
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
+</UserControl>
+

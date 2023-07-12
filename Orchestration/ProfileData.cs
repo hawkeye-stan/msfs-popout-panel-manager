@@ -1,7 +1,9 @@
-﻿using MSFSPopoutPanelManager.Shared;
-using MSFSPopoutPanelManager.UserDataAgent;
-using System.Collections.ObjectModel;
+﻿using MSFSPopoutPanelManager.DomainModel.Profile;
+using MSFSPopoutPanelManager.Shared;
+using MSFSPopoutPanelManager.WindowsAgent;
+using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 
 namespace MSFSPopoutPanelManager.Orchestration
@@ -12,95 +14,186 @@ namespace MSFSPopoutPanelManager.Orchestration
 
         public ProfileData()
         {
-            Profiles = new ObservableCollection<Profile>();
+            Profiles = new SortedObservableCollection<UserProfile>();
         }
 
-        public ObservableCollection<Profile> Profiles { get; private set; }
+        public SortedObservableCollection<UserProfile> Profiles { get; private set; }
 
-        public FlightSimData FlightSimData { private get; set; }
+        [IgnorePropertyChanged]
+        internal FlightSimData FlightSimDataRef { private get; set; }
 
-        public AppSettingData AppSettingData { private get; set; }
+        [IgnorePropertyChanged]
+        internal AppSettingData AppSettingDataRef { private get; set; }
 
-        public int AddProfile(string profileName)
+        public void AddProfile(string profileName)
         {
-            var newProfileId = ProfileManager.AddProfile(profileName, Profiles);
-            UpdateActiveProfile(newProfileId);
-            AppSettingData.AppSetting.LastUsedProfileId = newProfileId;
-            return newProfileId;
+            var newProfile = new UserProfile();
+            newProfile.Name = profileName;
+            newProfile.ProfileChanged += (sender, e) => WriteProfiles();
+
+            Profiles.Add(newProfile);
+            SetActiveProfile(newProfile.Id);
+
+            ProfileDataManager.WriteProfiles(Profiles);
+
+            AppSettingDataRef.ApplicationSetting.SystemSetting.LastUsedProfileId = newProfile.Id;
         }
 
-        public int AddProfile(string profileName, int copyFromProfileId)
+        public void AddProfile(string profileName, UserProfile copiedProfile)
         {
-            var newProfileId = ProfileManager.AddProfile(profileName, copyFromProfileId, Profiles);
-            UpdateActiveProfile(newProfileId);
-            AppSettingData.AppSetting.LastUsedProfileId = newProfileId;
-            return newProfileId;
+            if (copiedProfile == null)
+                return;
+
+            var newProfile = new UserProfile();
+            newProfile.Name = profileName;
+
+            foreach (var copiedPanelConfig in copiedProfile.PanelConfigs)
+            {
+                var copied = copiedPanelConfig.Copy();
+
+                copied.Id = Guid.NewGuid();
+                copied.PanelHandle = IntPtr.MaxValue;
+                copied.IsEditingPanel = false;
+
+                newProfile.PanelConfigs.Add(copied);
+            }
+
+            newProfile.ProfileSetting = copiedProfile.ProfileSetting.Copy();
+            newProfile.MsfsGameWindowConfig = copiedProfile.MsfsGameWindowConfig.Copy();
+            newProfile.ProfileChanged += (sender, e) => WriteProfiles();
+
+            Profiles.Add(newProfile);
+            SetActiveProfile(newProfile.Id);
+
+            ProfileDataManager.WriteProfiles(Profiles);
+
+            AppSettingDataRef.ApplicationSetting.SystemSetting.LastUsedProfileId = newProfile.Id;
         }
 
-        public bool DeleteProfile(int profileId)
+        public bool DeleteActiveProfile()
         {
             if (ActiveProfile == null)
                 return false;
 
-            var success = ProfileManager.DeleteProfile(profileId, Profiles);
-            UpdateActiveProfile(-1);
+            var activeProfileIndex = Profiles.IndexOf(ActiveProfile);
+
+            Profiles.Remove(ActiveProfile);
+
+            if (activeProfileIndex == 0 && Profiles.Count == 0)
+                SetActiveProfile(-1);
+            else if (activeProfileIndex == Profiles.Count)
+                SetActiveProfile(0);
+            else
+                SetActiveProfile(activeProfileIndex);
+
             return true;
         }
 
-        public void AddProfileBinding(string aircraft, int activeProfileId)
+        public void AddProfileBinding(string aircraft)
         {
             if (ActiveProfile == null)
                 return;
 
-            ProfileManager.AddProfileBinding(aircraft, activeProfileId, Profiles);
+            var boundProfile = Profiles.FirstOrDefault(p => p.AircraftBindings.Any(p => p == aircraft));
+            if (boundProfile != null)
+                return;
+
+            ActiveProfile.AircraftBindings.Add(aircraft);
+
+            ProfileDataManager.WriteProfiles(Profiles);
             RefreshProfile();
         }
 
-        public void DeleteProfileBinding(string aircraft, int activeProfileId)
+        public void DeleteProfileBinding(string aircraft)
         {
             if (ActiveProfile == null)
                 return;
 
-            ProfileManager.DeleteProfileBinding(aircraft, activeProfileId, Profiles);
+            ActiveProfile.AircraftBindings.Remove(aircraft);
+
+            ProfileDataManager.WriteProfiles(Profiles);
             RefreshProfile();
         }
 
         public void ReadProfiles()
         {
-            Profiles = new ObservableCollection<Profile>(ProfileManager.ReadProfiles());
+            Profiles = new SortedObservableCollection<UserProfile>(ProfileDataManager.ReadProfiles());
+            Profiles.ToList().ForEach(p => p.ProfileChanged += (sender, e) => WriteProfiles());
+
+            // Detect profiles collection changes
+            Profiles.CollectionChanged += (sender, e) =>
+            {
+                switch (e.Action)
+                {
+                    case System.Collections.Specialized.NotifyCollectionChangedAction.Add:
+                    case System.Collections.Specialized.NotifyCollectionChangedAction.Remove:
+                        WriteProfiles();
+                        break;
+                }
+            };
         }
 
         public void WriteProfiles()
         {
-            ProfileManager.WriteProfiles(Profiles);
+            Debug.WriteLine("Saving Data ... ");
+            ProfileDataManager.WriteProfiles(Profiles);
         }
 
-        public void UpdateActiveProfile(int profileId)
+        public void SetActiveProfile(Guid id)
         {
-            if (profileId == -1 && Profiles.Count > 0)
-                ActiveProfile = Profiles.FirstOrDefault(p => p.ProfileId == Profiles[0].ProfileId);
-            else if (profileId == -1 || Profiles.Count == 0)
+            StatusMessageWriter.ClearMessage();
+
+            if (id == Guid.Empty && Profiles.Count == 0)
+            {
                 ActiveProfile = null;
+                AppSettingDataRef.ApplicationSetting.SystemSetting.LastUsedProfileId = Guid.Empty;
+            }
+            else if (id == Guid.Empty && Profiles.Count > 0)
+            {
+                ActiveProfile = Profiles.First();
+                AppSettingDataRef.ApplicationSetting.SystemSetting.LastUsedProfileId = ActiveProfile.Id;
+            }
             else
-                ActiveProfile = Profiles.FirstOrDefault(p => p.ProfileId == profileId);
+            {
+                ActiveProfile = Profiles.FirstOrDefault(p => p.Id == id);
+
+                if (ActiveProfile == null && Profiles.Count > 0)
+                {
+                    ActiveProfile = Profiles.First();
+                    AppSettingDataRef.ApplicationSetting.SystemSetting.LastUsedProfileId = ActiveProfile.Id;
+                }
+                else if (ActiveProfile == null && Profiles.Count == 0)
+                {
+                    AppSettingDataRef.ApplicationSetting.SystemSetting.LastUsedProfileId = Guid.Empty;
+                    return;
+                }
+                else
+                {
+                    AppSettingDataRef.ApplicationSetting.SystemSetting.LastUsedProfileId = ActiveProfile.Id;
+                }
+            }
+
+            ResetActiveProfile();
 
             // Set active profile flag, this is used only for MVVM binding
-            Profiles.ToList().ForEach(p => p.IsActive = false);
-
-            if (ActiveProfile != null)
+            if (Profiles.Count > 0)
             {
+                Profiles.ToList().ForEach(p => p.IsActive = false);
                 ActiveProfile.IsActive = true;
-                AppSettingData.AppSetting.LastUsedProfileId = ActiveProfile.ProfileId;
             }
+        }
+
+        public void SetActiveProfile(int profileIndex)
+        {
+            if (profileIndex == -1)
+                SetActiveProfile(Guid.Empty);
             else
-            {
-                AppSettingData.AppSetting.LastUsedProfileId = -1;
-            }
+                SetActiveProfile(Profiles[profileIndex].Id);
 
             ActiveProfileChanged?.Invoke(this, null);
         }
 
-        public Profile ActiveProfile { get; private set; }
+        public UserProfile ActiveProfile { get; private set; }
 
         public bool HasActiveProfile { get { return ActiveProfile != null; } }
 
@@ -111,22 +204,7 @@ namespace MSFSPopoutPanelManager.Orchestration
                 if (ActiveProfile == null)
                     return false;
 
-                return ActiveProfile.BindingAircrafts.Any(p => p == FlightSimData.CurrentMsfsAircraft);
-            }
-        }
-
-        public bool IsAllowedDeleteAircraftBinding
-        {
-            get
-            {
-                if (ActiveProfile == null || !FlightSimData.HasCurrentMsfsAircraft)
-                    return false;
-
-                var uProfile = Profiles.FirstOrDefault(u => u.BindingAircrafts.Any(p => p == FlightSimData.CurrentMsfsAircraft));
-                if (uProfile != null && uProfile.ProfileId != ActiveProfile.ProfileId)
-                    return false;
-
-                return ActiveProfile.BindingAircrafts.Any(p => p == FlightSimData.CurrentMsfsAircraft);
+                return ActiveProfile.AircraftBindings.Any(p => p == FlightSimDataRef.AircraftName);
             }
         }
 
@@ -134,75 +212,64 @@ namespace MSFSPopoutPanelManager.Orchestration
         {
             get
             {
-                if (ActiveProfile == null || !FlightSimData.HasCurrentMsfsAircraft)
+                if (ActiveProfile == null || !FlightSimDataRef.HasAircraftName)
+                    return true;
+
+                var uProfile = Profiles.FirstOrDefault(u => u.AircraftBindings.Any(p => p == FlightSimDataRef.AircraftName));
+                if (uProfile != null && uProfile != ActiveProfile)
                     return false;
 
-                var uProfile = Profiles.FirstOrDefault(u => u.BindingAircrafts.Any(p => p == FlightSimData.CurrentMsfsAircraft));
-                if (uProfile != null && uProfile.ProfileId != ActiveProfile.ProfileId)
-                    return false;
-
-                if (FlightSimData == null || ActiveProfile.BindingAircrafts == null)
-                    return false;
-
-                return ActiveProfile == null ? false : !ActiveProfile.BindingAircrafts.Any(p => p == FlightSimData.CurrentMsfsAircraft);
+                return true;
             }
         }
 
         public void RefreshProfile()
         {
-            int currentProfileId;
+            int profileIndex;
             if (ActiveProfile == null)
-                currentProfileId = -1;
+                profileIndex = -1;
             else
-                currentProfileId = ActiveProfile.ProfileId;
+                profileIndex = Profiles.IndexOf(ActiveProfile);
 
             ActiveProfile = null;
-            UpdateActiveProfile(currentProfileId);
+
+            if (profileIndex == -1)
+                SetActiveProfile(Guid.Empty);
+            else
+                SetActiveProfile(Profiles[profileIndex].Id);
+        }
+
+        public void ResetActiveProfile()
+        {
+            InputHookManager.EndMouseHook();
+            InputHookManager.EndKeyboardHook();
+
+            if (ActiveProfile == null)
+                return;
+
+            ActiveProfile.CurrentMoveResizePanelId = Guid.Empty;
+            ActiveProfile.IsEditingPanelSource = false;
+            ActiveProfile.IsPoppedOut = false;
+
+            foreach (var panelConfig in ActiveProfile.PanelConfigs)
+            {
+                panelConfig.IsEditingPanel = false;
+                panelConfig.PanelHandle = IntPtr.MaxValue;
+            }
         }
 
         public void AutoSwitchProfile()
         {
             // Automatic switching of active profile when SimConnect active aircraft changes
-            if (Profiles != null && !string.IsNullOrEmpty(FlightSimData.CurrentMsfsAircraft))
+            if (Profiles != null && !string.IsNullOrEmpty(FlightSimDataRef.AircraftName))
             {
-                var matchedProfile = Profiles.FirstOrDefault(p => p.BindingAircrafts.Any(t => t == FlightSimData.CurrentMsfsAircraft));
-                if (matchedProfile != null)
-                    UpdateActiveProfile(matchedProfile.ProfileId);
-            }
-        }
-
-        // This is to migrate profile binding from aircraft livery to aircraft name
-        // Started in v3.4.2
-        public void MigrateLiveryToAircraftBinding(string liveryName, string aircraftName)
-        {
-            bool hasChanges = false;
-            if (Profiles != null && !string.IsNullOrEmpty(liveryName) && !string.IsNullOrEmpty(aircraftName))
-            {
-                var matchedProfile = Profiles.FirstOrDefault(p => p.BindingAircraftLiveries.Any(t => t == liveryName));
-
-                if (matchedProfile != null && !matchedProfile.BindingAircrafts.Any(a => a == aircraftName))
-                {
-                    matchedProfile.BindingAircrafts.Add(aircraftName);
-                    hasChanges = true;
-                }
-
+                var matchedProfile = Profiles.FirstOrDefault(p => p.AircraftBindings.Any(t => t == FlightSimDataRef.AircraftName));
                 if (matchedProfile != null)
                 {
-                    matchedProfile.BindingAircraftLiveries.Remove(liveryName);
-                    hasChanges = true;
-                }
-
-                if (hasChanges)
-                {
-                    WriteProfiles();
+                    SetActiveProfile(matchedProfile.Id);
                     RefreshProfile();
                 }
             }
-        }
-
-        public void MigrateLiveryToAircraftBinding()
-        {
-            MigrateLiveryToAircraftBinding(FlightSimData.CurrentMsfsLiveryTitle, FlightSimData.CurrentMsfsAircraft);
         }
 
         public void SaveMsfsGameWindowConfig()

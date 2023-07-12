@@ -8,6 +8,7 @@
 *.userosscache
 *.sln.docstates
 *.backup
+.nuget/
 
 # Build results
 [Dd]ebug/

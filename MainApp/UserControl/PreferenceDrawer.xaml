@@ -1,0 +1,544 @@
+﻿<UserControl
+    x:Class="MSFSPopoutPanelManager.MainApp.PreferenceDrawer"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:localcontrol="clr-namespace:MSFSPopoutPanelManager.MainApp.CustomControl"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodel="clr-namespace:MSFSPopoutPanelManager.MainApp.ViewModel"
+    Width="1024"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style
+            x:Key="TextBlockHeading"
+            BasedOn="{StaticResource {x:Type TextBlock}}"
+            TargetType="TextBlock">
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Width" Value="Auto" />
+            <Setter Property="Margin" Value="0,5,0,0" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontWeight" Value="Bold" />
+        </Style>
+        <Style
+            x:Key="TextBlockSubheading"
+            BasedOn="{StaticResource {x:Type TextBlock}}"
+            TargetType="TextBlock">
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Width" Value="Auto" />
+            <Setter Property="Margin" Value="0,5,0,5" />
+        </Style>
+        <Style
+            x:Key="ToggleButton"
+            BasedOn="{StaticResource MaterialDesignSwitchToggleButton}"
+            TargetType="ToggleButton">
+            <Setter Property="Margin" Value="4,0,4,0" />
+        </Style>
+        <Style
+            x:Key="TextBlockLabel"
+            BasedOn="{StaticResource {x:Type TextBlock}}"
+            TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Width" Value="700" />
+            <Setter Property="Margin" Value="5,0,0,0" />
+            <Setter Property="LineHeight" Value="20" />
+        </Style>
+        <Style TargetType="Line">
+            <Setter Property="Margin" Value="0,5,0,5" />
+        </Style>
+
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </UserControl.Resources>
+    <DockPanel d:DataContext="{d:DesignInstance viewmodel:ApplicationViewModel}">
+        <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
+            <TreeView
+                Width="210"
+                VerticalAlignment="Stretch"
+                DockPanel.Dock="Left">
+                <TreeView.ItemContainerStyle>
+                    <Style TargetType="{x:Type TreeViewItem}">
+                        <Setter Property="IsExpanded" Value="True" />
+                        <Setter Property="Foreground" Value="#666666" />
+                        <Setter Property="Background" Value="Transparent" />
+                        <Style.Resources>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent" />
+                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="White" />
+                            <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="Transparent" />
+                            <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="White" />
+                        </Style.Resources>
+                    </Style>
+                </TreeView.ItemContainerStyle>
+                <TreeViewItem
+                    Margin="-5,0,0,10"
+                    Padding="0"
+                    FontSize="14"
+                    FontWeight="Bold"
+                    Foreground="Gray"
+                    Header="Preferences"
+                    IsHitTestVisible="False" />
+                <TreeViewItem
+                    x:Name="CategoryGeneralSettings"
+                    Margin="0,0,0,10"
+                    Padding="0"
+                    Header="General Settings"
+                    IsSelected="True" />
+                <TreeViewItem
+                    x:Name="CategoryAutoPopOutPanelSettings"
+                    Margin="0,0,0,10"
+                    Header="Auto Pop Out Panel Settings" />
+                <TreeViewItem
+                    x:Name="CategoryPopOutSettings"
+                    Margin="0,0,0,10"
+                    Header="Pop Out Settings" />
+                <TreeViewItem
+                    x:Name="CategoryGameRefocusSettings"
+                    Margin="0,0,0,10"
+                    Header="Game Refocus Settings" />
+                <TreeViewItem
+                    x:Name="CategoryTouchSettings"
+                    Margin="0,0,0,10"
+                    Header="Touch Settings" />
+                <TreeViewItem
+                    x:Name="CategoryTrackIRSettings"
+                    Margin="0,0,0,10"
+                    Header="Track IR Settings" />
+                <TreeViewItem
+                    x:Name="CategoryWindowedModeSettings"
+                    Margin="0,0,0,10"
+                    Header="Windowed Mode Settings" />
+            </TreeView>
+        </ScrollViewer>
+
+        <ScrollViewer
+            Width="780"
+            Height="565"
+            VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="0,-4,0,0">
+                <!--  General Settings  -->
+                <WrapPanel Orientation="Vertical" Visibility="{Binding ElementName=CategoryGeneralSettings, Path=IsSelected, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                    <WrapPanel
+                        Width="Auto"
+                        Margin="0,0,20,20"
+                        Orientation="Vertical">
+                        <TextBlock Style="{StaticResource TextBlockHeading}">Always on Top</TextBlock>
+                        <Line
+                            Stretch="Fill"
+                            Stroke="Gray"
+                            X2="1" />
+                        <WrapPanel>
+                            <ToggleButton IsChecked="{Binding AppSettingData.ApplicationSetting.GeneralSetting.AlwaysOnTop, Mode=TwoWay}" Style="{StaticResource ToggleButton}" />
+                            <TextBlock Style="{StaticResource TextBlockLabel}">Pin the application on top of all open windows.</TextBlock>
+                        </WrapPanel>
+                    </WrapPanel>
+                    <WrapPanel Margin="0,0,20,20" Orientation="Vertical">
+                        <TextBlock Style="{StaticResource TextBlockHeading}">Auto Start</TextBlock>
+                        <Line
+                            Stretch="Fill"
+                            Stroke="Gray"
+                            X2="1" />
+                        <WrapPanel>
+                            <ToggleButton IsChecked="{Binding AppSettingData.ApplicationSetting.GeneralSetting.AutoStart, Mode=TwoWay}" Style="{StaticResource ToggleButton}" />
+                            <TextBlock Style="{StaticResource TextBlockLabel}">Enable auto start application when MSFS starts. This adds a XML config entry in EXE.xml file.</TextBlock>
+                        </WrapPanel>
+                    </WrapPanel>
+                    <WrapPanel Margin="0,0,20,20" Orientation="Vertical">
+                        <TextBlock Style="{StaticResource TextBlockHeading}">Minimize to Tray</TextBlock>
+                        <Line
+                            Stretch="Fill"
+                            Stroke="Gray"
+                            X2="1" />
+                        <WrapPanel>
+                            <ToggleButton IsChecked="{Binding AppSettingData.ApplicationSetting.GeneralSetting.MinimizeToTray, Mode=TwoWay}" Style="{StaticResource ToggleButton}" />
+                            <TextBlock Style="{StaticResource TextBlockLabel}">Minimize the application to system tray.</TextBlock>
+                        </WrapPanel>
+                    </WrapPanel>
+                    <WrapPanel Margin="0,0,20,20" Orientation="Vertical">
+                        <TextBlock Style="{StaticResource TextBlockHeading}">Start Minimized</TextBlock>
+                        <Line
+                            Stretch="Fill"
+                            Stroke="Gray"
+                            X2="1" />
+                        <WrapPanel>
+                            <ToggleButton IsChecked="{Binding AppSettingData.ApplicationSetting.GeneralSetting.StartMinimized, Mode=TwoWay}" Style="{StaticResource ToggleButton}" />
+                            <TextBlock Style="{StaticResource TextBlockLabel}">Start the application in minimized mode in system tray.</TextBlock>
+                        </WrapPanel>
+                    </WrapPanel>
+                    <WrapPanel Margin="0,0,20,20" Orientation="Vertical">
+                        <TextBlock Style="{StaticResource TextBlockHeading}">Auto Close When Exiting MSFS</TextBlock>
+                        <Line
+                            Stretch="Fill"
+                            Stroke="Gray"
+                            X2="1" />
+                        <WrapPanel>
+                            <ToggleButton IsChecked="{Binding AppSettingData.ApplicationSetting.GeneralSetting.AutoClose, Mode=TwoWay}" Style="{StaticResource ToggleButton}" />
+                            <TextBlock Style="{StaticResource TextBlockLabel}">Automatically close the application when exiting MSFS.</TextBlock>
+                        </WrapPanel>
+                    </WrapPanel>
+                    <WrapPanel Margin="0,0,20,20" Orientation="Vertical">
+                        <TextBlock Style="{StaticResource TextBlockHeading}">Check for Update</TextBlock>
+                        <Line
+                            Stretch="Fill"
+                            Stroke="Gray"
+                            X2="1" />
+                        <WrapPanel>
+                            <ToggleButton IsChecked="{Binding AppSettingData.ApplicationSetting.GeneralSetting.CheckForUpdate, Mode=TwoWay}" Style="{StaticResource ToggleButton}" />
+                            <TextBlock Style="{StaticResource TextBlockLabel}">Enable checking for update of application through Github.</TextBlock>
+                        </WrapPanel>
+                    </WrapPanel>
+                </WrapPanel>
+
+                <!--  Auto Pop Out Panel Settings  -->
+                <WrapPanel Orientation="Vertical" Visibility="{Binding ElementName=CategoryAutoPopOutPanelSettings, Path=IsSelected, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                    <WrapPanel Margin="0,0,20,20" Orientation="Vertical">
+                        <TextBlock Style="{StaticResource TextBlockHeading}">Enable Auto Pop Out Panels</TextBlock>
+                        <Line
+                            Stretch="Fill"
+                            Stroke="Gray"
+                            X2="1" />
+                        <WrapPanel>
+                            <ToggleButton IsChecked="{Binding AppSettingData.ApplicationSetting.AutoPopOutSetting.IsEnabled, Mode=TwoWay}" Style="{StaticResource ToggleButton}" />
+                            <TextBlock Style="{StaticResource TextBlockLabel}">Automatic pop out panels when an aircraft livery is bound to a profile. The following steps will be performed.</TextBlock>
+                        </WrapPanel>
+                        <StackPanel Margin="46,0,0,0" Orientation="Vertical">
+                            <TextBlock Margin="0,10,0,0" Style="{StaticResource TextBlockLabel}">
+                                1. Detect flight start signal using SimConnect.
+                            </TextBlock>
+                            <TextBlock Margin="0,10,0,0" Style="{StaticResource TextBlockLabel}">
+                                2. Wait for cockpit view to appear before executing pop out panel sequence.
+                            </TextBlock>
+                            <TextBlock Margin="0,10,0,0" Style="{StaticResource TextBlockLabel}">
+                                3. If configured for profile on cold start, execute and detect instrumentation power on before executing pop out panel sequence.
+                            </TextBlock>
+                        </StackPanel>
+                    </WrapPanel>
+                    <WrapPanel Margin="0,0,20,20" Orientation="Vertical">
+                        <TextBlock Style="{StaticResource TextBlockHeading}">Ready to Fly Button Delay</TextBlock>
+                        <Line
+                            Stretch="Fill"
+                            Stroke="Gray"
+                            X2="1" />
+                        <StackPanel Orientation="Horizontal">
+                            <localcontrol:NumericUpDown
+                                Width="90"
+                                Height="24"
+                                FontSize="12"
+                                Increment="1"
+                                MaxValue="10"
+                                MinValue="0"
+                                Value="{Binding AppSettingData.ApplicationSetting.AutoPopOutSetting.ReadyToFlyDelay, Mode=TwoWay}" />
+                            <TextBlock
+                                Width="640"
+                                Margin="10,0,0,0"
+                                Style="{StaticResource TextBlockLabel}"
+                                TextWrapping="Wrap">
+                                Amount of time in seconds to delay auto pop out panels from starting after ready to fly button has been pressed automatically. Extending this delay helps resolve auto pop out failure because cockpit has not been loaded completely yet depending on the speed of your PC.
+                            </TextBlock>
+                        </StackPanel>
+                    </WrapPanel>
+                </WrapPanel>
+
+                <!--  Pop Out Settings  -->
+                <WrapPanel Orientation="Vertical" Visibility="{Binding ElementName=CategoryPopOutSettings, Path=IsSelected, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                    <WrapPanel Margin="0,0,20,0" Orientation="Vertical">
+                        <WrapPanel Orientation="Vertical">
+                            <TextBlock Style="{StaticResource TextBlockHeading}">Enable Auto Panning</TextBlock>
+                            <Line
+                                Stretch="Fill"
+                                Stroke="Gray"
+                                X2="1" />
+                            <WrapPanel>
+                                <ToggleButton IsChecked="{Binding AppSettingData.ApplicationSetting.PopOutSetting.AutoPanning.IsEnabled, Mode=TwoWay}" Style="{StaticResource ToggleButton}" />
+                                <TextBlock Style="{StaticResource TextBlockLabel}">Enable automatic panning of cockpit view when popping out panels. Auto Panning remembers the custom cockpit camera angle you used when defining the locations of pop out panel.</TextBlock>
+                            </WrapPanel>
+                        </WrapPanel>
+                        <WrapPanel Orientation="Vertical" Visibility="{Binding AppSettingData.ApplicationSetting.PopOutSetting.AutoPanning.IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                            <StackPanel
+                                Width="Auto"
+                                Margin="40,15,0,0"
+                                VerticalAlignment="Top"
+                                Orientation="Horizontal">
+                                <WrapPanel>
+                                    <Label Content="Ctrl-Alt-" FontSize="14" />
+                                    <ComboBox
+                                        Width="35"
+                                        VerticalAlignment="top"
+                                        SelectedValue="{Binding AppSettingData.ApplicationSetting.PopOutSetting.AutoPanning.KeyBinding, Mode=TwoWay}"
+                                        SelectedValuePath="Tag">
+                                        <ComboBoxItem Content="0" Tag="0" />
+                                        <ComboBoxItem Content="1" Tag="1" />
+                                        <ComboBoxItem Content="2" Tag="2" />
+                                        <ComboBoxItem Content="3" Tag="3" />
+                                        <ComboBoxItem Content="4" Tag="4" />
+                                        <ComboBoxItem Content="5" Tag="5" />
+                                        <ComboBoxItem Content="6" Tag="6" />
+                                        <ComboBoxItem Content="7" Tag="7" />
+                                        <ComboBoxItem Content="8" Tag="8" />
+                                        <ComboBoxItem Content="9" Tag="9" />
+                                    </ComboBox>
+                                </WrapPanel>
+                                <TextBlock
+                                    Width="620"
+                                    Margin="10,3,0,0"
+                                    Style="{StaticResource TextBlockLabel}">
+                                    Configure key binding for saving and recalling of custom MSFS cockpit camera view when defining the locations of pop out panel. Requires binding keystroke to custom camera in MSFS control setting. (Default: Ctrl-Alt-0 to save and Alt-0 to load).
+                                </TextBlock>
+                            </StackPanel>
+                        </WrapPanel>
+                    </WrapPanel>
+                    <WrapPanel Margin="0,20,20,0" Orientation="Vertical">
+                        <TextBlock Style="{StaticResource TextBlockHeading}">Minimize Pop Out Panel Manager During Pop Out</TextBlock>
+                        <Line
+                            Stretch="Fill"
+                            Stroke="Gray"
+                            X2="1" />
+                        <WrapPanel>
+                            <ToggleButton IsChecked="{Binding AppSettingData.ApplicationSetting.PopOutSetting.MinimizeDuringPopOut, Mode=TwoWay}" Style="{StaticResource ToggleButton}" />
+                            <TextBlock Style="{StaticResource TextBlockLabel}">Minimize Pop Out Panel Manager during pop out process.</TextBlock>
+                        </WrapPanel>
+                    </WrapPanel>
+                    <WrapPanel Margin="0,20,20,0" Orientation="Vertical">
+                        <TextBlock Style="{StaticResource TextBlockHeading}">Minimize Pop Out Panel Manager After Pop Out</TextBlock>
+                        <Line
+                            Stretch="Fill"
+                            Stroke="Gray"
+                            X2="1" />
+                        <WrapPanel>
+                            <ToggleButton IsChecked="{Binding AppSettingData.ApplicationSetting.PopOutSetting.MinimizeAfterPopOut, Mode=TwoWay}" Style="{StaticResource ToggleButton}" />
+                            <TextBlock Style="{StaticResource TextBlockLabel}">Minimize Pop Out Panel Manager after all panels have been popped out.</TextBlock>
+                        </WrapPanel>
+                    </WrapPanel>
+                    <WrapPanel Margin="0,20,20,0" Orientation="Vertical">
+                        <TextBlock Style="{StaticResource TextBlockHeading}">Enable Active Pause</TextBlock>
+                        <Line
+                            Stretch="Fill"
+                            Stroke="Gray"
+                            X2="1" />
+                        <WrapPanel>
+                            <ToggleButton IsChecked="{Binding AppSettingData.ApplicationSetting.PopOutSetting.AutoActivePause, Mode=TwoWay}" Style="{StaticResource ToggleButton}" />
+                            <TextBlock Style="{StaticResource TextBlockLabel}">Enable active pause when panels are being popped out.</TextBlock>
+                        </WrapPanel>
+                    </WrapPanel>
+                    <WrapPanel Margin="0,20,20,0" Orientation="Vertical">
+                        <WrapPanel Orientation="Vertical">
+                            <TextBlock Style="{StaticResource TextBlockHeading}">Enable Return to Predefined Camera View After Pop Out</TextBlock>
+                            <Line
+                                Stretch="Fill"
+                                Stroke="Gray"
+                                X2="1" />
+                            <WrapPanel>
+                                <ToggleButton IsChecked="{Binding AppSettingData.ApplicationSetting.PopOutSetting.AfterPopOutCameraView.IsEnabled, Mode=TwoWay}" Style="{StaticResource ToggleButton}" />
+                                <TextBlock Style="{StaticResource TextBlockLabel}">Enable return to a predefined camera view after pop out.</TextBlock>
+                            </WrapPanel>
+                        </WrapPanel>
+                        <WrapPanel Orientation="Vertical" Visibility="{Binding AppSettingData.ApplicationSetting.PopOutSetting.AfterPopOutCameraView.IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                            <WrapPanel Margin="46,10,0,0" Orientation="Horizontal">
+                                <ComboBox
+                                    Width="160"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    SelectedValue="{Binding AppSettingData.ApplicationSetting.PopOutSetting.AfterPopOutCameraView.CameraView, Mode=TwoWay}"
+                                    SelectedValuePath="Tag">
+                                    <ComboBoxItem Content="Cockpit Center View" Tag="CockpitCenterView" />
+                                    <ComboBoxItem Content="Custom Camera View" Tag="CustomCameraView" />
+                                </ComboBox>
+                            </WrapPanel>
+                        </WrapPanel>
+                        <WrapPanel Orientation="Vertical" Visibility="{Binding AppSettingData.ApplicationSetting.PopOutSetting.AfterPopOutCameraView.IsEnabledCustomCameraKeyBinding, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                            <StackPanel Margin="44,10,0,0" Orientation="Horizontal">
+                                <Label Content="Alt-" FontSize="14" />
+                                <ComboBox
+                                    Width="35"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Top"
+                                    SelectedValue="{Binding AppSettingData.ApplicationSetting.PopOutSetting.AfterPopOutCameraView.KeyBinding, Mode=TwoWay}"
+                                    SelectedValuePath="Tag">
+                                    <ComboBoxItem Content="0" Tag="0" />
+                                    <ComboBoxItem Content="1" Tag="1" />
+                                    <ComboBoxItem Content="2" Tag="2" />
+                                    <ComboBoxItem Content="3" Tag="3" />
+                                    <ComboBoxItem Content="4" Tag="4" />
+                                    <ComboBoxItem Content="5" Tag="5" />
+                                    <ComboBoxItem Content="6" Tag="6" />
+                                    <ComboBoxItem Content="7" Tag="7" />
+                                    <ComboBoxItem Content="8" Tag="8" />
+                                    <ComboBoxItem Content="9" Tag="9" />
+                                </ComboBox>
+                                <TextBlock
+                                    Width="620"
+                                    Margin="10,3,0,0"
+                                    Style="{StaticResource TextBlockLabel}">
+                                    Configure key binding for custom camera view to load. Requires binding keystroke to custom camera in MSFS control setting. (Default: Alt-1 to load).
+                                </TextBlock>
+                            </StackPanel>
+                        </WrapPanel>
+                    </WrapPanel>
+
+                    <WrapPanel Margin="0,20,20,0" Orientation="Vertical">
+                        <TextBlock Style="{StaticResource TextBlockHeading}">Enable Panel Reset When Profile Is Locked</TextBlock>
+                        <Line
+                            Stretch="Fill"
+                            Stroke="Gray"
+                            X2="1" />
+                        <WrapPanel>
+                            <ToggleButton IsChecked="{Binding AppSettingData.ApplicationSetting.PopOutSetting.EnablePanelResetWhenLocked, Mode=TwoWay}" Style="{StaticResource ToggleButton}" />
+                            <TextBlock Style="{StaticResource TextBlockLabel}">
+                                Enable panel to go back to its original location when move if the profile is locked. Disable this setting will allow panel to be moved when profile is locked
+                                but the profile setting will be unchanged. With this setting disable, Pop Out Panel Manager will no longer detect pop out panel's movement when profile is locked which may save some CPU cycles.
+                            </TextBlock>
+                        </WrapPanel>
+                    </WrapPanel>
+
+                    <WrapPanel Margin="0,20,20,20" Orientation="Vertical">
+                        <TextBlock Style="{StaticResource TextBlockHeading}">Pop Out Title Bar Color Customization</TextBlock>
+                        <Line
+                            Stretch="Fill"
+                            Stroke="Gray"
+                            X2="1" />
+                        <WrapPanel>
+                            <ToggleButton
+                                x:Name="TglBtnPopOutColorCustomizationEnable"
+                                IsChecked="{Binding AppSettingData.ApplicationSetting.PopOutSetting.PopOutTitleBarCustomization.IsEnabled, Mode=TwoWay}"
+                                Style="{StaticResource ToggleButton}" />
+                            <TextBlock Style="{StaticResource TextBlockLabel}">
+                                Enable setting the color of title bar for pop out panel. The color is set in Hexidemical format of RGB color (RRGGBB). For example, black is "#000000" and white is "#FFFFFF".
+                            </TextBlock>
+                        </WrapPanel>
+                        <WrapPanel Visibility="{Binding AppSettingData.ApplicationSetting.PopOutSetting.PopOutTitleBarCustomization.IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                            <Label Margin="42,10,0,0">Color:</Label>
+                            <Label Margin="0,10,0,0">#</Label>
+                            <TextBox
+                                Width="50"
+                                Height="22"
+                                Margin="0,10,0,0"
+                                VerticalAlignment="Top"
+                                materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
+                                AcceptsReturn="False"
+                                IsEnabled="{Binding Path=IsChecked, ElementName=TglBtnPopOutColorCustomizationEnable}"
+                                MaxLength="6"
+                                Style="{StaticResource MaterialDesignTextBox}"
+                                Text="{Binding AppSettingData.ApplicationSetting.PopOutSetting.PopOutTitleBarCustomization.HexColor, Mode=TwoWay}" />
+                        </WrapPanel>
+                    </WrapPanel>
+
+                    <WrapPanel Margin="0,0,20,20" Orientation="Vertical">
+                        <TextBlock Style="{StaticResource TextBlockHeading}">Use Left Control + Right Control to Pop Out Panel</TextBlock>
+                        <Line
+                            Stretch="Fill"
+                            Stroke="Gray"
+                            X2="1" />
+                        <WrapPanel>
+                            <ToggleButton IsChecked="{Binding AppSettingData.ApplicationSetting.PopOutSetting.UseLeftRightControlToPopOut, Mode=TwoWay}" Style="{StaticResource ToggleButton}" />
+                            <TextBlock Style="{StaticResource TextBlockLabel}">
+                                If your keyboard does not have a Right-Alt key to perform left click to pop out panel, you can map Left Ctrl + Right Ctrl in MSFS control setting to pop out
+                                panel instead. For this feature to work, please map (CTRL + RIGHT CTRL) in Control Options => Miscellaneous => New UI Window Mode in the game
+                            </TextBlock>
+                        </WrapPanel>
+                    </WrapPanel>
+                </WrapPanel>
+
+                <!--  Game Refocus Settings  -->
+                <WrapPanel Orientation="Vertical" Visibility="{Binding ElementName=CategoryGameRefocusSettings, Path=IsSelected, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                    <WrapPanel Margin="0,0,20,20" Orientation="Vertical">
+                        <TextBlock Style="{StaticResource TextBlockHeading}">Refocus Game Window</TextBlock>
+                        <Line
+                            Stretch="Fill"
+                            Stroke="Gray"
+                            X2="1" />
+                        <WrapPanel>
+                            <ToggleButton IsChecked="{Binding AppSettingData.ApplicationSetting.RefocusSetting.RefocusGameWindow.IsEnabled, Mode=TwoWay}" Style="{StaticResource ToggleButton}" />
+                            <TextBlock Style="{StaticResource TextBlockLabel}">Automactically set focus back to game window after a period of inactivity when either clicking on a panel or touching a panel when touch feature is enabled. This will give you flight control back when using pop out panel to overcome the current MSFS limitation. This setting needs to be enabled for each profile and each pop out panel's automatic refocus setting to work.</TextBlock>
+                        </WrapPanel>
+                        <StackPanel
+                            Margin="46,10,0,0"
+                            Orientation="Horizontal"
+                            Visibility="{Binding AppSettingData.ApplicationSetting.RefocusSetting.RefocusGameWindow.IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                            <localcontrol:NumericUpDown
+                                Width="90"
+                                Height="24"
+                                FontSize="12"
+                                Increment="0.1"
+                                MaxValue="10"
+                                MinValue="0.5"
+                                Places="1"
+                                Value="{Binding AppSettingData.ApplicationSetting.RefocusSetting.RefocusGameWindow.Delay, Mode=TwoWay}" />
+                            <TextBlock
+                                Width="620"
+                                Margin="10,0,0,0"
+                                Style="{StaticResource TextBlockLabel}">
+                                Amount of time in seconds to wait for touch inactivity before input focus goes back to game window.
+                            </TextBlock>
+                        </StackPanel>
+                    </WrapPanel>
+                </WrapPanel>
+
+                <!--  Touch Settings  -->
+                <WrapPanel Orientation="Vertical" Visibility="{Binding ElementName=CategoryTouchSettings, Path=IsSelected, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                    <WrapPanel Margin="0,0,20,20" Orientation="Vertical">
+                        <TextBlock Style="{StaticResource TextBlockHeading}">Touch Down Touch Up Delay</TextBlock>
+                        <Line
+                            Stretch="Fill"
+                            Stroke="Gray"
+                            X2="1" />
+                        <WrapPanel>
+                            <localcontrol:NumericUpDown
+                                Width="90"
+                                Height="24"
+                                FontSize="12"
+                                Increment="5"
+                                MaxValue="100"
+                                MinValue="0"
+                                Value="{Binding AppSettingData.ApplicationSetting.TouchSetting.TouchDownUpDelay, Mode=TwoWay}" />
+                            <TextBlock
+                                Width="630"
+                                Margin="10,0,0,0"
+                                Style="{StaticResource TextBlockLabel}">
+                                Amount of time in milliseconds to delay touch down and then touch up event when operating touch enabled panel. If your touch is not registering consistently, increasing this value may help.
+                            </TextBlock>
+                            <TextBlock
+                                Margin="0,10,0,0"
+                                FontSize="14"
+                                TextWrapping="Wrap">
+                                For panel display on direct connected touch monitor, 0 milliseconds work really well.<LineBreak /><LineBreak />
+                                For panel display on a tablet using software such as Spacedesk, since there is higher latency for touch signal, increasing this value 5ms at a time may compensate for this latency.</TextBlock>
+                        </WrapPanel>
+                    </WrapPanel>
+                </WrapPanel>
+
+                <!--  TrackIR Settings  -->
+                <WrapPanel Orientation="Vertical" Visibility="{Binding ElementName=CategoryTrackIRSettings, Path=IsSelected, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                    <WrapPanel Margin="0,0,20,20" Orientation="Vertical">
+                        <TextBlock Style="{StaticResource TextBlockHeading}">Auto Disable Track IR</TextBlock>
+                        <Line
+                            Stretch="Fill"
+                            Stroke="Gray"
+                            X2="1" />
+                        <WrapPanel>
+                            <ToggleButton IsChecked="{Binding AppSettingData.ApplicationSetting.TrackIRSetting.AutoDisableTrackIR, Mode=TwoWay}" Style="{StaticResource ToggleButton}" />
+                            <TextBlock Style="{StaticResource TextBlockLabel}">Automactically disable Track IR during panel selections and pop out process. Track IR will be re-enabled once these processes are completed.</TextBlock>
+                        </WrapPanel>
+                    </WrapPanel>
+                </WrapPanel>
+
+                <!--  Windowed Mode Settings  -->
+                <WrapPanel Orientation="Vertical" Visibility="{Binding ElementName=CategoryWindowedModeSettings, Path=IsSelected, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                    <WrapPanel Margin="0,0,20,20" Orientation="Vertical">
+                        <TextBlock Style="{StaticResource TextBlockHeading}">Auto Resize MSFS Game Window (Used with Windowed Display Mode only)</TextBlock>
+                        <Line
+                            Stretch="Fill"
+                            Stroke="Gray"
+                            X2="1" />
+                        <WrapPanel>
+                            <ToggleButton IsChecked="{Binding AppSettingData.ApplicationSetting.WindowedModeSetting.AutoResizeMsfsGameWindow, Mode=TwoWay}" Style="{StaticResource ToggleButton}" />
+                            <TextBlock Style="{StaticResource TextBlockLabel}">
+                                Enable automatic resize of MSFS game window when using Windowed Display Mode. When playing the game in Windowed Display Mode, this setting is used to resize game window to match original size
+                                and location when panel profile was initially defined. When this setting is first checked, current game window size and location will also be saved automatically.
+                            </TextBlock>
+                        </WrapPanel>
+                    </WrapPanel>
+                </WrapPanel>
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
+</UserControl>

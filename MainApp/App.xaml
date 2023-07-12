@@ -1,0 +1,21 @@
+﻿<Application
+    x:Class="MSFSPopoutPanelManager.MainApp.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <materialDesign:BundledTheme
+                    BaseTheme="Dark"
+                    PrimaryColor="BlueGrey"
+                    SecondaryColor="Blue" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.PopupBox.xaml" />
+                <ResourceDictionary Source="CustomControl/themes/NumericUpDown.xaml" />
+                <ResourceDictionary Source="Styles/CustomScrollViewStyle.xaml" />
+                <ResourceDictionary x:Name="CustomMaterialDesignExpander" Source="Styles/CustomMaterialDesignExpander.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

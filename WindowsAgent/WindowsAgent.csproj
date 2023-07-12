@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+	  <TargetFramework>net7.0-windows</TargetFramework>
     <AssemblyName>WindowsAgent</AssemblyName>
     <PackageId>MSFS 2020 Popout Panel Manager WindowsAgent</PackageId>
     <Product>MSFS 2020 Popout Panel Manager WindowsAgent</Product>
@@ -11,12 +11,12 @@
     <PackageProjectUrl>https://github.com/hawkeye-stan/msfs-popout-panel-manager</PackageProjectUrl>
     <RootNamespace>MSFSPopoutPanelManager.WindowsAgent</RootNamespace>
     <Platforms>x64</Platforms>
-    <Version>3.4.6.0321</Version>
-    <AssemblyVersion>3.4.6.0321</AssemblyVersion>
-    <FileVersion>3.4.6.0321</FileVersion>
+    <Version>4.0.0.0</Version>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+    <FileVersion>4.0.0.0</FileVersion>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <DebugType>Embedded</DebugType>
-    <Configurations>Debug;Release;DebugTouchPanel;ReleaseTouchPanel</Configurations>
+    <Configurations>Debug;Releasel;Local</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,8 +25,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DomainModel\DomainModel.csproj" />
     <ProjectReference Include="..\Shared\Shared.csproj" />
-    <ProjectReference Include="..\UserDataAgent\UserDataAgent.csproj" />
   </ItemGroup>
 
 </Project>

@@ -25,13 +25,13 @@ namespace MSFSPopoutPanelManager.Shared
             errorLogAppender.File = FileIo.GetErrorLogFilePath();
             errorLogAppender.ActivateOptions();
 
-            var infoLogAppender = LogManager.GetRepository(Assembly.GetEntryAssembly()).GetAppenders().Skip(1).First() as RollingFileAppender;
-            infoLogAppender.File = FileIo.GetInfoLogFilePath();
-            infoLogAppender.ActivateOptions();
+            //var infoLogAppender = LogManager.GetRepository(Assembly.GetEntryAssembly()).GetAppenders().Skip(1).First() as RollingFileAppender;
+            //infoLogAppender.File = FileIo.GetInfoLogFilePath();
+            //infoLogAppender.ActivateOptions();
 
-            var debugLogAppender = LogManager.GetRepository(Assembly.GetEntryAssembly()).GetAppenders().Skip(2).First() as RollingFileAppender;
-            debugLogAppender.File = FileIo.GetDebugLogFilePath();
-            debugLogAppender.ActivateOptions();
+            //var debugLogAppender = LogManager.GetRepository(Assembly.GetEntryAssembly()).GetAppenders().Skip(2).First() as RollingFileAppender;
+            //debugLogAppender.File = FileIo.GetDebugLogFilePath();
+            //debugLogAppender.ActivateOptions();
         }
 
         public static void WriteLog(string message, StatusMessageType messageType)
@@ -41,12 +41,12 @@ namespace MSFSPopoutPanelManager.Shared
                 case StatusMessageType.Error:
                     Log.Error(message);
                     break;
-                case StatusMessageType.Info:
-                    Log.Info(message);
-                    break;
-                case StatusMessageType.Debug:
-                    Log.Debug(message);
-                    break;
+                    //case StatusMessageType.Info:
+                    //    Log.Info(message);
+                    //    break;
+                    //case StatusMessageType.Debug:
+                    //    Log.Debug(message);
+                    //    break;
             }
         }
 

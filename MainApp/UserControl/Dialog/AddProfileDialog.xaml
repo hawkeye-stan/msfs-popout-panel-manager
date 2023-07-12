@@ -1,0 +1,92 @@
+﻿<UserControl
+    x:Class="MSFSPopoutPanelManager.MainApp.AddProfileDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:MSFSPopoutPanelManager.MainApp"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodel="clr-namespace:MSFSPopoutPanelManager.MainApp.ViewModel"
+    xmlns:wpf="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
+    Width="400"
+    Height="210"
+    DataContext="{Binding RelativeSource={RelativeSource Self}, Path=ViewModel}"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <local:InverseBooleanOrConverter x:Key="InverseBooleanOrConverter" />
+    </UserControl.Resources>
+    <StackPanel>
+        <materialDesign:ColorZone
+            Height="30"
+            materialDesign:ElevationAssist.Elevation="Dp4"
+            Mode="PrimaryDark">
+            <StackPanel
+                Grid.Row="0"
+                Margin="24,0,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center">
+                <TextBlock Text="Add Profile" />
+            </StackPanel>
+        </materialDesign:ColorZone>
+        <StackPanel
+            Height="84"
+            Margin="24,12,24,16"
+            HorizontalAlignment="Stretch"
+            FocusManager.FocusedElement="{Binding ElementName=TxtBoxName}">
+            <ComboBox
+                materialDesign:HintAssist.FloatingScale="0.75"
+                materialDesign:HintAssist.Hint="Copy From Profile"
+                DisplayMemberPath="Name"
+                ItemsSource="{Binding ProfileData.Profiles}"
+                MaxDropDownHeight="280"
+                SelectedValue="{Binding CopiedProfile, Mode=TwoWay}"
+                Style="{StaticResource MaterialDesignFloatingHintComboBox}" />
+            <TextBox
+                x:Name="TxtBoxName"
+                Margin="0,8,0,0"
+                VerticalAlignment="Center"
+                materialDesign:HintAssist.FloatingScale="0.75"
+                materialDesign:HintAssist.Hint="Profile Name"
+                Style="{StaticResource MaterialDesignFloatingHintTextBox}">
+                <Binding
+                    Mode="TwoWay"
+                    Path="Profile.Name"
+                    UpdateSourceTrigger="PropertyChanged"
+                    ValidatesOnDataErrors="True">
+                    <Binding.ValidationRules>
+                        <viewmodel:PostiveValidationRule />
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox>
+        </StackPanel>
+        <StackPanel
+            Height="50"
+            Margin="24,12,24,0"
+            HorizontalAlignment="Right"
+            Orientation="Horizontal">
+            <Button
+                x:Name="BtnAccept"
+                Command="{x:Static wpf:DialogHost.CloseDialogCommand}"
+                CommandParameter="ADD"
+                IsDefault="True"
+                Style="{StaticResource MaterialDesignOutlinedButton}">
+                ACCEPT
+                <Button.IsEnabled>
+                    <MultiBinding Converter="{StaticResource InverseBooleanOrConverter}" Mode="TwoWay">
+                        <Binding ElementName="TxtBoxName" Path="(Validation.HasError)" />
+                        <Binding Path="Profile.Name.Length" />
+                    </MultiBinding>
+                </Button.IsEnabled>
+            </Button>
+            <Button
+                x:Name="BtnCancel"
+                Margin="12,0,0,0"
+                Command="{x:Static wpf:DialogHost.CloseDialogCommand}"
+                CommandParameter="CANCEL"
+                IsCancel="True"
+                Style="{StaticResource MaterialDesignOutlinedButton}">
+                CANCEL
+            </Button>
+        </StackPanel>
+    </StackPanel>
+</UserControl>

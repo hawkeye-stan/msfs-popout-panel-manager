@@ -1,53 +1,94 @@
-﻿using MSFSPopoutPanelManager.Shared;
+﻿using MSFSPopoutPanelManager.DomainModel.Profile;
 using System.Linq;
 
 namespace MSFSPopoutPanelManager.Orchestration
 {
-    public class ProfileOrchestrator : ObservableObject
+    public class ProfileOrchestrator
     {
-        internal ProfileData ProfileData { get; set; }
+        private ProfileData _profileData;
+        private FlightSimData _flightSimData;
 
-        internal FlightSimData FlightSimData { get; set; }
-
-        public void AddProfile(string profileName, int copyProfileId)
+        public ProfileOrchestrator(ProfileData profileData, FlightSimData flightSimData)
         {
-            if (copyProfileId == -1)
-                ProfileData.AddProfile(profileName);
+            _profileData = profileData;
+            _flightSimData = flightSimData;
+        }
+
+        public void AddProfile(string profileName, UserProfile copiedProfile)
+        {
+            // Reset current profile
+            _profileData.ResetActiveProfile();
+
+            if (copiedProfile == null)
+                _profileData.AddProfile(profileName);
             else
-                ProfileData.AddProfile(profileName, copyProfileId);
+                _profileData.AddProfile(profileName, copiedProfile);
 
             // Automatically bind aircraft
-            var boundProfile = ProfileData.Profiles.FirstOrDefault(p => p.BindingAircrafts.Any(p => p == FlightSimData.CurrentMsfsAircraft));
-            if (boundProfile == null && FlightSimData.HasCurrentMsfsAircraft)
+            var boundProfile = _profileData.Profiles.FirstOrDefault(p => p.AircraftBindings.Any(p => p == _flightSimData.AircraftName));
+            if (boundProfile == null && _flightSimData.HasAircraftName)
             {
-                ProfileData.ActiveProfile.BindingAircrafts.Add(FlightSimData.CurrentMsfsAircraft);
-                ProfileData.WriteProfiles();
-                ProfileData.RefreshProfile();
+                _profileData.ActiveProfile.AircraftBindings.Add(_flightSimData.AircraftName);
+                _profileData.WriteProfiles();
+                _profileData.RefreshProfile();
             }
         }
 
         public void DeleteActiveProfile()
         {
-            if (ProfileData.ActiveProfile != null)
-                ProfileData.DeleteProfile(ProfileData.ActiveProfile.ProfileId);
+            _profileData.DeleteActiveProfile();
         }
 
-        public void ChangeProfile(int profileId)
+        public void MoveToNextProfile()
         {
-            if (ProfileData != null)
-                ProfileData.UpdateActiveProfile(profileId);
+            // Reset current profile
+            _profileData.ResetActiveProfile();
+
+            var newProfileIndex = _profileData.Profiles.IndexOf(_profileData.ActiveProfile) + 1;
+
+            if (newProfileIndex >= _profileData.Profiles.Count)
+                newProfileIndex = 0;
+
+            _profileData.SetActiveProfile(newProfileIndex);
+        }
+
+        public void MoveToPreviousProfile()
+        {
+            // Reset current profile
+            _profileData.ResetActiveProfile();
+
+            var newProfileIndex = _profileData.Profiles.IndexOf(_profileData.ActiveProfile) - 1;
+
+            if (newProfileIndex < 0)
+                newProfileIndex = _profileData.Profiles.Count - 1;
+
+            _profileData.SetActiveProfile(newProfileIndex);
+        }
+
+        public void ChangeProfile(UserProfile profile)
+        {
+            if (_profileData != null)
+                _profileData.SetActiveProfile(profile.Id);
         }
 
         public void AddProfileBinding(string bindingAircraft)
         {
-            if (ProfileData.ActiveProfile != null && bindingAircraft != null)
-                ProfileData.AddProfileBinding(bindingAircraft, ProfileData.ActiveProfile.ProfileId);
+            if (_profileData.ActiveProfile != null && bindingAircraft != null)
+                _profileData.AddProfileBinding(bindingAircraft);
         }
 
         public void DeleteProfileBinding(string bindingAircraft)
         {
-            if (ProfileData.ActiveProfile != null && bindingAircraft != null)
-                ProfileData.DeleteProfileBinding(bindingAircraft, ProfileData.ActiveProfile.ProfileId);
+            if (_profileData.ActiveProfile != null && bindingAircraft != null)
+                _profileData.DeleteProfileBinding(bindingAircraft);
+        }
+
+        public void AddPanel()
+        {
+            var panelConfig = new PanelConfig();
+            panelConfig.PanelType = PanelType.CustomPopout;
+            panelConfig.PanelSource.Color = PanelConfigColors.GetNextAvailableColor(_profileData.ActiveProfile.PanelConfigs.ToList());
+            _profileData.ActiveProfile.PanelConfigs.Add(panelConfig);
         }
     }
 }

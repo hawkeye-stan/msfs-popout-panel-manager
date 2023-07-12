@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+	
   <PropertyGroup>
-    <TargetFrameworks>net6.0</TargetFrameworks>
+	  <TargetFramework>net7.0-windows</TargetFramework>
     <AssemblyName>Orchestration</AssemblyName>
     <PackageId>MSFS 2020 Popout Panel Manager Orchestration</PackageId>
     <Product>MSFS 2020 Popout Panel Manager Orchestration</Product>
@@ -10,12 +11,12 @@
     <PackageProjectUrl>https://github.com/hawkeye-stan/msfs-popout-panel-manager</PackageProjectUrl>
     <RootNamespace>MSFSPopoutPanelManager.Orchestration</RootNamespace>
     <Platforms>x64</Platforms>
-    <Version>3.4.6.0321</Version>
-    <AssemblyVersion>3.4.6.0321</AssemblyVersion>
-    <FileVersion>3.4.6.0321</FileVersion>
+    <Version>4.0.0.0</Version>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+    <FileVersion>4.0.0.0</FileVersion>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <DebugType>Embedded</DebugType>
-    <Configurations>Debug;Release;DebugTouchPanel;ReleaseTouchPanel</Configurations>
+    <Configurations>Debug;Release;Local</Configurations>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -30,20 +31,17 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Autoupdater.NET.Official" Version="1.7.0" />
-    <PackageReference Include="Fody" Version="6.6.3">
+    <PackageReference Include="Autoupdater.NET.Official" Version="1.8.3" />
+    <PackageReference Include="Fody" Version="6.7.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="PropertyChanged.Fody" Version="3.4.1" />
-    <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" PrivateAssets="All" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DomainModel\DomainModel.csproj" />
     <ProjectReference Include="..\SimconnectAgent\SimconnectAgent.csproj" />
-    <ProjectReference Include="..\TouchPanelAgent\TouchPanelAgent.csproj" />
-    <ProjectReference Include="..\UserDataAgent\UserDataAgent.csproj" />
-    <ProjectReference Include="..\WebServer\WebServer.csproj" Condition=" '$(Configuration)' == 'ReleaseTouchPanel' Or '$(Configuration)' == 'DebugTouchPanel' " />
     <ProjectReference Include="..\WindowsAgent\WindowsAgent.csproj" />
   </ItemGroup>
 </Project>

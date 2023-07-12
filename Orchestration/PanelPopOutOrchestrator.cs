@@ -1,527 +1,482 @@
-﻿using MSFSPopoutPanelManager.Shared;
-using MSFSPopoutPanelManager.UserDataAgent;
+﻿using MSFSPopoutPanelManager.DomainModel.Profile;
+using MSFSPopoutPanelManager.DomainModel.Setting;
+using MSFSPopoutPanelManager.Shared;
 using MSFSPopoutPanelManager.WindowsAgent;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace MSFSPopoutPanelManager.Orchestration
 {
     public class PanelPopOutOrchestrator : ObservableObject
     {
         // This will be replaced by a signal from Ready to Fly Skipper into webserver in version 4.0
-        private const int READY_TO_FLY_BUTTON_APPEARANCE_DELAY = 4000;
-        private int _builtInPanelConfigDelay;
+        private const int READY_TO_FLY_BUTTON_APPEARANCE_DELAY = 2000;
 
-        internal ProfileData ProfileData { get; set; }
+        private ProfileData _profileData;
+        private AppSettingData _appSettingData;
+        private FlightSimData _flightSimData;
 
-        internal AppSettingData AppSettingData { get; set; }
-
-        internal FlightSimData FlightSimData { get; set; }
+        public PanelPopOutOrchestrator(ProfileData profileData, AppSettingData appSettingData, FlightSimData flightSimData)
+        {
+            _profileData = profileData;
+            _appSettingData = appSettingData;
+            _flightSimData = flightSimData;
+        }
 
         internal FlightSimOrchestrator FlightSimOrchestrator { private get; set; }
 
         internal PanelSourceOrchestrator PanelSourceOrchestrator { private get; set; }
 
-        internal TouchPanelOrchestrator TouchPanelOrchestrator { private get; set; }
+        internal PanelConfigurationOrchestrator PanelConfigurationOrchestrator { private get; set; }
 
-        private Profile ActiveProfile { get { return ProfileData == null ? null : ProfileData.ActiveProfile; } }
+        private UserProfile ActiveProfile { get { return _profileData == null ? null : _profileData.ActiveProfile; } }
 
-        private AppSetting AppSetting { get { return AppSettingData == null ? null : AppSettingData.AppSetting; } }
+        private ApplicationSetting AppSetting { get { return _appSettingData == null ? null : _appSettingData.ApplicationSetting; } }
 
         public event EventHandler OnPopOutStarted;
-        public event EventHandler<bool> OnPopOutCompleted;
-        public event EventHandler<TouchPanelOpenEventArg> OnTouchPanelOpened;
-        public event EventHandler<PanelSourceCoordinate> OnPanelSourceOverlayFlashed;
+        public event EventHandler OnPopOutCompleted;
+        public event EventHandler<PanelConfig> OnHudBarOpened;
 
-        public void ManualPopOut()
+        public async void ManualPopOut()
         {
-            if (ActiveProfile == null)
-                return;
-
-            InputHookManager.EndHook();
-
-            if (ActiveProfile.PanelSourceCoordinates.Count > 0 || ActiveProfile.TouchPanelBindings.Count > 0 || ActiveProfile.IncludeInGamePanels)
-            {
-                StatusMessageWriter.WriteMessage($"Panels pop out in progress for profile:\n{ActiveProfile.ProfileName}", StatusMessageType.Info, true);
-                _builtInPanelConfigDelay = 0;
-                CorePopOutSteps();
-            }
+            await CoreSteps(false);
         }
 
-        public void AutoPopOut()
+        public async void AutoPopOut()
         {
-            if (ActiveProfile == null)
-                return;
-
-            ProfileData.AutoSwitchProfile();
-
-            // find the profile with the matching binding aircraft
-            var profile = ProfileData.Profiles.FirstOrDefault(p => p.BindingAircrafts.Any(p => p == FlightSimData.CurrentMsfsAircraft));
-
-            // Do not do auto pop out if no profile matches the current aircraft
-            if (profile == null)
-                return;
-
-            // Match the delay for Ready to Fly button to disappear
-            Thread.Sleep(READY_TO_FLY_BUTTON_APPEARANCE_DELAY);
-
-            if (ActiveProfile.PanelSourceCoordinates.Count > 0 || ActiveProfile.TouchPanelBindings.Count > 0 || ActiveProfile.IncludeInGamePanels)
+            await Application.Current.Dispatcher.Invoke(async () =>
             {
-                StatusMessageWriter.WriteMessage($"Automatic pop out is starting for profile:\n{profile.ProfileName}", StatusMessageType.Info, true);
+                _profileData.AutoSwitchProfile();
 
-                // Extra wait for cockpit view to appear and align
-                Thread.Sleep(2000);
+                // Do not do auto pop out if no profile matches the current aircraft
+                if (!ActiveProfile.AircraftBindings.Any(p => p == _flightSimData.AircraftName))
+                    return;
 
-                _builtInPanelConfigDelay = 4000;
+                // Do not do auto pop out if no panel configs defined
+                if (ActiveProfile.PanelConfigs.Count == 0)
+                    return;
 
-                CorePopOutSteps();
-            }
+                // Do not do auto pop out if not all custom panels have panel source defined
+                if (ActiveProfile.PanelConfigs.Count(p => p.PanelType == PanelType.CustomPopout) > 0 &&
+                    ActiveProfile.PanelConfigs.Count(p => p.PanelType == PanelType.CustomPopout && p.HasPanelSource) != ActiveProfile.PanelConfigs.Count(p => p.PanelType == PanelType.CustomPopout))
+                    
+                    return;
+
+                await CoreSteps(true);
+            });
         }
 
-        private void CorePopOutSteps()
+        private async Task CoreSteps(bool isAutoPopOut)
         {
-            // Set Windowed Display Mode window's configuration if needed
-            if (AppSettingData.AppSetting.AutoResizeMsfsGameWindow)
-                WindowActionManager.SetMsfsGameWindowLocation(ActiveProfile.MsfsGameWindowConfig);
+            if (ActiveProfile == null || ActiveProfile.IsEditingPanelSource || ActiveProfile.HasUnidentifiedPanelSource)
+                return;
 
-            // Has custom pop out panels
-            if (ActiveProfile.PanelSourceCoordinates.Count > 0)
-            {
-                // Turn off TrackIR if TrackIR is started
-                FlightSimOrchestrator.TurnOffTrackIR();
+            OnPopOutStarted?.Invoke(this, null);
 
-                // Turn on power if required to pop out panels at least one (fix Cessna 208b grand caravan mod bug where battery is reported as on)
-                if (ActiveProfile.PowerOnRequiredForColdStart)
-                {
-                    int count = 0;
-                    do
-                    {
-                        FlightSimOrchestrator.TurnOnPower();
-                        Thread.Sleep(500);
-                        count++;
-                    }
-                    while (!FlightSimData.ElectricalMasterBatteryStatus && count < 10);
-                }
+            StatusMessageWriter.IsEnabled = true;
+            StatusMessageWriter.ClearMessage();
+            StatusMessageWriter.WriteMessageNewLine("Pop out in progress. Please refrain from moving your mouse.", StatusMessageType.Info);
 
-                // Turn on avionics if required to pop out panels
-                if (ActiveProfile.PowerOnRequiredForColdStart)
-                    FlightSimOrchestrator.TurnOnAvionics();
-            }
+            StepPopoutPrep();
 
-            StartPopout();
+            await StepReadyToFlyDelay(isAutoPopOut);
 
-            // Has custom pop out panels
-            if (ActiveProfile.PanelSourceCoordinates.Count > 0)
-            {
-                // Turn off avionics if needed after pop out
-                FlightSimOrchestrator.TurnOffAvionics();
+            // *** THIS MUST BE DONE FIRST. Get the built-in panel list to be configured later
+            List<IntPtr> builtInPanelHandles = WindowActionManager.GetWindowsByPanelType(new List<PanelType>() { PanelType.BuiltInPopout });
 
-                // Turn off power if needed after pop out
-                FlightSimOrchestrator.TurnOffPower();
+            await StepAddCutomPanels(builtInPanelHandles);
 
-                // Return to custom camera view
-                ReturnToAfterPopOutCameraView();
+            StepAddBuiltInPanels(builtInPanelHandles);
 
-                // Turn TrackIR back on
-                FlightSimOrchestrator.TurnOnTrackIR();
-            }
+            StepAddHudBar();
+
+            StepApplyPanelConfig();
+
+            await StepPostPopout();
+
+            StatusMessageWriter.IsEnabled = false;
         }
 
-        private void StartPopout()
+
+        private void StepPopoutPrep()
         {
-            List<PanelConfig> panelConfigs = new List<PanelConfig>();
+            PanelConfigurationOrchestrator.EndConfiguration();
 
-            var simulatorProcess = WindowProcessManager.GetSimulatorProcess();
-
-            if (simulatorProcess == null || simulatorProcess.Handle == IntPtr.Zero)
-            {
-                StatusMessageWriter.WriteMessage("MSFS/SimConnect has not been started. Please try again at a later time.", StatusMessageType.Error, false);
-                return;
-            }
-
-            if (ActiveProfile == null)
-            {
-                StatusMessageWriter.WriteMessage("No profile has been selected. Please select a profile to continue.", StatusMessageType.Error, false);
-                return;
-            }
-
-            if (ActiveProfile.PanelSourceCoordinates.Count == 0 && ActiveProfile.TouchPanelBindings.Count == 0 && !ActiveProfile.IncludeInGamePanels)
-            {
-                StatusMessageWriter.WriteMessage("No panel has been selected for the profile. Please select at least one panel to continue.", StatusMessageType.Error, false);
-                return;
-            }
+            // Set profile pop out status
+            _profileData.ResetActiveProfile();
 
             // Close all existing custom pop out panels
             WindowActionManager.CloseAllPopOuts();
 
             // Close all panel source overlays
             PanelSourceOrchestrator.CloseAllPanelSource();
+        }
 
-            OnPopOutStarted?.Invoke(this, null);
-
-            // Must close out all existing custom pop out panels
-            if (WindowActionManager.GetWindowsCountByPanelType(new List<PanelType>() { PanelType.CustomPopout, PanelType.MSFSTouchPanel }) > 0)
-            {
-                StatusMessageWriter.WriteMessage("Please close all existing panel pop outs to continue.", StatusMessageType.Error, false);
+        private async Task StepReadyToFlyDelay(bool isAutoPopOut)
+        {
+            if (!isAutoPopOut)
                 return;
-            }
 
-            // Try to pop out and separate custom panels
-            if (ActiveProfile.PanelSourceCoordinates.Count > 0)
+            await Task.Run(() =>
             {
-                if (AppSetting.UseAutoPanning)
-                    InputEmulationManager.LoadCustomView(AppSetting.AutoPanningKeyBinding);
+                StatusMessageWriter.WriteMessage("Waiting on ready to fly button delay", StatusMessageType.Info);
 
-                var panelResults = ExecutePopout();
+                // Match the delay for Ready to Fly button to disappear
+                Thread.Sleep(READY_TO_FLY_BUTTON_APPEARANCE_DELAY);
 
-                if (panelResults == null)
-                    return;
+                // Extra wait for cockpit view to appear and align
+                Thread.Sleep(AppSetting.AutoPopOutSetting.ReadyToFlyDelay * 1000);
 
-                panelConfigs.AddRange(panelResults);
-            }
+                StatusMessageWriter.WriteOkStatusMessage();
+            });
+        }
 
-            // Add the MSFS Touch Panel (My other github project) windows to the panel list
-            if (AppSetting.TouchPanelSettings.EnableTouchPanelIntegration)
-            {
-                var panelResults = AddMsfsTouchPanels(panelConfigs.Count + 100);     // add a panelIndex gap
-                if (panelResults != null)
-                    panelConfigs.AddRange(panelResults);
-            }
-
-            // Add the built-in panels from toolbar menu (ie. VFR Map, Check List, Weather, etc)
-            if (ActiveProfile.IncludeInGamePanels)
-            {
-                // Allow delay to wait for in game built-in pop outs to appear
-                Thread.Sleep(_builtInPanelConfigDelay);
-
-                var panelResults = AddBuiltInPanels();
-                if (panelResults != null)
-                    panelConfigs.AddRange(panelResults);
-            }
-            if (panelConfigs.Count == 0)
-            {
-                StatusMessageWriter.WriteMessage("No panels have been found. Please select at least one in-game panel.", StatusMessageType.Error, true);
+        private async Task StepAddCutomPanels(List<IntPtr> builtInPanelHandles)
+        {
+            if (!ActiveProfile.HasCustomPanels)
                 return;
-            }
 
-            if (panelConfigs.Count > 0)
-            {
-                if (ActiveProfile.PanelConfigs.Count > 0)
-                {
-                    LoadAndApplyPanelConfigs(panelConfigs);
-                    StatusMessageWriter.WriteMessage("Panels have been popped out succesfully and saved panel settings have been applied.", StatusMessageType.Info, true);
-                    OnPopOutCompleted?.Invoke(this, false);
-                }
-                else
-                {
-                    LoadAndApplyPanelConfigs(panelConfigs);
-                    StatusMessageWriter.WriteMessage("Panels have been popped out succesfully.", StatusMessageType.Info, true);
-                    OnPopOutCompleted?.Invoke(this, true);
-                }
+            await StepPreCustomPanelPopOut();
 
-                if (!ActiveProfile.IsLocked)
-                    ProfileData.WriteProfiles();
+            await StepCustomPanelPopOut(builtInPanelHandles);
 
-                // For migrating existing profile, if using windows mode, save MSFS game window configuration
-                if (AppSettingData.AppSetting.AutoResizeMsfsGameWindow && !ActiveProfile.MsfsGameWindowConfig.IsValid)
-                    ProfileData.SaveMsfsGameWindowConfig();
-            }
+            await StepPostCustomPanelPopOut();
         }
 
-        private List<PanelConfig> ExecutePopout()
+        private async Task StepPreCustomPanelPopOut()
         {
-            List<PanelConfig> panels = new List<PanelConfig>();
-
-            // PanelIndex starts at 1
-            for (var i = 1; i <= ActiveProfile.PanelSourceCoordinates.Count; i++)
+            await Task.Run(() =>
             {
-                var x = ActiveProfile.PanelSourceCoordinates[i - 1].X;
-                var y = ActiveProfile.PanelSourceCoordinates[i - 1].Y;
-
-                // show the panel source overlay for split second
-                Task task = new Task(() => OnPanelSourceOverlayFlashed?.Invoke(this, ActiveProfile.PanelSourceCoordinates[i - 1]));
-                task.RunSynchronously();
-
-                InputEmulationManager.PopOutPanel(x, y, AppSetting.UseLeftRightControlToPopOut);
-
-                // Get an AceApp window with non Microsoft Flight Simulator as window title
-                var handle = PInvoke.FindWindow("AceApp", null);
-
-                // Unable to find pop out window because of application delay
-                var simulatorProcess = WindowProcessManager.GetSimulatorProcess();
-                if (handle.Equals(simulatorProcess.Handle))
-                    handle = IntPtr.Zero;
-
-                if (handle == IntPtr.Zero && i == 1)
+                // Set Windowed Display Mode window's configuration if needed
+                if (_appSettingData.ApplicationSetting.WindowedModeSetting.AutoResizeMsfsGameWindow && WindowActionManager.IsMsfsGameInWindowedMode())
                 {
-                    StatusMessageWriter.WriteMessage("Unable to pop out the first panel. Please check the first panel's number circle is positioned inside the panel, check for panel obstruction, and check if panel can be popped out. Pop out process stopped.", StatusMessageType.Error, true);
-                    return null;
-                }
-                else if (handle == IntPtr.Zero)
-                {
-                    StatusMessageWriter.WriteMessage($"Unable to pop out panel number {i}. Please check panel's number circle is positioned inside the panel, check for panel obstruction, and check if panel can be popped out. Pop out process stopped.", StatusMessageType.Error, true);
-                    return null;
+                    StatusMessageWriter.WriteMessage("Moving and resizing MSFS game window", StatusMessageType.Info);
+                    WindowActionManager.SetMsfsGameWindowLocation(ActiveProfile.MsfsGameWindowConfig);
+                    Thread.Sleep(500);
+                    StatusMessageWriter.WriteOkStatusMessage();
                 }
 
-                var clientRect = WindowActionManager.GetClientRect(handle);
+                // Turn on power and avionics if required to pop out panels at least one (fix Cessna 208b grand caravan mod bug where battery is reported as on)
+                if (ActiveProfile.ProfileSetting.PowerOnRequiredForColdStart)
+                {
+                    FlightSimOrchestrator.TurnOnPower();
+                    FlightSimOrchestrator.TurnOnAvionics();
+                }
 
-                var panel = new PanelConfig();
-                panel.PanelHandle = handle;
-                panel.PanelType = PanelType.CustomPopout;
-                panel.PanelIndex = i;
-                panel.PanelName = $"Panel{i}";
-                panel.Top = (i - 1) * 30;
-                panel.Left = (i - 1) * 30;
-                panel.Width = clientRect.Width;
-                panel.Height = clientRect.Height;
-                panels.Add(panel);
+                // Turn off TrackIR if TrackIR is started
+                FlightSimOrchestrator.TurnOffTrackIR();
 
-                PInvoke.SetWindowText(panel.PanelHandle, panel.PanelName + " (Custom)");
-            }
+                // Turn on Active Pause
+                FlightSimOrchestrator.TurnOnActivePause();
 
-            //Perform validation, make sure the number of pop out panels is equal to the number of selected panel
-            if (WindowActionManager.GetWindowsCountByPanelType(new List<PanelType>() { PanelType.CustomPopout }) != ActiveProfile.PanelSourceCoordinates.Count)
-            {
-                StatusMessageWriter.WriteMessage("Unable to pop out all panels. Please align all panel number circles with in-game panel locations.", StatusMessageType.Error, false);
-                return null;
-            }
-
-            return panels;
+                // Setting custom camera angle for auto panning
+                if (AppSetting.PopOutSetting.AutoPanning.IsEnabled)
+                {
+                    StatusMessageWriter.WriteMessage("Setting auto panning camera angle", StatusMessageType.Info);
+                    InputEmulationManager.LoadCustomView(AppSetting.PopOutSetting.AutoPanning.KeyBinding);
+                    StatusMessageWriter.WriteOkStatusMessage();
+                }
+            });
         }
 
-        private List<PanelConfig> AddBuiltInPanels()
+        private async Task StepCustomPanelPopOut(List<IntPtr> builtInPanelHandles)
         {
-            List<PanelConfig> builtinPanels = new List<PanelConfig>();
-
-            var panelHandles = WindowActionManager.GetWindowsByPanelType(new List<PanelType>() { PanelType.BuiltInPopout });
-
-            foreach (var panelHandle in panelHandles)
+            await Task.Run(() =>
             {
-                var rectangle = WindowActionManager.GetWindowRect(panelHandle);
-                var clientRectangle = WindowActionManager.GetClientRect(panelHandle);
+                // Save current application location to restore it after pop out
+                var appLocation = WindowActionManager.GetWindowRectangle(WindowProcessManager.GetApplicationProcess().Handle);
 
-                builtinPanels.Add(new PanelConfig()
+                int index = 0;
+                foreach (var panelConfig in ActiveProfile.PanelConfigs)
                 {
-                    PanelIndex = -1,
-                    PanelHandle = panelHandle,
-                    PanelType = PanelType.BuiltInPopout,
-                    PanelName = WindowActionManager.GetWindowCaption(panelHandle),
-                    Top = rectangle.Top,
-                    Left = rectangle.Left,
-                    Width = clientRectangle.Width,
-                    Height = clientRectangle.Height
-                });
-            }
-
-            return builtinPanels.Count == 0 ? null : builtinPanels;
-        }
-
-        private List<PanelConfig> AddMsfsTouchPanels(int panelIndex)
-        {
-            List<PanelConfig> touchPanels = new List<PanelConfig>();
-
-            if (AppSetting.TouchPanelSettings.EnableTouchPanelIntegration)
-            {
-                TouchPanelOrchestrator.LoadPlaneProfiles();
-
-                if (TouchPanelOrchestrator.PlaneProfiles == null)
-                    return null;
-
-                // Find all selected panels
-                var panelConfigs = TouchPanelOrchestrator.PlaneProfiles.SelectMany(p => p.Panels.Where(c => c.IsSelected));
-
-                foreach (var panelConfig in panelConfigs)
-                {
-                    var caption = $"{panelConfig.Name} (Touch Panel)";
-
-                    // Change width and height to 1080p aspect ratio
-                    double aspectRatio = 1;
-                    if (panelConfig.Width > 1920)
+                    if (panelConfig.PanelType == PanelType.CustomPopout)
                     {
-                        aspectRatio = Convert.ToDouble(1920) / panelConfig.Width;
-                        panelConfig.Width = 1920;                                   // there are hidden padding to make it to 1920
-                        panelConfig.Height = Convert.ToInt32(panelConfig.Height * aspectRatio);
+                        StatusMessageWriter.WriteMessage($"Popping out panel '{panelConfig.PanelName}'", StatusMessageType.Info);
+
+                        panelConfig.IsSelectedPanelSource = true;
+                        //PanelSourceOrchestrator.ShowPanelSourceNonEdit(panelConfig);
+                        //Thread.Sleep(500);
+                        //PanelSourceOrchestrator.ClosePanelSourceNonEdit(panelConfig);
+                        ExecuteCustomPopout(panelConfig, builtInPanelHandles, index++);
+                        ApplyPanelLocation(panelConfig);
+                        panelConfig.IsSelectedPanelSource = false;
+
+                        if (panelConfig.IsPopOutSuccess != null && !(bool)panelConfig.IsPopOutSuccess)
+                            StatusMessageWriter.WriteFailureStatusMessage();
+                        else
+                            StatusMessageWriter.WriteOkStatusMessage();
                     }
+                }
 
-                    OnTouchPanelOpened?.Invoke(this, new TouchPanelOpenEventArg() { PlaneId = panelConfig.PlaneId, PanelId = panelConfig.PanelId, Caption = caption, Width = panelConfig.Width, Height = panelConfig.Height });
+                // Restore current application location
+                WindowActionManager.MoveWindow(WindowProcessManager.GetApplicationProcess().Handle, appLocation);
+            });
+        }
 
-                    // detect for a max of 5 seconds
-                    int tryCount = 0;
-                    while (tryCount < 10)
+        private async Task StepPostCustomPanelPopOut()
+        {
+            await Task.Run(() =>
+            {
+                if (ActiveProfile.ProfileSetting.PowerOnRequiredForColdStart)
+                {
+                    FlightSimOrchestrator.TurnOffAvionics();
+                    FlightSimOrchestrator.TurnOffPower();
+                }
+
+                // Turn TrackIR back on
+                FlightSimOrchestrator.TurnOnTrackIR();
+
+                // Turn on Active Pause
+                FlightSimOrchestrator.TurnOffActivePause();
+
+                // Return to custom camera view if set
+                var task = Task.Run(() => ReturnToAfterPopOutCameraView());
+            });
+        }
+
+        private void StepAddBuiltInPanels(List<IntPtr> builtInPanelHandles)
+        {
+            if (ActiveProfile.ProfileSetting.IncludeInGamePanels)
+            {
+                var builtInPanels = new List<PanelConfig>();
+
+                StatusMessageWriter.WriteMessage("Configuring built-in panel", StatusMessageType.Info);
+
+                foreach (var panelHandle in builtInPanelHandles)
+                {
+                    var panelCaption = WindowActionManager.GetWindowCaption(panelHandle);
+                    var panelConfig = ActiveProfile.PanelConfigs.FirstOrDefault(p => p.PanelName == panelCaption);
+
+                    if (panelConfig == null)
                     {
-                        var touchPanelHandle = WindowActionManager.FindWindowByCaption(caption);
-                        if (touchPanelHandle != IntPtr.Zero)
+                        if (!ActiveProfile.IsLocked)
                         {
-                            var dimension = WindowActionManager.GetWindowRect(touchPanelHandle);
-                            var panelInfo = new PanelConfig
+                            var rectangle = WindowActionManager.GetWindowRectangle(panelHandle);
+                            panelConfig = new PanelConfig()
                             {
-                                PanelIndex = panelIndex,
-                                PanelHandle = touchPanelHandle,
-                                PanelName = caption,
-                                PanelType = PanelType.MSFSTouchPanel,
-                                Top = dimension.Top,
-                                Left = dimension.Left,
-                                Width = panelConfig.Width,
-                                Height = panelConfig.Height,
-                                AlwaysOnTop = true     // default to always on top
+                                PanelHandle = panelHandle,
+                                PanelType = PanelType.BuiltInPopout,
+                                PanelName = panelCaption,
+                                Top = rectangle.Top,
+                                Left = rectangle.Left,
+                                Width = rectangle.Width,
+                                Height = rectangle.Height,
+                                AutoGameRefocus = false
                             };
 
-                            touchPanels.Add(panelInfo);
-                            break;
+                            ActiveProfile.PanelConfigs.Add(panelConfig);
                         }
-                        Thread.Sleep(500);
-                        tryCount++;
                     }
+                    else
+                    {
+                        panelConfig.PanelHandle = panelHandle;
 
-                    if (tryCount == 10)
-                        return null;
-
-                    panelIndex++;
+                        // Need to do it twice for MSFS to take this setting (MSFS bug)
+                        ApplyPanelLocation(panelConfig);
+                        ApplyPanelLocation(panelConfig);
+                    }
                 }
-            }
 
-            return touchPanels.Count == 0 ? null : touchPanels;
+                // Set handles for missing built-in panels
+                foreach (var panelConfig in ActiveProfile.PanelConfigs)
+                {
+                    if (panelConfig.PanelType == PanelType.BuiltInPopout && panelConfig.PanelHandle == IntPtr.MaxValue)
+                        panelConfig.PanelHandle = IntPtr.Zero;
+                }
+
+                if (ActiveProfile.PanelConfigs.Any(p => p.PanelType == PanelType.BuiltInPopout && p.IsPopOutSuccess != null && !(bool)p.IsPopOutSuccess) ||
+                    ActiveProfile.PanelConfigs.Count(p => p.PanelType == PanelType.BuiltInPopout) == 0)
+                    StatusMessageWriter.WriteFailureStatusMessage();
+                else
+                    StatusMessageWriter.WriteOkStatusMessage();
+            }
         }
 
-        private void LoadAndApplyPanelConfigs(List<PanelConfig> panelResults)
+        private void StepAddHudBar()
         {
-            ActiveProfile.PanelConfigs.ToList().ForEach(p => p.PanelHandle = IntPtr.Zero);
+            if (!ActiveProfile.ProfileSetting.HudBarConfig.IsEnabled)
+                return;
 
-            Parallel.ForEach(panelResults, panel =>
+            StatusMessageWriter.WriteMessage("Opening HUD Bar", StatusMessageType.Info);
+
+            var panelConfig = ActiveProfile.PanelConfigs.FirstOrDefault(p => p.PanelType == PanelType.HudBarWindow);
+
+            if (panelConfig == null)
             {
-                // Something is wrong here where panel has no window handle
-                if (panel.PanelHandle == IntPtr.Zero)
-                    return;
-
-                PanelConfig savedPanelConfig = null;
-
-                if (panel.PanelType == PanelType.CustomPopout || panel.PanelType == PanelType.MSFSTouchPanel)
-                    savedPanelConfig = ActiveProfile.PanelConfigs.FirstOrDefault(s => s.PanelIndex == panel.PanelIndex);
-                else if (panel.PanelType == PanelType.BuiltInPopout)
-                    savedPanelConfig = ActiveProfile.PanelConfigs.FirstOrDefault(s => s.PanelName == panel.PanelName);
-
-                // Apply MSFS saved panel location if available since this panel is newly profiled
-                if (savedPanelConfig == null)
+                panelConfig = new PanelConfig()
                 {
-                    var rect = WindowActionManager.GetWindowRect(panel.PanelHandle);
-                    panel.Top = rect.Top;
-                    panel.Left = rect.Left;
-                    return;
-                }
+                    PanelName = "HUD Bar",
+                    PanelType = PanelType.HudBarWindow,
+                    AutoGameRefocus = false
+                };
 
-                // Assign window handle to panel config
-                savedPanelConfig.PanelHandle = panel.PanelHandle;
+                ActiveProfile.PanelConfigs.Add(panelConfig);
+            }
 
-                // Apply panel name
-                if (savedPanelConfig.PanelType == PanelType.CustomPopout)
+            OnHudBarOpened?.Invoke(this, panelConfig);
+
+            StatusMessageWriter.WriteOkStatusMessage();
+        }
+
+        private void StepApplyPanelConfig()
+        {
+            // Must apply other panel config after pop out since MSFS popping out action will overwrite panel config such as Always on Top
+            foreach (var panelConfig in ActiveProfile.PanelConfigs)
+            {
+                ApplyPanelConfig(panelConfig);
+
+                // Set title bar color
+                if (_appSettingData.ApplicationSetting.PopOutSetting.PopOutTitleBarCustomization.IsEnabled && !panelConfig.FullScreen)
                 {
-                    var caption = savedPanelConfig.PanelName + " (Custom)";
-                    PInvoke.SetWindowText(savedPanelConfig.PanelHandle, caption);
-                    Thread.Sleep(500);
+                    WindowActionManager.SetWindowTitleBarColor(panelConfig.PanelHandle, _appSettingData.ApplicationSetting.PopOutSetting.PopOutTitleBarCustomization.HexColor);
                 }
+            }
+        }
 
-                // Apply locations
-                if (savedPanelConfig.Width != 0 && savedPanelConfig.Height != 0)
-                {
-                    PInvoke.ShowWindow(savedPanelConfig.PanelHandle, PInvokeConstant.SW_RESTORE);
-                    Thread.Sleep(250);
-                    WindowActionManager.MoveWindow(savedPanelConfig.PanelHandle, savedPanelConfig.Left, savedPanelConfig.Top, savedPanelConfig.Width, savedPanelConfig.Height);
-                    Thread.Sleep(1000);
-                }
+        private async Task StepPostPopout()
+        {
+            await Task.Run(() =>
+            {
+                // Set profile pop out status
+                ActiveProfile.IsPoppedOut = true;
 
-                // Apply window size again to overcome a bug in MSFS that when moving panel between monitors, panel automatic resize for no reason
-                if (savedPanelConfig.PanelType == PanelType.BuiltInPopout)
-                {
-                    Thread.Sleep(2000);     // Overcome GTN750 bug
-                    WindowActionManager.MoveWindow(savedPanelConfig.PanelHandle, savedPanelConfig.Left, savedPanelConfig.Top, savedPanelConfig.Width, savedPanelConfig.Height);
-                    Thread.Sleep(1000);
-                }
+                // Must use application dispatcher to dispatch UI events (winEventHook)
+                PanelConfigurationOrchestrator.StartConfiguration();
 
-                if (!savedPanelConfig.FullScreen)
-                {
-                    // Apply always on top
-                    if (savedPanelConfig.AlwaysOnTop)
-                    {
-                        WindowActionManager.ApplyAlwaysOnTop(savedPanelConfig.PanelHandle, savedPanelConfig.PanelType, true, new Rectangle(savedPanelConfig.Left, savedPanelConfig.Top, savedPanelConfig.Width, savedPanelConfig.Height));
-                        Thread.Sleep(1000);
-                    }
+                // Start touch hook
+                PanelConfigurationOrchestrator.StartTouchHook();
 
-                    // Apply hide title bar
-                    if (savedPanelConfig.HideTitlebar)
-                        WindowActionManager.ApplyHidePanelTitleBar(savedPanelConfig.PanelHandle, true);
-                }
+                if (CheckForPopOutError())
+                    StatusMessageWriter.WriteMessageNewLine("Pop out has been completed with error.", StatusMessageType.Info, 10);
+                else
+                    StatusMessageWriter.WriteMessageNewLine("Pop out has been completed successfully.", StatusMessageType.Info, 10);
 
-                PInvoke.ShowWindow(savedPanelConfig.PanelHandle, PInvokeConstant.SW_RESTORE);
+                Thread.Sleep(1000);
+                OnPopOutCompleted?.Invoke(this, null);
             });
+        }
 
-            // If profile is unlocked, add any new panel into profile
-            if (!ActiveProfile.IsLocked)
+        private void ExecuteCustomPopout(PanelConfig panel, List<IntPtr> builtInPanelHandles, int index)
+        {
+            if (panel.PanelType == PanelType.CustomPopout)
             {
-                // Need this to fix collectionview modification thread issue
-                var finalPanelConfigs = ActiveProfile.PanelConfigs.ToList();
+                // There should only be one handle that is not in both builtInPanelHandles vs latestAceAppWindowsWithCaptionHandles
+                var handle = TryPopOutCustomPanel(panel.PanelSource, builtInPanelHandles);
 
-                var isAdded = false;
-
-                foreach (var panel in panelResults)
+                if (handle == IntPtr.Zero)
                 {
-                    if ((panel.PanelType == PanelType.BuiltInPopout || panel.PanelType == PanelType.MSFSTouchPanel) && !ActiveProfile.PanelConfigs.Any(s => s.PanelName == panel.PanelName))
-                    {
-                        finalPanelConfigs.Add(panel);
-                        isAdded = true;
-                    }
-                    else if (panel.PanelType == PanelType.CustomPopout && !ActiveProfile.PanelConfigs.Any(s => s.PanelIndex == panel.PanelIndex))
-                    {
-                        finalPanelConfigs.Add(panel);
-                        isAdded = true;
-                    }
+                    panel.PanelHandle = IntPtr.Zero;
+                    return;
                 }
 
-                if (isAdded)
+                // Unable to pop out panel, the handle was previously popped out's handle
+                if (_profileData.ActiveProfile.PanelConfigs.Any(p => p.PanelHandle.Equals(handle)) || handle.Equals(WindowProcessManager.SimulatorProcess.Handle) || handle == IntPtr.Zero)
                 {
-                    ActiveProfile.PanelConfigs = new ObservableCollection<PanelConfig>(finalPanelConfigs);
-                    ProfileData.WriteProfiles();
+                    panel.PanelHandle = IntPtr.Zero;
+                    return;
+                }
+
+                panel.PanelHandle = handle;
+                WindowActionManager.SetWindowCaption(panel.PanelHandle, $"{panel.PanelName} (Custom)");
+
+                // First time popping out
+                if (panel.Width == 0 && panel.Height == 0)
+                {
+                    var rect = WindowActionManager.GetWindowRectangle(panel.PanelHandle);
+                    panel.Top = 0 + index * 30;
+                    panel.Left = 0 + index * 30;
+                    panel.Width = rect.Width;
+                    panel.Height = rect.Height;
+                }
+            }
+        }
+
+        private IntPtr TryPopOutCustomPanel(PanelSource panelSource, List<IntPtr> builtInPanelHandles)
+        {
+            // Try to pop out 5 times before failure with 1/4 second wait in between
+            int count = 0;
+            do
+            {
+                InputEmulationManager.PopOutPanel((int)panelSource.X, (int)panelSource.Y, AppSetting.PopOutSetting.UseLeftRightControlToPopOut);
+
+                var latestAceAppWindowsWithCaptionHandles = WindowActionManager.GetWindowsByPanelType(new List<PanelType>() { PanelType.BuiltInPopout });
+
+                // There should only be one handle that is not in both builtInPanelHandles vs latestAceAppWindowsWithCaptionHandles
+                var handle = latestAceAppWindowsWithCaptionHandles.Except(builtInPanelHandles).FirstOrDefault();
+
+                if (handle != IntPtr.Zero)
+                    return handle;
+
+                Thread.Sleep(250);
+                count++;
+            }
+            while (count < 5);
+
+            return IntPtr.Zero;
+        }
+
+        private void ApplyPanelLocation(PanelConfig panel)
+        {
+            if (panel.IsPopOutSuccess == null || !((bool)panel.IsPopOutSuccess) || panel.PanelHandle == IntPtr.Zero)
+                return;
+
+            // Apply top/left/width/height
+            WindowActionManager.MoveWindow(panel.PanelHandle, panel.Left, panel.Top, panel.Width, panel.Height);
+        }
+
+        private void ApplyPanelConfig(PanelConfig panel)
+        {
+            if (panel.IsPopOutSuccess == null || !((bool)panel.IsPopOutSuccess) || panel.PanelHandle == IntPtr.Zero)
+                return;
+
+            if (!panel.FullScreen)
+            {
+                // Apply always on top
+                if (panel.AlwaysOnTop)
+                {
+                    WindowActionManager.ApplyAlwaysOnTop(panel.PanelHandle, panel.PanelType, panel.AlwaysOnTop);
+                    Thread.Sleep(250);
+                }
+
+                // Apply hide title bar
+                if (panel.HideTitlebar)
+                {
+                    WindowActionManager.ApplyHidePanelTitleBar(panel.PanelHandle, true);
+                    Thread.Sleep(250);
                 }
             }
 
-            // Apply full screen (cannot combine with always on top or hide title bar)
-            // Cannot run in parallel process
-            ActiveProfile.PanelConfigs.ToList().ForEach(panel =>
+            if (panel.FullScreen && !panel.AlwaysOnTop && !panel.HideTitlebar)
             {
-                if (panel.FullScreen && (!panel.AlwaysOnTop && !panel.HideTitlebar))
-                {
-                    InputEmulationManager.ToggleFullScreenPanel(panel.PanelHandle);
-                    Thread.Sleep(250);
-
-                    // Set full screen mode panel coordinate
-                    var windowRectangle = WindowActionManager.GetWindowRect(panel.PanelHandle);
-                    var clientRectangle = WindowActionManager.GetClientRect(panel.PanelHandle);
-                    panel.FullScreenLeft = windowRectangle.Left;
-                    panel.FullScreenTop = windowRectangle.Top;
-                    panel.FullScreenWidth = clientRectangle.Width;
-                    panel.FullScreenHeight = clientRectangle.Height;
-                }
-            });
+                Thread.Sleep(500);
+                InputEmulationManager.ToggleFullScreenPanel(panel.PanelHandle);
+                Thread.Sleep(250);
+            }
         }
 
         private void ReturnToAfterPopOutCameraView()
         {
-            if (!AppSetting.AfterPopOutCameraView.EnableReturnToCameraView)
+            if (!AppSetting.PopOutSetting.AfterPopOutCameraView.IsEnabled)
                 return;
 
-            switch (AppSetting.AfterPopOutCameraView.CameraView)
+            switch (AppSetting.PopOutSetting.AfterPopOutCameraView.CameraView)
             {
                 case AfterPopOutCameraViewType.CockpitCenterView:
                     InputEmulationManager.CenterView();
                     break;
                 case AfterPopOutCameraViewType.CustomCameraView:
-                    InputEmulationManager.LoadCustomView(AppSetting.AfterPopOutCameraView.CustomCameraKeyBinding);
+                    InputEmulationManager.LoadCustomView(AppSetting.PopOutSetting.AfterPopOutCameraView.KeyBinding);
                     break;
             }
+        }
+
+        private bool CheckForPopOutError()
+        {
+            return ActiveProfile.PanelConfigs.Count(p => p.IsPopOutSuccess != null && (bool)p.IsPopOutSuccess) != ActiveProfile.PanelConfigs.Count(p => p.IsPopOutSuccess != null);
         }
     }
 }

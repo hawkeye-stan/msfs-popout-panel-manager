@@ -1,4 +1,5 @@
-﻿using MSFSPopoutPanelManager.UserDataAgent;
+﻿using MSFSPopoutPanelManager.DomainModel.Profile;
+using MSFSPopoutPanelManager.DomainModel.Setting;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -10,12 +11,9 @@ namespace MSFSPopoutPanelManager.WindowsAgent
 {
     public class TouchEventManager
     {
-        private static WindowProcess _simulatorProcess;
         private static IntPtr _hHook = IntPtr.Zero;
         private static PInvoke.WindowsHookExProc callbackDelegate = HookCallBack;
-        private static bool _isTouchDown;
-        private static int _mouseMoveCount;
-        private static object _mouseTouchLock = new object();
+        private static bool _isTouchDown = false;
         private static bool _isDragged = false;
         private static int _refocusedTaskIndex = 0;
 
@@ -30,17 +28,13 @@ namespace MSFSPopoutPanelManager.WindowsAgent
         private const uint MOUSEEVENTF_LEFTUP = 0x0004;
         private const uint MOUSEEVENTF_MOVE = 0x0001;
 
-        public static Profile ActiveProfile { private get; set; }
+        public static UserProfile ActiveProfile { private get; set; }
 
-        public static AppSetting AppSetting { private get; set; }
+        public static ApplicationSetting ApplicationSetting { private get; set; }
 
         public static void Hook()
         {
-            // If using RSG GT750 Gen 1, disable touch support
-            if (ActiveProfile != null && ActiveProfile.RealSimGearGTN750Gen1Override)
-                return;
-
-            _simulatorProcess = WindowProcessManager.GetSimulatorProcess();
+            Debug.WriteLine("Executing touch event manager mouse hook...");
 
             Process curProcess = Process.GetCurrentProcess();
             ProcessModule curModule = curProcess.MainModule;
@@ -51,12 +45,10 @@ namespace MSFSPopoutPanelManager.WindowsAgent
 
         public static void UnHook()
         {
-            // If using RSG GT750 Gen 1, disable touch support
-            if (ActiveProfile != null && ActiveProfile.RealSimGearGTN750Gen1Override)
-                return;
-
             if (_hHook != IntPtr.Zero)
             {
+                Debug.WriteLine("Executing touch event manager mouse unhook...");
+
                 PInvoke.UnhookWindowsHookEx(_hHook);
                 _hHook = IntPtr.Zero;
             }
@@ -90,17 +82,10 @@ namespace MSFSPopoutPanelManager.WindowsAgent
 
             // If touch point is within pop out panel boundaries and have touch enabled
             var panelConfig = ActiveProfile.PanelConfigs.FirstOrDefault(p => p.TouchEnabled &&
-                                                    ((!p.FullScreen &&
-                                                    info.pt.X > p.Left
+                                                    (info.pt.X > p.Left
                                                     && info.pt.X < p.Left + p.Width
                                                     && info.pt.Y > p.Top + (p.HideTitlebar ? 5 : PANEL_MENUBAR_HEIGHT)
-                                                    && info.pt.Y < p.Top + p.Height) ||
-                                                    (p.FullScreen &&
-                                                    info.pt.X > p.FullScreenLeft
-                                                    && info.pt.X < p.FullScreenLeft + p.FullScreenWidth
-                                                    && info.pt.Y > p.FullScreenTop + 5
-                                                    && info.pt.Y < p.FullScreenTop + p.FullScreenHeight
-                                                    )));
+                                                    && info.pt.Y < p.Top + p.Height));
 
             if (panelConfig == null)
                 return PInvoke.CallNextHookEx(_hHook, code, wParam, lParam);
@@ -115,67 +100,75 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                     if (!_isTouchDown)
                     {
                         _isTouchDown = true;
+                        _refocusedTaskIndex++;
 
-                        lock (_mouseTouchLock)
+                        if (_isDragged)
+                            return 1;
+                    
+                        Task.Run(() =>
                         {
-                            Task.Run(() =>
-                            {
-                                if (_mouseMoveCount > 1)
-                                {
-                                    PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, info.pt.X, info.pt.Y, 0, 0);
-                                    _isDragged = true;
-                                }
-
-                                Thread.Sleep(AppSetting.TouchScreenSettings.TouchDownUpDelay + 25);
-                                PInvoke.mouse_event(MOUSEEVENTF_LEFTDOWN, info.pt.X, info.pt.Y, 0, 0);
-                                Thread.Sleep(AppSetting.TouchScreenSettings.TouchDownUpDelay + 50);
-                                _isTouchDown = false;
-                            });
-                        }
+                            PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, info.pt.X, info.pt.Y, 0, 0);        // focus window
+                            Thread.Sleep(ApplicationSetting.TouchSetting.TouchDownUpDelay + 25);
+                            PInvoke.mouse_event(MOUSEEVENTF_LEFTDOWN, info.pt.X, info.pt.Y, 0, 0);
+                            Thread.Sleep(ApplicationSetting.TouchSetting.TouchDownUpDelay + 50);
+                            _isTouchDown = false;
+                        });
                     }
                     return 1;
                 case WM_LBUTTONUP:
                     Task.Run(() =>
                     {
                         while (_isTouchDown) { }
-                        PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, info.pt.X, info.pt.Y, 0, 0);
+
                         if (_isDragged)
                         {
-                            Thread.Sleep(AppSetting.TouchScreenSettings.TouchDownUpDelay + 50);
+                            if (ApplicationSetting.TouchSetting.TouchDownUpDelay > 0)
+                                Thread.Sleep(ApplicationSetting.TouchSetting.TouchDownUpDelay);
+
                             PInvoke.SetCursorPos(info.pt.X, info.pt.Y);
-                            Thread.Sleep(AppSetting.TouchScreenSettings.TouchDownUpDelay + 50);
+
+                            if (ApplicationSetting.TouchSetting.TouchDownUpDelay > 0)
+                                Thread.Sleep(ApplicationSetting.TouchSetting.TouchDownUpDelay);
+
                             InputEmulationManager.LeftClickFast(info.pt.X, info.pt.Y);
+
                             _isDragged = false;
                         }
-                        _mouseMoveCount = 0;
+                        else
+                        {
+                            if(ApplicationSetting.TouchSetting.TouchDownUpDelay > 0)
+                                Thread.Sleep(ApplicationSetting.TouchSetting.TouchDownUpDelay);
+
+                            PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, info.pt.X, info.pt.Y, 0, 0);
+                        }
+
+                        _isTouchDown = false;
 
                         // Refocus game window
-                        if (AppSetting.TouchScreenSettings.RefocusGameWindow && !panelConfig.DisableGameRefocus)
+                        if (ApplicationSetting.RefocusSetting.RefocusGameWindow.IsEnabled && panelConfig.AutoGameRefocus)
                         {
-                            _refocusedTaskIndex++;
                             var currentRefocusIndex = _refocusedTaskIndex;
 
-                            Thread.Sleep(AppSetting.TouchScreenSettings.RefocusGameWindowDelay);
+                            Thread.Sleep(Convert.ToInt32(ApplicationSetting.RefocusSetting.RefocusGameWindow.Delay * 1000));
 
                             if (currentRefocusIndex == _refocusedTaskIndex)
                             {
-                                var rectangle = WindowActionManager.GetWindowRect(_simulatorProcess.Handle);
-                                var clientRectangle = WindowActionManager.GetClientRect(_simulatorProcess.Handle);
-                                PInvoke.SetCursorPos(rectangle.X + clientRectangle.Width / 2, rectangle.Y + clientRectangle.Height / 2);
+                                var rect = WindowActionManager.GetWindowRectangle(WindowProcessManager.SimulatorProcess.Handle);
+                                PInvoke.SetCursorPos(rect.X + rect.Width / 2, rect.Y + rect.Height / 2);
                             }
                         }
                     });
                     return 1;
                 case WM_MOUSEMOVE:
                     if (_isTouchDown)
+                    {
+                        _isDragged = true;
                         return 1;
-
-                    _mouseMoveCount++;
+                    }
                     break;
             }
 
             return PInvoke.CallNextHookEx(_hHook, code, wParam, lParam);
-
         }
     }
 }

@@ -1,4 +1,7 @@
-﻿using System.ComponentModel;
+﻿using Newtonsoft.Json;
+using System;
+using System.ComponentModel;
+using System.Reflection;
 
 namespace MSFSPopoutPanelManager.Shared
 {
@@ -7,22 +10,54 @@ namespace MSFSPopoutPanelManager.Shared
         // Implements Fody.Changed
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected virtual void OnPropertyChanged(string propertyName, object oldvalue, object newvalue)
+        protected virtual void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (oldvalue != newvalue)
-                PropertyChanged?.Invoke(this, new PropertyChangedExtendedEventArgs(propertyName, oldvalue, newvalue));
+            bool hasJsonIgnoreAttribute = false;
+
+            var type = sender.GetType();
+            var propertyInfo = type.GetProperty(e.PropertyName);
+
+            if (propertyInfo != null)
+            {
+                if (Attribute.IsDefined(propertyInfo, typeof(IgnorePropertyChanged)))
+                    return;
+
+                hasJsonIgnoreAttribute = Attribute.IsDefined(propertyInfo, typeof(JsonIgnoreAttribute));
+            }
+
+            PropertyChanged?.Invoke(this, new PropertyChangedExtendedEventArgs(e?.PropertyName, hasJsonIgnoreAttribute));
+        }
+
+        protected void InitializeChildPropertyChangeBinding()
+        {
+            Type type = this.GetType();
+            PropertyInfo[] properties = type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+
+            foreach (PropertyInfo propertyInfo in properties)
+            {
+                if (Attribute.IsDefined(propertyInfo, typeof(IgnorePropertyChanged)))
+                    continue;
+
+                Type childType = propertyInfo.PropertyType;
+
+                if (childType.IsSubclassOf(typeof(ObservableObject)))
+                {
+                    EventInfo eventInfo = childType.GetEvent("PropertyChanged");
+                    MethodInfo methodInfo = type.GetMethod("OnPropertyChanged", BindingFlags.NonPublic | BindingFlags.Instance);
+                    Delegate dg = Delegate.CreateDelegate(eventInfo.EventHandlerType, this, methodInfo);
+                    eventInfo.AddEventHandler(propertyInfo.GetValue(this, null), dg);
+                }
+            }
         }
     }
 
     public class PropertyChangedExtendedEventArgs : PropertyChangedEventArgs
     {
-        public virtual object OldValue { get; private set; }
-        public virtual object NewValue { get; private set; }
+        public virtual bool DisableSave { get; private set; }
 
-        public PropertyChangedExtendedEventArgs(string propertyName, object oldValue, object newValue) : base(propertyName)
+        public PropertyChangedExtendedEventArgs(string propertyName, bool disableSave) : base(propertyName)
         {
-            OldValue = oldValue;
-            NewValue = newValue;
+            DisableSave = disableSave;
         }
     }
 }

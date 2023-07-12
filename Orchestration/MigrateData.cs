@@ -1,144 +1,198 @@
-﻿using MSFSPopoutPanelManager.Shared;
+﻿using MSFSPopoutPanelManager.DomainModel.Legacy;
+using MSFSPopoutPanelManager.DomainModel.Profile;
+using MSFSPopoutPanelManager.DomainModel.Setting;
+using MSFSPopoutPanelManager.Shared;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace MSFSPopoutPanelManager.Orchestration
 {
     internal class MigrateData
     {
-        public static void MigrateUserDataFiles()
+        private const string USER_PROFILE_DATA_FILENAME = "userprofiledata.json";
+        private const string APP_SETTING_DATA_FILENAME = "appsettingdata.json";
+        private const string ERROR_LOG_FILENAME = "error.log";
+        private const string INFO_LOG_FILENAME = "info.log";
+        private const string DEBUG_LOG_FILENAME = "debug.log";
+
+        public static ApplicationSetting MigrateAppSettingFile(string content)
         {
             try
             {
-                var newDataPath = FileIo.GetUserDataFilePath();
+                BackupAppSettingFile();
 
-                // Check if migration is necessary
-                if (new DirectoryInfo(newDataPath).Exists)
-                    return;
+                var appSetting = new ApplicationSetting();
+                var legacyAppSetting = JsonConvert.DeserializeObject<LegacyAppSetting>(content);
 
-                var packageFile = new FileInfo("MSFSPopoutPanelManager.exe");
-                var oldDataPath = Path.Combine(packageFile.DirectoryName, "userdata");
+                // General settings
+                appSetting.GeneralSetting.AlwaysOnTop = legacyAppSetting.AlwaysOnTop;
+                appSetting.GeneralSetting.AutoClose = legacyAppSetting.AutoClose;
+                appSetting.GeneralSetting.MinimizeToTray = legacyAppSetting.MinimizeToTray;
+                appSetting.GeneralSetting.StartMinimized = legacyAppSetting.StartMinimized;
 
-                // Check if upgrading from older version of app
-                if (!new DirectoryInfo(oldDataPath).Exists)
-                    return;
+                // Auto pop out setting
+                appSetting.AutoPopOutSetting.IsEnabled = legacyAppSetting.AutoPopOutPanels;
 
-                const string APPSETTING_DATA_JSON = "appsettingdata.json";
-                const string USERPROFILE_DATA_JSON = "userprofiledata.json";
+                // Pop out setting
+                appSetting.PopOutSetting.UseLeftRightControlToPopOut = legacyAppSetting.UseLeftRightControlToPopOut;
+                appSetting.PopOutSetting.MinimizeAfterPopOut = legacyAppSetting.MinimizeAfterPopOut;
+                appSetting.PopOutSetting.AutoPanning.IsEnabled = legacyAppSetting.UseAutoPanning;
+                appSetting.PopOutSetting.AutoPanning.KeyBinding = legacyAppSetting.AutoPanningKeyBinding;
+                appSetting.PopOutSetting.AfterPopOutCameraView.IsEnabled = legacyAppSetting.AfterPopOutCameraView.EnableReturnToCameraView;
+                appSetting.PopOutSetting.AfterPopOutCameraView.CameraView = legacyAppSetting.AfterPopOutCameraView.CameraView;
+                appSetting.PopOutSetting.AfterPopOutCameraView.KeyBinding = legacyAppSetting.AfterPopOutCameraView.CustomCameraKeyBinding;
 
-                var installationPathDirInfo = packageFile.Directory;
+                // Refocus setting
+                appSetting.RefocusSetting.RefocusGameWindow.IsEnabled = legacyAppSetting.TouchScreenSettings.RefocusGameWindow;
 
-                var oldAppSettingDataJsonPath = Path.Combine(oldDataPath, APPSETTING_DATA_JSON);
-                var newAppSettingDataJsonPath = Path.Combine(newDataPath, APPSETTING_DATA_JSON);
-                var oldUserProfileDataJsonPath = Path.Combine(oldDataPath, USERPROFILE_DATA_JSON);
-                var newUserProfileDataJsonPath = Path.Combine(newDataPath, USERPROFILE_DATA_JSON);
+                var delay = Math.Round(legacyAppSetting.TouchScreenSettings.RefocusGameWindowDelay / 1000.0, 1);
+                appSetting.RefocusSetting.RefocusGameWindow.Delay = delay < 1.0 ? 1.0 : delay;
 
-                StatusMessageWriter.WriteMessage($"Performing user data migration to your Windows 'Documents' folder. Please wait.....", StatusMessageType.Info, true, 3, true);
+                // Touch setting
+                appSetting.TouchSetting.TouchDownUpDelay = 0;
 
-                // Try to create user folder
-                if (!new DirectoryInfo(newDataPath).Exists)
+                // Track IR setting
+                appSetting.TrackIRSetting.AutoDisableTrackIR = legacyAppSetting.AutoDisableTrackIR;
+
+                // Windowed mode setting
+                appSetting.WindowedModeSetting.AutoResizeMsfsGameWindow = legacyAppSetting.AutoResizeMsfsGameWindow;
+
+                return appSetting;
+            }
+            catch (Exception ex)
+            {
+                var msg = "An unknown application setting data migration error has occured. Application will close";
+                FileLogger.WriteException(msg, ex);
+
+                Environment.Exit(0);
+            }
+
+            return null;
+        }
+
+        public static IList<UserProfile> MigrateUserProfileFile(string content)
+        {
+            try
+            {
+                BackupUserProfileFile();
+
+                var profiles = new List<UserProfile>();
+                var legacyProfiles = JsonConvert.DeserializeObject<List<LegacyProfile>>(content);
+                legacyProfiles = legacyProfiles.OrderBy(p => p.ProfileName.ToLower()).ToList();
+
+                foreach (var legacyProfile in legacyProfiles)
                 {
-                    var userDocumentFolder = Directory.CreateDirectory(newDataPath);
+                    var profile = new UserProfile();
 
-                    if (!new DirectoryInfo(newDataPath).Exists)
+                    profile.Name = legacyProfile.ProfileName;
+                    profile.IsLocked = legacyProfile.IsLocked;
+                    profile.AircraftBindings = legacyProfile.BindingAircrafts;
+
+                    profile.ProfileSetting.PowerOnRequiredForColdStart = legacyProfile.PowerOnRequiredForColdStart;
+                    profile.ProfileSetting.IncludeInGamePanels = legacyProfile.IncludeInGamePanels;
+
+                    if (legacyProfile.MsfsGameWindowConfig != null)
                     {
-                        StatusMessageWriter.WriteMessage($"Unable to create folder '{userDocumentFolder}'. Application will close.", StatusMessageType.Error, true, 5, true);
-                        Environment.Exit(0);
+                        profile.MsfsGameWindowConfig.Top = legacyProfile.MsfsGameWindowConfig.Top;
+                        profile.MsfsGameWindowConfig.Left = legacyProfile.MsfsGameWindowConfig.Left;
+                        profile.MsfsGameWindowConfig.Width = legacyProfile.MsfsGameWindowConfig.Width;
+                        profile.MsfsGameWindowConfig.Height = legacyProfile.MsfsGameWindowConfig.Height;
                     }
+
+                    foreach (var legacyPanelConfig in legacyProfile.PanelConfigs)
+                    {
+                        var panelConfig = new PanelConfig();
+
+                        panelConfig.PanelName = legacyPanelConfig.PanelName;
+                        panelConfig.PanelType = legacyPanelConfig.PanelType;
+
+                        panelConfig.Top = legacyPanelConfig.Top;
+                        panelConfig.Left = legacyPanelConfig.Left + 9;
+                        panelConfig.Width = legacyPanelConfig.Width - 18;
+                        panelConfig.Height = legacyPanelConfig.Height - 9;
+
+                        if (panelConfig.PanelType == PanelType.CustomPopout)
+                        {
+                            var legacyPanelSource = legacyProfile.PanelSourceCoordinates.FirstOrDefault(x => x.PanelIndex == legacyPanelConfig.PanelIndex);
+
+                            if (legacyPanelSource != null)
+                            {
+                                panelConfig.PanelSource.X = legacyPanelSource.X;
+                                panelConfig.PanelSource.Y = legacyPanelSource.Y;
+                                panelConfig.PanelSource.Color = PanelConfigColors.GetNextAvailableColor(profile.PanelConfigs.ToList());
+                            }
+                        }
+
+                        panelConfig.AlwaysOnTop = legacyPanelConfig.AlwaysOnTop;
+                        panelConfig.HideTitlebar = legacyPanelConfig.HideTitlebar;
+                        panelConfig.FullScreen = legacyPanelConfig.FullScreen;
+
+                        if (legacyProfile.RealSimGearGTN750Gen1Override)
+                            panelConfig.TouchEnabled = false;
+                        else
+                            panelConfig.TouchEnabled = legacyPanelConfig.TouchEnabled;
+
+                        if (legacyPanelConfig.DisableGameRefocus || panelConfig.PanelType == PanelType.BuiltInPopout)
+                            panelConfig.AutoGameRefocus = false;
+
+                        profile.PanelConfigs.Add(panelConfig);
+                    }
+
+                    profiles.Add(profile);
                 }
 
-                // Try move appsettingdata.json
-                if (new FileInfo(oldAppSettingDataJsonPath).Exists)
-                {
-                    File.Copy(oldAppSettingDataJsonPath, newAppSettingDataJsonPath);
-
-                    // Verify file has been copied
-                    if (!new FileInfo(newAppSettingDataJsonPath).Exists)
-                    {
-                        StatusMessageWriter.WriteMessage("An error has occured when moving 'appsettingdata.json' to new folder location. Please try manually move this file and restart the app again.", StatusMessageType.Error, true, 5, true);
-                        RemoveDocumentsFolder();
-                        Environment.Exit(0);
-                    }
-
-                    File.Delete(oldAppSettingDataJsonPath);
-                }
-
-                // Try move userprofiledata.json
-                if (new FileInfo(oldUserProfileDataJsonPath).Exists)
-                {
-                    File.Copy(oldUserProfileDataJsonPath, newUserProfileDataJsonPath);
-
-                    // Verify file has been copied
-                    if (!new FileInfo(newUserProfileDataJsonPath).Exists)
-                    {
-                        StatusMessageWriter.WriteMessage("An error has occured when moving 'userprofiledata.json' to new folder location. Please try manually move this file and restart the app again.", StatusMessageType.Error, true, 5, true);
-                        RemoveDocumentsFolder();
-                        Environment.Exit(0);
-                    }
-
-                    File.Delete(oldUserProfileDataJsonPath);
-                }
-
-                // Now remove all orphan files and folder
-                CleanFolderRecursive(installationPathDirInfo);
-
-                // Force an update of AppSetting file
-                var appSettingData = new AppSettingData();
-                appSettingData.ReadSettings();
-                appSettingData.AppSetting.AlwaysOnTop = !appSettingData.AppSetting.AlwaysOnTop;
-                System.Threading.Thread.Sleep(500);
-                appSettingData.AppSetting.AlwaysOnTop = !appSettingData.AppSetting.AlwaysOnTop;
-
-                StatusMessageWriter.WriteMessage(String.Empty, StatusMessageType.Info, false);
+                return profiles;
             }
             catch (Exception ex)
             {
                 var msg = "An unknown user data migration error has occured. Application will close";
                 FileLogger.WriteException(msg, ex);
-                StatusMessageWriter.WriteMessage(msg, StatusMessageType.Error, true, 5, true);
 
                 Environment.Exit(0);
             }
+
+            return null;
         }
 
-        private static void CleanFolderRecursive(DirectoryInfo directory)
+        private static void BackupAppSettingFile()
         {
-            foreach (FileInfo filePath in directory.GetFiles())
+            var srcPath = Path.Combine(FileIo.GetUserDataFilePath(), APP_SETTING_DATA_FILENAME);
+            var backupPath = Path.Combine(FileIo.GetUserDataFilePath(), "Backup-previous-version", APP_SETTING_DATA_FILENAME);
+
+            if (File.Exists(srcPath))
             {
-                var name = filePath.Name.ToLower();
-                if (name != "msfspopoutpanelmanager.exe")
-                {
-                    try
-                    {
-                        filePath.Delete();
-                    }
-                    catch { }
-                }
+                Directory.CreateDirectory(Path.Combine(FileIo.GetUserDataFilePath(), "Backup-previous-version"));
+                File.Copy(srcPath, backupPath, true);
             }
 
-            foreach (DirectoryInfo dir in directory.GetDirectories())
-            {
-                CleanFolderRecursive(new DirectoryInfo(dir.FullName));
+            // Delete existing error log
+            var logFilePath = Path.Combine(FileIo.GetUserDataFilePath(), "LogFiles", ERROR_LOG_FILENAME);
+            if (File.Exists(logFilePath))
+                File.Delete(logFilePath);
 
-                var name = dir.Name.ToLower();
-                if (name == "resources" || name == "userdata")
-                {
-                    try
-                    {
-                        dir.Delete();
-                    }
-                    catch { }
-                }
-            }
+            logFilePath = Path.Combine(FileIo.GetUserDataFilePath(), "LogFiles", INFO_LOG_FILENAME);
+            if (File.Exists(logFilePath))
+                File.Delete(logFilePath);
+
+            logFilePath = Path.Combine(FileIo.GetUserDataFilePath(), "LogFiles", DEBUG_LOG_FILENAME);
+            if (File.Exists(logFilePath))
+                File.Delete(logFilePath);
+
+            FileLogger.WriteLog("File initialized...", StatusMessageType.Error);
         }
 
-        private static void RemoveDocumentsFolder()
+        private static void BackupUserProfileFile()
         {
-            var dataPath = FileIo.GetUserDataFilePath();
+            var srcPath = Path.Combine(FileIo.GetUserDataFilePath(), USER_PROFILE_DATA_FILENAME);
+            var backupPath = Path.Combine(FileIo.GetUserDataFilePath(), "Backup-previous-version", USER_PROFILE_DATA_FILENAME);
 
-            if (Directory.Exists(dataPath))
+            if (File.Exists(srcPath))
             {
-                Directory.Delete(dataPath, true);
+                Directory.CreateDirectory(Path.Combine(FileIo.GetUserDataFilePath(), "Backup-previous-version"));
+                File.Copy(srcPath, backupPath, true);
             }
         }
     }

@@ -3,117 +3,143 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32602.215
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfApp", "WpfApp\WpfApp.csproj", "{54712A0A-B344-45E4-85C4-0A913305A0E6}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared", "Shared\Shared.csproj", "{4BDDE1F9-FBDD-479A-B88E-B27D0513C046}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{15FC98CD-0A69-437B-A5E5-67D025DB5CDC}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		.gitignore = .gitignore
 		autoupdate.xml = autoupdate.xml
-		latestreleasenotes.txt = latestreleasenotes.txt
+		GETTING_STARTED.md = GETTING_STARTED.md
 		LICENSE = LICENSE
 		README.md = README.md
+		RELEASENOTES.md = RELEASENOTES.md
+		rollback.xml = rollback.xml
 		VERSION.md = VERSION.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WindowsAgent", "WindowsAgent\WindowsAgent.csproj", "{BDD878A3-EF5B-43C7-94B7-CEFA04C67A9E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArduinoAgent", "ArduinoAgent\ArduinoAgent.csproj", "{E72F813F-EE30-4384-B02F-EB5D4BCFEC49}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimconnectAgent", "SimconnectAgent\SimconnectAgent.csproj", "{1BBF7803-BA8D-4AEF-8319-061E93AE5F3D}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebServer", "WebServer\WebServer.csproj", "{D20EA590-22C2-4F93-AC25-AF6960F97E03}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserDataAgent", "UserDataAgent\UserDataAgent.csproj", "{677B6DF0-8E19-4B08-8480-F7C365B6BB89}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orchestration", "Orchestration\Orchestration.csproj", "{9CD4014F-B3EA-4E67-9329-9679931E2688}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TouchPanelAgent", "TouchPanelAgent\TouchPanelAgent.csproj", "{2F36A227-C92C-4B42-B1E4-480015492357}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MainApp", "MainApp\MainApp.csproj", "{5EEA1D18-3036-4A9F-876C-45DE2AC9F247}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DomainModel", "DomainModel\DomainModel.csproj", "{602CA4F9-B6AE-4500-A52F-082D47CB1F9A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{143369CD-7A52-43A0-9364-41A46A645B05}"
+	ProjectSection(SolutionItems) = preProject
+		assets\logo.png = assets\logo.png
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "readme", "readme", "{71539661-D87F-46E3-82F2-2608B5AF74BA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{FF7DD7EF-43C5-4E7C-8283-1087F51935F9}"
+	ProjectSection(SolutionItems) = preProject
+		assets\readme\images\app.png = assets\readme\images\app.png
+		assets\readme\images\gettingstarted1.png = assets\readme\images\gettingstarted1.png
+		assets\readme\images\gettingstarted2.png = assets\readme\images\gettingstarted2.png
+		assets\readme\images\gettingstarted3.png = assets\readme\images\gettingstarted3.png
+		assets\readme\images\gettingstarted4.png = assets\readme\images\gettingstarted4.png
+		assets\readme\images\gettingstarted5.png = assets\readme\images\gettingstarted5.png
+		assets\readme\images\gettingstarted6.png = assets\readme\images\gettingstarted6.png
+		assets\readme\images\gettingstarted7.png = assets\readme\images\gettingstarted7.png
+		assets\readme\images\gettingstarted8.png = assets\readme\images\gettingstarted8.png
+		assets\readme\images\gettingstarted9.png = assets\readme\images\gettingstarted9.png
+		assets\readme\images\rollback.png = assets\readme\images\rollback.png
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
-		DebugTouchPanel|x64 = DebugTouchPanel|x64
+		Local|Any CPU = Local|Any CPU
+		Local|x64 = Local|x64
+		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
-		ReleaseTouchPanel|x64 = ReleaseTouchPanel|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{54712A0A-B344-45E4-85C4-0A913305A0E6}.Debug|x64.ActiveCfg = Debug|x64
-		{54712A0A-B344-45E4-85C4-0A913305A0E6}.Debug|x64.Build.0 = Debug|x64
-		{54712A0A-B344-45E4-85C4-0A913305A0E6}.DebugTouchPanel|x64.ActiveCfg = DebugTouchPanel|x64
-		{54712A0A-B344-45E4-85C4-0A913305A0E6}.DebugTouchPanel|x64.Build.0 = DebugTouchPanel|x64
-		{54712A0A-B344-45E4-85C4-0A913305A0E6}.Release|x64.ActiveCfg = Release|x64
-		{54712A0A-B344-45E4-85C4-0A913305A0E6}.Release|x64.Build.0 = Release|x64
-		{54712A0A-B344-45E4-85C4-0A913305A0E6}.ReleaseTouchPanel|x64.ActiveCfg = ReleaseTouchPanel|x64
-		{54712A0A-B344-45E4-85C4-0A913305A0E6}.ReleaseTouchPanel|x64.Build.0 = ReleaseTouchPanel|x64
+		{4BDDE1F9-FBDD-479A-B88E-B27D0513C046}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{4BDDE1F9-FBDD-479A-B88E-B27D0513C046}.Debug|Any CPU.Build.0 = Debug|x64
 		{4BDDE1F9-FBDD-479A-B88E-B27D0513C046}.Debug|x64.ActiveCfg = Debug|x64
 		{4BDDE1F9-FBDD-479A-B88E-B27D0513C046}.Debug|x64.Build.0 = Debug|x64
-		{4BDDE1F9-FBDD-479A-B88E-B27D0513C046}.DebugTouchPanel|x64.ActiveCfg = DebugTouchPanel|x64
-		{4BDDE1F9-FBDD-479A-B88E-B27D0513C046}.DebugTouchPanel|x64.Build.0 = DebugTouchPanel|x64
+		{4BDDE1F9-FBDD-479A-B88E-B27D0513C046}.Local|Any CPU.ActiveCfg = Local|x64
+		{4BDDE1F9-FBDD-479A-B88E-B27D0513C046}.Local|Any CPU.Build.0 = Local|x64
+		{4BDDE1F9-FBDD-479A-B88E-B27D0513C046}.Local|x64.ActiveCfg = Local|x64
+		{4BDDE1F9-FBDD-479A-B88E-B27D0513C046}.Local|x64.Build.0 = Local|x64
+		{4BDDE1F9-FBDD-479A-B88E-B27D0513C046}.Release|Any CPU.ActiveCfg = Release|x64
+		{4BDDE1F9-FBDD-479A-B88E-B27D0513C046}.Release|Any CPU.Build.0 = Release|x64
 		{4BDDE1F9-FBDD-479A-B88E-B27D0513C046}.Release|x64.ActiveCfg = Release|x64
 		{4BDDE1F9-FBDD-479A-B88E-B27D0513C046}.Release|x64.Build.0 = Release|x64
-		{4BDDE1F9-FBDD-479A-B88E-B27D0513C046}.ReleaseTouchPanel|x64.ActiveCfg = ReleaseTouchPanel|x64
-		{4BDDE1F9-FBDD-479A-B88E-B27D0513C046}.ReleaseTouchPanel|x64.Build.0 = ReleaseTouchPanel|x64
+		{BDD878A3-EF5B-43C7-94B7-CEFA04C67A9E}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{BDD878A3-EF5B-43C7-94B7-CEFA04C67A9E}.Debug|Any CPU.Build.0 = Debug|x64
 		{BDD878A3-EF5B-43C7-94B7-CEFA04C67A9E}.Debug|x64.ActiveCfg = Debug|x64
 		{BDD878A3-EF5B-43C7-94B7-CEFA04C67A9E}.Debug|x64.Build.0 = Debug|x64
-		{BDD878A3-EF5B-43C7-94B7-CEFA04C67A9E}.DebugTouchPanel|x64.ActiveCfg = DebugTouchPanel|x64
-		{BDD878A3-EF5B-43C7-94B7-CEFA04C67A9E}.DebugTouchPanel|x64.Build.0 = DebugTouchPanel|x64
-		{BDD878A3-EF5B-43C7-94B7-CEFA04C67A9E}.Release|x64.ActiveCfg = Release|x64
-		{BDD878A3-EF5B-43C7-94B7-CEFA04C67A9E}.Release|x64.Build.0 = Release|x64
-		{BDD878A3-EF5B-43C7-94B7-CEFA04C67A9E}.ReleaseTouchPanel|x64.ActiveCfg = ReleaseTouchPanel|x64
-		{BDD878A3-EF5B-43C7-94B7-CEFA04C67A9E}.ReleaseTouchPanel|x64.Build.0 = ReleaseTouchPanel|x64
-		{E72F813F-EE30-4384-B02F-EB5D4BCFEC49}.Debug|x64.ActiveCfg = Debug|x64
-		{E72F813F-EE30-4384-B02F-EB5D4BCFEC49}.Debug|x64.Build.0 = Debug|x64
-		{E72F813F-EE30-4384-B02F-EB5D4BCFEC49}.DebugTouchPanel|x64.ActiveCfg = DebugTouchPanel|x64
-		{E72F813F-EE30-4384-B02F-EB5D4BCFEC49}.DebugTouchPanel|x64.Build.0 = DebugTouchPanel|x64
-		{E72F813F-EE30-4384-B02F-EB5D4BCFEC49}.Release|x64.ActiveCfg = Release|x64
-		{E72F813F-EE30-4384-B02F-EB5D4BCFEC49}.Release|x64.Build.0 = Release|x64
-		{E72F813F-EE30-4384-B02F-EB5D4BCFEC49}.ReleaseTouchPanel|x64.ActiveCfg = ReleaseTouchPanel|x64
-		{E72F813F-EE30-4384-B02F-EB5D4BCFEC49}.ReleaseTouchPanel|x64.Build.0 = ReleaseTouchPanel|x64
+		{BDD878A3-EF5B-43C7-94B7-CEFA04C67A9E}.Local|Any CPU.ActiveCfg = Local|x64
+		{BDD878A3-EF5B-43C7-94B7-CEFA04C67A9E}.Local|Any CPU.Build.0 = Local|x64
+		{BDD878A3-EF5B-43C7-94B7-CEFA04C67A9E}.Local|x64.ActiveCfg = Local|x64
+		{BDD878A3-EF5B-43C7-94B7-CEFA04C67A9E}.Local|x64.Build.0 = Local|x64
+		{BDD878A3-EF5B-43C7-94B7-CEFA04C67A9E}.Release|Any CPU.ActiveCfg = Release|x64
+		{BDD878A3-EF5B-43C7-94B7-CEFA04C67A9E}.Release|Any CPU.Build.0 = Release|x64
+		{BDD878A3-EF5B-43C7-94B7-CEFA04C67A9E}.Release|x64.ActiveCfg = Debug|x64
+		{BDD878A3-EF5B-43C7-94B7-CEFA04C67A9E}.Release|x64.Build.0 = Debug|x64
+		{1BBF7803-BA8D-4AEF-8319-061E93AE5F3D}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{1BBF7803-BA8D-4AEF-8319-061E93AE5F3D}.Debug|Any CPU.Build.0 = Debug|x64
 		{1BBF7803-BA8D-4AEF-8319-061E93AE5F3D}.Debug|x64.ActiveCfg = Debug|x64
 		{1BBF7803-BA8D-4AEF-8319-061E93AE5F3D}.Debug|x64.Build.0 = Debug|x64
-		{1BBF7803-BA8D-4AEF-8319-061E93AE5F3D}.DebugTouchPanel|x64.ActiveCfg = DebugTouchPanel|x64
-		{1BBF7803-BA8D-4AEF-8319-061E93AE5F3D}.DebugTouchPanel|x64.Build.0 = DebugTouchPanel|x64
+		{1BBF7803-BA8D-4AEF-8319-061E93AE5F3D}.Local|Any CPU.ActiveCfg = Local|x64
+		{1BBF7803-BA8D-4AEF-8319-061E93AE5F3D}.Local|Any CPU.Build.0 = Local|x64
+		{1BBF7803-BA8D-4AEF-8319-061E93AE5F3D}.Local|x64.ActiveCfg = Local|x64
+		{1BBF7803-BA8D-4AEF-8319-061E93AE5F3D}.Local|x64.Build.0 = Local|x64
+		{1BBF7803-BA8D-4AEF-8319-061E93AE5F3D}.Release|Any CPU.ActiveCfg = Release|x64
+		{1BBF7803-BA8D-4AEF-8319-061E93AE5F3D}.Release|Any CPU.Build.0 = Release|x64
 		{1BBF7803-BA8D-4AEF-8319-061E93AE5F3D}.Release|x64.ActiveCfg = Release|x64
 		{1BBF7803-BA8D-4AEF-8319-061E93AE5F3D}.Release|x64.Build.0 = Release|x64
-		{1BBF7803-BA8D-4AEF-8319-061E93AE5F3D}.ReleaseTouchPanel|x64.ActiveCfg = ReleaseTouchPanel|x64
-		{1BBF7803-BA8D-4AEF-8319-061E93AE5F3D}.ReleaseTouchPanel|x64.Build.0 = ReleaseTouchPanel|x64
-		{D20EA590-22C2-4F93-AC25-AF6960F97E03}.Debug|x64.ActiveCfg = Debug|x64
-		{D20EA590-22C2-4F93-AC25-AF6960F97E03}.Debug|x64.Build.0 = Debug|x64
-		{D20EA590-22C2-4F93-AC25-AF6960F97E03}.DebugTouchPanel|x64.ActiveCfg = DebugTouchPanel|x64
-		{D20EA590-22C2-4F93-AC25-AF6960F97E03}.DebugTouchPanel|x64.Build.0 = DebugTouchPanel|x64
-		{D20EA590-22C2-4F93-AC25-AF6960F97E03}.Release|x64.ActiveCfg = Release|x64
-		{D20EA590-22C2-4F93-AC25-AF6960F97E03}.Release|x64.Build.0 = Release|x64
-		{D20EA590-22C2-4F93-AC25-AF6960F97E03}.ReleaseTouchPanel|x64.ActiveCfg = ReleaseTouchPanel|x64
-		{D20EA590-22C2-4F93-AC25-AF6960F97E03}.ReleaseTouchPanel|x64.Build.0 = ReleaseTouchPanel|x64
-		{677B6DF0-8E19-4B08-8480-F7C365B6BB89}.Debug|x64.ActiveCfg = Debug|x64
-		{677B6DF0-8E19-4B08-8480-F7C365B6BB89}.Debug|x64.Build.0 = Debug|x64
-		{677B6DF0-8E19-4B08-8480-F7C365B6BB89}.DebugTouchPanel|x64.ActiveCfg = DebugTouchPanel|x64
-		{677B6DF0-8E19-4B08-8480-F7C365B6BB89}.DebugTouchPanel|x64.Build.0 = DebugTouchPanel|x64
-		{677B6DF0-8E19-4B08-8480-F7C365B6BB89}.Release|x64.ActiveCfg = Release|x64
-		{677B6DF0-8E19-4B08-8480-F7C365B6BB89}.Release|x64.Build.0 = Release|x64
-		{677B6DF0-8E19-4B08-8480-F7C365B6BB89}.ReleaseTouchPanel|x64.ActiveCfg = ReleaseTouchPanel|x64
-		{677B6DF0-8E19-4B08-8480-F7C365B6BB89}.ReleaseTouchPanel|x64.Build.0 = ReleaseTouchPanel|x64
+		{9CD4014F-B3EA-4E67-9329-9679931E2688}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{9CD4014F-B3EA-4E67-9329-9679931E2688}.Debug|Any CPU.Build.0 = Debug|x64
 		{9CD4014F-B3EA-4E67-9329-9679931E2688}.Debug|x64.ActiveCfg = Debug|x64
 		{9CD4014F-B3EA-4E67-9329-9679931E2688}.Debug|x64.Build.0 = Debug|x64
-		{9CD4014F-B3EA-4E67-9329-9679931E2688}.DebugTouchPanel|x64.ActiveCfg = DebugTouchPanel|x64
-		{9CD4014F-B3EA-4E67-9329-9679931E2688}.DebugTouchPanel|x64.Build.0 = DebugTouchPanel|x64
+		{9CD4014F-B3EA-4E67-9329-9679931E2688}.Local|Any CPU.ActiveCfg = Local|x64
+		{9CD4014F-B3EA-4E67-9329-9679931E2688}.Local|Any CPU.Build.0 = Local|x64
+		{9CD4014F-B3EA-4E67-9329-9679931E2688}.Local|x64.ActiveCfg = Local|x64
+		{9CD4014F-B3EA-4E67-9329-9679931E2688}.Local|x64.Build.0 = Local|x64
+		{9CD4014F-B3EA-4E67-9329-9679931E2688}.Release|Any CPU.ActiveCfg = Release|x64
+		{9CD4014F-B3EA-4E67-9329-9679931E2688}.Release|Any CPU.Build.0 = Release|x64
 		{9CD4014F-B3EA-4E67-9329-9679931E2688}.Release|x64.ActiveCfg = Release|x64
 		{9CD4014F-B3EA-4E67-9329-9679931E2688}.Release|x64.Build.0 = Release|x64
-		{9CD4014F-B3EA-4E67-9329-9679931E2688}.ReleaseTouchPanel|x64.ActiveCfg = ReleaseTouchPanel|x64
-		{9CD4014F-B3EA-4E67-9329-9679931E2688}.ReleaseTouchPanel|x64.Build.0 = ReleaseTouchPanel|x64
-		{2F36A227-C92C-4B42-B1E4-480015492357}.Debug|x64.ActiveCfg = Debug|x64
-		{2F36A227-C92C-4B42-B1E4-480015492357}.Debug|x64.Build.0 = Debug|x64
-		{2F36A227-C92C-4B42-B1E4-480015492357}.DebugTouchPanel|x64.ActiveCfg = DebugTouchPanel|x64
-		{2F36A227-C92C-4B42-B1E4-480015492357}.DebugTouchPanel|x64.Build.0 = DebugTouchPanel|x64
-		{2F36A227-C92C-4B42-B1E4-480015492357}.Release|x64.ActiveCfg = Release|x64
-		{2F36A227-C92C-4B42-B1E4-480015492357}.Release|x64.Build.0 = Release|x64
-		{2F36A227-C92C-4B42-B1E4-480015492357}.ReleaseTouchPanel|x64.ActiveCfg = ReleaseTouchPanel|x64
-		{2F36A227-C92C-4B42-B1E4-480015492357}.ReleaseTouchPanel|x64.Build.0 = ReleaseTouchPanel|x64
+		{5EEA1D18-3036-4A9F-876C-45DE2AC9F247}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{5EEA1D18-3036-4A9F-876C-45DE2AC9F247}.Debug|Any CPU.Build.0 = Debug|x64
+		{5EEA1D18-3036-4A9F-876C-45DE2AC9F247}.Debug|x64.ActiveCfg = Debug|x64
+		{5EEA1D18-3036-4A9F-876C-45DE2AC9F247}.Debug|x64.Build.0 = Debug|x64
+		{5EEA1D18-3036-4A9F-876C-45DE2AC9F247}.Local|Any CPU.ActiveCfg = Release|x64
+		{5EEA1D18-3036-4A9F-876C-45DE2AC9F247}.Local|Any CPU.Build.0 = Release|x64
+		{5EEA1D18-3036-4A9F-876C-45DE2AC9F247}.Local|x64.ActiveCfg = Release|x64
+		{5EEA1D18-3036-4A9F-876C-45DE2AC9F247}.Local|x64.Build.0 = Release|x64
+		{5EEA1D18-3036-4A9F-876C-45DE2AC9F247}.Release|Any CPU.ActiveCfg = Release|x64
+		{5EEA1D18-3036-4A9F-876C-45DE2AC9F247}.Release|Any CPU.Build.0 = Release|x64
+		{5EEA1D18-3036-4A9F-876C-45DE2AC9F247}.Release|x64.ActiveCfg = Release|x64
+		{5EEA1D18-3036-4A9F-876C-45DE2AC9F247}.Release|x64.Build.0 = Release|x64
+		{602CA4F9-B6AE-4500-A52F-082D47CB1F9A}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{602CA4F9-B6AE-4500-A52F-082D47CB1F9A}.Debug|Any CPU.Build.0 = Debug|x64
+		{602CA4F9-B6AE-4500-A52F-082D47CB1F9A}.Debug|x64.ActiveCfg = Debug|x64
+		{602CA4F9-B6AE-4500-A52F-082D47CB1F9A}.Debug|x64.Build.0 = Debug|x64
+		{602CA4F9-B6AE-4500-A52F-082D47CB1F9A}.Local|Any CPU.ActiveCfg = Local|x64
+		{602CA4F9-B6AE-4500-A52F-082D47CB1F9A}.Local|Any CPU.Build.0 = Local|x64
+		{602CA4F9-B6AE-4500-A52F-082D47CB1F9A}.Local|x64.ActiveCfg = Local|x64
+		{602CA4F9-B6AE-4500-A52F-082D47CB1F9A}.Local|x64.Build.0 = Local|x64
+		{602CA4F9-B6AE-4500-A52F-082D47CB1F9A}.Release|Any CPU.ActiveCfg = Release|x64
+		{602CA4F9-B6AE-4500-A52F-082D47CB1F9A}.Release|Any CPU.Build.0 = Release|x64
+		{602CA4F9-B6AE-4500-A52F-082D47CB1F9A}.Release|x64.ActiveCfg = Release|x64
+		{602CA4F9-B6AE-4500-A52F-082D47CB1F9A}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{143369CD-7A52-43A0-9364-41A46A645B05} = {15FC98CD-0A69-437B-A5E5-67D025DB5CDC}
+		{71539661-D87F-46E3-82F2-2608B5AF74BA} = {143369CD-7A52-43A0-9364-41A46A645B05}
+		{FF7DD7EF-43C5-4E7C-8283-1087F51935F9} = {71539661-D87F-46E3-82F2-2608B5AF74BA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D1607553-61E8-4ED6-B382-ABA6F6944586}

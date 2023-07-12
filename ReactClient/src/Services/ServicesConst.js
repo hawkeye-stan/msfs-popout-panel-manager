@@ -1,1 +1,0 @@
-export const API_URL = { protocol: window.location.protocol, hostname: window.location.hostname, url: `${window.location.protocol}//${window.location.hostname}:27012`}

@@ -1,51 +1,39 @@
-﻿using MSFSPopoutPanelManager.Shared;
-using MSFSPopoutPanelManager.UserDataAgent;
+﻿using MSFSPopoutPanelManager.DomainModel.Setting;
+using MSFSPopoutPanelManager.Shared;
 using System;
 
 namespace MSFSPopoutPanelManager.Orchestration
 {
     public class AppSettingData : ObservableObject
     {
-        public event EventHandler AppSettingUpdated;
         public event EventHandler<bool> AlwaysOnTopChanged;
-        public event EventHandler<bool> AutoPopOutPanelsChanged;
-        public event EventHandler<bool> TouchPanelIntegrationChanged;
+        public event EventHandler<bool> EnablePanelResetWhenLockedChanged;
 
-        public AppSetting AppSetting { get; private set; }
+        public ApplicationSetting ApplicationSetting { get; private set; }
 
         public void ReadSettings()
         {
-            AppSetting = AppSettingManager.ReadAppSetting();
+            ApplicationSetting = AppSettingDataManager.ReadAppSetting();
 
-            if (AppSetting == null)
+            if (ApplicationSetting == null)
             {
-                AppSetting = new AppSetting();
-                AppSettingManager.WriteAppSetting(AppSetting);
+                ApplicationSetting = new ApplicationSetting();
+                AppSettingDataManager.WriteAppSetting(ApplicationSetting);
             }
 
             // Autosave data
-            AppSetting.PropertyChanged += (sender, e) =>
+            ApplicationSetting.PropertyChanged += (sender, e) =>
             {
-                var arg = e as PropertyChangedExtendedEventArgs;
+                AppSettingDataManager.WriteAppSetting(ApplicationSetting);
 
-                if (arg.OldValue != arg.NewValue)
+                switch (e.PropertyName)
                 {
-                    AppSettingManager.WriteAppSetting(AppSetting);
-
-                    switch (arg.PropertyName)
-                    {
-                        case "AlwaysOnTop":
-                            AlwaysOnTopChanged?.Invoke(this, (bool)arg.NewValue);
-                            break;
-                        case "AutoPopOutPanels":
-                            AutoPopOutPanelsChanged?.Invoke(this, (bool)arg.NewValue);
-                            break;
-                        case "EnableTouchPanelIntegration":
-                            TouchPanelIntegrationChanged?.Invoke(this, (bool)arg.NewValue);
-                            break;
-                    }
-
-                    AppSettingUpdated?.Invoke(this, null);
+                    case "AlwaysOnTop":
+                        AlwaysOnTopChanged?.Invoke(this, ApplicationSetting.GeneralSetting.AlwaysOnTop);
+                        break;
+                    case "EnablePanelResetWhenLocked":
+                        EnablePanelResetWhenLockedChanged?.Invoke(this, ApplicationSetting.PopOutSetting.EnablePanelResetWhenLocked);
+                        break;
                 }
             };
         }

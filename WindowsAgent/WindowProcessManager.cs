@@ -15,24 +15,16 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             return appVersion;
         }
 
-        public static WindowProcess GetSimulatorProcess()
+        public static WindowProcess SimulatorProcess { get; private set; }
+
+        public static void GetSimulatorProcess()
         {
-            return GetWindowProcess("FlightSimulator");
+            SimulatorProcess = GetWindowProcess("FlightSimulator");
         }
 
         public static WindowProcess GetApplicationProcess()
         {
             return GetWindowProcess("MSFSPopoutPanelManager");
-        }
-
-        public static void OpenOnlineUserGuide()
-        {
-            Process.Start(new ProcessStartInfo("https://github.com/hawkeye-stan/msfs-popout-panel-manager#msfs-pop-out-panel-manager") { UseShellExecute = true });
-        }
-
-        public static void OpenOnlineLatestDownload()
-        {
-            Process.Start(new ProcessStartInfo("https://github.com/hawkeye-stan/msfs-popout-panel-manager/releases") { UseShellExecute = true });
         }
 
         private static WindowProcess GetWindowProcess(string processName)

@@ -1,0 +1,102 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net7.0-windows</TargetFramework>
+		<UseWPF>true</UseWPF>
+		<AssemblyName>MSFSPopoutPanelManager</AssemblyName>
+		<PackageId>MSFS 2020 Popout Panel Manager</PackageId>
+		<Product>MSFS 2020 Popout Panel Manager</Product>
+		<Authors>Stanley Kwok</Authors>
+		<Company>Stanley Kwok</Company>
+		<Copyright>Stanley Kwok 2021</Copyright>
+		<PackageProjectUrl>https://github.com/hawkeye-stan/msfs-popout-panel-manager</PackageProjectUrl>
+		<RootNamespace>MSFSPopoutPanelManager.MainApp</RootNamespace>
+		<ApplicationIcon>logo.ico</ApplicationIcon>
+		<Platforms>x64</Platforms>
+		<Version>4.0.0.0</Version>
+		<AssemblyVersion>4.0.0.0</AssemblyVersion>
+		<FileVersion>4.0.0.0</FileVersion>
+		<DebugType>embedded</DebugType>
+		<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+		<!-- Publishing options -->
+		<IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+		<EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+		<Configurations>Debug;Release;Local</Configurations>
+		<PublishReadyToRunComposite>false</PublishReadyToRunComposite>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Resource Include="logo.ico" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="log4net.config">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Autoupdater.NET.Official" Version="1.8.3" />
+		<PackageReference Include="DotNetKit.Wpf.AutoCompleteComboBox" Version="1.6.0" />
+		<PackageReference Include="Fody" Version="6.7.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="gong-wpf-dragdrop" Version="3.2.1" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="PropertyChanged.Fody" Version="4.1.0" PrivateAssets="All" />
+		<PackageReference Include="CalcBinding" Version="2.5.2" />
+		<PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="1.1.0" />
+		<PackageReference Include="MaterialDesignThemes" Version="4.9.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
+		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
+		<PackageReference Include="Prism.Core" Version="8.1.97" />
+		<PackageReference Include="log4net" Version="2.0.15" />
+		<PackageReference Include="InputSimulatorCore" Version="1.0.5" />
+		<PackageReference Include="WindowsHook" Version="1.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="AppWindow.xaml.cs">
+	    <SubType>Code</SubType>
+	  </Compile>
+	  <Compile Update="Properties\Settings.Designer.cs">
+	    <DesignTimeSharedInput>True</DesignTimeSharedInput>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Settings.settings</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="CustomControl\Themes\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\DomainModel\DomainModel.csproj" />
+	  <ProjectReference Include="..\Orchestration\Orchestration.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="logo.png">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Properties\Settings.settings">
+	    <Generator>SettingsSingleFileGenerator</Generator>
+	    <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+	  </None>
+	</ItemGroup>
+
+	<Target Name="CopyItems" AfterTargets="ComputeFilesToPublish">
+		<!-- Copy all plugin-extensions items -->
+		<ItemGroup>
+			<Skipper Include="$(SolutionDir)\Assets\Community\zzz-ready-to-fly-button-skipper\**"></Skipper>
+			<License Include="$(SolutionDir)\LICENSE"></License>
+			<Version Include="$(SolutionDir)\VERSION.md"></Version>
+		</ItemGroup>
+		<Copy SourceFiles="@(License)" DestinationFolder="$(PublishDir)" SkipUnchangedFiles="false" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="@(Version)" DestinationFolder="$(PublishDir)" SkipUnchangedFiles="false" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="@(Skipper)" DestinationFolder="$(PublishDir)Community\zzz-ready-to-fly-button-skipper\%(RecursiveDir)" SkipUnchangedFiles="false" OverwriteReadOnlyFiles="true" />
+	</Target>
+</Project>

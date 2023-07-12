@@ -2,9 +2,9 @@
 {
     public class SimConnectDataDefinition
     {
-        public SIMCONNECT_DEFINE_ID DefineId = SIMCONNECT_DEFINE_ID.Dummy;
+        public DATA_DEFINITION DefinitionId { get; set; }
 
-        public SIMCONNECT_REQUEST RequestId = SIMCONNECT_REQUEST.Dummy;
+        public DATA_REQUEST RequestId { get; set; }
 
         public string PropName { get; set; }
 
@@ -16,23 +16,8 @@
 
         public DataDefinitionType DataDefinitionType { get; set; }
 
-        public object DefaultValue { get; set; }
-
-        public string JavaScriptFormatting { get; set; }
-
         public object Value { get; set; }
     }
-
-    public enum SIMCONNECT_DEFINE_ID
-    {
-        Dummy = 0
-    }
-
-    public enum SIMCONNECT_REQUEST
-    {
-        Dummy = 0,
-        SimConnectStruct
-    };
 
     public enum DataDefinitionType
     {

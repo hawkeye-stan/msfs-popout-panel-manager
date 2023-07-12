@@ -1,60 +1,23 @@
-﻿using System;
-using System.Runtime.InteropServices;
-using System.Text;
-
-namespace MSFSPopoutPanelManager.SimConnectAgent
+﻿namespace MSFSPopoutPanelManager.SimConnectAgent
 {
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct ClientDataValue
+    public enum DATA_DEFINITION
     {
-        public float data;
-    }
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct ClientDataString
-    {
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1024)]
-        public byte[] data;
-
-        public ClientDataString(string strData)
-        {
-            byte[] txtBytes = Encoding.ASCII.GetBytes(strData);
-            var ret = new byte[1024];
-            Array.Copy(txtBytes, ret, txtBytes.Length);
-            data = ret;
-        }
-    }
-
-    //public enum SIMCONNECT_DATA_DEFINITION
-    //{
-    //    SIMCONNECT_DATA_STRUCT
-    //}
-
-    public enum SIMCONNECT_DATA_DEFINITION_TOUCHPANEL
-    {
-        SIMCONNECT_DATA_STRUCT_TOUCHPANEL
+        REQUIRED_DEFINITION = 0,
+        HUDBAR_DEFINITION,
+        WRITEABLE_DEFINITION,
+        NA
     }
 
     public enum DATA_REQUEST
     {
-        REQUEST_1
+        REQUIRED_REQUEST = 0,
+        HUDBAR_REQUEST,
+        NA
     }
 
     public enum NotificationGroup
     {
         GROUP0
-    }
-
-    public enum SimConnectSystemEvent
-    {
-        FOURSECS,
-        SIMSTART,
-        SIMSTOP,
-        FLIGHTLOADED,
-        AIRCRAFTLOADED,
-        PAUSED,
-        VIEW,
-        NONE
     }
 
     public enum SystemStateRequestId
