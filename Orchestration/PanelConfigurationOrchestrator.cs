@@ -98,15 +98,7 @@ namespace MSFSPopoutPanelManager.Orchestration
                 {
                     InputEmulationManager.ToggleFullScreenPanel(panelConfig.PanelHandle);
 
-                    if (panelConfig.FullScreen)
-                    {
-                        var rect = WindowActionManager.GetWindowRectangle(panelConfig.PanelHandle);
-                        panelConfig.Left = rect.Left;
-                        panelConfig.Top = rect.Top;
-                        panelConfig.Width = rect.Width;
-                        panelConfig.Height = rect.Height;
-                    }
-                    else
+                    if (!panelConfig.FullScreen)
                         WindowActionManager.MoveWindow(panelConfig.PanelHandle, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height);
                 }
                 else if (configPropertyName == PanelConfigPropertyName.PanelName)
