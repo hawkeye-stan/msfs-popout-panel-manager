@@ -96,38 +96,5 @@ namespace MSFSPopoutPanelManager.MainApp
         {
             this.Close();
         }
-
-        //private void _viewModel_OnStatusMessageUpdated(object sender, (List<Run>, int) e)
-        //{
-        //    var (messages, duration) = e;
-
-        //    if (messages == null)
-        //        return;
-
-        //    TextBlockMessage.Inlines.Clear();
-
-        //    foreach (var run in messages)
-        //        TextBlockMessage.Inlines.Add(run);
-
-        //    var lastRun = TextBlockMessage.Inlines.LastInline;
-
-        //    if (lastRun != null && ((Run)lastRun).Text == Environment.NewLine)
-        //        TextBlockMessage.Inlines.Remove(lastRun);
-
-        //    ScrollViewerMessageBar.ScrollToEnd();
-
-        //    if (duration != -1)
-        //    {
-        //        Task.Run(() =>
-        //        {
-        //            Thread.Sleep(duration * 1000);
-
-        //            Application.Current.Dispatcher.Invoke(() =>
-        //            {
-        //                TextBlockMessage.Inlines.Clear();
-        //            });
-        //        });
-        //    }
-        //}
     }
 }

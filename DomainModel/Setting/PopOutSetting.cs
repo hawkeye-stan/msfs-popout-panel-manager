@@ -10,6 +10,7 @@ namespace MSFSPopoutPanelManager.DomainModel.Setting
             MinimizeAfterPopOut = false;
             UseLeftRightControlToPopOut = false;
             AutoActivePause = false;
+            EnablePopOutMessages = true;
 
             AfterPopOutCameraView = new AfterPopOutCameraView();
             AutoPanning = new AutoPanning();
@@ -30,6 +31,8 @@ namespace MSFSPopoutPanelManager.DomainModel.Setting
         public bool UseLeftRightControlToPopOut { get; set; }
 
         public bool EnablePanelResetWhenLocked { get; set; }
+
+        public bool EnablePopOutMessages { get; set; }
 
         public bool AutoActivePause { get; set; }
 

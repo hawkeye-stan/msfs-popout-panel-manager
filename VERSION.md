@@ -5,6 +5,8 @@
 
 * Fixed issue when full screen mode is activated which may cause black bar to appear on either size (top/bottom or left/right).
 
+* Added preference option in pop out settings to disable pop out progress messages from appearing.
+
 ## Version 4.0.0
 
 * Major improvement on responsiveness for touch and drag when using touch panel feature. (Please set Touch Down Touch Up Delay to 0 in preference setting to get the fastest performance)

@@ -390,6 +390,18 @@
                         </WrapPanel>
                     </WrapPanel>
 
+                    <WrapPanel Margin="0,20,20,0" Orientation="Vertical">
+                        <TextBlock Style="{StaticResource TextBlockHeading}">Enable Pop Out Progress Messages</TextBlock>
+                        <Line
+                            Stretch="Fill"
+                            Stroke="Gray"
+                            X2="1" />
+                        <WrapPanel>
+                            <ToggleButton IsChecked="{Binding AppSettingData.ApplicationSetting.PopOutSetting.EnablePopOutMessages, Mode=TwoWay}" Style="{StaticResource ToggleButton}" />
+                            <TextBlock Style="{StaticResource TextBlockLabel}">Enable display of pop out progress messages</TextBlock>
+                        </WrapPanel>
+                    </WrapPanel>
+
                     <WrapPanel Margin="0,20,20,20" Orientation="Vertical">
                         <TextBlock Style="{StaticResource TextBlockHeading}">Pop Out Title Bar Color Customization</TextBlock>
                         <Line

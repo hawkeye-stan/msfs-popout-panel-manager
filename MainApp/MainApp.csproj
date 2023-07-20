@@ -94,9 +94,11 @@
 			<Skipper Include="$(SolutionDir)\Assets\Community\zzz-ready-to-fly-button-skipper\**"></Skipper>
 			<License Include="$(SolutionDir)\LICENSE"></License>
 			<Version Include="$(SolutionDir)\VERSION.md"></Version>
+			<ReleaseNotes Include="$(SolutionDir)\RELEASENOTES.md"></ReleaseNotes>
 		</ItemGroup>
 		<Copy SourceFiles="@(License)" DestinationFolder="$(PublishDir)" SkipUnchangedFiles="false" OverwriteReadOnlyFiles="true" />
 		<Copy SourceFiles="@(Version)" DestinationFolder="$(PublishDir)" SkipUnchangedFiles="false" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="@(ReleaseNotes)" DestinationFolder="$(PublishDir)" SkipUnchangedFiles="false" OverwriteReadOnlyFiles="true" />
 		<Copy SourceFiles="@(Skipper)" DestinationFolder="$(PublishDir)Community\zzz-ready-to-fly-button-skipper\%(RecursiveDir)" SkipUnchangedFiles="false" OverwriteReadOnlyFiles="true" />
 	</Target>
 </Project>

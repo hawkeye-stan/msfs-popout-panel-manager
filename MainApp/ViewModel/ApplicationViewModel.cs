@@ -23,18 +23,7 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
 
         public WindowState InitialWindowState { get; private set; }
 
-        public event EventHandler<(List<Run>, int)> OnStatusMessageUpdated;
-
-        public ApplicationViewModel(MainOrchestrator orchestrator) : base(orchestrator)
-        {
-            StatusMessageWriter.OnStatusMessage += (sender, e) =>
-            {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    OnStatusMessageUpdated?.Invoke(this, (FormatStatusMessages(e.Messages), e.Duration));
-                });
-            };
-        }
+        public ApplicationViewModel(MainOrchestrator orchestrator) : base(orchestrator) { }
 
         public void Initialize()
         {

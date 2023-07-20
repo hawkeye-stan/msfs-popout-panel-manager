@@ -26,6 +26,9 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
             get { return _isVisible; }
             set
             {
+                if (!AppSettingData.ApplicationSetting.PopOutSetting.EnablePopOutMessages)
+                    return;
+
                 _isVisible = value;
                 if (value)
                 {
@@ -52,10 +55,13 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
             {
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    WindowActionManager.ApplyAlwaysOnTop(Handle, PanelType.StatusMessageWindow, true);
-                    OnMessageUpdated?.Invoke(this, FormatStatusMessages(e.Messages));
+                    if (AppSettingData.ApplicationSetting.PopOutSetting.EnablePopOutMessages)
+                    {
+                        WindowActionManager.ApplyAlwaysOnTop(Handle, PanelType.StatusMessageWindow, true);
+                        OnMessageUpdated?.Invoke(this, FormatStatusMessages(e.Messages));
 
-                    CenterDialogToGameWindow();
+                        CenterDialogToGameWindow();
+                    }
                 });
             };
         }
