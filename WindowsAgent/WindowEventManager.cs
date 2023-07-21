@@ -166,6 +166,10 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             var rect = WindowActionManager.GetWindowRectangle(panelConfig.PanelHandle);
             panelConfig.Left = rect.Left;
             panelConfig.Top = rect.Top;
+
+            if (panelConfig.PanelType == PanelType.HudBarWindow)
+                return;
+
             panelConfig.Width = rect.Width;
             panelConfig.Height = rect.Height;
 

@@ -121,6 +121,8 @@ namespace MSFSPopoutPanelManager.Orchestration
                             break;
                         case PanelConfigPropertyName.Width:
                         case PanelConfigPropertyName.Height:
+                            if (panelConfig.PanelType == PanelType.HudBarWindow)
+                                return;
 
                             if (panelConfig.HideTitlebar)
                             {

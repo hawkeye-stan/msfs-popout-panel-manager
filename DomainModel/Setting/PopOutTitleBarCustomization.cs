@@ -1,6 +1,8 @@
-﻿namespace MSFSPopoutPanelManager.DomainModel.Setting
+﻿using MSFSPopoutPanelManager.Shared;
+
+namespace MSFSPopoutPanelManager.DomainModel.Setting
 {
-    public class PopOutTitleBarCustomization
+    public class PopOutTitleBarCustomization : ObservableObject
     {
         public PopOutTitleBarCustomization()
         {
