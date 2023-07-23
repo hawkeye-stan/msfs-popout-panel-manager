@@ -64,10 +64,10 @@ namespace MSFSPopoutPanelManager.WindowsAgent
         [DllImport("user32.dll", SetLastError = true)]
         public static extern IntPtr GetWindowLong(IntPtr hwnd, int nIndex);
 
-        [DllImport("user32.dll")]
+        [DllImport("user32.dll", SetLastError = true)]
         public static extern uint GetWindowThreadProcessId(IntPtr hWnd, IntPtr ProcessId);
 
-        [DllImport("kernel32.dll")]
+        [DllImport("kernel32.dll", SetLastError = true)]
         public static extern uint GetCurrentThreadId();
 
         [DllImport("user32.dll", SetLastError = true)]
@@ -86,7 +86,7 @@ namespace MSFSPopoutPanelManager.WindowsAgent
         [DllImport("user32.dll", SetLastError = true)]
         private static extern int GetWindowRect(IntPtr hwnd, out Rectangle lpRect);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         private static extern int GetWindowText(IntPtr hwnd, StringBuilder lpWindowText, int nMaxCount);
 
         public static string GetWindowText(IntPtr hwnd)
@@ -100,7 +100,7 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             catch { return string.Empty; }
         }
 
-        [DllImport("user32.dll")]
+        [DllImport("user32.dll", SetLastError = true)]
         public static extern bool GetClientRect(IntPtr hWnd, out Rectangle lpRect);
 
         [DllImport("user32.dll", SetLastError = true)]
@@ -266,6 +266,4 @@ namespace MSFSPopoutPanelManager.WindowsAgent
         DWMWA_SYSTEMBACKDROP_TYPE,
         DWMWA_LAST
     }
-
-
 }

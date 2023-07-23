@@ -94,13 +94,14 @@ namespace MSFSPopoutPanelManager.Orchestration
 
             StepAddHudBar();
 
+            SetupRefocusDisplay();
+
             StepApplyPanelConfig();
 
             await StepPostPopout();
 
             StatusMessageWriter.IsEnabled = false;
         }
-
 
         private void StepPopoutPrep()
         {
@@ -305,21 +306,23 @@ namespace MSFSPopoutPanelManager.Orchestration
 
             var panelConfig = ActiveProfile.PanelConfigs.FirstOrDefault(p => p.PanelType == PanelType.HudBarWindow);
 
-            if (panelConfig == null)
-            {
-                panelConfig = new PanelConfig()
-                {
-                    PanelName = "HUD Bar",
-                    PanelType = PanelType.HudBarWindow,
-                    AutoGameRefocus = false
-                };
-
-                ActiveProfile.PanelConfigs.Add(panelConfig);
-            }
-
             OnHudBarOpened?.Invoke(this, panelConfig);
 
             StatusMessageWriter.WriteOkStatusMessage();
+        }
+
+        public void SetupRefocusDisplay()
+        {
+            if (!ActiveProfile.ProfileSetting.RefocusOnDisplay.IsEnabled)
+                return;
+
+            var panelConfig = ActiveProfile.PanelConfigs.FirstOrDefault(p => p.PanelType == PanelType.RefocusDisplay);
+            if (panelConfig != null)
+            {
+                StatusMessageWriter.WriteMessage($"Configurating {panelConfig.PanelName} for auto refocus on touch", StatusMessageType.Info);
+                panelConfig.PanelHandle = new IntPtr(1);
+                StatusMessageWriter.WriteOkStatusMessage();
+            }
         }
 
         private void StepApplyPanelConfig()

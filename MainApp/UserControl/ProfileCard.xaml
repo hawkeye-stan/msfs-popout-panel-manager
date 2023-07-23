@@ -52,6 +52,16 @@
             </Style.Triggers>
         </Style>
         <Style
+            x:Key="TxtBlockDisableWhenLockedInner"
+            BasedOn="{StaticResource TextBlockLabel}"
+            TargetType="TextBlock">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding DataContext.ProfileData.ActiveProfile.IsLocked, RelativeSource={RelativeSource AncestorType=UserControl, Mode=FindAncestor}}" Value="True">
+                    <Setter Property="Foreground" Value="DimGray" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style
             x:Key="CmbBoxDisableWhenLocked"
             BasedOn="{StaticResource MaterialDesignComboBox}"
             TargetType="ComboBox">
@@ -226,7 +236,6 @@
                                 <TextBlock Style="{StaticResource TxtBlockDisableWhenLocked}" ToolTip="Add in-game menu bar panels such as VFR Map, Checklist, ATC, etc. to profile to enable panel size and location management and touch support">Include in-game menu bar panels for pop out management and touch screen support</TextBlock>
                             </WrapPanel>
 
-
                             <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
                                 <WrapPanel>
                                     <ToggleButton
@@ -246,6 +255,66 @@
                                         ItemsSource="{Binding HudBarTypes}"
                                         SelectedValue="{Binding ProfileData.ActiveProfile.ProfileSetting.HudBarConfig.HudBarType, Mode=TwoWay, Converter={StaticResource StringToHudBarTypeConverter}}"
                                         Style="{StaticResource CmbBoxDisableWhenLocked}" />
+                                </WrapPanel>
+                            </StackPanel>
+
+                            <StackPanel Margin="0,8,0,0" Orientation="Vertical">
+                                <WrapPanel>
+                                    <ToggleButton
+                                        IsChecked="{Binding ProfileData.ActiveProfile.ProfileSetting.RefocusOnDisplay.IsEnabled, Mode=TwoWay, NotifyOnTargetUpdated=True}"
+                                        IsEnabled="{c:Binding '!ProfileData.ActiveProfile.IsLocked',
+                                                              Mode=OneWay}"
+                                        Style="{StaticResource ToggleButton}"
+                                        TargetUpdated="AddRefocusDisplay_TargetUpdated" />
+                                    <TextBlock Style="{StaticResource TxtBlockDisableWhenLocked}" ToolTip="Automactically set focus back to game window after a period of inactivity after touching the designated monitor. This is overcome a bug in MSFS where NVidia frame generation does not work when focus is not in the game window.">Enable entire monitor display to have game refocus function when touch</TextBlock>
+                                </WrapPanel>
+                                <WrapPanel
+                                    Margin="36,0,0,0"
+                                    IsEnabled="{c:Binding !ProfileData.ActiveProfile.IsLocked}"
+                                    Orientation="Horizontal"
+                                    Visibility="{Binding ProfileData.ActiveProfile.ProfileSetting.RefocusOnDisplay.IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                                    <WrapPanel Orientation="Vertical" Visibility="{Binding ProfileData.ActiveProfile.ProfileSetting.RefocusOnDisplay.IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                                        <ItemsControl
+                                            Margin="0"
+                                            Padding="8"
+                                            ItemsSource="{Binding ProfileData.ActiveProfile.ProfileSetting.RefocusOnDisplay.Monitors, Mode=TwoWay}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type domain:MonitorInfo}">
+                                                    <WrapPanel Margin="0,0,0,4" Orientation="Horizontal">
+                                                        <CheckBox
+                                                            VerticalAlignment="Center"
+                                                            Command="{Binding DataContext.RefocusDisplaySelectionUpdatedCommand, RelativeSource={RelativeSource AncestorType=UserControl, Mode=FindAncestor}}"
+                                                            CommandParameter="{Binding Name}"
+                                                            IsChecked="{Binding IsSelected, Mode=TwoWay}" />
+                                                        <WrapPanel
+                                                            Margin="8,0,0,0"
+                                                            VerticalAlignment="Center"
+                                                            Orientation="Horizontal">
+                                                            <TextBlock
+                                                                Margin="0,0,5,0"
+                                                                FontWeight="Bold"
+                                                                Style="{StaticResource TxtBlockDisableWhenLockedInner}"
+                                                                Text="{Binding Name}" />
+                                                            <TextBlock Style="{StaticResource TxtBlockDisableWhenLockedInner}" Text="(" />
+                                                            <TextBlock Style="{StaticResource TxtBlockDisableWhenLockedInner}" Text="{Binding Width}" />
+                                                            <TextBlock Style="{StaticResource TxtBlockDisableWhenLockedInner}" Text="x" />
+                                                            <TextBlock Style="{StaticResource TxtBlockDisableWhenLockedInner}" Text="{Binding Height}" />
+                                                            <TextBlock Style="{StaticResource TxtBlockDisableWhenLockedInner}" Text=")" />
+                                                        </WrapPanel>
+                                                    </WrapPanel>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </WrapPanel>
+                                    <Button
+                                        Width="160"
+                                        Margin="20,0,0,0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Command="{Binding RefocusDisplayRefreshedCommand}"
+                                        Style="{StaticResource MaterialDesignOutlinedLightButton}">
+                                        Refresh Display List
+                                    </Button>
                                 </WrapPanel>
 
                             </StackPanel>

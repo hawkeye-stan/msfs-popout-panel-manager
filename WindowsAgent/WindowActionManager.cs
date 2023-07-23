@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace MSFSPopoutPanelManager.WindowsAgent
 {
@@ -297,6 +298,18 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             int color;
             if (int.TryParse(hexColor, NumberStyles.HexNumber, null, out color))
                 PInvoke.DwmSetWindowAttribute(hwnd, DwmWindowAttribute.DWMWA_CAPTION_COLOR, ref color, sizeof(Int32));
+        }
+
+        public static List<MonitorInfo> GetMonitorsInfo()
+        {
+            var monitors = new List<MonitorInfo>();
+
+            foreach (Screen screen in Screen.AllScreens)
+            {
+                monitors.Add(new MonitorInfo { Name = screen.DeviceName.Substring(screen.DeviceName.LastIndexOf("\\") + 1), X = screen.Bounds.X, Y = screen.Bounds.Y, Width = screen.Bounds.Width, Height = screen.Bounds.Height });
+            }
+
+            return monitors;
         }
     }
 }

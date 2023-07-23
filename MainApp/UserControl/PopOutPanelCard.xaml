@@ -216,36 +216,38 @@
                         x:Name="StackPanelAdjustment"
                         Width="440"
                         Orientation="Horizontal"
-                        Visibility="{c:Binding 'DataItem.PanelType==profileDomain:PanelType.BuiltInPopout or DataItem.PanelType==profileDomain:PanelType.HudBarWindow or DataItem.PanelSource.X != null'}">
+                        Visibility="{c:Binding 'DataItem.PanelType==profileDomain:PanelType.RefocusDisplay or DataItem.PanelType==profileDomain:PanelType.BuiltInPopout or DataItem.PanelType==profileDomain:PanelType.HudBarWindow or DataItem.PanelSource.X != null'}">
                         <local:PanelConfigField
                             Margin="20,0,0,0"
                             BindingPath="Top"
                             DataItem="{Binding DataItem}"
+                            IsEnabled="{c:Binding 'DataItem.PanelType!=profileDomain:PanelType.RefocusDisplay'}"
                             SourceUpdated="Data_SourceUpdated" />
                         <local:PanelConfigField
                             Margin="20,0,0,0"
                             BindingPath="Left"
                             DataItem="{Binding DataItem}"
+                            IsEnabled="{c:Binding 'DataItem.PanelType!=profileDomain:PanelType.RefocusDisplay'}"
                             SourceUpdated="Data_SourceUpdated" />
                         <local:PanelConfigField
                             Margin="20,0,0,0"
                             BindingPath="Width"
                             DataItem="{Binding DataItem}"
-                            IsEnabled="{c:Binding 'DataItem.PanelType!=profileDomain:PanelType.HudBarWindow'}"
+                            IsEnabled="{c:Binding 'DataItem.PanelType!=profileDomain:PanelType.HudBarWindow and DataItem.PanelType!=profileDomain:PanelType.RefocusDisplay'}"
                             SourceUpdated="Data_SourceUpdated" />
                         <local:PanelConfigField
                             Margin="20,0,0,0"
                             BindingPath="Height"
                             DataItem="{Binding DataItem}"
-                            IsEnabled="{c:Binding 'DataItem.PanelType!=profileDomain:PanelType.HudBarWindow'}"
+                            IsEnabled="{c:Binding 'DataItem.PanelType!=profileDomain:PanelType.HudBarWindow and DataItem.PanelType!=profileDomain:PanelType.RefocusDisplay'}"
                             SourceUpdated="Data_SourceUpdated" />
 
-                        <local:MoveAndResizePanelButton Margin="12,0,0,0" />
+                        <local:MoveAndResizePanelButton Margin="12,0,0,0" Visibility="{c:Binding 'DataItem.PanelType!=profileDomain:PanelType.RefocusDisplay'}" />
 
                         <local:TouchEnabledButton
                             Width="{StaticResource IconSize}"
                             Margin="12,0,0,0"
-                            Visibility="{c:Binding 'DataItem.PanelType!=profileDomain:PanelType.HudBarWindow'}" />
+                            Visibility="{c:Binding 'DataItem.PanelType!=profileDomain:PanelType.HudBarWindow and DataItem.PanelType!=profileDomain:PanelType.RefocusDisplay'}" />
                     </StackPanel>
 
                     <!--  Source panel icon  -->
@@ -288,7 +290,8 @@
                             Margin="0"
                             Command="{Binding DeletePanelCommand}"
                             KeyboardNavigation.AcceptsReturn="False"
-                            ToolTip="Delete panel">
+                            ToolTip="Delete panel"
+                            Visibility="{c:Binding 'DataItem.PanelType!=profileDomain:PanelType.RefocusDisplay and DataItem.PanelType!=profileDomain:PanelType.HudBarWindow'}">
                             <materialDesign:PackIcon
                                 Width="{StaticResource IconSize}"
                                 Height="{StaticResource IconSize}"
@@ -301,8 +304,7 @@
                 Margin="42,8,24,16"
                 Orientation="Horizontal"
                 TextBlock.Foreground="{DynamicResource MaterialDesignBody}"
-                Visibility="{c:Binding 'DataItem.PanelType!=profileDomain:PanelType.HudBarWindow'}">
-
+                Visibility="{c:Binding 'DataItem.PanelType!=profileDomain:PanelType.HudBarWindow and DataItem.PanelType!=profileDomain:PanelType.RefocusDisplay'}">
                 <WrapPanel>
                     <ToggleButton
                         x:Name="TglBtnAlwaysOnTop"

@@ -10,6 +10,7 @@
         MultiMonitorWindow = 5,
         PanelSourceWindow = 6,
         StatusMessageWindow = 7,
+        RefocusDisplay = 8,
         Unknown = 100
     }
 }

@@ -99,8 +99,11 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                 case WM_LBUTTONDOWN:
                     if (!_isTouchDown)
                     {
-                        _isTouchDown = true;
                         _refocusedTaskIndex++;
+                        if (panelConfig.PanelType == PanelType.RefocusDisplay)
+                            return 1;
+
+                        _isTouchDown = true;
 
                         if (_isDragged)
                             return 1;
@@ -118,31 +121,34 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                 case WM_LBUTTONUP:
                     Task.Run(() =>
                     {
-                        while (_isTouchDown) { }
-
-                        if (_isDragged)
+                        if (panelConfig.PanelType != PanelType.RefocusDisplay)
                         {
-                            if (ApplicationSetting.TouchSetting.TouchDownUpDelay > 0)
-                                Thread.Sleep(ApplicationSetting.TouchSetting.TouchDownUpDelay);
+                            while (_isTouchDown) { }
 
-                            PInvoke.SetCursorPos(info.pt.X, info.pt.Y);
+                            if (_isDragged)
+                            {
+                                if (ApplicationSetting.TouchSetting.TouchDownUpDelay > 0)
+                                    Thread.Sleep(ApplicationSetting.TouchSetting.TouchDownUpDelay);
 
-                            if (ApplicationSetting.TouchSetting.TouchDownUpDelay > 0)
-                                Thread.Sleep(ApplicationSetting.TouchSetting.TouchDownUpDelay);
+                                PInvoke.SetCursorPos(info.pt.X, info.pt.Y);
 
-                            InputEmulationManager.LeftClickFast(info.pt.X, info.pt.Y);
+                                if (ApplicationSetting.TouchSetting.TouchDownUpDelay > 0)
+                                    Thread.Sleep(ApplicationSetting.TouchSetting.TouchDownUpDelay);
 
-                            _isDragged = false;
+                                InputEmulationManager.LeftClickFast(info.pt.X, info.pt.Y);
+
+                                _isDragged = false;
+                            }
+                            else
+                            {
+                                if (ApplicationSetting.TouchSetting.TouchDownUpDelay > 0)
+                                    Thread.Sleep(ApplicationSetting.TouchSetting.TouchDownUpDelay);
+
+                                PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, info.pt.X, info.pt.Y, 0, 0);
+                            }
+
+                            _isTouchDown = false;
                         }
-                        else
-                        {
-                            if(ApplicationSetting.TouchSetting.TouchDownUpDelay > 0)
-                                Thread.Sleep(ApplicationSetting.TouchSetting.TouchDownUpDelay);
-
-                            PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, info.pt.X, info.pt.Y, 0, 0);
-                        }
-
-                        _isTouchDown = false;
 
                         // Refocus game window
                         if (ApplicationSetting.RefocusSetting.RefocusGameWindow.IsEnabled && panelConfig.AutoGameRefocus)
@@ -155,6 +161,9 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                             {
                                 var rect = WindowActionManager.GetWindowRectangle(WindowProcessManager.SimulatorProcess.Handle);
                                 PInvoke.SetCursorPos(rect.X + rect.Width / 2, rect.Y + rect.Height / 2);
+
+                                if (panelConfig.PanelType == PanelType.RefocusDisplay)
+                                    InputEmulationManager.LeftClick(rect.X + rect.Width / 2, rect.Y + rect.Height / 2);
                             }
                         }
                     });

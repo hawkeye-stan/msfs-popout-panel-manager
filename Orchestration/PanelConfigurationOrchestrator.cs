@@ -71,8 +71,9 @@ namespace MSFSPopoutPanelManager.Orchestration
                     return;
 
                 var hasTouchEnabledPanel = ActiveProfile.PanelConfigs.Any(p => p.TouchEnabled && p.IsPopOutSuccess != null && (bool)p.IsPopOutSuccess);
+                var hasRefocusDisplays = ActiveProfile.PanelConfigs.Any(p => p.PanelType == PanelType.RefocusDisplay);
 
-                if (hasTouchEnabledPanel && !TouchEventManager.IsHooked)
+                if (hasRefocusDisplays || (hasTouchEnabledPanel && !TouchEventManager.IsHooked))
                     TouchEventManager.Hook();
             });
         }

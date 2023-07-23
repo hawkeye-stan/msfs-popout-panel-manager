@@ -32,13 +32,16 @@
                 Background="Transparent"
                 DialogTheme="Inherit"
                 Identifier="RootDialog">
-                <materialDesign:DrawerHost OverlayBackground="Transparent" RightDrawerCornerRadius="15">
+                <materialDesign:DrawerHost
+                    OpenMode="Standard"
+                    OverlayBackground="Transparent"
+                    RightDrawerCornerRadius="15">
                     <materialDesign:DrawerHost.RightDrawerContent>
                         <DockPanel>
                             <Button
                                 Width="{StaticResource IconSize}"
                                 Height="{StaticResource IconSize}"
-                                Margin="8,8,12,0"
+                                Margin="8,8,36,0"
                                 HorizontalAlignment="Right"
                                 Command="{x:Static materialDesign:DrawerHost.CloseDrawerCommand}"
                                 DockPanel.Dock="Top"
@@ -48,7 +51,7 @@
                                     Height="{StaticResource IconSize}"
                                     Kind="ArrowRight" />
                             </Button>
-                            <StackPanel Name="panelPreferenceDrawer" />
+                            <StackPanel Name="panelDrawers" />
                         </DockPanel>
                     </materialDesign:DrawerHost.RightDrawerContent>
                     <DockPanel>

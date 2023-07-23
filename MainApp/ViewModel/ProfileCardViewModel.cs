@@ -2,6 +2,7 @@
 using MSFSPopoutPanelManager.DomainModel.Profile;
 using MSFSPopoutPanelManager.Orchestration;
 using MSFSPopoutPanelManager.Shared;
+using MSFSPopoutPanelManager.WindowsAgent;
 using Prism.Commands;
 using System;
 using System.Collections.Generic;
@@ -27,6 +28,12 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
         public ICommand IncludeInGamePanelUpdatedCommand { get; }
 
         public ICommand AddHudBarUpdatedCommand { get; }
+
+        public ICommand RefocusDisplayUpdatedCommand { get; }
+
+        public ICommand RefocusDisplayRefreshedCommand { get; }
+
+        public DelegateCommand<string> RefocusDisplaySelectionUpdatedCommand { get; }
 
         public List<string> HudBarTypes => Enum.GetNames(typeof(HudBarType)).Where(x => x != "None").Select(x => x.Replace("_", " ")).ToList();
 
@@ -68,6 +75,12 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
             IncludeInGamePanelUpdatedCommand = new DelegateCommand(OnIncludeInGamePanelUpdated);
 
             AddHudBarUpdatedCommand = new DelegateCommand(OnAddHudBarUpdated);
+
+            RefocusDisplayUpdatedCommand = new DelegateCommand(OnRefocusDisplayUpdated);
+
+            RefocusDisplayRefreshedCommand = new DelegateCommand(OnRefocusDisplayRefreshed);
+
+            RefocusDisplaySelectionUpdatedCommand = new DelegateCommand<string>(RefocusDisplaySelectionUpdated);
         }
 
         private async void OnDeleteProfile()
@@ -124,14 +137,100 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
 
         private void OnIncludeInGamePanelUpdated()
         {
-            if (Orchestrator.ProfileData.ActiveProfile != null && !Orchestrator.ProfileData.ActiveProfile.ProfileSetting.IncludeInGamePanels)
-                Orchestrator.ProfileData.ActiveProfile.PanelConfigs.RemoveAll(p => p.PanelType == PanelType.BuiltInPopout);
+            if (ProfileData.ActiveProfile != null && !ProfileData.ActiveProfile.ProfileSetting.IncludeInGamePanels)
+                ProfileData.ActiveProfile.PanelConfigs.RemoveAll(p => p.PanelType == PanelType.BuiltInPopout);
         }
 
         private void OnAddHudBarUpdated()
         {
-            if (Orchestrator.ProfileData.ActiveProfile != null && !Orchestrator.ProfileData.ActiveProfile.ProfileSetting.HudBarConfig.IsEnabled)
-                Orchestrator.ProfileData.ActiveProfile.PanelConfigs.RemoveAll(p => p.PanelType == PanelType.HudBarWindow);
+            if (ProfileData.ActiveProfile == null)
+                return;
+
+            if (ProfileData.ActiveProfile.ProfileSetting.HudBarConfig.IsEnabled)
+            {
+                if (ProfileData.ActiveProfile.PanelConfigs.Any(p => p.PanelType == PanelType.HudBarWindow))
+                    return;
+
+                ProfileData.ActiveProfile.PanelConfigs.Add(new PanelConfig
+                {
+                    PanelName = "HUD Bar",
+                    PanelType = PanelType.HudBarWindow,
+                    Left = 0,
+                    Top = 0,
+                    Width = 1920,
+                    Height = 40,
+                    AutoGameRefocus = false
+                });
+            }
+            else 
+            { 
+                ProfileData.ActiveProfile.PanelConfigs.RemoveAll(p => p.PanelType == PanelType.HudBarWindow);
+            }
+        }
+
+        private void OnRefocusDisplayUpdated()
+        {
+            if (ProfileData.ActiveProfile == null)
+                return;
+
+            if (ProfileData.ActiveProfile.ProfileSetting.RefocusOnDisplay.Monitors.Count == 0)
+            {
+                var monitors = WindowActionManager.GetMonitorsInfo().OrderBy(m => m.Name);
+
+                foreach (var monitor in monitors)
+                    ProfileData.ActiveProfile.ProfileSetting.RefocusOnDisplay.Monitors.Add(monitor);
+            }
+
+            if (!ProfileData.ActiveProfile.ProfileSetting.RefocusOnDisplay.IsEnabled)
+            {
+                ProfileData.ActiveProfile.PanelConfigs.RemoveAll(p => p.PanelType == PanelType.RefocusDisplay);
+                ProfileData.ActiveProfile.ProfileSetting.RefocusOnDisplay.Monitors.ToList().ForEach(p => p.IsSelected = false);
+            }
+        }
+
+        private void OnRefocusDisplayRefreshed()
+        {
+            if (ProfileData.ActiveProfile == null)
+                return;
+
+            ProfileData.ActiveProfile.ProfileSetting.RefocusOnDisplay.Monitors.Clear();
+            ProfileData.ActiveProfile.PanelConfigs.RemoveAll(p => p.PanelType == PanelType.RefocusDisplay);
+
+            var monitors = WindowActionManager.GetMonitorsInfo().OrderBy(m => m.Name);
+
+            foreach (var monitor in monitors)
+                ProfileData.ActiveProfile.ProfileSetting.RefocusOnDisplay.Monitors.Add(monitor);
+        }
+
+        private void RefocusDisplaySelectionUpdated(string arg)
+        {
+            if (ProfileData.ActiveProfile == null)
+                return;
+
+            var monitor = ProfileData.ActiveProfile.ProfileSetting.RefocusOnDisplay.Monitors.FirstOrDefault(m => m.Name == arg);
+
+            if (monitor == null)
+                return;
+
+            if(!monitor.IsSelected)
+            {
+                ProfileData.ActiveProfile.PanelConfigs.RemoveAll(p => p.PanelName == arg && p.PanelType == PanelType.RefocusDisplay);
+            }
+            else
+            {
+                ProfileData.ActiveProfile.PanelConfigs.Add(new PanelConfig
+                {
+                    PanelName = arg,
+                    PanelType = PanelType.RefocusDisplay,
+                    Left = monitor.X,
+                    Top = monitor.Y,
+                    Width = monitor.Width,
+                    Height = monitor.Height,
+                    HideTitlebar = true,
+                    FullScreen = true,
+                    TouchEnabled = true    
+                });
+            }
         }
     }
 }

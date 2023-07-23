@@ -52,6 +52,11 @@ namespace MSFSPopoutPanelManager.MainApp
         {
             _viewModel.AddHudBarUpdatedCommand.Execute(null);
         }
+
+        private void AddRefocusDisplay_TargetUpdated(object sender, DataTransferEventArgs e)
+        {
+            _viewModel.RefocusDisplayUpdatedCommand.Execute(null);
+        }
     }
 
 

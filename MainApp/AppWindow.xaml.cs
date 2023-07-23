@@ -4,11 +4,7 @@ using MSFSPopoutPanelManager.MainApp.ViewModel;
 using MSFSPopoutPanelManager.WindowsAgent;
 using Prism.Commands;
 using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Documents;
 using System.Windows.Interop;
 
 namespace MSFSPopoutPanelManager.MainApp
@@ -77,14 +73,14 @@ namespace MSFSPopoutPanelManager.MainApp
 
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
         {
-            this.panelPreferenceDrawer.Children.Clear();
-            this.panelPreferenceDrawer.Children.Add(new PreferenceDrawer());
+            this.panelDrawers.Children.Clear();
+            this.panelDrawers.Children.Add(new PreferenceDrawer());
         }
 
         private void HelpButton_Click(object sender, RoutedEventArgs e)
         {
-            this.panelPreferenceDrawer.Children.Clear();
-            this.panelPreferenceDrawer.Children.Add(new HelpDrawer());
+            this.panelDrawers.Children.Clear();
+            this.panelDrawers.Children.Add(new HelpDrawer());
         }
 
         private void BtnMinimize_Click(object sender, RoutedEventArgs e)
