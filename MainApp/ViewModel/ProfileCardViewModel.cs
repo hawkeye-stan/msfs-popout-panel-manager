@@ -226,8 +226,6 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
                     Top = monitor.Y,
                     Width = monitor.Width,
                     Height = monitor.Height,
-                    HideTitlebar = true,
-                    FullScreen = true,
                     TouchEnabled = true    
                 });
             }
