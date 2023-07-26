@@ -11,7 +11,7 @@
 
 * Fixed preferences pop out title bar color customization setting not saving.
 
-* Fixed various UI issues.
+* Fixed few UI issues from v4.0.
 
 ## Version 4.0.0
 

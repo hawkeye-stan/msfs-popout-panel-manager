@@ -52,6 +52,9 @@ namespace MSFSPopoutPanelManager.Orchestration
             {
                 _profileData.AutoSwitchProfile();
 
+                if (ActiveProfile == null)
+                    return;
+
                 // Do not do auto pop out if no profile matches the current aircraft
                 if (!ActiveProfile.AircraftBindings.Any(p => p == _flightSimData.AircraftName))
                     return;

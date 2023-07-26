@@ -138,7 +138,7 @@ namespace MSFSPopoutPanelManager.WindowsAgent
         public static void ToggleFullScreenPanel(IntPtr hwnd)
         {
             PInvoke.SetForegroundWindow(hwnd);
-            Thread.Sleep(500);
+            Thread.Sleep(200);
 
             PInvoke.keybd_event(Convert.ToByte(VK_RMENU), 0, KEYEVENTF_KEYDOWN, 0);
             PInvoke.keybd_event(Convert.ToByte(VK_ENT), 0, KEYEVENTF_KEYDOWN, 0);
