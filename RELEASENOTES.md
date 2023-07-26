@@ -1,4 +1,4 @@
-## Version 4.0.1
+## Version 4.0.1.1
 
 * Added preference option in pop out settings to disable pop out progress messages from appearing.
 
