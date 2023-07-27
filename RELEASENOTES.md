@@ -2,7 +2,7 @@
 * Hotfix - Fixed issue where using touch panel feature may freeze computer and the application.
 
 Known Issue:
-If the profile has the option of "entire monitor display to have game refocus fucntion when touch" enabled, the configuration of display panels must be listed after the configuration of pop out panels in profile configuration.
+If the profile has the option of "entire monitor display to have game refocus function when touch" enabled, the configuration of display panels must be listed after the configuration of pop out panels in profile configuration.
 
 ## Version 4.0.1.1
 
