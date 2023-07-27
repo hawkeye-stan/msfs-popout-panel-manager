@@ -107,7 +107,7 @@ namespace MSFSPopoutPanelManager.WindowsAgent
 
                         if (_isDragged)
                             return 1;
-                    
+
                         Task.Run(() =>
                         {
                             PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, info.pt.X, info.pt.Y, 0, 0);        // focus window
@@ -119,9 +119,31 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                     }
                     return 1;
                 case WM_LBUTTONUP:
-                    Task.Run(() =>
+                    if (panelConfig.PanelType == PanelType.RefocusDisplay)
                     {
-                        if (panelConfig.PanelType != PanelType.RefocusDisplay)
+                        Task.Run(() =>
+                        {
+                            _isTouchDown = false;
+                            _isDragged = false;
+
+                            // Refocus game window
+                            if (ApplicationSetting.RefocusSetting.RefocusGameWindow.IsEnabled && panelConfig.AutoGameRefocus)
+                            {
+                                var currentRefocusIndex = _refocusedTaskIndex;
+
+                                Thread.Sleep(Convert.ToInt32(ApplicationSetting.RefocusSetting.RefocusGameWindow.Delay * 1000));
+
+                                if (currentRefocusIndex == _refocusedTaskIndex)
+                                {
+                                    var rect = WindowActionManager.GetWindowRectangle(WindowProcessManager.SimulatorProcess.Handle);
+                                    InputEmulationManager.LeftClick(rect.X + rect.Width / 2, rect.Y + rect.Height / 2);
+                                }
+                            }
+                        });
+                    }
+                    else
+                    {
+                        Task.Run(() =>
                         {
                             while (_isTouchDown) { }
 
@@ -148,25 +170,22 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                             }
 
                             _isTouchDown = false;
-                        }
 
-                        // Refocus game window
-                        if (ApplicationSetting.RefocusSetting.RefocusGameWindow.IsEnabled && panelConfig.AutoGameRefocus)
-                        {
-                            var currentRefocusIndex = _refocusedTaskIndex;
-
-                            Thread.Sleep(Convert.ToInt32(ApplicationSetting.RefocusSetting.RefocusGameWindow.Delay * 1000));
-
-                            if (currentRefocusIndex == _refocusedTaskIndex)
+                            // Refocus game window
+                            if (ApplicationSetting.RefocusSetting.RefocusGameWindow.IsEnabled && panelConfig.AutoGameRefocus)
                             {
-                                var rect = WindowActionManager.GetWindowRectangle(WindowProcessManager.SimulatorProcess.Handle);
-                                PInvoke.SetCursorPos(rect.X + rect.Width / 2, rect.Y + rect.Height / 2);
+                                var currentRefocusIndex = _refocusedTaskIndex;
 
-                                if (panelConfig.PanelType == PanelType.RefocusDisplay)
-                                    InputEmulationManager.LeftClick(rect.X + rect.Width / 2, rect.Y + rect.Height / 2);
+                                Thread.Sleep(Convert.ToInt32(ApplicationSetting.RefocusSetting.RefocusGameWindow.Delay * 1000));
+
+                                if (currentRefocusIndex == _refocusedTaskIndex)
+                                {
+                                    var rect = WindowActionManager.GetWindowRectangle(WindowProcessManager.SimulatorProcess.Handle);
+                                    PInvoke.SetCursorPos(rect.X + rect.Width / 2, rect.Y + rect.Height / 2);
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
                     return 1;
                 case WM_MOUSEMOVE:
                     if (_isTouchDown)

@@ -319,12 +319,14 @@ namespace MSFSPopoutPanelManager.Orchestration
             if (!ActiveProfile.ProfileSetting.RefocusOnDisplay.IsEnabled)
                 return;
 
-            var panelConfig = ActiveProfile.PanelConfigs.FirstOrDefault(p => p.PanelType == PanelType.RefocusDisplay);
-            if (panelConfig != null)
+            foreach (var panelConfig in ActiveProfile.PanelConfigs.Where(p => p.PanelType == PanelType.RefocusDisplay))
             {
-                StatusMessageWriter.WriteMessage($"Configurating {panelConfig.PanelName} for auto refocus on touch", StatusMessageType.Info);
-                panelConfig.PanelHandle = new IntPtr(1);
-                StatusMessageWriter.WriteOkStatusMessage();
+                if (panelConfig != null)
+                {
+                    StatusMessageWriter.WriteMessage($"Configurating {panelConfig.PanelName} for auto refocus on touch", StatusMessageType.Info);
+                    panelConfig.PanelHandle = new IntPtr(1);
+                    StatusMessageWriter.WriteOkStatusMessage();
+                }
             }
         }
 
