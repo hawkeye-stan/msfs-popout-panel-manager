@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Timers;
+using static MSFSPopoutPanelManager.SimConnectAgent.SimDataDefinitions;
 
 namespace MSFSPopoutPanelManager.SimConnectAgent
 {
@@ -176,14 +177,22 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
             }
         }
 
-        public void SetDataObject(string propName, object dValue)
+        public void SetDataObject(WriteableVariableName propName, object dValue)
         {
             try
             {
                 var dataStruct = new WriteableDataStruct();
                 dataStruct.Prop0 = (double)dValue;
 
-                _simConnect.SetDataOnSimObject(DATA_DEFINITION.WRITEABLE_DEFINITION, SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_DATA_SET_FLAG.DEFAULT, dataStruct);
+                switch (propName)
+                {
+                    case WriteableVariableName.TrackIREnable:
+                        _simConnect.SetDataOnSimObject(DATA_DEFINITION.WRITEABLE_TRACKIR_DEFINITION, SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_DATA_SET_FLAG.DEFAULT, dataStruct);
+                        break;
+                    case WriteableVariableName.CockpitCameraZoom:
+                        _simConnect.SetDataOnSimObject(DATA_DEFINITION.WRITEABLE_COCKPITCAMERAZOOM_DEFINITION, SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_DATA_SET_FLAG.DEFAULT, dataStruct);
+                        break;
+                }
             }
             catch (Exception ex)
             {
@@ -298,10 +307,12 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
                 }
             }
 
-            _simConnect.AddToDataDefinition(DATA_DEFINITION.WRITEABLE_DEFINITION, "TRACK IR ENABLE", "bool", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+            _simConnect.AddToDataDefinition(DATA_DEFINITION.WRITEABLE_TRACKIR_DEFINITION, "TRACK IR ENABLE", "bool", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+            _simConnect.AddToDataDefinition(DATA_DEFINITION.WRITEABLE_COCKPITCAMERAZOOM_DEFINITION, "COCKPIT CAMERA ZOOM", "percentage", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
 
             _simConnect.RegisterDataDefineStruct<SimConnectStruct>(DATA_DEFINITION.REQUIRED_DEFINITION);
-            _simConnect.RegisterDataDefineStruct<SimConnectStruct>(DATA_DEFINITION.WRITEABLE_DEFINITION);
+            _simConnect.RegisterDataDefineStruct<SimConnectStruct>(DATA_DEFINITION.WRITEABLE_TRACKIR_DEFINITION);
+            _simConnect.RegisterDataDefineStruct<SimConnectStruct>(DATA_DEFINITION.WRITEABLE_COCKPITCAMERAZOOM_DEFINITION);
         }
 
         private void AddHudBarDataDefinitions()

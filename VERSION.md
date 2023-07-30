@@ -1,9 +1,10 @@
 # Version History
 <hr/>
 
-
-## Version 4.0.1.3
+## Version 4.0.2
 * Added workaround for CJ4 CDU panel not popping out because of MSFS bug.
+
+* Added workaround fix when using camera zoom setting with value other than 50 in MSFS general options will cause Pop Out Panel Manager pop out to fail. This is an existing MSFS bug where saving and loading of custom camera view is currently broken for zoom level other than 50.
 
 ## Version 4.0.1.2
 * Hotfix - Fixed issue where using touch panel feature may freeze computer and the application.

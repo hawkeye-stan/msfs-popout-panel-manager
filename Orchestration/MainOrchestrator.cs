@@ -19,7 +19,7 @@ namespace MSFSPopoutPanelManager.Orchestration
             FlightSimData.ProfileDataRef = ProfileData;
 
             Profile = new ProfileOrchestrator(ProfileData, FlightSimData);
-            PanelSource = new PanelSourceOrchestrator(ProfileData, AppSettingData);
+            PanelSource = new PanelSourceOrchestrator(ProfileData, AppSettingData, FlightSimData);
             PanelPopOut = new PanelPopOutOrchestrator(ProfileData, AppSettingData, FlightSimData);
             PanelConfiguration = new PanelConfigurationOrchestrator(ProfileData, AppSettingData, FlightSimData);
             FlightSim = new FlightSimOrchestrator(ProfileData, AppSettingData, FlightSimData);

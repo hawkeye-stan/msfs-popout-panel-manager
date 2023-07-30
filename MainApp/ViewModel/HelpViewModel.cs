@@ -26,7 +26,15 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
             HyperLinkCommand = new DelegateCommand<string>(OnHyperLinkActivated);
             DeleteAppCacheCommand = new DelegateCommand(OnDeleteAppCache);
             RollBackCommand = new DelegateCommand(OnRollBack);
-            ApplicationVersion = WindowProcessManager.GetApplicationVersion();
+
+            var buildConfig = string.Empty;
+#if DEBUG
+            buildConfig = " (Debug)";
+#elif LOCAL
+            buildConfig = " (Local)";
+#endif
+
+            ApplicationVersion = $"{WindowProcessManager.GetApplicationVersion()}{buildConfig}";
 
             IsRollBackCommandVisible = Orchestrator.Help.IsRollBackUpdateEnabled();
             HasOrphanAppCache = Orchestrator.Help.HasOrphanAppCache();

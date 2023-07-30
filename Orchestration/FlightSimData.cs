@@ -28,6 +28,8 @@ namespace MSFSPopoutPanelManager.Orchestration
 
         public int CameraState { get; set; }
 
+        public int CockpitCameraZoom { get; set; }
+
         public bool PlaneInParkingSpot { get; set; }
 
         public bool IsSimulatorStarted { get; set; }

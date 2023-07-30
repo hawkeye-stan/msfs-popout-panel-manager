@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using static MSFSPopoutPanelManager.SimConnectAgent.SimDataDefinitions;
 
 namespace MSFSPopoutPanelManager.SimConnectAgent
 {
@@ -228,9 +229,14 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
             Thread.Sleep(200);
         }
 
+        public void SetCockpitCameraZoomLevel(int zoomLevel)
+        {
+            _simConnector.SetDataObject(WriteableVariableName.CockpitCameraZoom, Convert.ToDouble(zoomLevel));
+        }
+
         private void SetTrackIREnable(bool enable)
         {
-            _simConnector.SetDataObject(SimDataDefinitions.WriteableVariableName.TrackIREnable, enable ? Convert.ToDouble(1) : Convert.ToDouble(0));
+            _simConnector.SetDataObject(WriteableVariableName.TrackIREnable, enable ? Convert.ToDouble(1) : Convert.ToDouble(0));
         }
 
         private void HandleSimConnected(object source, EventArgs e)

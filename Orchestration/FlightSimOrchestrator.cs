@@ -69,6 +69,10 @@ namespace MSFSPopoutPanelManager.Orchestration
                 var trackIR = Convert.ToBoolean(e.Find(d => d.PropertyName == SimDataDefinitions.PropName.TrackIREnable).Value);
                 if (trackIR != _flightSimData.TrackIRStatus)
                     _flightSimData.TrackIRStatus = trackIR;
+
+                var cockpitCameraZoom = Convert.ToInt32(e.Find(d => d.PropertyName == SimDataDefinitions.PropName.CockpitCameraZoom).Value);
+                if (cockpitCameraZoom != _flightSimData.CockpitCameraZoom)
+                    _flightSimData.CockpitCameraZoom = cockpitCameraZoom;
             };
 
             _simConnectProvider.OnSimConnectDataHudBarRefreshed += (sender, e) =>
@@ -306,6 +310,11 @@ namespace MSFSPopoutPanelManager.Orchestration
                 return;
 
             _simConnectProvider.DecreaseSimRate();
+        }
+
+        public void SetCockpitCameraZoomLevel(int zoomLevel)
+        {
+            _simConnectProvider.SetCockpitCameraZoomLevel(zoomLevel);
         }
 
         public void SetHudBarConfig()

@@ -12,6 +12,7 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
             definitions.Add(new SimConnectDataDefinition() { DefinitionId = DATA_DEFINITION.REQUIRED_DEFINITION, RequestId = DATA_REQUEST.REQUIRED_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.TrackIREnable, VariableName = "TRACK IR ENABLE", SimConnectUnit = "Bool", DataType = DataType.Float64 });
             definitions.Add(new SimConnectDataDefinition() { DefinitionId = DATA_DEFINITION.REQUIRED_DEFINITION, RequestId = DATA_REQUEST.REQUIRED_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.PlaneInParkingSpot, VariableName = "ATC ON PARKING SPOT", SimConnectUnit = "Bool", DataType = DataType.Float64 });
             definitions.Add(new SimConnectDataDefinition() { DefinitionId = DATA_DEFINITION.REQUIRED_DEFINITION, RequestId = DATA_REQUEST.REQUIRED_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.CameraState, VariableName = "CAMERA STATE", SimConnectUnit = "Number", DataType = DataType.Float64 });
+            definitions.Add(new SimConnectDataDefinition() { DefinitionId = DATA_DEFINITION.REQUIRED_DEFINITION, RequestId = DATA_REQUEST.REQUIRED_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.CockpitCameraZoom, VariableName = "COCKPIT CAMERA ZOOM", SimConnectUnit = "Percentage", DataType = DataType.Float64 });
             return definitions;
         }
 
@@ -74,6 +75,7 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
             public static string PlaneInParkingSpot = "PlaneInParkingSpot";
             public static string CameraState = "CameraState";
             public static string AircraftName = "AircraftName";
+            public static string CockpitCameraZoom = "CockpitCameraZoom";
 
             // Hud Bar data
             public static string ElevatorTrim = "ElevatorTrim";
@@ -87,9 +89,10 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
             public static string SimRate = "SimRate";
         }
 
-        public static class WriteableVariableName
+        public enum WriteableVariableName
         {
-            public static string TrackIREnable = "TRACK IR ENABLE";
+            TrackIREnable,
+            CockpitCameraZoom
         }
     }
 

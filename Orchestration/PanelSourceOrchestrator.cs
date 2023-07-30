@@ -3,6 +3,7 @@ using MSFSPopoutPanelManager.DomainModel.Setting;
 using MSFSPopoutPanelManager.Shared;
 using MSFSPopoutPanelManager.WindowsAgent;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Point = System.Drawing.Point;
 
@@ -12,11 +13,14 @@ namespace MSFSPopoutPanelManager.Orchestration
     {
         private ProfileData _profileData;
         private AppSettingData _appSettingData;
+        private FlightSimData _flightSimData;
+        private int _prePanelConfigurationCockpitZoomLevel = 50;
 
-        public PanelSourceOrchestrator(ProfileData profileData, AppSettingData appSettingData)
+        public PanelSourceOrchestrator(ProfileData profileData, AppSettingData appSettingData, FlightSimData flightSimData)
         {
             _profileData = profileData;
             _appSettingData = appSettingData;
+            _flightSimData = flightSimData;
 
             _profileData.ActiveProfileChanged += (sender, e) => { CloseAllPanelSource(); };
         }
@@ -57,7 +61,9 @@ namespace MSFSPopoutPanelManager.Orchestration
 
                 if (AppSetting.PopOutSetting.AutoPanning.IsEnabled)
                 {
+                    _prePanelConfigurationCockpitZoomLevel = _flightSimData.CockpitCameraZoom;
                     InputEmulationManager.LoadCustomView(AppSetting.PopOutSetting.AutoPanning.KeyBinding);
+                    FlightSimOrchestrator.SetCockpitCameraZoomLevel(50);
                     WindowActionManager.BringWindowToForeground(ApplicationHandle);
                 }
             });
@@ -93,15 +99,20 @@ namespace MSFSPopoutPanelManager.Orchestration
             {
                 // Recenter game or return to after pop out camera view
                 if (!AppSetting.PopOutSetting.AfterPopOutCameraView.IsEnabled)
+                {
+                    FlightSimOrchestrator.SetCockpitCameraZoomLevel(_prePanelConfigurationCockpitZoomLevel);
                     InputEmulationManager.CenterView();
+                }
                 else
                 {
                     switch (AppSetting.PopOutSetting.AfterPopOutCameraView.CameraView)
                     {
                         case AfterPopOutCameraViewType.CockpitCenterView:
+                            FlightSimOrchestrator.SetCockpitCameraZoomLevel(_prePanelConfigurationCockpitZoomLevel);
                             InputEmulationManager.CenterView();
                             break;
                         case AfterPopOutCameraViewType.CustomCameraView:
+                            FlightSimOrchestrator.SetCockpitCameraZoomLevel(_prePanelConfigurationCockpitZoomLevel);
                             InputEmulationManager.LoadCustomView(AppSetting.PopOutSetting.AfterPopOutCameraView.KeyBinding);
                             break;
                     }
