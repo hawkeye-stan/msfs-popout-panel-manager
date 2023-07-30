@@ -61,6 +61,10 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                 PInvoke.mouse_event(MOUSEEVENTF_LEFTDOWN, x, y, 0, 0);
                 Thread.Sleep(200);
                 PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, 0);
+                Thread.Sleep(200);
+                PInvoke.mouse_event(MOUSEEVENTF_LEFTDOWN, x, y, 0, 0);
+                Thread.Sleep(200);
+                PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, 0);
                 InputSimulator.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.RCONTROL);
                 InputSimulator.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.LCONTROL);
                 Thread.Sleep(100);
@@ -70,6 +74,10 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             else
             {
                 InputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.RMENU);
+                PInvoke.mouse_event(MOUSEEVENTF_LEFTDOWN, x, y, 0, 0);
+                Thread.Sleep(200);
+                PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, 0);
+                Thread.Sleep(200);
                 PInvoke.mouse_event(MOUSEEVENTF_LEFTDOWN, x, y, 0, 0);
                 Thread.Sleep(200);
                 PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, 0);

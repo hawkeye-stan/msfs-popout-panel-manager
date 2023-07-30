@@ -1,3 +1,6 @@
+## Version 4.0.1.3
+* Added workaround for CJ4 CDU panel not popping out because of MSFS bug.
+
 ## Version 4.0.1.2
 * Hotfix - Fixed issue where using touch panel feature may freeze computer and the application.
 
