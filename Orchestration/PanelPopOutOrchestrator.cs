@@ -186,8 +186,8 @@ namespace MSFSPopoutPanelManager.Orchestration
                     // Remember current game's zoom level to be recall after pop out
                     _prePopOutCockpitZoomLevel = _flightSimData.CockpitCameraZoom;
                     InputEmulationManager.LoadCustomView(AppSetting.PopOutSetting.AutoPanning.KeyBinding);
-                    Thread.Sleep(1000);
                     FlightSimOrchestrator.SetCockpitCameraZoomLevel(50);
+                    Thread.Sleep(1000);
                     StatusMessageWriter.WriteOkStatusMessage();
                 }
             });
