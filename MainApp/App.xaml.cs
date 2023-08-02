@@ -5,6 +5,9 @@ using MSFSPopoutPanelManager.Orchestration;
 using MSFSPopoutPanelManager.Shared;
 using MSFSPopoutPanelManager.WindowsAgent;
 using System;
+using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,58 +29,7 @@ namespace MSFSPopoutPanelManager.MainApp
             DpiAwareness.Enable();
 
             // Must run this first
-            Initialize();
-
-            // Setup dependency injections
-            AppHost = Host.CreateDefaultBuilder()
-                .ConfigureServices((hostContext, services) =>
-                {
-                    services.AddSingleton<AppWindow>();
-
-                    services.AddSingleton<MainOrchestrator>();
-                    services.AddSingleton<OrchestratorUIHelper>(s => new OrchestratorUIHelper(s.GetRequiredService<MainOrchestrator>()));
-
-                    services.AddSingleton<ApplicationViewModel>(s => new ApplicationViewModel(s.GetRequiredService<MainOrchestrator>()));
-                    services.AddSingleton<HelpViewModel>(s => new HelpViewModel(s.GetRequiredService<MainOrchestrator>()));
-                    services.AddSingleton<ProfileCardListViewModel>(s => new ProfileCardListViewModel(s.GetRequiredService<MainOrchestrator>()));
-                    services.AddSingleton<ProfileCardViewModel>(s => new ProfileCardViewModel(s.GetRequiredService<MainOrchestrator>()));
-                    services.AddSingleton<TrayIconViewModel>(s => new TrayIconViewModel(s.GetRequiredService<MainOrchestrator>()));
-
-                    services.AddTransient<AddProfileViewModel>(s => new AddProfileViewModel(s.GetRequiredService<MainOrchestrator>()));
-                    services.AddTransient<PopOutPanelListViewModel>(s => new PopOutPanelListViewModel(s.GetRequiredService<MainOrchestrator>()));
-                    services.AddTransient<PopOutPanelCardViewModel>(s => new PopOutPanelCardViewModel(s.GetRequiredService<MainOrchestrator>()));
-                    services.AddTransient<PanelConfigFieldViewModel>(s => new PanelConfigFieldViewModel(s.GetRequiredService<MainOrchestrator>()));
-                    services.AddTransient<PanelCoorOverlayViewModel>(s => new PanelCoorOverlayViewModel(s.GetRequiredService<MainOrchestrator>()));
-
-                    services.AddTransient<MessageWindowViewModel>(s => new MessageWindowViewModel(s.GetRequiredService<MainOrchestrator>()));
-                    services.AddTransient<HudBarViewModel>(s => new HudBarViewModel(s.GetRequiredService<MainOrchestrator>()));
-
-                }).Build();
-
-            await AppHost!.StartAsync();
-
-            // Startup window (must come after DPI setup above)
-            MainWindow = AppHost.Services.GetRequiredService<AppWindow>();
-            MainWindow.Show();
-
-            base.OnStartup(e);
-
-            // Setup orchestration UI handler
-            var orchestrationUIHelper = App.AppHost.Services.GetRequiredService<OrchestratorUIHelper>();
-
-            // Setup message window dialog
-            var messageWindow = new MessageWindow();
-            messageWindow.Show();
-        }
-
-        private void Initialize()
-        {
-            const string appName = "MSFS PopOut Panel Manager";
-            bool createdNew;
-
-            var mutex = new Mutex(true, appName, out createdNew);
-
-            if (!createdNew)
+            if(IsRunning())
             {
                 //app is already running! Exiting the application  
                 Application.Current.Shutdown();
@@ -88,7 +40,53 @@ namespace MSFSPopoutPanelManager.MainApp
                 Dispatcher.UnhandledException += HandleDispatcherException;
                 TaskScheduler.UnobservedTaskException += HandleTaskSchedulerUnobservedTaskException;
                 AppDomain.CurrentDomain.UnhandledException += HandledDomainException;
+
+                // Setup dependency injections
+                AppHost = Host.CreateDefaultBuilder()
+                    .ConfigureServices((hostContext, services) =>
+                    {
+                        services.AddSingleton<AppWindow>();
+
+                        services.AddSingleton<MainOrchestrator>();
+                        services.AddSingleton<OrchestratorUIHelper>(s => new OrchestratorUIHelper(s.GetRequiredService<MainOrchestrator>()));
+
+                        services.AddSingleton<ApplicationViewModel>(s => new ApplicationViewModel(s.GetRequiredService<MainOrchestrator>()));
+                        services.AddSingleton<HelpViewModel>(s => new HelpViewModel(s.GetRequiredService<MainOrchestrator>()));
+                        services.AddSingleton<ProfileCardListViewModel>(s => new ProfileCardListViewModel(s.GetRequiredService<MainOrchestrator>()));
+                        services.AddSingleton<ProfileCardViewModel>(s => new ProfileCardViewModel(s.GetRequiredService<MainOrchestrator>()));
+                        services.AddSingleton<TrayIconViewModel>(s => new TrayIconViewModel(s.GetRequiredService<MainOrchestrator>()));
+
+                        services.AddTransient<AddProfileViewModel>(s => new AddProfileViewModel(s.GetRequiredService<MainOrchestrator>()));
+                        services.AddTransient<PopOutPanelListViewModel>(s => new PopOutPanelListViewModel(s.GetRequiredService<MainOrchestrator>()));
+                        services.AddTransient<PopOutPanelCardViewModel>(s => new PopOutPanelCardViewModel(s.GetRequiredService<MainOrchestrator>()));
+                        services.AddTransient<PanelConfigFieldViewModel>(s => new PanelConfigFieldViewModel(s.GetRequiredService<MainOrchestrator>()));
+                        services.AddTransient<PanelCoorOverlayViewModel>(s => new PanelCoorOverlayViewModel(s.GetRequiredService<MainOrchestrator>()));
+
+                        services.AddTransient<MessageWindowViewModel>(s => new MessageWindowViewModel(s.GetRequiredService<MainOrchestrator>()));
+                        services.AddTransient<HudBarViewModel>(s => new HudBarViewModel(s.GetRequiredService<MainOrchestrator>()));
+
+                    }).Build();
+
+                await AppHost!.StartAsync();
+
+                // Startup window (must come after DPI setup above)
+                MainWindow = AppHost.Services.GetRequiredService<AppWindow>();
+                MainWindow.Show();
+
+                // Setup orchestration UI handler
+                var orchestrationUIHelper = App.AppHost.Services.GetRequiredService<OrchestratorUIHelper>();
+
+                // Setup message window dialog
+                var messageWindow = new MessageWindow();
+                messageWindow.Show();
+
+                base.OnStartup(e);
             }
+        }
+
+        private bool IsRunning()
+        {
+            return Process.GetProcesses().Count(p => p.ProcessName.Contains(Assembly.GetEntryAssembly().GetName().Name)) > 1;
         }
 
         private void HandleTaskSchedulerUnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
