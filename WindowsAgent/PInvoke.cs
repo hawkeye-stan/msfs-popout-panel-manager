@@ -123,6 +123,9 @@ namespace MSFSPopoutPanelManager.WindowsAgent
         [DllImport("user32.dll", SetLastError = true)]
         public static extern bool SetForegroundWindow(IntPtr hwnd);
 
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr SetFocus(IntPtr hwnd);
+
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern IntPtr SendMessage(IntPtr hwnd, UInt32 Msg, IntPtr wParam, IntPtr lParam);
 

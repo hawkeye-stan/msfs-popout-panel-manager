@@ -114,6 +114,9 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             PInvoke.SetForegroundWindow(hwnd);
             Thread.Sleep(200);
 
+            PInvoke.SetFocus(hwnd);
+            Thread.Sleep(300);
+
             // Set view using Ctrl-Alt-0
             PInvoke.keybd_event(Convert.ToByte(VK_LCONTROL), 0, KEYEVENTF_KEYDOWN, 0);
             PInvoke.keybd_event(Convert.ToByte(VK_LMENU), 0, KEYEVENTF_KEYDOWN, 0);
@@ -150,6 +153,9 @@ namespace MSFSPopoutPanelManager.WindowsAgent
         {
             PInvoke.SetForegroundWindow(hwnd);
             Thread.Sleep(200);
+
+            PInvoke.SetFocus(hwnd);
+            Thread.Sleep(300);
 
             PInvoke.keybd_event(Convert.ToByte(VK_RMENU), 0, KEYEVENTF_KEYDOWN, 0);
             PInvoke.keybd_event(Convert.ToByte(VK_ENT), 0, KEYEVENTF_KEYDOWN, 0);
