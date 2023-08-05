@@ -45,6 +45,7 @@ namespace MSFSPopoutPanelManager.Orchestration
 
             _simConnectProvider.OnConnected += (sender, e) =>
             {
+                _flightSimData.IsSimConnectActive = true;
                 _flightSimData.IsSimulatorStarted = true;
                 WindowProcessManager.GetSimulatorProcess();     // refresh simulator process
                 DetectMsfsExit();
@@ -52,8 +53,14 @@ namespace MSFSPopoutPanelManager.Orchestration
 
             _simConnectProvider.OnDisconnected += (sender, e) =>
             {
+                _flightSimData.IsSimConnectActive = false;
                 WindowProcessManager.GetSimulatorProcess();     // refresh simulator process
                 _flightSimData.Reset();
+            };
+
+            _simConnectProvider.OnException += (sender, e) =>
+            {
+                _flightSimData.IsSimConnectActive = false;
             };
 
             _simConnectProvider.OnSimConnectDataRequiredRefreshed += (sender, e) =>

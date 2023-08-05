@@ -20,6 +20,18 @@
         <system:Double x:Key="IconSize">22</system:Double>
         <system:Double x:Key="ButtonSize">28</system:Double>
         <Style
+            x:Key="TxtBoxTitle"
+            BasedOn="{StaticResource MaterialDesignBody1TextBlock}"
+            TargetType="{x:Type TextBlock}">
+            <Setter Property="Margin" Value="10,5,10,5" />
+            <Setter Property="Foreground" Value="White" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding FlightSimData.IsSimConnectActive}" Value="False">
+                    <Setter Property="Foreground" Value="Red" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style
             x:Key="TxtBoxLabel"
             BasedOn="{StaticResource MaterialDesignBody1TextBlock}"
             TargetType="TextBlock">
@@ -79,7 +91,7 @@
             <TextBlock
                 Grid.Column="0"
                 Margin="10,5,0,0"
-                Style="{StaticResource TxtBoxLabel}"
+                Style="{StaticResource TxtBoxTitle}"
                 Text="{Binding HudBarTypeText}" />
             <DockPanel Grid.Column="1">
                 <Separator Style="{StaticResource VerticalSeparator}" />

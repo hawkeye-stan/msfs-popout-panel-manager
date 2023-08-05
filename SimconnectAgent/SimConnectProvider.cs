@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using System.Threading.Tasks;
 using static MSFSPopoutPanelManager.SimConnectAgent.SimDataDefinitions;
 
 namespace MSFSPopoutPanelManager.SimConnectAgent
@@ -30,6 +31,7 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
         public event EventHandler<bool> OnIsInCockpitChanged;
         public event EventHandler OnFlightStarted;
         public event EventHandler OnFlightStopped;
+        public event EventHandler OnException;
         public event EventHandler<List<SimDataItem>> OnSimConnectDataRequiredRefreshed;
         public event EventHandler<List<SimDataItem>> OnSimConnectDataHudBarRefreshed;
         public event EventHandler<string> OnActiveAircraftChanged;
@@ -252,7 +254,7 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
             _hudBarRequestDataTimer = new System.Timers.Timer();
             _hudBarRequestDataTimer.Interval = MSFS_HUDBAR_DATA_REFRESH_TIMEOUT;
             _hudBarRequestDataTimer.Stop();
-            _hudBarRequestDataTimer.Elapsed += (sender, e) => { try { _simConnector.RequestHudBarData(); } catch { } }; ;
+            _hudBarRequestDataTimer.Elapsed += (sender, e) => { try { _simConnector.RequestHudBarData(); } catch { } };
 
             if (_isHudBarDataActive)
                 SetHudBarConfig(_activeHudBarType);
@@ -270,6 +272,8 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
 
         private void HandleSimException(object source, string e)
         {
+            OnException?.Invoke(this, null);
+
             _requiredRequestDataTimer.Stop();
             _hudBarRequestDataTimer.Stop();
 

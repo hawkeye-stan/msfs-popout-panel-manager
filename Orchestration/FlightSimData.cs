@@ -11,7 +11,10 @@ namespace MSFSPopoutPanelManager.Orchestration
         {
             Setup();
             InitializeChildPropertyChangeBinding();
+            IsSimConnectActive = false;
         }
+
+        public bool IsSimConnectActive { get; set; }
 
         public string AircraftName { get; set; }
 
