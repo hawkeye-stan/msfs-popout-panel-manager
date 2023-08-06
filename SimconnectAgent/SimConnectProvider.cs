@@ -11,7 +11,7 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
     public class SimConnectProvider
     {
         private const int MSFS_DATA_REFRESH_TIMEOUT = 500;
-        private const int MSFS_HUDBAR_DATA_REFRESH_TIMEOUT = 100;
+        private const int MSFS_HUDBAR_DATA_REFRESH_TIMEOUT = 200;
 
         private SimConnector _simConnector;
 
