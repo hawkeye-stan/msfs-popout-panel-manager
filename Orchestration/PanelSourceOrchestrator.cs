@@ -63,7 +63,7 @@ namespace MSFSPopoutPanelManager.Orchestration
                 {
                     _prePanelConfigurationCockpitZoomLevel = _flightSimData.CockpitCameraZoom;
                     LoadCustomView(AppSetting.PopOutSetting.AutoPanning.KeyBinding);
-                    FlightSimOrchestrator.SetCockpitCameraZoomLevel(50);
+                    SetCockpitZoomLevel(50);
                     WindowActionManager.BringWindowToForeground(ApplicationHandle);
                 }
             });
@@ -101,8 +101,7 @@ namespace MSFSPopoutPanelManager.Orchestration
                 if (!AppSetting.PopOutSetting.AfterPopOutCameraView.IsEnabled)
                 {
                     InputEmulationManager.CenterView();
-                    Thread.Sleep(500);
-                    FlightSimOrchestrator.SetCockpitCameraZoomLevel(_prePanelConfigurationCockpitZoomLevel);
+                    SetCockpitZoomLevel(_prePanelConfigurationCockpitZoomLevel);
                 }
                 else
                 {
@@ -110,12 +109,11 @@ namespace MSFSPopoutPanelManager.Orchestration
                     {
                         case AfterPopOutCameraViewType.CockpitCenterView:
                             InputEmulationManager.CenterView();
-                            Thread.Sleep(500);
-                            FlightSimOrchestrator.SetCockpitCameraZoomLevel(_prePanelConfigurationCockpitZoomLevel);
+                            SetCockpitZoomLevel(_prePanelConfigurationCockpitZoomLevel);
                             break;
                         case AfterPopOutCameraViewType.CustomCameraView:
                             LoadCustomView(AppSetting.PopOutSetting.AfterPopOutCameraView.KeyBinding);
-                            FlightSimOrchestrator.SetCockpitCameraZoomLevel(_prePanelConfigurationCockpitZoomLevel);
+                            SetCockpitZoomLevel(_prePanelConfigurationCockpitZoomLevel);
                             break;
                     }
                 }
@@ -188,13 +186,25 @@ namespace MSFSPopoutPanelManager.Orchestration
 
         private void LoadCustomView(string keybinding)
         {
-            int retry = 5;
+            int retry = 20;
             for (var i = 0; i < retry; i++)
             {
                 InputEmulationManager.LoadCustomView(keybinding);
-                Thread.Sleep(500);      // wait for flightsimdata to be updated
-
+                Thread.Sleep(750);  // wait for flightsimdata to be updated
                 if (_flightSimData.CameraViewTypeAndIndex1 == 7)    // 7 = custom camera view enum
+                    break;
+            }
+        }
+
+        private void SetCockpitZoomLevel(int zoom)
+        {
+            int retry = 10;
+            for (var i = 0; i < retry; i++)
+            {
+                FlightSimOrchestrator.SetCockpitCameraZoomLevel(zoom);
+                Thread.Sleep(500);  // wait for flightsimdata to be updated
+
+                if (_flightSimData.CockpitCameraZoom == zoom)
                     break;
             }
         }

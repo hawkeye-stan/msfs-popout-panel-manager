@@ -5,7 +5,6 @@ using MSFSPopoutPanelManager.WindowsAgent;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -14,9 +13,6 @@ namespace MSFSPopoutPanelManager.Orchestration
 {
     public class PanelPopOutOrchestrator : ObservableObject
     {
-        // This will be replaced by a signal from Ready to Fly Skipper into webserver in version 4.0
-        private const int READY_TO_FLY_BUTTON_APPEARANCE_DELAY = 2000;
-
         private ProfileData _profileData;
         private AppSettingData _appSettingData;
         private FlightSimData _flightSimData;
@@ -88,8 +84,6 @@ namespace MSFSPopoutPanelManager.Orchestration
 
             StepPopoutPrep();
 
-            await StepReadyToFlyDelay(isAutoPopOut);
-
             // *** THIS MUST BE DONE FIRST. Get the built-in panel list to be configured later
             List<IntPtr> builtInPanelHandles = WindowActionManager.GetWindowsByPanelType(new List<PanelType>() { PanelType.BuiltInPopout });
 
@@ -120,25 +114,6 @@ namespace MSFSPopoutPanelManager.Orchestration
 
             // Close all panel source overlays
             PanelSourceOrchestrator.CloseAllPanelSource();
-        }
-
-        private async Task StepReadyToFlyDelay(bool isAutoPopOut)
-        {
-            if (!isAutoPopOut)
-                return;
-
-            await Task.Run(() =>
-            {
-                StatusMessageWriter.WriteMessage("Waiting on ready to fly button delay", StatusMessageType.Info);
-
-                // Match the delay for Ready to Fly button to disappear
-                Thread.Sleep(READY_TO_FLY_BUTTON_APPEARANCE_DELAY);
-
-                // Extra wait for cockpit view to appear and align
-                Thread.Sleep(AppSetting.AutoPopOutSetting.ReadyToFlyDelay * 1000);
-
-                StatusMessageWriter.WriteOkStatusMessage();
-            });
         }
 
         private async Task StepAddCutomPanels(List<IntPtr> builtInPanelHandles)
@@ -187,8 +162,7 @@ namespace MSFSPopoutPanelManager.Orchestration
                     // Remember current game's zoom level to be recall after pop out
                     _prePopOutCockpitZoomLevel = _flightSimData.CockpitCameraZoom;
                     LoadCustomView(AppSetting.PopOutSetting.AutoPanning.KeyBinding);
-                    FlightSimOrchestrator.SetCockpitCameraZoomLevel(50);
-                    Thread.Sleep(1000);
+                    SetCockpitZoomLevel(50);
                     StatusMessageWriter.WriteOkStatusMessage();
                 }
             });
@@ -246,7 +220,7 @@ namespace MSFSPopoutPanelManager.Orchestration
 
                 // Return to custom camera view if set
                 var task = Task.Run(() => {
-                    FlightSimOrchestrator.SetCockpitCameraZoomLevel(_prePopOutCockpitZoomLevel);
+                    //SetCockpitZoomLevel(_prePopOutCockpitZoomLevel);
                     ReturnToAfterPopOutCameraView();
                 });
             });
@@ -485,12 +459,11 @@ namespace MSFSPopoutPanelManager.Orchestration
             {
                 case AfterPopOutCameraViewType.CockpitCenterView:
                     InputEmulationManager.CenterView();
-                    Thread.Sleep(500);
-                    FlightSimOrchestrator.SetCockpitCameraZoomLevel(_prePopOutCockpitZoomLevel);
+                    SetCockpitZoomLevel(_prePopOutCockpitZoomLevel);
                     break;
                 case AfterPopOutCameraViewType.CustomCameraView:
                     LoadCustomView(AppSetting.PopOutSetting.AfterPopOutCameraView.KeyBinding);
-                    FlightSimOrchestrator.SetCockpitCameraZoomLevel(_prePopOutCockpitZoomLevel);
+                    SetCockpitZoomLevel(_prePopOutCockpitZoomLevel);
                     break;
             }
         }
@@ -502,13 +475,27 @@ namespace MSFSPopoutPanelManager.Orchestration
 
         private void LoadCustomView(string keybinding)
         {
-            int retry = 5;
+            int retry = 20;
             for(var i = 0; i < retry; i++) 
             {
                 InputEmulationManager.LoadCustomView(keybinding);
-                Thread.Sleep(500);      // wait for flightsimdata to be updated
-
+                Thread.Sleep(750);  // wait for flightsimdata to be updated
                 if (_flightSimData.CameraViewTypeAndIndex1 == 7)    // 7 = custom camera view enum
+                    break;
+            }
+        }
+
+        private void SetCockpitZoomLevel(int zoom)
+        {
+            int retry = 10;
+            for (var i = 0; i < retry; i++)
+            {
+                System.Diagnostics.Debug.WriteLine($"zoom {i}");
+
+                FlightSimOrchestrator.SetCockpitCameraZoomLevel(zoom);
+                Thread.Sleep(500);  // wait for flightsimdata to be updated
+
+                if (_flightSimData.CockpitCameraZoom == zoom) 
                     break;
             }
         }

@@ -102,6 +102,9 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             PInvoke.keybd_event(Convert.ToByte(VK_SPACE), 0, KEYEVENTF_KEYUP, 0);
             PInvoke.keybd_event(Convert.ToByte(VK_RCONTROL), 0, KEYEVENTF_KEYUP, 0);
             Thread.Sleep(200);
+
+            // Wait for center view to complete
+            Thread.Sleep(500);
         }
 
         public static void SaveCustomView(string keybinding)
@@ -145,9 +148,6 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             PInvoke.keybd_event(Convert.ToByte(customViewKey), 0, KEYEVENTF_KEYUP, 0);
             PInvoke.keybd_event(Convert.ToByte(VK_LMENU), 0, KEYEVENTF_KEYUP, 0);
             Thread.Sleep(200);
-
-            // Small delay to let load custom view finish
-            Thread.Sleep(500);
         }
 
         public static void ToggleFullScreenPanel(IntPtr hwnd)
