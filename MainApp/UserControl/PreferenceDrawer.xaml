@@ -98,6 +98,10 @@
                     Margin="0,0,0,10"
                     Header="Game Refocus Settings" />
                 <TreeViewItem
+                    x:Name="CategoryKeyboardShortcutSettings"
+                    Margin="0,0,0,10"
+                    Header="Keyboard Shortcut Settings" />
+                <TreeViewItem
                     x:Name="CategoryTouchSettings"
                     Margin="0,0,0,10"
                     Header="Touch Settings" />
@@ -211,30 +215,6 @@
                             </TextBlock>
                             <TextBlock Margin="0,10,0,0" Style="{StaticResource TextBlockLabel}">
                                 3. If configured for profile on cold start, execute and detect instrumentation power on before executing pop out panel sequence.
-                            </TextBlock>
-                        </StackPanel>
-                    </WrapPanel>
-                    <WrapPanel Margin="0,0,20,20" Orientation="Vertical">
-                        <TextBlock Style="{StaticResource TextBlockHeading}">Ready to Fly Button Delay</TextBlock>
-                        <Line
-                            Stretch="Fill"
-                            Stroke="Gray"
-                            X2="1" />
-                        <StackPanel Orientation="Horizontal">
-                            <localcontrol:NumericUpDown
-                                Width="90"
-                                Height="24"
-                                FontSize="12"
-                                Increment="1"
-                                MaxValue="10"
-                                MinValue="0"
-                                Value="{Binding AppSettingData.ApplicationSetting.AutoPopOutSetting.ReadyToFlyDelay, Mode=TwoWay}" />
-                            <TextBlock
-                                Width="640"
-                                Margin="10,0,0,0"
-                                Style="{StaticResource TextBlockLabel}"
-                                TextWrapping="Wrap">
-                                Amount of time in seconds to delay auto pop out panels from starting after ready to fly button has been pressed automatically. Extending this delay helps resolve auto pop out failure because cockpit has not been loaded completely yet depending on the speed of your PC.
                             </TextBlock>
                         </StackPanel>
                     </WrapPanel>
@@ -483,6 +463,72 @@
                                 Amount of time in seconds to wait for touch inactivity before input focus goes back to game window.
                             </TextBlock>
                         </StackPanel>
+                    </WrapPanel>
+                </WrapPanel>
+
+                <!--  Keyboard Shortcut Settings  -->
+                <WrapPanel Orientation="Vertical" Visibility="{Binding ElementName=CategoryKeyboardShortcutSettings, Path=IsSelected, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                    <WrapPanel Margin="0,0,20,0" Orientation="Vertical">
+                        <WrapPanel Orientation="Vertical">
+                            <TextBlock Style="{StaticResource TextBlockHeading}">Keyboard Shortcuts</TextBlock>
+                            <Line
+                                Stretch="Fill"
+                                Stroke="Gray"
+                                X2="1" />
+                            <WrapPanel>
+                                <ToggleButton IsChecked="{Binding AppSettingData.ApplicationSetting.KeyboardShortcutSetting.IsEnabled, Mode=TwoWay}" Style="{StaticResource ToggleButton}" />
+                                <TextBlock Style="{StaticResource TextBlockLabel}">Enable using of keyboard shortcuts to control application.</TextBlock>
+                            </WrapPanel>
+                        </WrapPanel>
+                        <WrapPanel Orientation="Vertical" Visibility="{Binding AppSettingData.ApplicationSetting.KeyboardShortcutSetting.IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                            <StackPanel
+                                Width="Auto"
+                                Margin="44,15,0,0"
+                                VerticalAlignment="Top"
+                                Orientation="Horizontal">
+                                <WrapPanel>
+                                    <Label Content="Ctrl-Shift-" FontSize="14" />
+                                    <ComboBox
+                                        Width="40"
+                                        VerticalAlignment="top"
+                                        SelectedValue="{Binding AppSettingData.ApplicationSetting.KeyboardShortcutSetting.StartPopOutKeyBinding, Mode=TwoWay}"
+                                        SelectedValuePath="Tag">
+                                        <ComboBoxItem Content="A" Tag="A" />
+                                        <ComboBoxItem Content="B" Tag="B" />
+                                        <ComboBoxItem Content="C" Tag="C" />
+                                        <ComboBoxItem Content="D" Tag="D" />
+                                        <ComboBoxItem Content="E" Tag="E" />
+                                        <ComboBoxItem Content="F" Tag="F" />
+                                        <ComboBoxItem Content="G" Tag="G" />
+                                        <ComboBoxItem Content="H" Tag="H" />
+                                        <ComboBoxItem Content="I" Tag="I" />
+                                        <ComboBoxItem Content="J" Tag="J" />
+                                        <ComboBoxItem Content="K" Tag="K" />
+                                        <ComboBoxItem Content="L" Tag="L" />
+                                        <ComboBoxItem Content="M" Tag="M" />
+                                        <ComboBoxItem Content="N" Tag="N" />
+                                        <ComboBoxItem Content="O" Tag="O" />
+                                        <ComboBoxItem Content="P" Tag="P" />
+                                        <ComboBoxItem Content="Q" Tag="Q" />
+                                        <ComboBoxItem Content="R" Tag="R" />
+                                        <ComboBoxItem Content="S" Tag="S" />
+                                        <ComboBoxItem Content="T" Tag="T" />
+                                        <ComboBoxItem Content="U" Tag="U" />
+                                        <ComboBoxItem Content="V" Tag="V" />
+                                        <ComboBoxItem Content="W" Tag="W" />
+                                        <ComboBoxItem Content="X" Tag="X" />
+                                        <ComboBoxItem Content="Y" Tag="Y" />
+                                        <ComboBoxItem Content="Z" Tag="Z" />
+                                    </ComboBox>
+                                </WrapPanel>
+                                <TextBlock
+                                    Width="600"
+                                    Margin="10,3,0,0"
+                                    Style="{StaticResource TextBlockLabel}">
+                                    Configure key binding to initiate start pop out.
+                                </TextBlock>
+                            </StackPanel>
+                        </WrapPanel>
                     </WrapPanel>
                 </WrapPanel>
 

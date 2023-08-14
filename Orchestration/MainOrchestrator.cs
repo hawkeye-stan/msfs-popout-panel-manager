@@ -1,5 +1,6 @@
 ﻿using AutoUpdaterDotNET;
 using MSFSPopoutPanelManager.Shared;
+using MSFSPopoutPanelManager.WindowsAgent;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -24,6 +25,7 @@ namespace MSFSPopoutPanelManager.Orchestration
             PanelConfiguration = new PanelConfigurationOrchestrator(ProfileData, AppSettingData, FlightSimData);
             FlightSim = new FlightSimOrchestrator(ProfileData, AppSettingData, FlightSimData);
             Help = new HelpOrchestrator();
+            Keyboard = new KeyboardOrchestrator(AppSettingData, FlightSimData);
 
             PanelSource.FlightSimOrchestrator = FlightSim;
 
@@ -34,6 +36,8 @@ namespace MSFSPopoutPanelManager.Orchestration
             FlightSim.PanelPopOutOrchestrator = PanelPopOut;
             FlightSim.PanelConfigurationOrchestrator = PanelConfiguration;
             FlightSim.OnSimulatorExited += (sender, e) => { ApplicationClose(); Environment.Exit(0); };
+
+            Keyboard.PanelPopOutOrchestrator = PanelPopOut;
         }
 
         public ProfileOrchestrator Profile { get; set; }
@@ -54,6 +58,8 @@ namespace MSFSPopoutPanelManager.Orchestration
 
         public HelpOrchestrator Help { get; set; }
 
+        public KeyboardOrchestrator Keyboard { get; set; }
+
         public IntPtr ApplicationHandle { get; set; }
 
         public Window ApplicationWindow { get; set; }
@@ -71,6 +77,8 @@ namespace MSFSPopoutPanelManager.Orchestration
             ProfileData.SetActiveProfile(AppSettingData.ApplicationSetting.SystemSetting.LastUsedProfileId);     // Load last used profile
 
             Task.Run(() => FlightSim.StartSimConnectServer());                                                   // Start the SimConnect server
+
+            Keyboard.Initialize();
         }
 
         public void ApplicationClose()
@@ -78,6 +86,8 @@ namespace MSFSPopoutPanelManager.Orchestration
             // Force unhook all win events 
             PanelConfiguration.EndConfiguration();
             PanelConfiguration.EndTouchHook();
+
+            InputHookManager.EndKeyboardHook();
             FlightSim.EndSimConnectServer(true);
         }
 

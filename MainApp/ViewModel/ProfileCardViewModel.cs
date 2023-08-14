@@ -129,7 +129,7 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
 
         private void OnStartPopOut()
         {
-            if (IsDisabledAppInput)
+            if (Orchestrator.PanelPopOut.IsDisabledStartPopOut || !FlightSimData.IsInCockpit)
                 return;
 
             Orchestrator.PanelPopOut.ManualPopOut();
@@ -162,8 +162,8 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
                     AutoGameRefocus = false
                 });
             }
-            else 
-            { 
+            else
+            {
                 ProfileData.ActiveProfile.PanelConfigs.RemoveAll(p => p.PanelType == PanelType.HudBarWindow);
             }
         }
@@ -212,7 +212,7 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
             if (monitor == null)
                 return;
 
-            if(!monitor.IsSelected)
+            if (!monitor.IsSelected)
             {
                 ProfileData.ActiveProfile.PanelConfigs.RemoveAll(p => p.PanelName == arg && p.PanelType == PanelType.RefocusDisplay);
             }
@@ -226,7 +226,7 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
                     Top = monitor.Y,
                     Width = monitor.Width,
                     Height = monitor.Height,
-                    TouchEnabled = true    
+                    TouchEnabled = true
                 });
             }
         }

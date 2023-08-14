@@ -129,19 +129,25 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
             if (DataItem.IsEditingPanel)
             {
                 ProfileData.ActiveProfile.CurrentMoveResizePanelId = DataItem.Id;
-                InputHookManager.StartKeyboardHook();
+
+                if (!AppSettingData.ApplicationSetting.KeyboardShortcutSetting.IsEnabled)
+                    InputHookManager.StartKeyboardHook();
+
                 InputHookManager.OnKeyUp -= HandleKeyUpEvent;
                 InputHookManager.OnKeyUp += HandleKeyUpEvent;
             }
             else
             {
                 ProfileData.ActiveProfile.CurrentMoveResizePanelId = Guid.Empty;
+
+                if (!AppSettingData.ApplicationSetting.KeyboardShortcutSetting.IsEnabled)
+                    InputHookManager.EndKeyboardHook();
+
                 InputHookManager.OnKeyUp -= HandleKeyUpEvent;
-                InputHookManager.EndKeyboardHook();
             }
         }
 
-        private void HandleKeyUpEvent(object? sender, KeyUpEventArgs e)
+        private void HandleKeyUpEvent(object sender, KeyUpEventArgs e)
         {
             PanelConfigPropertyName panelConfigPropertyName = PanelConfigPropertyName.None;
 

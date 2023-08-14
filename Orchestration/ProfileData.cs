@@ -242,7 +242,7 @@ namespace MSFSPopoutPanelManager.Orchestration
         public void ResetActiveProfile()
         {
             InputHookManager.EndMouseHook();
-            InputHookManager.EndKeyboardHook();
+            //InputHookManager.EndKeyboardHook();
 
             if (ActiveProfile == null)
                 return;

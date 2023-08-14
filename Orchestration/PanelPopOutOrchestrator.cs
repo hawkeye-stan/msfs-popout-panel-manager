@@ -23,6 +23,7 @@ namespace MSFSPopoutPanelManager.Orchestration
             _profileData = profileData;
             _appSettingData = appSettingData;
             _flightSimData = flightSimData;
+            IsDisabledStartPopOut = false;
         }
 
         internal FlightSimOrchestrator FlightSimOrchestrator { private get; set; }
@@ -35,12 +36,17 @@ namespace MSFSPopoutPanelManager.Orchestration
 
         private ApplicationSetting AppSetting { get { return _appSettingData == null ? null : _appSettingData.ApplicationSetting; } }
 
+        public bool IsDisabledStartPopOut { get; set; }
+
         public event EventHandler OnPopOutStarted;
         public event EventHandler OnPopOutCompleted;
         public event EventHandler<PanelConfig> OnHudBarOpened;
 
         public async void ManualPopOut()
         {
+            if (IsDisabledStartPopOut || !_flightSimData.IsInCockpit)
+                return;
+
             await CoreSteps(false);
         }
 
@@ -490,8 +496,6 @@ namespace MSFSPopoutPanelManager.Orchestration
             int retry = 10;
             for (var i = 0; i < retry; i++)
             {
-                System.Diagnostics.Debug.WriteLine($"zoom {i}");
-
                 FlightSimOrchestrator.SetCockpitCameraZoomLevel(zoom);
                 Thread.Sleep(500);  // wait for flightsimdata to be updated
 
