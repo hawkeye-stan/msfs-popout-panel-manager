@@ -17,10 +17,10 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
         {
             Orchestrator = orchestrator;
 
-            Orchestrator.PanelPopOut.OnPopOutStarted += (sender, e) => IsDisabledAppInput = true;
-            Orchestrator.PanelPopOut.OnPopOutCompleted += (sender, e) => IsDisabledAppInput = false;
-            Orchestrator.PanelSource.OnPanelSourceSelectionStarted += (sender, e) => IsDisabledAppInput = true;
-            Orchestrator.PanelSource.OnPanelSourceSelectionCompleted += (sender, e) => IsDisabledAppInput = false;
+            Orchestrator.PanelPopOut.OnPopOutStarted += (sender, e) => Orchestrator.PanelPopOut.IsDisabledStartPopOut = true;
+            Orchestrator.PanelPopOut.OnPopOutCompleted += (sender, e) => Orchestrator.PanelPopOut.IsDisabledStartPopOut = false;
+            Orchestrator.PanelSource.OnPanelSourceSelectionStarted += (sender, e) => Orchestrator.PanelPopOut.IsDisabledStartPopOut = true;
+            Orchestrator.PanelSource.OnPanelSourceSelectionCompleted += (sender, e) => Orchestrator.PanelPopOut.IsDisabledStartPopOut = false;
         }
 
         public AppSettingData AppSettingData => Orchestrator.AppSettingData;
@@ -28,8 +28,6 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
         public ProfileData ProfileData => Orchestrator.ProfileData;
 
         public FlightSimData FlightSimData => Orchestrator.FlightSimData;
-
-        public bool IsDisabledAppInput { get; set; }
 
         protected List<Run> FormatStatusMessages(List<StatusMessage> messages)
         {

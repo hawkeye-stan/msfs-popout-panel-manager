@@ -25,7 +25,7 @@ namespace MSFSPopoutPanelManager.Shared
                 hasJsonIgnoreAttribute = Attribute.IsDefined(propertyInfo, typeof(JsonIgnoreAttribute));
             }
 
-            PropertyChanged?.Invoke(this, new PropertyChangedExtendedEventArgs(e?.PropertyName, hasJsonIgnoreAttribute));
+            PropertyChanged?.Invoke(this, new PropertyChangedExtendedEventArgs(e?.PropertyName, sender.ToString(), hasJsonIgnoreAttribute));
         }
 
         protected void InitializeChildPropertyChangeBinding()
@@ -55,9 +55,12 @@ namespace MSFSPopoutPanelManager.Shared
     {
         public virtual bool DisableSave { get; private set; }
 
-        public PropertyChangedExtendedEventArgs(string propertyName, bool disableSave) : base(propertyName)
+        public virtual string ObjectName { get; private set; }
+
+        public PropertyChangedExtendedEventArgs(string propertyName, string objectName, bool disableSave) : base(propertyName)
         {
             DisableSave = disableSave;
+            ObjectName = objectName;
         }
     }
 }

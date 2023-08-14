@@ -1,4 +1,5 @@
 ﻿using MSFSPopoutPanelManager.Shared;
+using System;
 
 namespace MSFSPopoutPanelManager.DomainModel.Setting
 {
@@ -14,8 +15,17 @@ namespace MSFSPopoutPanelManager.DomainModel.Setting
             TrackIRSetting = new TrackIRSetting();
             WindowedModeSetting = new WindowedModeSetting();
             SystemSetting = new SystemSetting();
+            KeyboardShortcutSetting = new KeyboardShortcutSetting();
 
             InitializeChildPropertyChangeBinding();
+
+            this.PropertyChanged += (sender, e) =>
+            {
+                var evtArg = e as PropertyChangedExtendedEventArgs;
+
+                if (evtArg.ObjectName == "MSFSPopoutPanelManager.DomainModel.Setting.KeyboardShortcutSetting" && evtArg.PropertyName == "IsEnabled")
+                    IsUsedKeyboardShortcutChanged?.Invoke(this, KeyboardShortcutSetting.IsEnabled);
+            };
         }
 
         public GeneralSetting GeneralSetting { get; set; }
@@ -33,5 +43,9 @@ namespace MSFSPopoutPanelManager.DomainModel.Setting
         public WindowedModeSetting WindowedModeSetting { get; set; }
 
         public SystemSetting SystemSetting { get; set; }
+
+        public KeyboardShortcutSetting KeyboardShortcutSetting { get; set; }
+
+        public event EventHandler<bool> IsUsedKeyboardShortcutChanged;
     }
 }

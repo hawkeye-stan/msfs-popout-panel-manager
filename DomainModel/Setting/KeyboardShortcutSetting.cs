@@ -2,13 +2,16 @@
 
 namespace MSFSPopoutPanelManager.DomainModel.Setting
 {
-    public class AutoPopOutSetting : ObservableObject
+    public class KeyboardShortcutSetting : ObservableObject
     {
-        public AutoPopOutSetting()
+        public KeyboardShortcutSetting()
         {
             IsEnabled = true;
+            StartPopOutKeyBinding = "P";
         }
 
         public bool IsEnabled { get; set; }
+
+        public string StartPopOutKeyBinding { get; set; }
     }
 }

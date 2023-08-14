@@ -175,7 +175,7 @@ namespace MSFSPopoutPanelManager.Orchestration
         {
             // Disable hooks if active
             InputHookManager.EndMouseHook();
-            InputHookManager.EndKeyboardHook();
+            //InputHookManager.EndKeyboardHook();
 
             _profileData.ActiveProfile.CurrentMoveResizePanelId = Guid.Empty;
 
