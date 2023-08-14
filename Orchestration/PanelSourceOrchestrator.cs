@@ -62,7 +62,7 @@ namespace MSFSPopoutPanelManager.Orchestration
                 if (AppSetting.PopOutSetting.AutoPanning.IsEnabled)
                 {
                     _prePanelConfigurationCockpitZoomLevel = _flightSimData.CockpitCameraZoom;
-                    InputEmulationManager.LoadCustomView(AppSetting.PopOutSetting.AutoPanning.KeyBinding);
+                    LoadCustomView(AppSetting.PopOutSetting.AutoPanning.KeyBinding);
                     FlightSimOrchestrator.SetCockpitCameraZoomLevel(50);
                     WindowActionManager.BringWindowToForeground(ApplicationHandle);
                 }
@@ -114,7 +114,7 @@ namespace MSFSPopoutPanelManager.Orchestration
                             FlightSimOrchestrator.SetCockpitCameraZoomLevel(_prePanelConfigurationCockpitZoomLevel);
                             break;
                         case AfterPopOutCameraViewType.CustomCameraView:
-                            InputEmulationManager.LoadCustomView(AppSetting.PopOutSetting.AfterPopOutCameraView.KeyBinding);
+                            LoadCustomView(AppSetting.PopOutSetting.AfterPopOutCameraView.KeyBinding);
                             FlightSimOrchestrator.SetCockpitCameraZoomLevel(_prePanelConfigurationCockpitZoomLevel);
                             break;
                     }
@@ -184,6 +184,19 @@ namespace MSFSPopoutPanelManager.Orchestration
             OnOverlayRemoved?.Invoke(this, panelConfig);
 
             _profileData.ActiveProfile.PanelConfigs.Remove(panelConfig);
+        }
+
+        private void LoadCustomView(string keybinding)
+        {
+            int retry = 5;
+            for (var i = 0; i < retry; i++)
+            {
+                InputEmulationManager.LoadCustomView(keybinding);
+                Thread.Sleep(500);      // wait for flightsimdata to be updated
+
+                if (_flightSimData.CameraViewTypeAndIndex1 == 7)    // 7 = custom camera view enum
+                    break;
+            }
         }
     }
 }

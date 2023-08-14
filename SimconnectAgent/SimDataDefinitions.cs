@@ -13,6 +13,7 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
             definitions.Add(new SimConnectDataDefinition() { DefinitionId = DATA_DEFINITION.REQUIRED_DEFINITION, RequestId = DATA_REQUEST.REQUIRED_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.PlaneInParkingSpot, VariableName = "ATC ON PARKING SPOT", SimConnectUnit = "Bool", DataType = DataType.Float64 });
             definitions.Add(new SimConnectDataDefinition() { DefinitionId = DATA_DEFINITION.REQUIRED_DEFINITION, RequestId = DATA_REQUEST.REQUIRED_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.CameraState, VariableName = "CAMERA STATE", SimConnectUnit = "Number", DataType = DataType.Float64 });
             definitions.Add(new SimConnectDataDefinition() { DefinitionId = DATA_DEFINITION.REQUIRED_DEFINITION, RequestId = DATA_REQUEST.REQUIRED_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.CockpitCameraZoom, VariableName = "COCKPIT CAMERA ZOOM", SimConnectUnit = "Percentage", DataType = DataType.Float64 });
+            definitions.Add(new SimConnectDataDefinition() { DefinitionId = DATA_DEFINITION.REQUIRED_DEFINITION, RequestId = DATA_REQUEST.REQUIRED_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.CameraViewTypeAndIndex1, VariableName = "CAMERA VIEW TYPE AND INDEX:1", SimConnectUnit = "Enum", DataType = DataType.Float64 });
             return definitions;
         }
 
@@ -76,6 +77,7 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
             public static string CameraState = "CameraState";
             public static string AircraftName = "AircraftName";
             public static string CockpitCameraZoom = "CockpitCameraZoom";
+            public static string CameraViewTypeAndIndex1 = "CameraViewTypeAndIndex1";
 
             // Hud Bar data
             public static string ElevatorTrim = "ElevatorTrim";

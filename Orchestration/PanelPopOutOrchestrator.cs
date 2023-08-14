@@ -5,6 +5,7 @@ using MSFSPopoutPanelManager.WindowsAgent;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -185,7 +186,7 @@ namespace MSFSPopoutPanelManager.Orchestration
                     
                     // Remember current game's zoom level to be recall after pop out
                     _prePopOutCockpitZoomLevel = _flightSimData.CockpitCameraZoom;
-                    InputEmulationManager.LoadCustomView(AppSetting.PopOutSetting.AutoPanning.KeyBinding);
+                    LoadCustomView(AppSetting.PopOutSetting.AutoPanning.KeyBinding);
                     FlightSimOrchestrator.SetCockpitCameraZoomLevel(50);
                     Thread.Sleep(1000);
                     StatusMessageWriter.WriteOkStatusMessage();
@@ -488,7 +489,7 @@ namespace MSFSPopoutPanelManager.Orchestration
                     FlightSimOrchestrator.SetCockpitCameraZoomLevel(_prePopOutCockpitZoomLevel);
                     break;
                 case AfterPopOutCameraViewType.CustomCameraView:
-                    InputEmulationManager.LoadCustomView(AppSetting.PopOutSetting.AfterPopOutCameraView.KeyBinding);
+                    LoadCustomView(AppSetting.PopOutSetting.AfterPopOutCameraView.KeyBinding);
                     FlightSimOrchestrator.SetCockpitCameraZoomLevel(_prePopOutCockpitZoomLevel);
                     break;
             }
@@ -497,6 +498,19 @@ namespace MSFSPopoutPanelManager.Orchestration
         private bool CheckForPopOutError()
         {
             return ActiveProfile.PanelConfigs.Count(p => p.IsPopOutSuccess != null && (bool)p.IsPopOutSuccess) != ActiveProfile.PanelConfigs.Count(p => p.IsPopOutSuccess != null);
+        }
+
+        private void LoadCustomView(string keybinding)
+        {
+            int retry = 5;
+            for(var i = 0; i < retry; i++) 
+            {
+                InputEmulationManager.LoadCustomView(keybinding);
+                Thread.Sleep(500);      // wait for flightsimdata to be updated
+
+                if (_flightSimData.CameraViewTypeAndIndex1 == 7)    // 7 = custom camera view enum
+                    break;
+            }
         }
     }
 }

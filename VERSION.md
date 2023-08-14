@@ -8,6 +8,8 @@
 
 * Fixed issue where full screen mode for pop out panel does not work on certain aircraft configuration.
 
+* Updated logic to verify custom camera view has been loaded before starting pop out process.
+
 ## Version 4.0.1.2
 * Hotfix - Fixed issue where using touch panel feature may freeze computer and the application.
 

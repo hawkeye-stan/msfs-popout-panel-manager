@@ -80,6 +80,10 @@ namespace MSFSPopoutPanelManager.Orchestration
                 var cockpitCameraZoom = Convert.ToInt32(e.Find(d => d.PropertyName == SimDataDefinitions.PropName.CockpitCameraZoom).Value);
                 if (cockpitCameraZoom != _flightSimData.CockpitCameraZoom)
                     _flightSimData.CockpitCameraZoom = cockpitCameraZoom;
+
+                var cameraViewTypeAndIndex1 = Convert.ToInt32(e.Find(d => d.PropertyName == SimDataDefinitions.PropName.CameraViewTypeAndIndex1).Value);
+                if (cameraViewTypeAndIndex1 != _flightSimData.CameraViewTypeAndIndex1)
+                    _flightSimData.CameraViewTypeAndIndex1 = cameraViewTypeAndIndex1;
             };
 
             _simConnectProvider.OnSimConnectDataHudBarRefreshed += (sender, e) =>

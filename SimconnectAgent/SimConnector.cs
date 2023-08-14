@@ -462,13 +462,6 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
                 aircraftName = aircraftName.Replace("_", " ").ToUpper();
 
                 OnActiveAircraftChanged?.Invoke(this, aircraftName);
-
-                //var def = _simConnectDataDefinitions.Find(s => s.PropName == SimDataDefinitions.PropName.AircraftName);
-                //if(def != null)
-                //{
-                //    def.Value = aircraftName;
-                //    OnReceivedData?.Invoke(this, _simConnectDataDefinitions);
-                //}
             }
         }
     }

@@ -132,8 +132,9 @@ namespace MSFSPopoutPanelManager.WindowsAgent
         {
             Debug.WriteLine("Loading custom view...");
 
-            // First center view to make sure recalling custom camera works on the first press
-            CenterView();
+            var hwnd = WindowProcessManager.SimulatorProcess.Handle;
+            PInvoke.SetForegroundWindow(hwnd);
+            Thread.Sleep(200);
 
             uint customViewKey = (uint)(Convert.ToInt32(keybinding) + KEY_0);
 
