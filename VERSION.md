@@ -2,15 +2,15 @@
 <hr/>
 
 ## Version 4.0.2
-* Added new logic to detect when flight session is ready to initiate pop out process. Ready to Fly delay setting is no longer needed. Please install the updated "ready-to-fly-button-skipper" community plugin to your community folder to shorten the time when pop out process starts. The old version waits 2 seconds before ready to fly button is deactivated and the new version is immediate.
+* Added new logic to detect when flight session is ready to initiate pop out process. Ready to Fly delay setting is no longer needed. Please install updated "ready-to-fly-button-skipper" community plugin to your community folder if you would like to shorten the time when pop out process starts from 2 seconds + ready to fly button dely to 0 seconds.
 
-* Updated logic to load custom camera view when performing pop out. It is now more reliable and reduces unnecessary shifting of camera angle before starting pop out process.
+* Updated logic to load custom camera view when performing pop out. The new logic is more reliable but unfornately will be a little slower because MSFS AAU2 may have introduced issue in loading and saving camera view. Pop out progress messages will show steps being taken when adjusting camera view.
+
+* Added workaround for MSFS bug when using cockpit camera zoom setting is set with value other than 50 in MSFS general options. Pop out was failing before because saving and loading custom camera view does not work correctly in MSFS.
 
 * Added workaround for CJ4 CDU panel not popping out because of MSFS bug.
 
-* Added workaround fix when using camera zoom setting with value other than 50 in MSFS general options will cause Pop Out Panel Manager pop out to fail. This is an existing MSFS bug where saving and loading of custom camera view is currently broken for zoom level other than 50.
-
-* Add configurable keyboard shortcut to initiate pop out process (default is Ctrl-Shift-P). This keyboard shortcut can be configured in preference setting. This setting can be disabled to improve computing resource needed to constantly detect keyboard inputs.
+* Added configurable keyboard shortcut to initiate pop out process (default is Ctrl-Shift-P). This keyboard shortcut can be configured in preference setting. This setting can be disabled to improve computing resource needed to constantly detect keyboard inputs.
 
 * Fixed issue where full screen mode for pop out panel does not work on certain aircraft configuration.
 
