@@ -1,5 +1,5 @@
 ## Version 4.0.2
-* Added new logic to detect when flight session is ready to initiate pop out process. Ready to Fly delay setting is no longer needed. Please install updated "ready-to-fly-button-skipper" community plugin to your community folder if you would like to shorten the time when pop out process starts from 2 seconds + ready to fly button dely to 0 seconds.
+* Added new logic to detect when flight session is ready to initiate pop out process for auto pop out panel. Ready to Fly button delay setting is no longer needed. 
 
 * Updated logic to load custom camera view when performing pop out. The new logic is more reliable but unfornately will be a little slower because MSFS AAU2 may have introduced issue in loading and saving camera view. Pop out progress messages will show steps being taken when adjusting camera view.
 
