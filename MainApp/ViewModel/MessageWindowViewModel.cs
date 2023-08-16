@@ -58,7 +58,7 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
                     if (AppSettingData.ApplicationSetting.PopOutSetting.EnablePopOutMessages)
                     {
                         WindowActionManager.ApplyAlwaysOnTop(Handle, PanelType.StatusMessageWindow, true);
-                        OnMessageUpdated?.Invoke(this, FormatStatusMessages(e.Messages));
+                        OnMessageUpdated?.Invoke(this, FormatStatusMessages(e));
 
                         CenterDialogToGameWindow();
                     }

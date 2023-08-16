@@ -236,6 +236,11 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
             _simConnector.SetDataObject(WriteableVariableName.CockpitCameraZoom, Convert.ToDouble(zoomLevel));
         }
 
+        public void SetCameraRequestAction(int actionEnum)
+        {
+            _simConnector.SetDataObject(WriteableVariableName.CameraRequestAction, Convert.ToDouble(actionEnum));
+        }
+        
         private void SetTrackIREnable(bool enable)
         {
             _simConnector.SetDataObject(WriteableVariableName.TrackIREnable, enable ? Convert.ToDouble(1) : Convert.ToDouble(0));

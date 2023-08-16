@@ -114,7 +114,7 @@ namespace MSFSPopoutPanelManager.Orchestration
             _simConnectProvider = null;
         }
 
-        public void TurnOnTrackIR(bool writeMessage = true)
+        public void TurnOnTrackIR()
         {
             if (_simConnectProvider == null)
                 return;
@@ -122,24 +122,22 @@ namespace MSFSPopoutPanelManager.Orchestration
             if (!_appSettingData.ApplicationSetting.TrackIRSetting.AutoDisableTrackIR)
                 return;
 
-            StatusMessageWriter.WriteMessage("Turning on TrackIR", StatusMessageType.Info);
-
-            int count = 0;
-            do
+            WorkflowStepWithMessage.Execute("Turning on TrackIR", () =>
             {
-                _simConnectProvider.TurnOnTrackIR();
-                Thread.Sleep(500);
-                count++;
-            }
-            while (!_flightSimData.TrackIRStatus && count < 5);
+                int count = 0;
+                do
+                {
+                    _simConnectProvider.TurnOnTrackIR();
+                    Thread.Sleep(500);
+                    count++;
+                }
+                while (!_flightSimData.TrackIRStatus && count < 5);
 
-            if (_flightSimData.TrackIRStatus)
-                StatusMessageWriter.WriteOkStatusMessage();
-            else
-                StatusMessageWriter.WriteFailureStatusMessage();
+                return _flightSimData.TrackIRStatus;
+            });
         }
 
-        public void TurnOffTrackIR(bool writeMessage = true)
+        public void TurnOffTrackIR()
         {
             if (_simConnectProvider == null)
                 return;
@@ -147,24 +145,19 @@ namespace MSFSPopoutPanelManager.Orchestration
             if (!_appSettingData.ApplicationSetting.TrackIRSetting.AutoDisableTrackIR)
                 return;
 
-            StatusMessageWriter.WriteMessage("Turning off TrackIR", StatusMessageType.Info);
-
-            int count = 0;
-            do
+            WorkflowStepWithMessage.Execute("Turning off TrackIR", () =>
             {
-                _simConnectProvider.TurnOffTrackIR();
-                Thread.Sleep(500);
-                count++;
-            }
-            while (_flightSimData.TrackIRStatus && count < 5);
+                int count = 0;
+                do
+                {
+                    _simConnectProvider.TurnOffTrackIR();
+                    Thread.Sleep(500);
+                    count++;
+                }
+                while (_flightSimData.TrackIRStatus && count < 5);
 
-            if (!writeMessage)
-                return;
-
-            if (!_flightSimData.TrackIRStatus)
-                StatusMessageWriter.WriteOkStatusMessage();
-            else
-                StatusMessageWriter.WriteFailureStatusMessage();
+                return !_flightSimData.TrackIRStatus;
+            });
         }
 
         public void TurnOnPower()
@@ -176,21 +169,20 @@ namespace MSFSPopoutPanelManager.Orchestration
                 return;
 
             _isTurnedOnPower = true;
-            StatusMessageWriter.WriteMessage("Turning on battery", StatusMessageType.Info);
 
-            int count = 0;
-            do
+            WorkflowStepWithMessage.Execute("Turning on battery", () =>
             {
-                _simConnectProvider.TurnOnPower(_profileData.ActiveProfile.ProfileSetting.PowerOnRequiredForColdStart);
-                Thread.Sleep(500);
-                count++;
-            }
-            while (!_flightSimData.ElectricalMasterBatteryStatus && count < 10);
+                int count = 0;
+                do
+                {
+                    _simConnectProvider.TurnOnPower(_profileData.ActiveProfile.ProfileSetting.PowerOnRequiredForColdStart);
+                    Thread.Sleep(500);
+                    count++;
+                }
+                while (!_flightSimData.ElectricalMasterBatteryStatus && count < 10);
 
-            if (_flightSimData.ElectricalMasterBatteryStatus)
-                StatusMessageWriter.WriteOkStatusMessage();
-            else
-                StatusMessageWriter.WriteFailureStatusMessage();
+                return _flightSimData.ElectricalMasterBatteryStatus;
+            });
         }
 
         public void TurnOffPower()
@@ -201,21 +193,19 @@ namespace MSFSPopoutPanelManager.Orchestration
             if (_profileData.ActiveProfile == null || !_isTurnedOnPower)
                 return;
 
-            StatusMessageWriter.WriteMessage("Turning off battery", StatusMessageType.Info);
-
-            int count = 0;
-            do
+            WorkflowStepWithMessage.Execute("Turning off battery", () =>
             {
-                _simConnectProvider.TurnOffPower(_profileData.ActiveProfile.ProfileSetting.PowerOnRequiredForColdStart);
-                Thread.Sleep(500);
-                count++;
-            }
-            while (_flightSimData.ElectricalMasterBatteryStatus && count < 10);
+                int count = 0;
+                do
+                {
+                    _simConnectProvider.TurnOffPower(_profileData.ActiveProfile.ProfileSetting.PowerOnRequiredForColdStart);
+                    Thread.Sleep(500);
+                    count++;
+                }
+                while (_flightSimData.ElectricalMasterBatteryStatus && count < 10);
 
-            if (!_flightSimData.ElectricalMasterBatteryStatus)
-                StatusMessageWriter.WriteOkStatusMessage();
-            else
-                StatusMessageWriter.WriteFailureStatusMessage();
+                return !_flightSimData.ElectricalMasterBatteryStatus;
+            });
 
             _isTurnedOnPower = false;
         }
@@ -230,21 +220,19 @@ namespace MSFSPopoutPanelManager.Orchestration
 
             _isTurnedOnAvionics = true;
 
-            StatusMessageWriter.WriteMessage("Turning on avionics", StatusMessageType.Info);
-
-            int count = 0;
-            do
+            WorkflowStepWithMessage.Execute("Turning on avionics", () =>
             {
-                _simConnectProvider.TurnOnAvionics(_profileData.ActiveProfile.ProfileSetting.PowerOnRequiredForColdStart);
-                Thread.Sleep(500);
-                count++;
-            }
-            while (!_flightSimData.AvionicsMasterSwitchStatus && count < 10);
+                int count = 0;
+                do
+                {
+                    _simConnectProvider.TurnOnAvionics(_profileData.ActiveProfile.ProfileSetting.PowerOnRequiredForColdStart);
+                    Thread.Sleep(500);
+                    count++;
+                }
+                while (!_flightSimData.AvionicsMasterSwitchStatus && count < 10);
 
-            if (_flightSimData.AvionicsMasterSwitchStatus)
-                StatusMessageWriter.WriteOkStatusMessage();
-            else
-                StatusMessageWriter.WriteFailureStatusMessage();
+                return _flightSimData.AvionicsMasterSwitchStatus;
+            });
         }
 
         public void TurnOffAvionics()
@@ -255,21 +243,19 @@ namespace MSFSPopoutPanelManager.Orchestration
             if (_profileData.ActiveProfile == null || !_isTurnedOnAvionics)
                 return;
 
-            StatusMessageWriter.WriteMessage("Turning off avionics", StatusMessageType.Info);
-
-            int count = 0;
-            do
+            WorkflowStepWithMessage.Execute("Turning off avionics", () =>
             {
-                _simConnectProvider.TurnOffAvionics(_profileData.ActiveProfile.ProfileSetting.PowerOnRequiredForColdStart);
-                Thread.Sleep(500);
-                count++;
-            }
-            while (_flightSimData.AvionicsMasterSwitchStatus && count < 10);
+                int count = 0;
+                do
+                {
+                    _simConnectProvider.TurnOffAvionics(_profileData.ActiveProfile.ProfileSetting.PowerOnRequiredForColdStart);
+                    Thread.Sleep(500);
+                    count++;
+                }
+                while (_flightSimData.AvionicsMasterSwitchStatus && count < 10);
 
-            if (!_flightSimData.AvionicsMasterSwitchStatus)
-                StatusMessageWriter.WriteOkStatusMessage();
-            else
-                StatusMessageWriter.WriteFailureStatusMessage();
+                return !_flightSimData.AvionicsMasterSwitchStatus;
+            });
 
             _isTurnedOnAvionics = false;
         }
@@ -282,9 +268,10 @@ namespace MSFSPopoutPanelManager.Orchestration
             if (!_appSettingData.ApplicationSetting.PopOutSetting.AutoActivePause)
                 return;
 
-            StatusMessageWriter.WriteMessage("Turning on active pause", StatusMessageType.Info);
-            _simConnectProvider.TurnOnActivePause();
-            StatusMessageWriter.WriteOkStatusMessage();
+            WorkflowStepWithMessage.Execute("Turning on active pause", () =>
+            {
+                _simConnectProvider.TurnOnActivePause();
+            });
         }
 
         public void TurnOffActivePause()
@@ -295,10 +282,10 @@ namespace MSFSPopoutPanelManager.Orchestration
             if (!_appSettingData.ApplicationSetting.PopOutSetting.AutoActivePause)
                 return;
 
-            StatusMessageWriter.WriteMessage("Turning off active pause", StatusMessageType.Info);
-            _simConnectProvider.TurnOffActivePause();
-            StatusMessageWriter.WriteOkStatusMessage();
-
+            WorkflowStepWithMessage.Execute("Turning off active pause", () =>
+            {
+                _simConnectProvider.TurnOffActivePause();
+            });
         }
 
         public void IncreaseSimRate()
@@ -326,6 +313,11 @@ namespace MSFSPopoutPanelManager.Orchestration
         public void SetCockpitCameraZoomLevel(int zoomLevel)
         {
             _simConnectProvider.SetCockpitCameraZoomLevel(zoomLevel);
+        }
+
+        public void ResetCameraView()
+        {
+            _simConnectProvider.SetCameraRequestAction(1);
         }
 
         public void SetHudBarConfig()

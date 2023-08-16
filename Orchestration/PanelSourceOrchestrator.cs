@@ -75,7 +75,7 @@ namespace MSFSPopoutPanelManager.Orchestration
             }
 
             // Turn off TrackIR if TrackIR is started
-            FlightSimOrchestrator.TurnOffTrackIR(false);
+            FlightSimOrchestrator.TurnOffTrackIR();
         }
 
         public async Task EndEditPanelSources()
@@ -88,19 +88,22 @@ namespace MSFSPopoutPanelManager.Orchestration
             // Save last auto panning camera angle
             if (AppSetting.PopOutSetting.AutoPanning.IsEnabled)
             {
-                InputEmulationManager.SaveCustomView(AppSetting.PopOutSetting.AutoPanning.KeyBinding);
-
                 // If using windows mode, save MSFS game window configuration
                 if (_appSettingData.ApplicationSetting.WindowedModeSetting.AutoResizeMsfsGameWindow)
                     _profileData.SaveMsfsGameWindowConfig();
+
+                InputEmulationManager.SaveCustomView(AppSetting.PopOutSetting.AutoPanning.KeyBinding);
             }
 
             await Task.Run(() =>
             {
+                Thread.Sleep(500);  // wait for custom view save to be completed
+
                 // Recenter game or return to after pop out camera view
                 if (!AppSetting.PopOutSetting.AfterPopOutCameraView.IsEnabled)
                 {
-                    InputEmulationManager.CenterView();
+                    FlightSimOrchestrator.ResetCameraView();
+                    Thread.Sleep(500);
                     SetCockpitZoomLevel(_prePanelConfigurationCockpitZoomLevel);
                 }
                 else
@@ -108,7 +111,8 @@ namespace MSFSPopoutPanelManager.Orchestration
                     switch (AppSetting.PopOutSetting.AfterPopOutCameraView.CameraView)
                     {
                         case AfterPopOutCameraViewType.CockpitCenterView:
-                            InputEmulationManager.CenterView();
+                            FlightSimOrchestrator.ResetCameraView();
+                            Thread.Sleep(500);
                             SetCockpitZoomLevel(_prePanelConfigurationCockpitZoomLevel);
                             break;
                         case AfterPopOutCameraViewType.CustomCameraView:
@@ -121,7 +125,7 @@ namespace MSFSPopoutPanelManager.Orchestration
                 WindowActionManager.BringWindowToForeground(ApplicationHandle);
 
                 // Turn TrackIR back on
-                FlightSimOrchestrator.TurnOnTrackIR(false);
+                FlightSimOrchestrator.TurnOnTrackIR();
             });
         }
 

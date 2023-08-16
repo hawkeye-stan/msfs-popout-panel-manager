@@ -5,6 +5,7 @@
         Info,
         Success,
         Failure,
+        Executing,
         Error,
         Debug
     }

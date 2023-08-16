@@ -46,6 +46,9 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
                     case StatusMessageType.Failure:
                         run.Foreground = new SolidColorBrush(Colors.IndianRed);
                         break;
+                    case StatusMessageType.Executing:
+                        run.Foreground = new SolidColorBrush(Colors.Yellow);
+                        break;
                     case StatusMessageType.Info:
                         break;
                 }

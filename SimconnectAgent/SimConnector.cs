@@ -192,6 +192,9 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
                     case WriteableVariableName.CockpitCameraZoom:
                         _simConnect.SetDataOnSimObject(DATA_DEFINITION.WRITEABLE_COCKPITCAMERAZOOM_DEFINITION, SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_DATA_SET_FLAG.DEFAULT, dataStruct);
                         break;
+                    case WriteableVariableName.CameraRequestAction:
+                        _simConnect.SetDataOnSimObject(DATA_DEFINITION.WRITEABLE_CAMERAREQUESTACTION_DEFINITION, SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_DATA_SET_FLAG.DEFAULT, dataStruct);
+                        break;
                 }
             }
             catch (Exception ex)
@@ -309,6 +312,7 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
 
             _simConnect.AddToDataDefinition(DATA_DEFINITION.WRITEABLE_TRACKIR_DEFINITION, "TRACK IR ENABLE", "bool", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
             _simConnect.AddToDataDefinition(DATA_DEFINITION.WRITEABLE_COCKPITCAMERAZOOM_DEFINITION, "COCKPIT CAMERA ZOOM", "percentage", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+            _simConnect.AddToDataDefinition(DATA_DEFINITION.WRITEABLE_CAMERAREQUESTACTION_DEFINITION, "CAMERA REQUEST ACTION", "enum", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
 
             _simConnect.RegisterDataDefineStruct<SimConnectStruct>(DATA_DEFINITION.REQUIRED_DEFINITION);
             _simConnect.RegisterDataDefineStruct<SimConnectStruct>(DATA_DEFINITION.WRITEABLE_TRACKIR_DEFINITION);

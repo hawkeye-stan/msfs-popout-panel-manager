@@ -94,7 +94,8 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
         public enum WriteableVariableName
         {
             TrackIREnable,
-            CockpitCameraZoom
+            CockpitCameraZoom,
+            CameraRequestAction
         }
     }
 

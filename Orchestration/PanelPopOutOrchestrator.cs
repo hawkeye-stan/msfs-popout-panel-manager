@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 
 namespace MSFSPopoutPanelManager.Orchestration
 {
@@ -86,7 +87,7 @@ namespace MSFSPopoutPanelManager.Orchestration
 
             StatusMessageWriter.IsEnabled = true;
             StatusMessageWriter.ClearMessage();
-            StatusMessageWriter.WriteMessageNewLine("Pop out in progress. Please refrain from moving your mouse.", StatusMessageType.Info);
+            StatusMessageWriter.WriteMessageWithNewLine("Pop out in progress. Please refrain from moving your mouse.", StatusMessageType.Info);
 
             StepPopoutPrep();
 
@@ -141,10 +142,11 @@ namespace MSFSPopoutPanelManager.Orchestration
                 // Set Windowed Display Mode window's configuration if needed
                 if (_appSettingData.ApplicationSetting.WindowedModeSetting.AutoResizeMsfsGameWindow && WindowActionManager.IsMsfsGameInWindowedMode())
                 {
-                    StatusMessageWriter.WriteMessage("Moving and resizing MSFS game window", StatusMessageType.Info);
-                    WindowActionManager.SetMsfsGameWindowLocation(ActiveProfile.MsfsGameWindowConfig);
-                    Thread.Sleep(500);
-                    StatusMessageWriter.WriteOkStatusMessage();
+                    WorkflowStepWithMessage.Execute("Moving and resizing MSFS game window", () =>
+                    {
+                        WindowActionManager.SetMsfsGameWindowLocation(ActiveProfile.MsfsGameWindowConfig);
+                        Thread.Sleep(1000);
+                    }); 
                 }
 
                 // Turn on power and avionics if required to pop out panels at least one (fix Cessna 208b grand caravan mod bug where battery is reported as on)
@@ -163,13 +165,28 @@ namespace MSFSPopoutPanelManager.Orchestration
                 // Setting custom camera angle for auto panning
                 if (AppSetting.PopOutSetting.AutoPanning.IsEnabled)
                 {
-                    StatusMessageWriter.WriteMessage("Setting auto panning camera angle", StatusMessageType.Info);
+                    StatusMessageWriter.WriteMessageWithNewLine("Setting auto panning camera view", StatusMessageType.Info);
                     
                     // Remember current game's zoom level to be recall after pop out
                     _prePopOutCockpitZoomLevel = _flightSimData.CockpitCameraZoom;
-                    LoadCustomView(AppSetting.PopOutSetting.AutoPanning.KeyBinding);
-                    SetCockpitZoomLevel(50);
-                    StatusMessageWriter.WriteOkStatusMessage();
+
+                    WorkflowStepWithMessage.Execute("Resetting camera view", () =>
+                    {
+                        ResetCockpitView();
+                        Thread.Sleep(2000);
+                    }, true);
+
+                    WorkflowStepWithMessage.Execute("Loading custom camera view", () =>
+                    {
+                        LoadCustomView(AppSetting.PopOutSetting.AutoPanning.KeyBinding);
+                        Thread.Sleep(2000);
+                    }, true);
+
+
+                    WorkflowStepWithMessage.Execute("Setting camera zoom level", () =>
+                    {
+                        SetCockpitZoomLevel(50);
+                    }, true);
                 }
             });
         }
@@ -181,25 +198,29 @@ namespace MSFSPopoutPanelManager.Orchestration
                 // Save current application location to restore it after pop out
                 var appLocation = WindowActionManager.GetWindowRectangle(WindowProcessManager.GetApplicationProcess().Handle);
 
+                if(ActiveProfile.PanelConfigs.Count > 0)
+                    StatusMessageWriter.WriteMessageWithNewLine("Popping out user defined panels", StatusMessageType.Info);
+
                 int index = 0;
                 foreach (var panelConfig in ActiveProfile.PanelConfigs)
                 {
                     if (panelConfig.PanelType == PanelType.CustomPopout)
                     {
-                        StatusMessageWriter.WriteMessage($"Popping out panel '{panelConfig.PanelName}'", StatusMessageType.Info);
+                        WorkflowStepWithMessage.Execute(panelConfig.PanelName, () =>
+                            {
+                                panelConfig.IsSelectedPanelSource = true;
+                                //PanelSourceOrchestrator.ShowPanelSourceNonEdit(panelConfig);
+                                //Thread.Sleep(500);
+                                //PanelSourceOrchestrator.ClosePanelSourceNonEdit(panelConfig);
+                                ExecuteCustomPopout(panelConfig, builtInPanelHandles, index++);
+                                ApplyPanelLocation(panelConfig);
+                                panelConfig.IsSelectedPanelSource = false;
 
-                        panelConfig.IsSelectedPanelSource = true;
-                        //PanelSourceOrchestrator.ShowPanelSourceNonEdit(panelConfig);
-                        //Thread.Sleep(500);
-                        //PanelSourceOrchestrator.ClosePanelSourceNonEdit(panelConfig);
-                        ExecuteCustomPopout(panelConfig, builtInPanelHandles, index++);
-                        ApplyPanelLocation(panelConfig);
-                        panelConfig.IsSelectedPanelSource = false;
-
-                        if (panelConfig.IsPopOutSuccess != null && !(bool)panelConfig.IsPopOutSuccess)
-                            StatusMessageWriter.WriteFailureStatusMessage();
-                        else
-                            StatusMessageWriter.WriteOkStatusMessage();
+                                if (panelConfig.IsPopOutSuccess != null && !(bool)panelConfig.IsPopOutSuccess)
+                                    return false;
+                                else
+                                    return true;
+                            }, true);
                     }
                 }
 
@@ -225,10 +246,7 @@ namespace MSFSPopoutPanelManager.Orchestration
                 FlightSimOrchestrator.TurnOffActivePause();
 
                 // Return to custom camera view if set
-                var task = Task.Run(() => {
-                    //SetCockpitZoomLevel(_prePopOutCockpitZoomLevel);
-                    ReturnToAfterPopOutCameraView();
-                });
+                ReturnToAfterPopOutCameraView();
             });
         }
 
@@ -236,57 +254,64 @@ namespace MSFSPopoutPanelManager.Orchestration
         {
             if (ActiveProfile.ProfileSetting.IncludeInGamePanels)
             {
-                var builtInPanels = new List<PanelConfig>();
-
-                StatusMessageWriter.WriteMessage("Configuring built-in panel", StatusMessageType.Info);
-
-                foreach (var panelHandle in builtInPanelHandles)
+                WorkflowStepWithMessage.Execute("Configuring built-in panel", () =>
                 {
-                    var panelCaption = WindowActionManager.GetWindowCaption(panelHandle);
-                    var panelConfig = ActiveProfile.PanelConfigs.FirstOrDefault(p => p.PanelName == panelCaption);
-
-                    if (panelConfig == null)
+                    int count = 0;
+                    while (builtInPanelHandles.Count == 0 && count < 5)
                     {
-                        if (!ActiveProfile.IsLocked)
-                        {
-                            var rectangle = WindowActionManager.GetWindowRectangle(panelHandle);
-                            panelConfig = new PanelConfig()
-                            {
-                                PanelHandle = panelHandle,
-                                PanelType = PanelType.BuiltInPopout,
-                                PanelName = panelCaption,
-                                Top = rectangle.Top,
-                                Left = rectangle.Left,
-                                Width = rectangle.Width,
-                                Height = rectangle.Height,
-                                AutoGameRefocus = false
-                            };
+                        builtInPanelHandles = WindowActionManager.GetWindowsByPanelType(new List<PanelType>() { PanelType.BuiltInPopout });
+                    }
 
-                            ActiveProfile.PanelConfigs.Add(panelConfig);
+                    var builtInPanels = new List<PanelConfig>();
+
+                    foreach (var panelHandle in builtInPanelHandles)
+                    {
+                        var panelCaption = WindowActionManager.GetWindowCaption(panelHandle);
+                        var panelConfig = ActiveProfile.PanelConfigs.FirstOrDefault(p => p.PanelName == panelCaption);
+
+                        if (panelConfig == null)
+                        {
+                            if (!ActiveProfile.IsLocked)
+                            {
+                                var rectangle = WindowActionManager.GetWindowRectangle(panelHandle);
+                                panelConfig = new PanelConfig()
+                                {
+                                    PanelHandle = panelHandle,
+                                    PanelType = PanelType.BuiltInPopout,
+                                    PanelName = panelCaption,
+                                    Top = rectangle.Top,
+                                    Left = rectangle.Left,
+                                    Width = rectangle.Width,
+                                    Height = rectangle.Height,
+                                    AutoGameRefocus = false
+                                };
+
+                                ActiveProfile.PanelConfigs.Add(panelConfig);
+                            }
+                        }
+                        else
+                        {
+                            panelConfig.PanelHandle = panelHandle;
+
+                            // Need to do it twice for MSFS to take this setting (MSFS bug)
+                            ApplyPanelLocation(panelConfig);
+                            ApplyPanelLocation(panelConfig);
                         }
                     }
-                    else
+
+                    // Set handles for missing built-in panels
+                    foreach (var panelConfig in ActiveProfile.PanelConfigs)
                     {
-                        panelConfig.PanelHandle = panelHandle;
-
-                        // Need to do it twice for MSFS to take this setting (MSFS bug)
-                        ApplyPanelLocation(panelConfig);
-                        ApplyPanelLocation(panelConfig);
+                        if (panelConfig.PanelType == PanelType.BuiltInPopout && panelConfig.PanelHandle == IntPtr.MaxValue)
+                            panelConfig.PanelHandle = IntPtr.Zero;
                     }
-                }
 
-                // Set handles for missing built-in panels
-                foreach (var panelConfig in ActiveProfile.PanelConfigs)
-                {
-                    if (panelConfig.PanelType == PanelType.BuiltInPopout && panelConfig.PanelHandle == IntPtr.MaxValue)
-                        panelConfig.PanelHandle = IntPtr.Zero;
-                }
-
-                if (ActiveProfile.PanelConfigs.Any(p => p.PanelType == PanelType.BuiltInPopout && p.IsPopOutSuccess != null && !(bool)p.IsPopOutSuccess) ||
-                    ActiveProfile.PanelConfigs.Count(p => p.PanelType == PanelType.BuiltInPopout) == 0)
-                    StatusMessageWriter.WriteFailureStatusMessage();
-                else
-                    StatusMessageWriter.WriteOkStatusMessage();
+                    if (ActiveProfile.PanelConfigs.Any(p => p.PanelType == PanelType.BuiltInPopout && p.IsPopOutSuccess != null && !(bool)p.IsPopOutSuccess) ||
+                        ActiveProfile.PanelConfigs.Count(p => p.PanelType == PanelType.BuiltInPopout) == 0)
+                        return false;
+                    else
+                        return true;
+                });
             }
         }
 
@@ -295,13 +320,11 @@ namespace MSFSPopoutPanelManager.Orchestration
             if (!ActiveProfile.ProfileSetting.HudBarConfig.IsEnabled)
                 return;
 
-            StatusMessageWriter.WriteMessage("Opening HUD Bar", StatusMessageType.Info);
-
-            var panelConfig = ActiveProfile.PanelConfigs.FirstOrDefault(p => p.PanelType == PanelType.HudBarWindow);
-
-            OnHudBarOpened?.Invoke(this, panelConfig);
-
-            StatusMessageWriter.WriteOkStatusMessage();
+            WorkflowStepWithMessage.Execute("Opening HUD Bar", () =>
+            {
+                var panelConfig = ActiveProfile.PanelConfigs.FirstOrDefault(p => p.PanelType == PanelType.HudBarWindow);
+                OnHudBarOpened?.Invoke(this, panelConfig);
+            });
         }
 
         public void SetupRefocusDisplay()
@@ -309,13 +332,21 @@ namespace MSFSPopoutPanelManager.Orchestration
             if (!ActiveProfile.ProfileSetting.RefocusOnDisplay.IsEnabled)
                 return;
 
-            foreach (var panelConfig in ActiveProfile.PanelConfigs.Where(p => p.PanelType == PanelType.RefocusDisplay))
+            var panelConfigs = ActiveProfile.PanelConfigs.Where(p => p.PanelType == PanelType.RefocusDisplay);
+
+            if (panelConfigs.Count() == 0)
+                return;
+
+            StatusMessageWriter.WriteMessageWithNewLine("Configurating panels for auto refocus on touch", StatusMessageType.Info);
+
+            foreach (var panelConfig in panelConfigs)
             {
                 if (panelConfig != null)
                 {
-                    StatusMessageWriter.WriteMessage($"Configurating {panelConfig.PanelName} for auto refocus on touch", StatusMessageType.Info);
-                    panelConfig.PanelHandle = new IntPtr(1);
-                    StatusMessageWriter.WriteOkStatusMessage();
+                    WorkflowStepWithMessage.Execute(panelConfig.PanelName, () =>
+                    {
+                        panelConfig.PanelHandle = new IntPtr(1);
+                    }, true);
                 }
             }
         }
@@ -349,9 +380,9 @@ namespace MSFSPopoutPanelManager.Orchestration
                 PanelConfigurationOrchestrator.StartTouchHook();
 
                 if (CheckForPopOutError())
-                    StatusMessageWriter.WriteMessageNewLine("Pop out has been completed with error.", StatusMessageType.Info, 10);
+                    StatusMessageWriter.WriteMessageWithNewLine("Pop out has been completed with error.", StatusMessageType.Info);
                 else
-                    StatusMessageWriter.WriteMessageNewLine("Pop out has been completed successfully.", StatusMessageType.Info, 10);
+                    StatusMessageWriter.WriteMessageWithNewLine("Pop out has been completed successfully.", StatusMessageType.Info);
 
                 Thread.Sleep(1000);
                 OnPopOutCompleted?.Invoke(this, null);
@@ -461,15 +492,41 @@ namespace MSFSPopoutPanelManager.Orchestration
             if (!AppSetting.PopOutSetting.AfterPopOutCameraView.IsEnabled)
                 return;
 
+            StatusMessageWriter.WriteMessageWithNewLine("Applying cockpit view after pop out", StatusMessageType.Info);
+
             switch (AppSetting.PopOutSetting.AfterPopOutCameraView.CameraView)
             {
                 case AfterPopOutCameraViewType.CockpitCenterView:
-                    InputEmulationManager.CenterView();
-                    SetCockpitZoomLevel(_prePopOutCockpitZoomLevel);
+                    WorkflowStepWithMessage.Execute("Resetting camera view", () =>
+                    {
+                        ResetCockpitView();
+                        Thread.Sleep(1000);
+                    }, true);
+
+                    WorkflowStepWithMessage.Execute("Setting camera zoom level", () =>
+                    {
+                        SetCockpitZoomLevel(_prePopOutCockpitZoomLevel);
+                    }, true);
+
                     break;
                 case AfterPopOutCameraViewType.CustomCameraView:
-                    LoadCustomView(AppSetting.PopOutSetting.AfterPopOutCameraView.KeyBinding);
-                    SetCockpitZoomLevel(_prePopOutCockpitZoomLevel);
+                    WorkflowStepWithMessage.Execute("Resetting camera view", () =>
+                    {
+                        ResetCockpitView();
+                        Thread.Sleep(1000);
+                    }, true);
+
+                    WorkflowStepWithMessage.Execute("Loading custom camera view", () =>
+                    {
+                        LoadCustomView(AppSetting.PopOutSetting.AfterPopOutCameraView.KeyBinding);
+                        Thread.Sleep(1000);
+                    }, true);
+
+                    WorkflowStepWithMessage.Execute("Setting camera zoom level", () =>
+                    {
+                        SetCockpitZoomLevel(_prePopOutCockpitZoomLevel);
+                    }, true);
+
                     break;
             }
         }
@@ -479,13 +536,25 @@ namespace MSFSPopoutPanelManager.Orchestration
             return ActiveProfile.PanelConfigs.Count(p => p.IsPopOutSuccess != null && (bool)p.IsPopOutSuccess) != ActiveProfile.PanelConfigs.Count(p => p.IsPopOutSuccess != null);
         }
 
+        private void ResetCockpitView()
+        {
+            int retry = 10;
+            for (var i = 0; i < retry; i++)
+            {
+                FlightSimOrchestrator.ResetCameraView();
+                Thread.Sleep(1000);  // wait for flightsimdata to be updated
+                if (_flightSimData.CameraViewTypeAndIndex1 == 0)    // 0 = reset view
+                    break;
+            }
+        }
+
         private void LoadCustomView(string keybinding)
         {
             int retry = 20;
             for(var i = 0; i < retry; i++) 
             {
                 InputEmulationManager.LoadCustomView(keybinding);
-                Thread.Sleep(750);  // wait for flightsimdata to be updated
+                Thread.Sleep(1000);  // wait for flightsimdata to be updated
                 if (_flightSimData.CameraViewTypeAndIndex1 == 7)    // 7 = custom camera view enum
                     break;
             }
@@ -497,7 +566,7 @@ namespace MSFSPopoutPanelManager.Orchestration
             for (var i = 0; i < retry; i++)
             {
                 FlightSimOrchestrator.SetCockpitCameraZoomLevel(zoom);
-                Thread.Sleep(500);  // wait for flightsimdata to be updated
+                Thread.Sleep(1000);  // wait for flightsimdata to be updated
 
                 if (_flightSimData.CockpitCameraZoom == zoom) 
                     break;
