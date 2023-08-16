@@ -88,6 +88,9 @@ namespace MSFSPopoutPanelManager.Orchestration
             // Save last auto panning camera angle
             if (AppSetting.PopOutSetting.AutoPanning.IsEnabled)
             {
+                // !!! Fix MSFS bug that without setting zoom, everything will be off by few pixels
+                FlightSimOrchestrator.SetCockpitCameraZoomLevel(_flightSimData.CockpitCameraZoom);
+
                 // If using windows mode, save MSFS game window configuration
                 if (_appSettingData.ApplicationSetting.WindowedModeSetting.AutoResizeMsfsGameWindow)
                     _profileData.SaveMsfsGameWindowConfig();
@@ -103,7 +106,6 @@ namespace MSFSPopoutPanelManager.Orchestration
                 if (!AppSetting.PopOutSetting.AfterPopOutCameraView.IsEnabled)
                 {
                     FlightSimOrchestrator.ResetCameraView();
-                    Thread.Sleep(500);
                     SetCockpitZoomLevel(_prePanelConfigurationCockpitZoomLevel);
                 }
                 else
@@ -112,7 +114,6 @@ namespace MSFSPopoutPanelManager.Orchestration
                     {
                         case AfterPopOutCameraViewType.CockpitCenterView:
                             FlightSimOrchestrator.ResetCameraView();
-                            Thread.Sleep(500);
                             SetCockpitZoomLevel(_prePanelConfigurationCockpitZoomLevel);
                             break;
                         case AfterPopOutCameraViewType.CustomCameraView:
@@ -179,7 +180,6 @@ namespace MSFSPopoutPanelManager.Orchestration
         {
             // Disable hooks if active
             InputHookManager.EndMouseHook();
-            //InputHookManager.EndKeyboardHook();
 
             _profileData.ActiveProfile.CurrentMoveResizePanelId = Guid.Empty;
 
@@ -206,7 +206,7 @@ namespace MSFSPopoutPanelManager.Orchestration
             for (var i = 0; i < retry; i++)
             {
                 FlightSimOrchestrator.SetCockpitCameraZoomLevel(zoom);
-                Thread.Sleep(500);  // wait for flightsimdata to be updated
+                Thread.Sleep(750);  // wait for flightsimdata to be updated
 
                 if (_flightSimData.CockpitCameraZoom == zoom)
                     break;

@@ -8,12 +8,14 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Input;
 
 namespace MSFSPopoutPanelManager.Orchestration
 {
     public class PanelPopOutOrchestrator : ObservableObject
     {
+        // This will be replaced by a signal from Ready to Fly Skipper into webserver in version 4.0
+        private const int READY_TO_FLY_BUTTON_APPEARANCE_DELAY = 2000;
+
         private ProfileData _profileData;
         private AppSettingData _appSettingData;
         private FlightSimData _flightSimData;
@@ -74,6 +76,8 @@ namespace MSFSPopoutPanelManager.Orchestration
                     
                     return;
 
+                await StepReadyToFlyDelay(true);
+
                 await CoreSteps(true);
             });
         }
@@ -123,6 +127,28 @@ namespace MSFSPopoutPanelManager.Orchestration
             PanelSourceOrchestrator.CloseAllPanelSource();
         }
 
+        private async Task StepReadyToFlyDelay(bool isAutoPopOut)
+        {
+            if (!isAutoPopOut)
+                return;
+
+            if (AppSetting.AutoPopOutSetting.ReadyToFlyDelay == 0)
+                return;
+
+            await Task.Run(() =>
+            {
+                WorkflowStepWithMessage.Execute("Waiting on ready to fly button delay", () =>
+                {
+                    // Ready to fly button plugin default delay
+                    Thread.Sleep(READY_TO_FLY_BUTTON_APPEARANCE_DELAY);
+
+                    // Extra wait for cockpit view to appear and align
+                    Thread.Sleep(AppSetting.AutoPopOutSetting.ReadyToFlyDelay * 1000);
+                });
+            });
+        }
+
+
         private async Task StepAddCutomPanels(List<IntPtr> builtInPanelHandles)
         {
             if (!ActiveProfile.HasCustomPanels)
@@ -158,9 +184,11 @@ namespace MSFSPopoutPanelManager.Orchestration
 
                 // Turn off TrackIR if TrackIR is started
                 FlightSimOrchestrator.TurnOffTrackIR();
+                Thread.Sleep(500);
 
                 // Turn on Active Pause
                 FlightSimOrchestrator.TurnOnActivePause();
+                Thread.Sleep(500);
 
                 // Setting custom camera angle for auto panning
                 if (AppSetting.PopOutSetting.AutoPanning.IsEnabled)
@@ -181,7 +209,6 @@ namespace MSFSPopoutPanelManager.Orchestration
                         LoadCustomView(AppSetting.PopOutSetting.AutoPanning.KeyBinding);
                         Thread.Sleep(2000);
                     }, true);
-
 
                     WorkflowStepWithMessage.Execute("Setting camera zoom level", () =>
                     {
@@ -241,9 +268,11 @@ namespace MSFSPopoutPanelManager.Orchestration
 
                 // Turn TrackIR back on
                 FlightSimOrchestrator.TurnOnTrackIR();
+                Thread.Sleep(500);
 
                 // Turn on Active Pause
                 FlightSimOrchestrator.TurnOffActivePause();
+                Thread.Sleep(500);
 
                 // Return to custom camera view if set
                 ReturnToAfterPopOutCameraView();

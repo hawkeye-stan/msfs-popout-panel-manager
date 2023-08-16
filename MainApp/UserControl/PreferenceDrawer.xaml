@@ -218,6 +218,30 @@
                             </TextBlock>
                         </StackPanel>
                     </WrapPanel>
+                    <WrapPanel Margin="0,0,20,20" Orientation="Vertical">
+                        <TextBlock Style="{StaticResource TextBlockHeading}">Ready to Fly Button Delay</TextBlock>
+                        <Line
+                            Stretch="Fill"
+                            Stroke="Gray"
+                            X2="1" />
+                        <StackPanel Orientation="Horizontal">
+                            <localcontrol:NumericUpDown
+                                Width="90"
+                                Height="24"
+                                FontSize="12"
+                                Increment="1"
+                                MaxValue="10"
+                                MinValue="0"
+                                Value="{Binding AppSettingData.ApplicationSetting.AutoPopOutSetting.ReadyToFlyDelay, Mode=TwoWay}" />
+                            <TextBlock
+                                Width="640"
+                                Margin="10,0,0,0"
+                                Style="{StaticResource TextBlockLabel}"
+                                TextWrapping="Wrap">
+                                Amount of time in seconds to delay auto pop out panels from starting after ready to fly button has been pressed automatically. Extending this delay helps resolve auto pop out failure because cockpit has not been loaded completely yet on slower PC.
+                            </TextBlock>
+                        </StackPanel>
+                    </WrapPanel>
                 </WrapPanel>
 
                 <!--  Pop Out Settings  -->

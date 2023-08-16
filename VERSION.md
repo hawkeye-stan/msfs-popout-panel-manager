@@ -2,7 +2,7 @@
 <hr/>
 
 ## Version 4.0.2
-* Added new logic to detect when flight session is ready to initiate pop out process for auto pop out panel. Ready to Fly button delay setting is no longer needed. 
+* Added new logic to detect when flight session is ready to initiate pop out process for auto pop out panel.
 
 * Updated logic to load custom camera view when performing pop out. The new logic is more reliable but unfornately will be a little slower because MSFS AAU2 may have introduced issue in loading and saving camera view. Pop out progress messages will show steps being taken when adjusting camera view.
 
