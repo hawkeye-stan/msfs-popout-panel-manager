@@ -19,6 +19,7 @@ namespace MSFSPopoutPanelManager.DomainModel.Profile
             PanelConfigs = new ObservableCollection<PanelConfig>();
             ProfileSetting = new ProfileSetting();
             MsfsGameWindowConfig = new MsfsGameWindowConfig();
+            HomeCockpitModeZoomFactor = 50;
 
             this.PropertyChanged += (sender, e) =>
             {
@@ -73,6 +74,8 @@ namespace MSFSPopoutPanelManager.DomainModel.Profile
         public ProfileSetting ProfileSetting { get; set; }
 
         public MsfsGameWindowConfig MsfsGameWindowConfig { get; set; }
+
+        public int HomeCockpitModeZoomFactor { get; set; }
 
         public int CompareTo(UserProfile other)
         {

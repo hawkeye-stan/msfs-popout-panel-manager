@@ -7,7 +7,7 @@ namespace MSFSPopoutPanelManager.DomainModel.Setting
         public KeyboardShortcutSetting()
         {
             IsEnabled = true;
-            StartPopOutKeyBinding = "P";
+            StartPopOutKeyBinding = "O";
         }
 
         public bool IsEnabled { get; set; }

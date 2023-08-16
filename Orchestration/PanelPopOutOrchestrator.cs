@@ -15,6 +15,8 @@ namespace MSFSPopoutPanelManager.Orchestration
     {
         // This will be replaced by a signal from Ready to Fly Skipper into webserver in version 4.0
         private const int READY_TO_FLY_BUTTON_APPEARANCE_DELAY = 2000;
+        private const int CAMERA_VIEW_HOME_COCKPIT_MODE = 8;
+        private const int CAMERA_VIEW_CUSTOM_CAMERA = 7;
 
         private ProfileData _profileData;
         private AppSettingData _appSettingData;
@@ -110,6 +112,8 @@ namespace MSFSPopoutPanelManager.Orchestration
 
             await StepPostPopout();
 
+            OnPopOutCompleted?.Invoke(this, null);
+
             StatusMessageWriter.IsEnabled = false;
         }
 
@@ -194,26 +198,33 @@ namespace MSFSPopoutPanelManager.Orchestration
                 if (AppSetting.PopOutSetting.AutoPanning.IsEnabled)
                 {
                     StatusMessageWriter.WriteMessageWithNewLine("Setting auto panning camera view", StatusMessageType.Info);
-                    
-                    // Remember current game's zoom level to be recall after pop out
-                    _prePopOutCockpitZoomLevel = _flightSimData.CockpitCameraZoom;
-
-                    WorkflowStepWithMessage.Execute("Resetting camera view", () =>
+                   
+                    if (_flightSimData.CameraViewTypeAndIndex1 == CAMERA_VIEW_HOME_COCKPIT_MODE)
                     {
-                        ResetCockpitView();
-                        Thread.Sleep(2000);
-                    }, true);
-
-                    WorkflowStepWithMessage.Execute("Loading custom camera view", () =>
+                        SetCockpitZoomLevel(_profileData.ActiveProfile.HomeCockpitModeZoomFactor);
+                    }
+                    else 
                     {
-                        LoadCustomView(AppSetting.PopOutSetting.AutoPanning.KeyBinding);
-                        Thread.Sleep(2000);
-                    }, true);
+                        // Remember current game's zoom level to be recall after pop out
+                        _prePopOutCockpitZoomLevel = _flightSimData.CockpitCameraZoom;
 
-                    WorkflowStepWithMessage.Execute("Setting camera zoom level", () =>
-                    {
-                        SetCockpitZoomLevel(50);
-                    }, true);
+                        WorkflowStepWithMessage.Execute("Resetting camera view", () =>
+                        {
+                            ResetCockpitView();
+                            Thread.Sleep(2000);
+                        }, true);
+
+                        WorkflowStepWithMessage.Execute("Loading custom camera view", () =>
+                        {
+                            LoadCustomView(AppSetting.PopOutSetting.AutoPanning.KeyBinding);
+                            Thread.Sleep(2000);
+                        }, true);
+
+                        WorkflowStepWithMessage.Execute("Setting camera zoom level", () =>
+                        {
+                            SetCockpitZoomLevel(50);
+                        }, true);
+                    }
                 }
             });
         }
@@ -412,9 +423,6 @@ namespace MSFSPopoutPanelManager.Orchestration
                     StatusMessageWriter.WriteMessageWithNewLine("Pop out has been completed with error.", StatusMessageType.Info);
                 else
                     StatusMessageWriter.WriteMessageWithNewLine("Pop out has been completed successfully.", StatusMessageType.Info);
-
-                Thread.Sleep(1000);
-                OnPopOutCompleted?.Invoke(this, null);
             });
         }
 
@@ -523,40 +531,47 @@ namespace MSFSPopoutPanelManager.Orchestration
 
             StatusMessageWriter.WriteMessageWithNewLine("Applying cockpit view after pop out", StatusMessageType.Info);
 
-            switch (AppSetting.PopOutSetting.AfterPopOutCameraView.CameraView)
+            if (_flightSimData.CameraViewTypeAndIndex1 == CAMERA_VIEW_HOME_COCKPIT_MODE)
             {
-                case AfterPopOutCameraViewType.CockpitCenterView:
-                    WorkflowStepWithMessage.Execute("Resetting camera view", () =>
-                    {
-                        ResetCockpitView();
-                        Thread.Sleep(1000);
-                    }, true);
+                FlightSimOrchestrator.ResetCameraView();
+            }
+            else
+            {
+                switch (AppSetting.PopOutSetting.AfterPopOutCameraView.CameraView)
+                {
+                    case AfterPopOutCameraViewType.CockpitCenterView:
+                        WorkflowStepWithMessage.Execute("Resetting camera view", () =>
+                        {
+                            ResetCockpitView();
+                            Thread.Sleep(1000);
+                        }, true);
 
-                    WorkflowStepWithMessage.Execute("Setting camera zoom level", () =>
-                    {
-                        SetCockpitZoomLevel(_prePopOutCockpitZoomLevel);
-                    }, true);
+                        WorkflowStepWithMessage.Execute("Setting camera zoom level", () =>
+                        {
+                            SetCockpitZoomLevel(_prePopOutCockpitZoomLevel);
+                        }, true);
 
-                    break;
-                case AfterPopOutCameraViewType.CustomCameraView:
-                    WorkflowStepWithMessage.Execute("Resetting camera view", () =>
-                    {
-                        ResetCockpitView();
-                        Thread.Sleep(1000);
-                    }, true);
+                        break;
+                    case AfterPopOutCameraViewType.CustomCameraView:
+                        WorkflowStepWithMessage.Execute("Resetting camera view", () =>
+                        {
+                            ResetCockpitView();
+                            Thread.Sleep(1000);
+                        }, true);
 
-                    WorkflowStepWithMessage.Execute("Loading custom camera view", () =>
-                    {
-                        LoadCustomView(AppSetting.PopOutSetting.AfterPopOutCameraView.KeyBinding);
-                        Thread.Sleep(1000);
-                    }, true);
+                        WorkflowStepWithMessage.Execute("Loading custom camera view", () =>
+                        {
+                            LoadCustomView(AppSetting.PopOutSetting.AfterPopOutCameraView.KeyBinding);
+                            Thread.Sleep(1000);
+                        }, true);
 
-                    WorkflowStepWithMessage.Execute("Setting camera zoom level", () =>
-                    {
-                        SetCockpitZoomLevel(_prePopOutCockpitZoomLevel);
-                    }, true);
+                        WorkflowStepWithMessage.Execute("Setting camera zoom level", () =>
+                        {
+                            SetCockpitZoomLevel(_prePopOutCockpitZoomLevel);
+                        }, true);
 
-                    break;
+                        break;
+                }
             }
         }
 
@@ -583,8 +598,8 @@ namespace MSFSPopoutPanelManager.Orchestration
             for(var i = 0; i < retry; i++) 
             {
                 InputEmulationManager.LoadCustomView(keybinding);
-                Thread.Sleep(1000);  // wait for flightsimdata to be updated
-                if (_flightSimData.CameraViewTypeAndIndex1 == 7)    // 7 = custom camera view enum
+                Thread.Sleep(750);  // wait for flightsimdata to be updated
+                if (_flightSimData.CameraViewTypeAndIndex1 == CAMERA_VIEW_CUSTOM_CAMERA)    // custom camera view enum
                     break;
             }
         }
@@ -595,7 +610,7 @@ namespace MSFSPopoutPanelManager.Orchestration
             for (var i = 0; i < retry; i++)
             {
                 FlightSimOrchestrator.SetCockpitCameraZoomLevel(zoom);
-                Thread.Sleep(1000);  // wait for flightsimdata to be updated
+                Thread.Sleep(750);  // wait for flightsimdata to be updated
 
                 if (_flightSimData.CockpitCameraZoom == zoom) 
                     break;

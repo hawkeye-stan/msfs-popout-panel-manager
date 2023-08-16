@@ -11,6 +11,9 @@ namespace MSFSPopoutPanelManager.Orchestration
 {
     public class PanelSourceOrchestrator : ObservableObject
     {
+        private const int CAMERA_VIEW_HOME_COCKPIT_MODE = 8;
+        private const int CAMERA_VIEW_CUSTOM_CAMERA = 7;
+
         private ProfileData _profileData;
         private AppSettingData _appSettingData;
         private FlightSimData _flightSimData;
@@ -62,8 +65,17 @@ namespace MSFSPopoutPanelManager.Orchestration
                 if (AppSetting.PopOutSetting.AutoPanning.IsEnabled)
                 {
                     _prePanelConfigurationCockpitZoomLevel = _flightSimData.CockpitCameraZoom;
-                    LoadCustomView(AppSetting.PopOutSetting.AutoPanning.KeyBinding);
-                    SetCockpitZoomLevel(50);
+
+                    if(_flightSimData.CameraViewTypeAndIndex1 == CAMERA_VIEW_HOME_COCKPIT_MODE)
+                    {
+                        FlightSimOrchestrator.SetCockpitCameraZoomLevel(_profileData.ActiveProfile.HomeCockpitModeZoomFactor);
+                    }
+                    else
+                    {
+                        LoadCustomView(AppSetting.PopOutSetting.AutoPanning.KeyBinding);
+                        SetCockpitZoomLevel(50);
+                    }
+                    
                     WindowActionManager.BringWindowToForeground(ApplicationHandle);
                 }
             });
@@ -88,41 +100,55 @@ namespace MSFSPopoutPanelManager.Orchestration
             // Save last auto panning camera angle
             if (AppSetting.PopOutSetting.AutoPanning.IsEnabled)
             {
-                // !!! Fix MSFS bug that without setting zoom, everything will be off by few pixels
-                FlightSimOrchestrator.SetCockpitCameraZoomLevel(_flightSimData.CockpitCameraZoom);
-
                 // If using windows mode, save MSFS game window configuration
                 if (_appSettingData.ApplicationSetting.WindowedModeSetting.AutoResizeMsfsGameWindow)
                     _profileData.SaveMsfsGameWindowConfig();
 
-                InputEmulationManager.SaveCustomView(AppSetting.PopOutSetting.AutoPanning.KeyBinding);
+                if (_flightSimData.CameraViewTypeAndIndex1 == CAMERA_VIEW_HOME_COCKPIT_MODE)
+                {
+                    _profileData.ActiveProfile.HomeCockpitModeZoomFactor = _flightSimData.CockpitCameraZoom;
+                }
+                else
+                {
+                    // !!! Fix MSFS bug that without setting zoom, everything will be off by few pixels
+                    FlightSimOrchestrator.SetCockpitCameraZoomLevel(_flightSimData.CockpitCameraZoom);
+
+                    InputEmulationManager.SaveCustomView(AppSetting.PopOutSetting.AutoPanning.KeyBinding);
+                }
             }
 
             await Task.Run(() =>
             {
                 Thread.Sleep(500);  // wait for custom view save to be completed
 
-                // Recenter game or return to after pop out camera view
-                if (!AppSetting.PopOutSetting.AfterPopOutCameraView.IsEnabled)
+                if (_flightSimData.CameraViewTypeAndIndex1 == CAMERA_VIEW_HOME_COCKPIT_MODE)
                 {
                     FlightSimOrchestrator.ResetCameraView();
-                    SetCockpitZoomLevel(_prePanelConfigurationCockpitZoomLevel);
                 }
                 else
                 {
-                    switch (AppSetting.PopOutSetting.AfterPopOutCameraView.CameraView)
+                    // Recenter game or return to after pop out camera view
+                    if (!AppSetting.PopOutSetting.AfterPopOutCameraView.IsEnabled)
                     {
-                        case AfterPopOutCameraViewType.CockpitCenterView:
-                            FlightSimOrchestrator.ResetCameraView();
-                            SetCockpitZoomLevel(_prePanelConfigurationCockpitZoomLevel);
-                            break;
-                        case AfterPopOutCameraViewType.CustomCameraView:
-                            LoadCustomView(AppSetting.PopOutSetting.AfterPopOutCameraView.KeyBinding);
-                            SetCockpitZoomLevel(_prePanelConfigurationCockpitZoomLevel);
-                            break;
+                        FlightSimOrchestrator.ResetCameraView();
+                        SetCockpitZoomLevel(_prePanelConfigurationCockpitZoomLevel);
+                    }
+                    else
+                    {
+                        switch (AppSetting.PopOutSetting.AfterPopOutCameraView.CameraView)
+                        {
+                            case AfterPopOutCameraViewType.CockpitCenterView:
+                                FlightSimOrchestrator.ResetCameraView();
+                                SetCockpitZoomLevel(_prePanelConfigurationCockpitZoomLevel);
+                                break;
+                            case AfterPopOutCameraViewType.CustomCameraView:
+                                LoadCustomView(AppSetting.PopOutSetting.AfterPopOutCameraView.KeyBinding);
+                                SetCockpitZoomLevel(_prePanelConfigurationCockpitZoomLevel);
+                                break;
+                        }
                     }
                 }
-
+                
                 WindowActionManager.BringWindowToForeground(ApplicationHandle);
 
                 // Turn TrackIR back on
@@ -195,7 +221,7 @@ namespace MSFSPopoutPanelManager.Orchestration
             {
                 InputEmulationManager.LoadCustomView(keybinding);
                 Thread.Sleep(750);  // wait for flightsimdata to be updated
-                if (_flightSimData.CameraViewTypeAndIndex1 == 7)    // 7 = custom camera view enum
+                if (_flightSimData.CameraViewTypeAndIndex1 == CAMERA_VIEW_CUSTOM_CAMERA)    // custom camera view enum
                     break;
             }
         }
