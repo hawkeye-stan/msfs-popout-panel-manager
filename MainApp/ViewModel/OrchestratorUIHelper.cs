@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 
 namespace MSFSPopoutPanelManager.MainApp.ViewModel
 {
@@ -16,6 +17,7 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
         public OrchestratorUIHelper(MainOrchestrator orchestrator) : base(orchestrator)
         {
             Orchestrator.PanelSource.OnOverlayShowed += HandleShowOverlay;
+            Orchestrator.PanelSource.OnNonEditOverlayShowed += HandleShowNonEditOverlay;
             Orchestrator.PanelSource.OnOverlayRemoved += HandleRemoveOverlay;
 
             Orchestrator.PanelPopOut.OnPopOutStarted += HandleOnPopOutStarted;
@@ -25,33 +27,12 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
 
         private void HandleShowOverlay(object? sender, PanelConfig panelConfig)
         {
-            if (panelConfig.PanelType != PanelType.CustomPopout)
-                return;
+            ShowOverlay(panelConfig, false);
+        }
 
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                PanelCoorOverlay overlay = new PanelCoorOverlay(panelConfig.Id);
-                overlay.IsEditingPanelLocation = true;
-                overlay.WindowStartupLocation = WindowStartupLocation.Manual;
-                overlay.SetWindowCoor(Convert.ToInt32(panelConfig.PanelSource.X), Convert.ToInt32(panelConfig.PanelSource.Y));
-                overlay.ShowInTaskbar = false;
-
-                // Fix MS.Win32.UnsafeNativeMethods.GetWindowText exception
-                try { overlay.Show(); } catch { overlay.Show(); }
-
-                overlay.WindowLocationChanged += (sender, e) =>
-                {
-                    if (Orchestrator.ProfileData.ActiveProfile != null)
-                    {
-                        var panelSource = Orchestrator.ProfileData.ActiveProfile.PanelConfigs.FirstOrDefault(p => p.Id == panelConfig.Id);
-                        if (panelSource != null)
-                        {
-                            panelSource.PanelSource.X = e.X;
-                            panelSource.PanelSource.Y = e.Y;
-                        }
-                    }
-                };
-            });
+        private void HandleShowNonEditOverlay(object? sender, PanelConfig panelConfig)
+        {
+            ShowOverlay(panelConfig, true);
         }
 
         private void HandleRemoveOverlay(object? sender, PanelConfig panelConfig)
@@ -124,6 +105,37 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
             });
 
             _minimizeForPopOut = false;
+        }
+
+        private void ShowOverlay(PanelConfig panelConfig, bool nonEdit = false)
+        {
+            if (panelConfig.PanelType != PanelType.CustomPopout)
+                return;
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                PanelCoorOverlay overlay = new PanelCoorOverlay(panelConfig.Id, !nonEdit);
+                overlay.IsEditingPanelLocation = true;
+                overlay.WindowStartupLocation = WindowStartupLocation.Manual;
+                overlay.SetWindowCoor(Convert.ToInt32(panelConfig.PanelSource.X), Convert.ToInt32(panelConfig.PanelSource.Y));
+                overlay.ShowInTaskbar = false;
+
+                // Fix MS.Win32.UnsafeNativeMethods.GetWindowText exception
+                try { overlay.Show(); } catch { overlay.Show(); }
+
+                overlay.WindowLocationChanged += (sender, e) =>
+                {
+                    if (Orchestrator.ProfileData.ActiveProfile != null)
+                    {
+                        var panelSource = Orchestrator.ProfileData.ActiveProfile.PanelConfigs.FirstOrDefault(p => p.Id == panelConfig.Id);
+                        if (panelSource != null)
+                        {
+                            panelSource.PanelSource.X = e.X;
+                            panelSource.PanelSource.Y = e.Y;
+                        }
+                    }
+                };
+            });
         }
     }
 }

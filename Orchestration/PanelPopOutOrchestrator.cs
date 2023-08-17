@@ -201,7 +201,7 @@ namespace MSFSPopoutPanelManager.Orchestration
                    
                     if (_flightSimData.CameraViewTypeAndIndex1 == CAMERA_VIEW_HOME_COCKPIT_MODE)
                     {
-                        SetCockpitZoomLevel(_profileData.ActiveProfile.HomeCockpitModeZoomFactor);
+                        SetCockpitZoomLevel(_profileData.ActiveProfile.PanelSourceCockpitZoomFactor);
                     }
                     else 
                     {
@@ -211,13 +211,13 @@ namespace MSFSPopoutPanelManager.Orchestration
                         WorkflowStepWithMessage.Execute("Resetting camera view", () =>
                         {
                             ResetCockpitView();
-                            Thread.Sleep(2000);
+                            Thread.Sleep(1000);
                         }, true);
 
                         WorkflowStepWithMessage.Execute("Loading custom camera view", () =>
                         {
                             LoadCustomView(AppSetting.PopOutSetting.AutoPanning.KeyBinding);
-                            Thread.Sleep(2000);
+                            Thread.Sleep(1000);
                         }, true);
 
                         WorkflowStepWithMessage.Execute("Setting camera zoom level", () =>
@@ -247,10 +247,9 @@ namespace MSFSPopoutPanelManager.Orchestration
                         WorkflowStepWithMessage.Execute(panelConfig.PanelName, () =>
                             {
                                 panelConfig.IsSelectedPanelSource = true;
-                                //PanelSourceOrchestrator.ShowPanelSourceNonEdit(panelConfig);
-                                //Thread.Sleep(500);
-                                //PanelSourceOrchestrator.ClosePanelSourceNonEdit(panelConfig);
+                                PanelSourceOrchestrator.ShowPanelSourceNonEdit(panelConfig);
                                 ExecuteCustomPopout(panelConfig, builtInPanelHandles, index++);
+                                PanelSourceOrchestrator.ClosePanelSourceNonEdit(panelConfig);
                                 ApplyPanelLocation(panelConfig);
                                 panelConfig.IsSelectedPanelSource = false;
 
@@ -423,6 +422,8 @@ namespace MSFSPopoutPanelManager.Orchestration
                     StatusMessageWriter.WriteMessageWithNewLine("Pop out has been completed with error.", StatusMessageType.Info);
                 else
                     StatusMessageWriter.WriteMessageWithNewLine("Pop out has been completed successfully.", StatusMessageType.Info);
+
+                Thread.Sleep(1000);
             });
         }
 
@@ -594,11 +595,11 @@ namespace MSFSPopoutPanelManager.Orchestration
 
         private void LoadCustomView(string keybinding)
         {
-            int retry = 20;
+            int retry = 10;
             for(var i = 0; i < retry; i++) 
             {
                 InputEmulationManager.LoadCustomView(keybinding);
-                Thread.Sleep(750);  // wait for flightsimdata to be updated
+                Thread.Sleep(1000);  // wait for flightsimdata to be updated
                 if (_flightSimData.CameraViewTypeAndIndex1 == CAMERA_VIEW_CUSTOM_CAMERA)    // custom camera view enum
                     break;
             }
@@ -610,7 +611,7 @@ namespace MSFSPopoutPanelManager.Orchestration
             for (var i = 0; i < retry; i++)
             {
                 FlightSimOrchestrator.SetCockpitCameraZoomLevel(zoom);
-                Thread.Sleep(750);  // wait for flightsimdata to be updated
+                Thread.Sleep(1000);  // wait for flightsimdata to be updated
 
                 if (_flightSimData.CockpitCameraZoom == zoom) 
                     break;

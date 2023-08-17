@@ -37,6 +37,7 @@ namespace MSFSPopoutPanelManager.Orchestration
         private ApplicationSetting AppSetting { get { return _appSettingData == null ? null : _appSettingData.ApplicationSetting; } }
 
         public event EventHandler<PanelConfig> OnOverlayShowed;
+        public event EventHandler<PanelConfig> OnNonEditOverlayShowed;
         public event EventHandler<PanelConfig> OnOverlayRemoved;
         public event EventHandler OnPanelSourceSelectionStarted;
         public event EventHandler OnPanelSourceSelectionCompleted;
@@ -68,7 +69,7 @@ namespace MSFSPopoutPanelManager.Orchestration
 
                     if(_flightSimData.CameraViewTypeAndIndex1 == CAMERA_VIEW_HOME_COCKPIT_MODE)
                     {
-                        FlightSimOrchestrator.SetCockpitCameraZoomLevel(_profileData.ActiveProfile.HomeCockpitModeZoomFactor);
+                        FlightSimOrchestrator.SetCockpitCameraZoomLevel(_profileData.ActiveProfile.PanelSourceCockpitZoomFactor);
                     }
                     else
                     {
@@ -104,15 +105,15 @@ namespace MSFSPopoutPanelManager.Orchestration
                 if (_appSettingData.ApplicationSetting.WindowedModeSetting.AutoResizeMsfsGameWindow)
                     _profileData.SaveMsfsGameWindowConfig();
 
-                if (_flightSimData.CameraViewTypeAndIndex1 == CAMERA_VIEW_HOME_COCKPIT_MODE)
+                if(_flightSimData.CameraViewTypeAndIndex1 == CAMERA_VIEW_HOME_COCKPIT_MODE)
                 {
-                    _profileData.ActiveProfile.HomeCockpitModeZoomFactor = _flightSimData.CockpitCameraZoom;
+                    _profileData.ActiveProfile.PanelSourceCockpitZoomFactor = _flightSimData.CockpitCameraZoom;
                 }
                 else
                 {
-                    // !!! Fix MSFS bug that without setting zoom, everything will be off by few pixels
-                    FlightSimOrchestrator.SetCockpitCameraZoomLevel(_flightSimData.CockpitCameraZoom);
-
+                    // !!! Fix MSFS bug that without setting zoom, everything will be off by few pixels at a time
+                    SetCockpitZoomLevel(_flightSimData.CockpitCameraZoom);
+                    
                     InputEmulationManager.SaveCustomView(AppSetting.PopOutSetting.AutoPanning.KeyBinding);
                 }
             }
@@ -121,34 +122,7 @@ namespace MSFSPopoutPanelManager.Orchestration
             {
                 Thread.Sleep(500);  // wait for custom view save to be completed
 
-                if (_flightSimData.CameraViewTypeAndIndex1 == CAMERA_VIEW_HOME_COCKPIT_MODE)
-                {
-                    FlightSimOrchestrator.ResetCameraView();
-                }
-                else
-                {
-                    // Recenter game or return to after pop out camera view
-                    if (!AppSetting.PopOutSetting.AfterPopOutCameraView.IsEnabled)
-                    {
-                        FlightSimOrchestrator.ResetCameraView();
-                        SetCockpitZoomLevel(_prePanelConfigurationCockpitZoomLevel);
-                    }
-                    else
-                    {
-                        switch (AppSetting.PopOutSetting.AfterPopOutCameraView.CameraView)
-                        {
-                            case AfterPopOutCameraViewType.CockpitCenterView:
-                                FlightSimOrchestrator.ResetCameraView();
-                                SetCockpitZoomLevel(_prePanelConfigurationCockpitZoomLevel);
-                                break;
-                            case AfterPopOutCameraViewType.CustomCameraView:
-                                LoadCustomView(AppSetting.PopOutSetting.AfterPopOutCameraView.KeyBinding);
-                                SetCockpitZoomLevel(_prePanelConfigurationCockpitZoomLevel);
-                                break;
-                        }
-                    }
-                }
-                
+                FlightSimOrchestrator.ResetCameraView();
                 WindowActionManager.BringWindowToForeground(ApplicationHandle);
 
                 // Turn TrackIR back on
@@ -159,7 +133,7 @@ namespace MSFSPopoutPanelManager.Orchestration
         public void ShowPanelSourceNonEdit(PanelConfig panel)
         {
             if (panel.HasPanelSource)
-                OnOverlayShowed?.Invoke(this, panel);
+                OnNonEditOverlayShowed?.Invoke(this, panel);
         }
 
         public void ClosePanelSourceNonEdit(PanelConfig panel)

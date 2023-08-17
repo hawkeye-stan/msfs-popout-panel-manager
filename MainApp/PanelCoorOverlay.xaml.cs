@@ -13,7 +13,8 @@ namespace MSFSPopoutPanelManager.MainApp
     {
         private PanelCoorOverlayViewModel _viewModel;
 
-        private const int WINDOW_ADJUSTMENT = 15;      // half of window height with shadow adjustment
+        private const int WINDOW_ADJUSTMENT = 20;      // half of window height with shadow adjustment
+        
         private int _xCoor;
         private int _yCoor;
 
@@ -23,13 +24,16 @@ namespace MSFSPopoutPanelManager.MainApp
 
         public IntPtr WindowHandle { get; set; }
 
+        public bool IsAllowedEdit { get; set; }
+
         public event EventHandler<System.Drawing.Point> WindowLocationChanged;
 
-        public PanelCoorOverlay(Guid id)
+        public PanelCoorOverlay(Guid id, bool isAllowedEdit)
         {
             _viewModel = App.AppHost.Services.GetRequiredService<PanelCoorOverlayViewModel>();
             _viewModel.SetPanelId(id);
             PanelId = id;
+            IsAllowedEdit = isAllowedEdit;
 
             InitializeComponent();
             Loaded += PanelCoorOverlay_Loaded;
@@ -45,6 +49,8 @@ namespace MSFSPopoutPanelManager.MainApp
             this.Top = 0;
 
             this.MouseUp += PanelCoorOverlay_MouseUp;   // detect location change when user release mouse button when dragging the overlay window
+
+            this.Background = isAllowedEdit ? new SolidColorBrush(Color.FromArgb(1, 240, 240, 255)) : new SolidColorBrush(System.Windows.Media.Colors.Transparent);
         }
 
         private void PanelCoorOverlay_Loaded(object sender, RoutedEventArgs e)
@@ -54,6 +60,9 @@ namespace MSFSPopoutPanelManager.MainApp
 
         private void PanelCoorOverlay_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            if (!IsAllowedEdit)
+                return;
+
             if (this.Top is double.NaN || this.Left is double.NaN)
                 return;
 
@@ -74,6 +83,9 @@ namespace MSFSPopoutPanelManager.MainApp
 
         private void Window_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
+            if (!IsAllowedEdit)
+                return;
+
             if (IsEditingPanelLocation && e.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
                 this.DragMove();
         }
@@ -89,6 +101,9 @@ namespace MSFSPopoutPanelManager.MainApp
 
         private void Canvas_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            if (!IsAllowedEdit)
+                return;
+
             if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed && _viewModel.Panel != null)
                 _viewModel.Panel.IsSelectedPanelSource = true;
         }
