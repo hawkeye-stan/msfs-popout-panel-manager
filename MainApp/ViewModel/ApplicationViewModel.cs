@@ -40,6 +40,8 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
             // Set Always on Top
             if (Orchestrator.AppSettingData.ApplicationSetting.GeneralSetting.AlwaysOnTop)
                 WindowActionManager.ApplyAlwaysOnTop(ApplicationHandle, PanelType.PopOutManager, Orchestrator.AppSettingData.ApplicationSetting.GeneralSetting.AlwaysOnTop);
+
+
         }
 
         public void WindowClosing()

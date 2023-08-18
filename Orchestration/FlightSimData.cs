@@ -39,6 +39,8 @@ namespace MSFSPopoutPanelManager.Orchestration
 
         public bool IsSimulatorStarted { get; set; }
 
+        public bool IsSimConnectDataReceived { get; set; }
+
         public bool IsInCockpit { get; set; }
 
         public IHudBarData HudBarData { get; set; }

@@ -6,6 +6,7 @@ using MSFSPopoutPanelManager.WindowsAgent;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace MSFSPopoutPanelManager.Orchestration
 {
@@ -53,6 +54,7 @@ namespace MSFSPopoutPanelManager.Orchestration
 
             _simConnectProvider.OnDisconnected += (sender, e) =>
             {
+                _flightSimData.IsSimConnectDataReceived = false;
                 _flightSimData.IsSimConnectActive = false;
                 WindowProcessManager.GetSimulatorProcess();     // refresh simulator process
                 _flightSimData.Reset();
@@ -60,6 +62,7 @@ namespace MSFSPopoutPanelManager.Orchestration
 
             _simConnectProvider.OnException += (sender, e) =>
             {
+                _flightSimData.IsSimConnectDataReceived = false;
                 _flightSimData.IsSimConnectActive = false;
             };
 
@@ -84,6 +87,8 @@ namespace MSFSPopoutPanelManager.Orchestration
                 var cameraViewTypeAndIndex1 = Convert.ToInt32(e.Find(d => d.PropertyName == SimDataDefinitions.PropName.CameraViewTypeAndIndex1).Value);
                 if (cameraViewTypeAndIndex1 != _flightSimData.CameraViewTypeAndIndex1)
                     _flightSimData.CameraViewTypeAndIndex1 = cameraViewTypeAndIndex1;
+
+                _flightSimData.IsSimConnectDataReceived = true;
             };
 
             _simConnectProvider.OnSimConnectDataHudBarRefreshed += (sender, e) =>
