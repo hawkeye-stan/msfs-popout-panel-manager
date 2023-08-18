@@ -17,7 +17,6 @@ namespace MSFSPopoutPanelManager.Orchestration
         private ProfileData _profileData;
         private AppSettingData _appSettingData;
         private FlightSimData _flightSimData;
-        private int _prePanelConfigurationCockpitZoomLevel = 50;
         private bool _isEditingPanelSourceLock = false;
 
         public PanelSourceOrchestrator(ProfileData profileData, AppSettingData appSettingData, FlightSimData flightSimData)
@@ -71,8 +70,6 @@ namespace MSFSPopoutPanelManager.Orchestration
 
                 if (AppSetting.PopOutSetting.AutoPanning.IsEnabled)
                 {
-                    _prePanelConfigurationCockpitZoomLevel = _flightSimData.CockpitCameraZoom;
-
                     if(_flightSimData.CameraViewTypeAndIndex1 == CAMERA_VIEW_HOME_COCKPIT_MODE)
                     {
                         FlightSimOrchestrator.SetCockpitCameraZoomLevel(_profileData.ActiveProfile.PanelSourceCockpitZoomFactor);
