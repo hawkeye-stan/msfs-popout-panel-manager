@@ -48,7 +48,6 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
                         if (panel?.PanelId == panelConfig.Id)
                         {
                             panel.Close();
-                            break;
                         }
                     }
                 }
@@ -114,6 +113,9 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
 
             Application.Current.Dispatcher.Invoke(() =>
             {
+                // Remove existing overlay if exist
+                HandleRemoveOverlay(this, panelConfig);
+
                 PanelCoorOverlay overlay = new PanelCoorOverlay(panelConfig.Id, !nonEdit);
                 overlay.IsEditingPanelLocation = true;
                 overlay.WindowStartupLocation = WindowStartupLocation.Manual;

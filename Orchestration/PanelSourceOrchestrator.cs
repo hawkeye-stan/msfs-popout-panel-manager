@@ -18,6 +18,7 @@ namespace MSFSPopoutPanelManager.Orchestration
         private AppSettingData _appSettingData;
         private FlightSimData _flightSimData;
         private int _prePanelConfigurationCockpitZoomLevel = 50;
+        private bool _isEditingPanelSourceLock = false;
 
         public PanelSourceOrchestrator(ProfileData profileData, AppSettingData appSettingData, FlightSimData flightSimData)
         {
@@ -49,7 +50,7 @@ namespace MSFSPopoutPanelManager.Orchestration
 
         public void StartPanelSelection(PanelConfig panelConfig)
         {
-            _profileData.ActiveProfile.IsEditingPanelSource = true;
+            ActiveProfile.IsEditingPanelSource = true;
 
             InputHookManager.OnLeftClick += (sender, e) => HandleOnPanelSelectionAdded(panelConfig, e);
             InputHookManager.StartMouseHook();
@@ -57,6 +58,11 @@ namespace MSFSPopoutPanelManager.Orchestration
 
         public async Task StartEditPanelSources()
         {
+            if (_isEditingPanelSourceLock)
+                return;
+
+            _isEditingPanelSourceLock = true;
+
             await Task.Run(() =>
             {
                 // Set Windowed Display Mode window's configuration if needed
@@ -79,24 +85,22 @@ namespace MSFSPopoutPanelManager.Orchestration
                     
                     WindowActionManager.BringWindowToForeground(ApplicationHandle);
                 }
+
+                foreach (var panel in _profileData.ActiveProfile.PanelConfigs)
+                {
+                    if (panel.HasPanelSource)
+                        OnOverlayShowed?.Invoke(this, panel);
+                }
+
+                // Turn off TrackIR if TrackIR is started
+                FlightSimOrchestrator.TurnOffTrackIR();
             });
-
-            foreach (var panel in _profileData.ActiveProfile.PanelConfigs)
-            {
-                if (panel.HasPanelSource)
-                    OnOverlayShowed?.Invoke(this, panel);
-            }
-
-            // Turn off TrackIR if TrackIR is started
-            FlightSimOrchestrator.TurnOffTrackIR();
         }
 
         public async Task EndEditPanelSources()
         {
-            foreach (var panel in _profileData.ActiveProfile.PanelConfigs)
-            {
-                OnOverlayRemoved?.Invoke(this, panel);
-            }
+            if (!_isEditingPanelSourceLock)
+                return;
 
             // Save last auto panning camera angle
             if (AppSetting.PopOutSetting.AutoPanning.IsEnabled)
@@ -113,9 +117,15 @@ namespace MSFSPopoutPanelManager.Orchestration
                 {
                     // !!! Fix MSFS bug that without setting zoom, everything will be off by few pixels at a time
                     SetCockpitZoomLevel(_flightSimData.CockpitCameraZoom);
-                    
                     InputEmulationManager.SaveCustomView(AppSetting.PopOutSetting.AutoPanning.KeyBinding);
                 }
+            }
+
+            _isEditingPanelSourceLock = false;
+
+            foreach (var panel in _profileData.ActiveProfile.PanelConfigs)
+            {
+                OnOverlayRemoved?.Invoke(this, panel);
             }
 
             await Task.Run(() =>
@@ -146,6 +156,7 @@ namespace MSFSPopoutPanelManager.Orchestration
             if (ActiveProfile != null)
             {
                 ActiveProfile.IsEditingPanelSource = false;
+                _isEditingPanelSourceLock = false;
 
                 foreach (var panelConfig in ActiveProfile.PanelConfigs)
                     OnOverlayRemoved?.Invoke(this, panelConfig);

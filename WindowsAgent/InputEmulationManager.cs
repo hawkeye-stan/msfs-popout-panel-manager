@@ -49,6 +49,7 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             Debug.WriteLine($"Pop out panel at: {x}/{y} ...");
 
             PInvoke.SetForegroundWindow(WindowProcessManager.SimulatorProcess.Handle);
+            Thread.Sleep(200);
 
             MoveAppWindowFromLeftClickPoint(x, y);
 
