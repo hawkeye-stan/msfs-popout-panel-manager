@@ -188,12 +188,10 @@ namespace MSFSPopoutPanelManager.Orchestration
 
                 // Turn off TrackIR if TrackIR is started
                 FlightSimOrchestrator.TurnOffTrackIR();
-                Thread.Sleep(500);
 
                 // Turn on Active Pause
                 FlightSimOrchestrator.TurnOnActivePause();
-                Thread.Sleep(500);
-
+                
                 // Setting custom camera angle for auto panning
                 if (AppSetting.PopOutSetting.AutoPanning.IsEnabled)
                 {
@@ -211,13 +209,11 @@ namespace MSFSPopoutPanelManager.Orchestration
                         WorkflowStepWithMessage.Execute("Resetting camera view", () =>
                         {
                             ResetCockpitView();
-                            Thread.Sleep(1000);
                         }, true);
 
                         WorkflowStepWithMessage.Execute("Loading custom camera view", () =>
                         {
                             LoadCustomView(AppSetting.PopOutSetting.AutoPanning.KeyBinding);
-                            Thread.Sleep(1000);
                         }, true);
 
                         WorkflowStepWithMessage.Execute("Setting camera zoom level", () =>
@@ -544,7 +540,6 @@ namespace MSFSPopoutPanelManager.Orchestration
                         WorkflowStepWithMessage.Execute("Resetting camera view", () =>
                         {
                             ResetCockpitView();
-                            Thread.Sleep(1000);
                         }, true);
 
                         WorkflowStepWithMessage.Execute("Setting camera zoom level", () =>
@@ -557,13 +552,11 @@ namespace MSFSPopoutPanelManager.Orchestration
                         WorkflowStepWithMessage.Execute("Resetting camera view", () =>
                         {
                             ResetCockpitView();
-                            Thread.Sleep(1000);
                         }, true);
 
                         WorkflowStepWithMessage.Execute("Loading custom camera view", () =>
                         {
                             LoadCustomView(AppSetting.PopOutSetting.AfterPopOutCameraView.KeyBinding);
-                            Thread.Sleep(1000);
                         }, true);
 
                         WorkflowStepWithMessage.Execute("Setting camera zoom level", () =>

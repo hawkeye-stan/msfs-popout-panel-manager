@@ -219,7 +219,7 @@
                         </StackPanel>
                     </WrapPanel>
                     <WrapPanel Margin="0,0,20,20" Orientation="Vertical">
-                        <TextBlock Style="{StaticResource TextBlockHeading}">Ready to Fly Button Delay</TextBlock>
+                        <TextBlock Style="{StaticResource TextBlockHeading}">Auto Pop Out Panel Delay</TextBlock>
                         <Line
                             Stretch="Fill"
                             Stroke="Gray"
