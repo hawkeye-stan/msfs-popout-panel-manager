@@ -67,10 +67,7 @@
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="200" />
                                 </Grid.ColumnDefinitions>
-                                <StackPanel
-                                    Grid.Column="0"
-                                    Margin="0,0,0,0"
-                                    Orientation="Horizontal">
+                                <StackPanel Grid.Column="0" Margin="0,0,0,0">
                                     <Button
                                         Margin="0"
                                         Padding="0"
@@ -79,38 +76,17 @@
                                         <Button.Style>
                                             <Style BasedOn="{StaticResource MaterialDesignFlatButton}" TargetType="Button">
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding FlightSimData.IsSimulatorStarted}" Value="True">
+                                                    <DataTrigger Binding="{Binding FlightSimData.IsSimConnectDataReceived}" Value="True">
                                                         <Setter Property="Foreground" Value="LightGreen" />
                                                         <Setter Property="Content" Value="{materialDesign:PackIcon Kind=AccessPointNetwork, Size={StaticResource IconSize}}" />
                                                     </DataTrigger>
-                                                    <DataTrigger Binding="{Binding FlightSimData.IsSimulatorStarted}" Value="False">
+                                                    <DataTrigger Binding="{Binding FlightSimData.IsSimConnectDataReceived}" Value="False">
                                                         <Setter Property="Foreground" Value="Red" />
                                                         <Setter Property="Content" Value="{materialDesign:PackIcon Kind=AccessPointNetworkOff, Size={StaticResource IconSize}}" />
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
                                         </Button.Style>
-                                    </Button>
-                                    <Button
-                                        Width="{StaticResource IconSize}"
-                                        Height="{StaticResource IconSize}"
-                                        Margin="5,4,0,0"
-                                        Padding="0"
-                                        HorizontalAlignment="Left"
-                                        ToolTip="Receiving SimConnect data">
-                                        <Button.Style>
-                                            <Style BasedOn="{StaticResource MaterialDesignIconButton}" TargetType="Button">
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding FlightSimData.IsSimConnectDataReceived}" Value="True">
-                                                        <Setter Property="Foreground" Value="LightGreen" />
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding FlightSimData.IsSimConnectDataReceived}" Value="False">
-                                                        <Setter Property="Foreground" Value="White" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Button.Style>
-                                        <materialDesign:PackIcon Kind="DownloadOutline" />
                                     </Button>
                                 </StackPanel>
                                 <StackPanel Grid.Column="1" Width="Auto">

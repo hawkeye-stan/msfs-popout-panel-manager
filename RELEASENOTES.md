@@ -11,6 +11,4 @@
 
 * Added configurable keyboard shortcut to initiate pop out process (default is Ctrl-Shift-O). This keyboard shortcut can be configured in preference setting. This setting can be disabled to improve computing resource needed to constantly detect keyboard inputs.
 
-* Added indicator to show SimConnect is receiving data.
-
 * Fixed issue where full screen mode for pop out panel does not work on certain aircraft configuration.
