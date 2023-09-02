@@ -11,9 +11,9 @@
     <PackageProjectUrl>https://github.com/hawkeye-stan/msfs-popout-panel-manager</PackageProjectUrl>
     <RootNamespace>MSFSPopoutPanelManager.SimConnectAgent</RootNamespace>
     <Platforms>x64</Platforms>
-    <Version>4.0.2.5</Version>
-    <AssemblyVersion>4.0.2.5</AssemblyVersion>
-    <FileVersion>4.0.2.5</FileVersion>
+    <Version>4.0.2.6</Version>
+    <AssemblyVersion>4.0.2.6</AssemblyVersion>
+    <FileVersion>4.0.2.6</FileVersion>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <DebugType>Embedded</DebugType>
     <Configurations>Debug;Release;Local</Configurations>
