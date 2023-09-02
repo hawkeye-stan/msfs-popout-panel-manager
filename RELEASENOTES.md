@@ -1,5 +1,5 @@
 ## Version 4.0.2
-* Added new logic to detect when flight session is ready to initiate pop out process for auto pop out panel.
+* Added new logic (not based on timing) to detect when flight session is ready to initiate pop out process for auto pop out panel. You can also set Auto Pop Out Panel Delay in preferences to 0 seconds if you have a fast PC.
 
 * Fixed camera logic to save and load custom camera view used by Pop Out Panel Manager. This is to work around camera issue since AAU2. Also, pop out progress messages will now show steps being taken when adjusting camera view.
 

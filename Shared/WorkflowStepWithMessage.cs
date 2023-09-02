@@ -4,7 +4,7 @@ namespace MSFSPopoutPanelManager.Shared
 {
     public static class WorkflowStepWithMessage
     {
-        public static void Execute(string message, Func<bool> function, bool isSubTask = false)
+        public static bool Execute(string message, Func<bool> function, bool isSubTask = false)
         {
             if (isSubTask)
                 message = "          - " + message;
@@ -16,9 +16,15 @@ namespace MSFSPopoutPanelManager.Shared
 
             StatusMessageWriter.RemoveLastMessage();
             if (result)
+            {
                 StatusMessageWriter.WriteOkStatusMessage();
+                return true;
+            }
             else
+            {
                 StatusMessageWriter.WriteFailureStatusMessage();
+                return false;
+            }
         }
 
         public static void Execute(string message, Action function, bool isSubTask = false)
