@@ -77,7 +77,7 @@ namespace MSFSPopoutPanelManager.Orchestration
                     else
                     {
                         LoadCustomView(AppSetting.PopOutSetting.AutoPanning.KeyBinding);
-                        SetCockpitZoomLevel(50);
+                        FlightSimOrchestrator.SetCockpitCameraZoomLevel(50);
                     }
                     
                     WindowActionManager.BringWindowToForeground(ApplicationHandle);
@@ -198,7 +198,7 @@ namespace MSFSPopoutPanelManager.Orchestration
 
         private void LoadCustomView(string keybinding)
         {
-            int retry = 20;
+            int retry = 3;
             for (var i = 0; i < retry; i++)
             {
                 InputEmulationManager.LoadCustomView(keybinding);
@@ -210,7 +210,7 @@ namespace MSFSPopoutPanelManager.Orchestration
 
         private void SetCockpitZoomLevel(int zoom)
         {
-            int retry = 10;
+            int retry = 3;
             for (var i = 0; i < retry; i++)
             {
                 FlightSimOrchestrator.SetCockpitCameraZoomLevel(zoom);
