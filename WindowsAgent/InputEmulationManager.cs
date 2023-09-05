@@ -55,6 +55,13 @@ namespace MSFSPopoutPanelManager.WindowsAgent
 
             LeftClick(x, y);
 
+            // Force cursor reset
+            PInvoke.SetCursorPos(x + 1, y);
+            Thread.Sleep(100);
+
+            PInvoke.SetCursorPos(x, y);
+            Thread.Sleep(300);
+
             if (useSecondaryKeys)
             {
                 InputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.LCONTROL);
