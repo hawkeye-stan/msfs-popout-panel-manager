@@ -305,6 +305,7 @@ namespace MSFSPopoutPanelManager.Orchestration
                     while (builtInPanelHandles.Count == 0 && count < 5)
                     {
                         builtInPanelHandles = WindowActionManager.GetWindowsByPanelType(new List<PanelType>() { PanelType.BuiltInPopout });
+                        count++;
                     }
 
                     var builtInPanels = new List<PanelConfig>();
