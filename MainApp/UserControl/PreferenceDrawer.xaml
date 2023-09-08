@@ -381,7 +381,7 @@
                     </WrapPanel>
 
                     <WrapPanel Margin="0,20,20,0" Orientation="Vertical">
-                        <TextBlock Style="{StaticResource TextBlockHeading}">Enable Panel Reset When Profile Is Locked</TextBlock>
+                        <TextBlock Style="{StaticResource TextBlockHeading}">Enable Tracking of Panels When Profile Is Locked</TextBlock>
                         <Line
                             Stretch="Fill"
                             Stroke="Gray"
@@ -389,7 +389,7 @@
                         <WrapPanel>
                             <ToggleButton IsChecked="{Binding AppSettingData.ApplicationSetting.PopOutSetting.EnablePanelResetWhenLocked, Mode=TwoWay}" Style="{StaticResource ToggleButton}" />
                             <TextBlock Style="{StaticResource TextBlockLabel}">
-                                Enable panel to go back to its original location when move if the profile is locked. Disable this setting will allow panel to be moved when profile is locked
+                                Enable tracking of panels to allow panel to go back to its original location when move if the profile is locked. Disable this setting will allow panel to be moved when profile is locked
                                 but the profile setting will be unchanged. With this setting disable, Pop Out Panel Manager will no longer detect pop out panel's movement when profile is locked which may save some CPU cycles.
                             </TextBlock>
                         </WrapPanel>

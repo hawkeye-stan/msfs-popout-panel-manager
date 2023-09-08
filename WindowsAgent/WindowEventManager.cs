@@ -117,6 +117,15 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                     }
                     else
                     {
+                        // Pop out is closed
+                        var rect = WindowActionManager.GetWindowRectangle(panelConfig.PanelHandle);
+                        if (rect.Width == 0 && rect.Height == 0)        
+                        {
+                            panelConfig.PanelHandle = IntPtr.MaxValue;
+                            _prevShowWinCmd = null;
+                            return;
+                        }
+
                         WINDOWPLACEMENT wp = new WINDOWPLACEMENT();
                         wp.length = System.Runtime.InteropServices.Marshal.SizeOf(wp);
                         PInvoke.GetWindowPlacement(hwnd, ref wp);
@@ -164,6 +173,13 @@ namespace MSFSPopoutPanelManager.WindowsAgent
         private static void UpdatePanelCoordinates(PanelConfig panelConfig)
         {
             var rect = WindowActionManager.GetWindowRectangle(panelConfig.PanelHandle);
+
+            if (rect.Width == 0 && rect.Height == 0)        // don't set if width and height = 0
+            {
+                panelConfig.PanelHandle = IntPtr.MaxValue;
+                return;
+            }
+            
             panelConfig.Left = rect.Left;
             panelConfig.Top = rect.Top;
 

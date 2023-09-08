@@ -14,9 +14,9 @@
 		<RootNamespace>MSFSPopoutPanelManager.MainApp</RootNamespace>
 		<ApplicationIcon>logo.ico</ApplicationIcon>
 		<Platforms>x64</Platforms>
-		<Version>4.0.2.6</Version>
-		<AssemblyVersion>4.0.2.6</AssemblyVersion>
-		<FileVersion>4.0.2.6</FileVersion>
+		<Version>4.0.2.7</Version>
+		<AssemblyVersion>4.0.2.7</AssemblyVersion>
+		<FileVersion>4.0.2.7</FileVersion>
 		<DebugType>embedded</DebugType>
 		<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
 		<!-- Publishing options -->

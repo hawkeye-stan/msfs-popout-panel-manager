@@ -129,7 +129,6 @@ namespace MSFSPopoutPanelManager.Orchestration
             {
                 Thread.Sleep(500);  // wait for custom view save to be completed
 
-                FlightSimOrchestrator.ResetCameraView();
                 WindowActionManager.BringWindowToForeground(ApplicationHandle);
 
                 // Turn TrackIR back on

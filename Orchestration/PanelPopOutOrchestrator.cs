@@ -21,7 +21,6 @@ namespace MSFSPopoutPanelManager.Orchestration
         private ProfileData _profileData;
         private AppSettingData _appSettingData;
         private FlightSimData _flightSimData;
-        private int _prePopOutCockpitZoomLevel = 50;
 
         public PanelPopOutOrchestrator(ProfileData profileData, AppSettingData appSettingData, FlightSimData flightSimData)
         {
@@ -207,9 +206,6 @@ namespace MSFSPopoutPanelManager.Orchestration
                     }
                     else 
                     {
-                        // Remember current game's zoom level to be recall after pop out
-                        _prePopOutCockpitZoomLevel = _flightSimData.CockpitCameraZoom;
-
                         WorkflowStepWithMessage.Execute("Resetting camera view", () =>
                         {
                             ResetCockpitView();
@@ -553,11 +549,6 @@ namespace MSFSPopoutPanelManager.Orchestration
                             ResetCockpitView();
                         }, true);
 
-                        WorkflowStepWithMessage.Execute("Setting camera zoom level", () =>
-                        {
-                            SetCockpitZoomLevel(_prePopOutCockpitZoomLevel);
-                        }, true);
-
                         break;
                     case AfterPopOutCameraViewType.CustomCameraView:
                         WorkflowStepWithMessage.Execute("Resetting camera view", () =>
@@ -568,11 +559,6 @@ namespace MSFSPopoutPanelManager.Orchestration
                         WorkflowStepWithMessage.Execute("Loading custom camera view", () =>
                         {
                             return LoadCustomView(AppSetting.PopOutSetting.AfterPopOutCameraView.KeyBinding);
-                        }, true);
-
-                        WorkflowStepWithMessage.Execute("Setting camera zoom level", () =>
-                        {
-                            SetCockpitZoomLevel(_prePopOutCockpitZoomLevel);
                         }, true);
 
                         break;
