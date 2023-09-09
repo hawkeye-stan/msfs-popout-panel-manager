@@ -49,23 +49,20 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             Debug.WriteLine($"Pop out panel at: {x}/{y} ...");
 
             PInvoke.SetForegroundWindow(WindowProcessManager.SimulatorProcess.Handle);
-            Thread.Sleep(200);
+            Thread.Sleep(250);
 
             MoveAppWindowFromLeftClickPoint(x, y);
 
             LeftClick(x, y);
 
-            // Force cursor reset
-            PInvoke.SetCursorPos(x + 1, y);
-            Thread.Sleep(100);
-
-            PInvoke.SetCursorPos(x, y);
-            Thread.Sleep(300);
+            // Force cursor reset and focus (doubling to make sure)
+            LeftClick(x, y);
 
             if (useSecondaryKeys)
             {
                 InputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.LCONTROL);
                 InputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.RCONTROL);
+                Thread.Sleep(300);
                 PInvoke.mouse_event(MOUSEEVENTF_LEFTDOWN, x, y, 0, 0);
                 Thread.Sleep(200);
                 PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, 0);
@@ -82,6 +79,7 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             else
             {
                 InputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.RMENU);
+                Thread.Sleep(300);
                 PInvoke.mouse_event(MOUSEEVENTF_LEFTDOWN, x, y, 0, 0);
                 Thread.Sleep(200);
                 PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, 0);
