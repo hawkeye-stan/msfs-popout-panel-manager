@@ -44,25 +44,28 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, 0);
         }
 
-        public static void PopOutPanel(int x, int y, bool useSecondaryKeys)
+        public static void PrepareToPopOutPanel(int x, int y)
         {
-            Debug.WriteLine($"Pop out panel at: {x}/{y} ...");
-
             PInvoke.SetForegroundWindow(WindowProcessManager.SimulatorProcess.Handle);
             Thread.Sleep(250);
 
             MoveAppWindowFromLeftClickPoint(x, y);
 
-            LeftClick(x, y);
+            // Left click outside the cirlce area to focus game window
+            LeftClick(x + 30, y);
 
-            // Force cursor reset and focus (doubling to make sure)
-            LeftClick(x, y);
+            // Force cursor reset and focus 
+            PInvoke.SetCursorPos(x, y);
+            Thread.Sleep(500);
+        }
 
+        public static void PopOutPanel(int x, int y, bool useSecondaryKeys)
+        {
             if (useSecondaryKeys)
             {
                 InputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.LCONTROL);
                 InputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.RCONTROL);
-                Thread.Sleep(300);
+                Thread.Sleep(500);
                 PInvoke.mouse_event(MOUSEEVENTF_LEFTDOWN, x, y, 0, 0);
                 Thread.Sleep(200);
                 PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, 0);
@@ -79,7 +82,7 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             else
             {
                 InputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.RMENU);
-                Thread.Sleep(300);
+                Thread.Sleep(500);
                 PInvoke.mouse_event(MOUSEEVENTF_LEFTDOWN, x, y, 0, 0);
                 Thread.Sleep(200);
                 PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, 0);
@@ -220,6 +223,7 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             {
                 var top = y - applicationRectangle.Height - 50;
                 WindowActionManager.MoveWindow(appHandle, applicationRectangle.X, top, applicationRectangle.Width, applicationRectangle.Height);
+                Thread.Sleep(1000);
             }
         }
 

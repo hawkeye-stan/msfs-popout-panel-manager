@@ -38,6 +38,9 @@ namespace MSFSPopoutPanelManager.Orchestration
             FlightSim.OnSimulatorExited += (sender, e) => { ApplicationClose(); Environment.Exit(0); };
 
             Keyboard.PanelPopOutOrchestrator = PanelPopOut;
+
+            // Delete all existing cache version of app
+            Help.DeleteAppCache();
         }
 
         public ProfileOrchestrator Profile { get; set; }

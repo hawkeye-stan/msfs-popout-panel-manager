@@ -249,9 +249,7 @@ namespace MSFSPopoutPanelManager.Orchestration
                         WorkflowStepWithMessage.Execute(panelConfig.PanelName, () =>
                             {
                                 panelConfig.IsSelectedPanelSource = true;
-                                PanelSourceOrchestrator.ShowPanelSourceNonEdit(panelConfig);
                                 ExecuteCustomPopout(panelConfig, builtInPanelHandles, index++);
-                                PanelSourceOrchestrator.ClosePanelSourceNonEdit(panelConfig);
                                 ApplyPanelLocation(panelConfig);
                                 panelConfig.IsSelectedPanelSource = false;
 
@@ -434,6 +432,10 @@ namespace MSFSPopoutPanelManager.Orchestration
         {
             if (panel.PanelType == PanelType.CustomPopout)
             {
+                PanelSourceOrchestrator.ShowPanelSourceNonEdit(panel);
+                InputEmulationManager.PrepareToPopOutPanel((int)panel.PanelSource.X, (int)panel.PanelSource.Y);
+                PanelSourceOrchestrator.ClosePanelSourceNonEdit(panel);
+
                 // There should only be one handle that is not in both builtInPanelHandles vs latestAceAppWindowsWithCaptionHandles
                 var handle = TryPopOutCustomPanel(panel.PanelSource, builtInPanelHandles);
 
@@ -467,7 +469,7 @@ namespace MSFSPopoutPanelManager.Orchestration
 
         private IntPtr TryPopOutCustomPanel(PanelSource panelSource, List<IntPtr> builtInPanelHandles)
         {
-            // Try to pop out 5 times before failure with 1/4 second wait in between
+            // Try to pop out 3 times before failure with 1/2 second wait in between
             int count = 0;
             do
             {
@@ -481,10 +483,10 @@ namespace MSFSPopoutPanelManager.Orchestration
                 if (handle != IntPtr.Zero)
                     return handle;
 
-                Thread.Sleep(250);
+                Thread.Sleep(500);
                 count++;
             }
-            while (count < 5);
+            while (count < 3);
 
             return IntPtr.Zero;
         }
