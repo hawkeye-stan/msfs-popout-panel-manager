@@ -20,7 +20,7 @@
 
 * Fixed an issue when manually closing pop out will reset profile panel configuration's width and height to 0 when the profile is unlocked. 
 
-* Fixed logic where after panel source selection is completed, Pop Out Panel Manager will no longer recenter camera view. This is to remove confusion since Pop Out Manager has no way to tell the previous camera view you're on when panel source selection started.
+* Fixed logic where after panel source selection is completed, Pop Out Panel Manager will no longer recenter camera view. This is to remove confusion since Pop Out Manager has no way to tell the previous camera view you're on when panel source selection was started.
 
 ## Version 4.0.1.2
 * Hotfix - Fixed issue where using touch panel feature may freeze computer and the application.

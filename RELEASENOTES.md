@@ -1,4 +1,5 @@
 ## Version 4.0.2
+
 * Added new logic (not based on timing) to detect when flight session is ready to initiate pop out process for auto pop out panel. You can also set Auto Pop Out Panel Delay in preferences to 0 seconds if you have a fast PC.
 
 * Added failure state when custom camera view fails to load. Pop Out Panel Manager will try to load the user specified custom camera (Ctrl-Alt-X/Alt-X where X is the camera defined in preference setting) for 10 seconds and when it fails, POPM will no longer try to pop out panels.
@@ -17,4 +18,4 @@
 
 * Fixed an issue when manually closing pop out will reset profile panel configuration's width and height to 0 when the profile is unlocked. 
 
-* Fixed logic where after panel source selection is completed, Pop Out Panel Manager will no longer recenter camera view. This is to remove confusion since Pop Out Manager has no way to tell the previous camera view you're on when panel source selection started.
+* Fixed logic where after panel source selection is completed, Pop Out Panel Manager will no longer recenter camera view. This is to remove confusion since Pop Out Manager has no way to tell the previous camera view you're on when panel source selection was started.
