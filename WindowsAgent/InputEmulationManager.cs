@@ -44,35 +44,40 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, 0);
         }
 
-        public static void PrepareToPopOutPanel(int x, int y)
+        public static void PrepareToPopOutPanel(int x, int y, bool isTurboMode)
         {
             PInvoke.SetForegroundWindow(WindowProcessManager.SimulatorProcess.Handle);
-            Thread.Sleep(250);
+            Thread.Sleep(isTurboMode ? 0 : 250);
 
             MoveAppWindowFromLeftClickPoint(x, y);
 
-            // Left click outside the cirlce area to focus game window
-            LeftClick(x + 30, y);
+            if(!isTurboMode)
+                LeftClick(x + 30, y);  // Left click outside the cirlce area to focus game window
 
             // Force cursor reset and focus 
             PInvoke.SetCursorPos(x, y);
-            Thread.Sleep(500);
+            Thread.Sleep(isTurboMode ? 50 : 500);
         }
 
-        public static void PopOutPanel(int x, int y, bool useSecondaryKeys)
+        public static void PopOutPanel(int x, int y, bool useSecondaryKeys, bool isTurbo)
         {
             if (useSecondaryKeys)
             {
                 InputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.LCONTROL);
                 InputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.RCONTROL);
-                Thread.Sleep(500);
+                
+                Thread.Sleep(isTurbo ? 0: 500);
+
                 PInvoke.mouse_event(MOUSEEVENTF_LEFTDOWN, x, y, 0, 0);
                 Thread.Sleep(200);
                 PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, 0);
-                Thread.Sleep(200);
+
+                Thread.Sleep(isTurbo ? 0 : 200);
+
                 PInvoke.mouse_event(MOUSEEVENTF_LEFTDOWN, x, y, 0, 0);
                 Thread.Sleep(200);
                 PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, 0);
+
                 InputSimulator.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.RCONTROL);
                 InputSimulator.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.LCONTROL);
                 Thread.Sleep(100);
@@ -82,14 +87,19 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             else
             {
                 InputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.RMENU);
-                Thread.Sleep(500);
+
+                Thread.Sleep(isTurbo ? 0 : 500);
+
                 PInvoke.mouse_event(MOUSEEVENTF_LEFTDOWN, x, y, 0, 0);
                 Thread.Sleep(200);
                 PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, 0);
-                Thread.Sleep(200);
+
+                Thread.Sleep(isTurbo ? 0 : 200);
+
                 PInvoke.mouse_event(MOUSEEVENTF_LEFTDOWN, x, y, 0, 0);
                 Thread.Sleep(200);
                 PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, 0);
+
                 InputSimulator.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.RMENU);
                 Thread.Sleep(100);
                 InputSimulator.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.RMENU);        // resend to make sure Alt key is up

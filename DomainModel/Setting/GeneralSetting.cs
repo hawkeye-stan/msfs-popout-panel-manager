@@ -12,6 +12,7 @@ namespace MSFSPopoutPanelManager.DomainModel.Setting
             StartMinimized = false;
             AutoClose = true;
             CheckForUpdate = true;
+            TurboMode = false;
 
             InitializeChildPropertyChangeBinding();
         }
@@ -25,6 +26,8 @@ namespace MSFSPopoutPanelManager.DomainModel.Setting
         public bool StartMinimized { get; set; }
 
         public bool CheckForUpdate { get; set; }
+
+        public bool TurboMode { get; set; }
 
         [JsonIgnore, IgnorePropertyChanged]
         public bool AutoStart
