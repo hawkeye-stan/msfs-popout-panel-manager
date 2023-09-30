@@ -1,6 +1,12 @@
 # Version History
 <hr/>
 
+## Version 4.0.3 Beta
+
+* Added a new turbo mode to improve execution speed during pop out process. Turbo mode can be turned on in preferences => general settings.
+
+* Update text color for pop out progress dialog.
+
 ## Version 4.0.2
 * Added new logic (not based on timing) to detect when flight session is ready to initiate pop out process for auto pop out panel. You can also set Auto Pop Out Panel Delay in preferences to 0 seconds if you have a fast PC.
 
