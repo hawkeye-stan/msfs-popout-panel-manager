@@ -19,6 +19,9 @@ namespace MSFSPopoutPanelManager.Orchestration
         private FlightSimData _flightSimData;
         private bool _isEditingPanelSourceLock = false;
 
+        public event EventHandler OnStatusMessageStarted;
+        public event EventHandler OnStatusMessageEnded;
+
         public PanelSourceOrchestrator(ProfileData profileData, AppSettingData appSettingData, FlightSimData flightSimData)
         {
             _profileData = profileData;
@@ -64,6 +67,12 @@ namespace MSFSPopoutPanelManager.Orchestration
 
             await Task.Run(() =>
             {
+                OnStatusMessageStarted?.Invoke(this, null);
+                StatusMessageWriter.IsEnabled = true;
+                StatusMessageWriter.ClearMessage();
+                StatusMessageWriter.WriteMessage("Loading camera view. Please wait......", StatusMessageType.Info);
+
+
                 // Set Windowed Display Mode window's configuration if needed
                 if (_appSettingData.ApplicationSetting.WindowedModeSetting.AutoResizeMsfsGameWindow)
                     WindowActionManager.SetMsfsGameWindowLocation(ActiveProfile.MsfsGameWindowConfig);
@@ -91,6 +100,11 @@ namespace MSFSPopoutPanelManager.Orchestration
 
                 // Turn off TrackIR if TrackIR is started
                 FlightSimOrchestrator.TurnOffTrackIR();
+
+                Thread.Sleep(500);
+                StatusMessageWriter.IsEnabled = false;
+                OnStatusMessageEnded?.Invoke(this, null);
+
             });
         }
 

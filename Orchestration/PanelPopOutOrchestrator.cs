@@ -13,7 +13,6 @@ namespace MSFSPopoutPanelManager.Orchestration
 {
     public class PanelPopOutOrchestrator : ObservableObject
     {
-        // This will be replaced by a signal from Ready to Fly Skipper into webserver in version 4.0
         private const int READY_TO_FLY_BUTTON_APPEARANCE_DELAY = 2000;
         private const int CAMERA_VIEW_HOME_COCKPIT_MODE = 8;
         private const int CAMERA_VIEW_CUSTOM_CAMERA = 7;
@@ -99,7 +98,7 @@ namespace MSFSPopoutPanelManager.Orchestration
             // *** THIS MUST BE DONE FIRST. Get the built-in panel list to be configured later
             List<IntPtr> builtInPanelHandles = WindowActionManager.GetWindowsByPanelType(new List<PanelType>() { PanelType.BuiltInPopout });
 
-            await StepAddCutomPanels(builtInPanelHandles);
+            await StepAddCustomPanels(builtInPanelHandles);
 
             StepAddBuiltInPanels(builtInPanelHandles);
 
@@ -152,7 +151,7 @@ namespace MSFSPopoutPanelManager.Orchestration
         }
 
 
-        private async Task StepAddCutomPanels(List<IntPtr> builtInPanelHandles)
+        private async Task StepAddCustomPanels(List<IntPtr> builtInPanelHandles)
         {
             if (!ActiveProfile.HasCustomPanels)
                 return;
@@ -214,7 +213,7 @@ namespace MSFSPopoutPanelManager.Orchestration
 
                         var success = WorkflowStepWithMessage.Execute("Loading custom camera view", () =>
                         {
-                            return LoadCustomView(AppSetting.PopOutSetting.AutoPanning.KeyBinding, AppSetting.GeneralSetting.TurboMode);
+                            return LoadCustomView(AppSetting.PopOutSetting.AutoPanning.KeyBinding, AppSetting.GeneralSetting.TurboMode, false);
                         }, true);
 
                         if (!success)
@@ -249,21 +248,11 @@ namespace MSFSPopoutPanelManager.Orchestration
                         WorkflowStepWithMessage.Execute(panelConfig.PanelName, () =>
                             {
                                 panelConfig.IsSelectedPanelSource = true;
-                                
-                                if(AppSetting.GeneralSetting.TurboMode)
-                                {
-                                    InputEmulationManager.PrepareToPopOutPanel((int)panelConfig.PanelSource.X, (int)panelConfig.PanelSource.Y, AppSetting.GeneralSetting.TurboMode);
-                                    PanelSourceOrchestrator.ShowPanelSourceNonEdit(panelConfig);
-                                    ExecuteCustomPopout(panelConfig, builtInPanelHandles, index++);
-                                    PanelSourceOrchestrator.ClosePanelSourceNonEdit(panelConfig);
-                                }
-                                else
-                                {
-                                    PanelSourceOrchestrator.ShowPanelSourceNonEdit(panelConfig);
-                                    InputEmulationManager.PrepareToPopOutPanel((int)panelConfig.PanelSource.X, (int)panelConfig.PanelSource.Y, AppSetting.GeneralSetting.TurboMode);
-                                    PanelSourceOrchestrator.ClosePanelSourceNonEdit(panelConfig);
-                                    ExecuteCustomPopout(panelConfig, builtInPanelHandles, index++);
-                                }
+
+                                PanelSourceOrchestrator.ShowPanelSourceNonEdit(panelConfig);
+                                InputEmulationManager.PrepareToPopOutPanel((int)panelConfig.PanelSource.X, (int)panelConfig.PanelSource.Y, AppSetting.GeneralSetting.TurboMode);
+                                PanelSourceOrchestrator.ClosePanelSourceNonEdit(panelConfig);
+                                ExecuteCustomPopout(panelConfig, builtInPanelHandles, index++);
 
                                 ApplyPanelLocation(panelConfig);
                                 panelConfig.IsSelectedPanelSource = false;
@@ -568,7 +557,7 @@ namespace MSFSPopoutPanelManager.Orchestration
 
                         WorkflowStepWithMessage.Execute("Loading custom camera view", () =>
                         {
-                            return LoadCustomView(AppSetting.PopOutSetting.AfterPopOutCameraView.KeyBinding, AppSetting.GeneralSetting.TurboMode);
+                            return LoadCustomView(AppSetting.PopOutSetting.AfterPopOutCameraView.KeyBinding, AppSetting.GeneralSetting.TurboMode, true);
                         }, true);
 
                         break;
@@ -593,7 +582,7 @@ namespace MSFSPopoutPanelManager.Orchestration
             }
         }
 
-        private bool LoadCustomView(string keybinding, bool isTurboMode)
+        private bool LoadCustomView(string keybinding, bool isTurboMode, bool ignoreError)
         {
             int retry = 10;
             for(var i = 0; i < retry; i++) 
@@ -604,7 +593,7 @@ namespace MSFSPopoutPanelManager.Orchestration
                     return true;
             }
 
-            return false;
+            return ignoreError;
         }
 
         private void SetCockpitZoomLevel(int zoom, bool isTurboMode)

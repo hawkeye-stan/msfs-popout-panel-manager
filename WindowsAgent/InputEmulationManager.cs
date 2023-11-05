@@ -51,8 +51,7 @@ namespace MSFSPopoutPanelManager.WindowsAgent
 
             MoveAppWindowFromLeftClickPoint(x, y);
 
-            if(!isTurboMode)
-                LeftClick(x + 30, y);  // Left click outside the cirlce area to focus game window
+            LeftClick(x + 30, y);  // Left click outside the circle area to focus game window
 
             // Force cursor reset and focus 
             PInvoke.SetCursorPos(x, y);
@@ -104,26 +103,6 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                 Thread.Sleep(100);
                 InputSimulator.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.RMENU);        // resend to make sure Alt key is up
             }
-        }
-
-        public static void CenterView()
-        {
-            Debug.WriteLine("Centering view......");
-
-            var hwnd = WindowProcessManager.SimulatorProcess.Handle;
-            PInvoke.SetForegroundWindow(hwnd);
-            Thread.Sleep(200);
-
-            // First center view using Ctrl-Space
-            PInvoke.keybd_event(Convert.ToByte(VK_RCONTROL), 0, KEYEVENTF_KEYDOWN, 0);
-            PInvoke.keybd_event(Convert.ToByte(VK_SPACE), 0, KEYEVENTF_KEYDOWN, 0);
-            Thread.Sleep(200);
-            PInvoke.keybd_event(Convert.ToByte(VK_SPACE), 0, KEYEVENTF_KEYUP, 0);
-            PInvoke.keybd_event(Convert.ToByte(VK_RCONTROL), 0, KEYEVENTF_KEYUP, 0);
-            Thread.Sleep(200);
-
-            // Wait for center view to complete
-            Thread.Sleep(500);
         }
 
         public static void SaveCustomView(string keybinding)

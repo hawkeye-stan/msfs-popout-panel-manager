@@ -32,8 +32,8 @@
         Height="Auto"
         Mode="Dark">
         <DockPanel
-            Width="400"
-            Height="225"
+            Width="{Binding WindowWidth}"
+            Height="{Binding WindowHeight}"
             d:DataContext="{d:DesignInstance viewmodel:MessageWindowViewModel}">
             <WrapPanel
                 Height="30"
