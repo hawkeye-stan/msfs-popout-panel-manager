@@ -111,9 +111,9 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                         Task.Run(() =>
                         {
                             PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, info.pt.X, info.pt.Y, 0, 0);        // focus window
-                            Thread.Sleep(ApplicationSetting.TouchSetting.TouchDownUpDelay + 25);
+                            Thread.Sleep(ApplicationSetting.TouchSetting.TouchDownUpDelay + 5);
                             PInvoke.mouse_event(MOUSEEVENTF_LEFTDOWN, info.pt.X, info.pt.Y, 0, 0);
-                            Thread.Sleep(ApplicationSetting.TouchSetting.TouchDownUpDelay + 50);
+                            Thread.Sleep(ApplicationSetting.TouchSetting.TouchDownUpDelay + 25);
                             _isTouchDown = false;
                         });
                     }
@@ -145,27 +145,18 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                     {
                         Task.Run(() =>
                         {
-                            while (_isTouchDown) { }
-
+                            SpinWait.SpinUntil(() => !_isTouchDown, TimeSpan.FromSeconds(0.25));
+                           
                             if (_isDragged)
                             {
-                                if (ApplicationSetting.TouchSetting.TouchDownUpDelay > 0)
-                                    Thread.Sleep(ApplicationSetting.TouchSetting.TouchDownUpDelay);
-
-                                PInvoke.SetCursorPos(info.pt.X, info.pt.Y);
-
-                                if (ApplicationSetting.TouchSetting.TouchDownUpDelay > 0)
-                                    Thread.Sleep(ApplicationSetting.TouchSetting.TouchDownUpDelay);
-
-                                InputEmulationManager.LeftClickFast(info.pt.X, info.pt.Y);
+                                PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, info.pt.X, info.pt.Y, 0, 0);
+                                Thread.Sleep(ApplicationSetting.TouchSetting.TouchDownUpDelay + 25);
+                                PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, info.pt.X, info.pt.Y, 0, 0);
 
                                 _isDragged = false;
                             }
                             else
                             {
-                                if (ApplicationSetting.TouchSetting.TouchDownUpDelay > 0)
-                                    Thread.Sleep(ApplicationSetting.TouchSetting.TouchDownUpDelay);
-
                                 PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, info.pt.X, info.pt.Y, 0, 0);
                             }
 
