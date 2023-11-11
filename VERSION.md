@@ -5,6 +5,10 @@
 
 * Fixed CPU rogue cycle issue when using touch feature in pop out panel.
 
+* Added support for PMDG 737 EFB.
+
+* Further improve touch feature responsiveness.
+
 ## Version 4.0.3 Beta 2
 
 * Updated logic to turbo mode to help resolve pop out reliability issue.
