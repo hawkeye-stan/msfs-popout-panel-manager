@@ -13,9 +13,12 @@ namespace MSFSPopoutPanelManager.WindowsAgent
     {
         private static IntPtr _hHook = IntPtr.Zero;
         private static PInvoke.WindowsHookExProc callbackDelegate = HookCallBack;
-        private static bool _isTouchDown = false;
+        private static bool _isTouchDownCompleted = true;
+        private static bool _isTouchUpCompleted = true;
         private static bool _isDragged = false;
         private static int _refocusedTaskIndex = 0;
+
+        private static object _lock = new object();
 
         private const int PANEL_MENUBAR_HEIGHT = 31;
         private const uint TOUCH_FLAG = 0xFF515700;
@@ -72,7 +75,7 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                 {
                     case WM_LBUTTONDOWN:
                     case WM_LBUTTONUP:
-                        if (_isTouchDown)
+                        if (!_isTouchDownCompleted)
                             return 1;
                         break;
                 }
@@ -97,34 +100,44 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                     return 1;
 
                 case WM_LBUTTONDOWN:
-                    if (!_isTouchDown)
+                    if (_isTouchDownCompleted && _isTouchUpCompleted)
                     {
                         _refocusedTaskIndex++;
                         if (panelConfig.PanelType == PanelType.RefocusDisplay)
                             return 1;
 
-                        _isTouchDown = true;
-
-                        if (_isDragged)
-                            return 1;
+                        lock (_lock)
+                        {
+                            _isTouchDownCompleted = false;
+                            _isTouchUpCompleted = false;
+                        }
 
                         Task.Run(() =>
                         {
-                            PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, info.pt.X, info.pt.Y, 0, 0);        // focus window
-                            Thread.Sleep(ApplicationSetting.TouchSetting.TouchDownUpDelay + 5);
+                            PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, info.pt.X + 1, info.pt.Y + 1, 0, 0); // focus window
+                            Thread.Sleep(ApplicationSetting.TouchSetting.TouchDownUpDelay + 10);
+                            
                             PInvoke.mouse_event(MOUSEEVENTF_LEFTDOWN, info.pt.X, info.pt.Y, 0, 0);
                             Thread.Sleep(ApplicationSetting.TouchSetting.TouchDownUpDelay + 25);
-                            _isTouchDown = false;
+                            lock (_lock)
+                            {
+                                _isTouchDownCompleted = true;
+                            }
                         });
                     }
                     return 1;
                 case WM_LBUTTONUP:
+
                     if (panelConfig.PanelType == PanelType.RefocusDisplay)
                     {
                         Task.Run(() =>
                         {
-                            _isTouchDown = false;
-                            _isDragged = false;
+                            lock (_lock)
+                            {
+                                _isTouchDownCompleted = true;
+                                _isDragged = false;
+                                _isTouchUpCompleted = true;
+                            }
 
                             // Refocus game window
                             if (ApplicationSetting.RefocusSetting.RefocusGameWindow.IsEnabled && panelConfig.AutoGameRefocus)
@@ -145,22 +158,23 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                     {
                         Task.Run(() =>
                         {
-                            SpinWait.SpinUntil(() => !_isTouchDown, TimeSpan.FromSeconds(0.25));
-                           
+                            SpinWait.SpinUntil(() => _isTouchDownCompleted, TimeSpan.FromSeconds(0.25));
+
                             if (_isDragged)
                             {
+                                // Need this for PMS GTN750
                                 PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, info.pt.X, info.pt.Y, 0, 0);
                                 Thread.Sleep(ApplicationSetting.TouchSetting.TouchDownUpDelay + 25);
-                                PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, info.pt.X, info.pt.Y, 0, 0);
-
-                                _isDragged = false;
                             }
-                            else
+
+                            PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, info.pt.X, info.pt.Y, 0, 0);
+
+                            lock (_lock)
                             {
-                                PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, info.pt.X, info.pt.Y, 0, 0);
+                                _isDragged = false;
+                                _isTouchDownCompleted = true;
+                                _isTouchUpCompleted = true;
                             }
-
-                            _isTouchDown = false;
 
                             // Refocus game window
                             if (ApplicationSetting.RefocusSetting.RefocusGameWindow.IsEnabled && panelConfig.AutoGameRefocus)
@@ -177,13 +191,19 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                             }
                         });
                     }
+
                     return 1;
                 case WM_MOUSEMOVE:
-                    if (_isTouchDown)
+                    if (!_isTouchDownCompleted)
                     {
-                        _isDragged = true;
+                        lock (_lock)
+                        {
+                            _isDragged = true;
+                        }
+
                         return 1;
                     }
+                    
                     break;
             }
 
