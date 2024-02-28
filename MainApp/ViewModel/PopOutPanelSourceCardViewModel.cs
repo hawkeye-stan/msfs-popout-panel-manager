@@ -54,8 +54,6 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
             
             _panelSourceOrchestrator.StartPanelSelectionEvent();
 
-            DataItem.IsSelectedPanelSource = true;
-
             _panelSourceOrchestrator.StartPanelSelection(DataItem);
         }
 

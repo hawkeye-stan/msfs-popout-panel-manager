@@ -1,19 +1,13 @@
-## Version 4.0.3
+## Version 4.1.0
 
-* Fixed rogue CPU issue when using touch feature in pop out panel which may cause computer to hang.
+* Added new method to select panel source for an aircraft profile using fixed camera view instead of relying saved custom camera view. Previous method of using saved custom camera view is still available to use if desire.
 
-* Added a new turbo mode to improve execution speed during pop out process. Turbo mode can be turned on in preferences => general settings.
+Video showing how to create a new profile using the new panel selection method: https://vimeo.com/917361559
 
-* Added support for PMDG 737 EFB.
+Video showing how to updae existing profile to use the new panel selection method: https://vimeo.com/917364912 
 
-* Added please wait message when editing panel source to resolve the confusion that Pop Out Panel Manager seems to hang when trying to select panel source during creation of a new aircraft profile.
+* Added new virtual number pad to be used for touch enabled screen. This number pad will first focus the game window before sending num pad keystroke to the game.
 
-* Improved touch reliability when touch feature on pop out panel.
+* Added a new button to easily close all Pop Out Panel Manager's managed pop outs.
 
-* Removed pop out failure error message when after pop out predefined camera view has not been setup for an aircraft.
-
-* Update text color for pop out progress dialog.
-
-### KNOWN ISSUE: 
-
-* For A2A Comanche PA-24-250, pop out step "Resetting camera view" does not work since this aircraft does not seem to implement SimConnect variable CAMERA_VIEW_TYPE_AND_INDEX:1 which Pop Out Panel Manager uses to reset camera view.
+* Fixed few reported bugs in the application.

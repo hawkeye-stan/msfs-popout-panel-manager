@@ -70,7 +70,7 @@ namespace MSFSPopoutPanelManager.MainApp.AppUserControl
 
             var fe = e.OriginalSource as FrameworkElement;
 
-            if (fe?.Name != "HeaderSiteContent" && fe?.Name != "BtnShowSourcePanel")
+            if (fe?.Name != "HeaderSiteContent" && fe?.Name != "BtnShowSourcePanel" && fe?.Name != "BtnIdentifySourcePanel")
                 return;
 
             foreach (var panelConfig in _viewModel.ActiveProfile.PanelConfigs)
