@@ -4,7 +4,7 @@
 
 Video showing how to create a new profile using the new panel selection method: https://vimeo.com/917361559
 
-Video showing how to updae existing profile to use the new panel selection method: https://vimeo.com/917364912 
+Video showing how to update existing profile to use the new panel selection method: https://vimeo.com/917364912 
 
 * Added new virtual number pad to be used for touch enabled screen. This number pad will first focus the game window before sending num pad keystroke to the game.
 
