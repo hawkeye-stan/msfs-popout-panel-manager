@@ -1,31 +1,26 @@
-﻿using MSFSPopoutPanelManager.Shared;
-using MSFSPopoutPanelManager.WindowsAgent;
+﻿using MSFSPopoutPanelManager.WindowsAgent;
 
 namespace MSFSPopoutPanelManager.Orchestration
 {
-    public class KeyboardOrchestrator : ObservableObject
+    public class KeyboardOrchestrator : BaseOrchestrator
     {
-        private AppSettingData _appSettingData;
-        private FlightSimData _flightSimData;
+        private readonly PanelPopOutOrchestrator _panelPopOutOrchestrator;
 
-        public KeyboardOrchestrator(AppSettingData appSettingData, FlightSimData flightSimData)
+        public KeyboardOrchestrator(SharedStorage sharedStorage, PanelPopOutOrchestrator panelPopOutOrchestrator) : base(sharedStorage)
         {
-            _appSettingData = appSettingData;
-            _flightSimData = flightSimData;
+            _panelPopOutOrchestrator = panelPopOutOrchestrator;
         }
-
-        internal PanelPopOutOrchestrator PanelPopOutOrchestrator { get; set; }
 
         public void Initialize()
         {
-            if (_appSettingData.ApplicationSetting.KeyboardShortcutSetting.IsEnabled)
+            if (AppSettingData.ApplicationSetting.KeyboardShortcutSetting.IsEnabled)
             {
                 InputHookManager.StartKeyboardHook();
                 InputHookManager.OnKeyUp -= HandleKeyboardHookKeyUpEvent;
                 InputHookManager.OnKeyUp += HandleKeyboardHookKeyUpEvent;
             }
 
-            _appSettingData.ApplicationSetting.IsUsedKeyboardShortcutChanged += (sender, e) =>
+            AppSettingData.ApplicationSetting.OnIsUsedKeyboardShortcutChanged += (_, e) =>
             {
                 if (e)
                 {
@@ -41,11 +36,11 @@ namespace MSFSPopoutPanelManager.Orchestration
             };
         }
 
-        public void HandleKeyboardHookKeyUpEvent(object sender, KeyUpEventArgs e)
+        public async void HandleKeyboardHookKeyUpEvent(object sender, KeyUpEventArgs e)
         {
             // Start pop out
-            if (e.IsHoldControl && e.IsHoldShift && e.KeyCode.ToUpper() == _appSettingData.ApplicationSetting.KeyboardShortcutSetting.StartPopOutKeyBinding)
-                PanelPopOutOrchestrator.ManualPopOut();
+            if (e.IsHoldControl && e.IsHoldShift && e.KeyCode.ToUpper() == AppSettingData.ApplicationSetting.KeyboardShortcutSetting.StartPopOutKeyBinding)
+                await _panelPopOutOrchestrator.ManualPopOut();
         }
     }
 }

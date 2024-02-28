@@ -4,11 +4,15 @@ using MSFSPopoutPanelManager.Orchestration;
 using Prism.Commands;
 using System;
 using System.Windows.Input;
+using MSFSPopoutPanelManager.MainApp.AppUserControl.Dialog;
 
 namespace MSFSPopoutPanelManager.MainApp.ViewModel
 {
     public class ProfileCardListViewModel : BaseViewModel
     {
+        private readonly ProfileOrchestrator _profileOrchestrator;
+        private readonly PanelSourceOrchestrator _panelSourceOrchestrator;
+
         public ICommand AddProfileCommand { get; }
 
         public ICommand NextProfileCommand { get; }
@@ -21,14 +25,13 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
 
         public int ProfileTransitionIndex { get; set; }
 
-        public bool IsProfileListEmpty { get { return ProfileData?.Profiles.Count == 0; } }
-
-        public bool IsProfileListNotEmpty { get { return ProfileData?.Profiles.Count > 0; } }
-
         public event EventHandler OnProfileSelected;
 
-        public ProfileCardListViewModel(MainOrchestrator orchestrator) : base(orchestrator)
+        public ProfileCardListViewModel(SharedStorage sharedStorage, ProfileOrchestrator profileOrchestrator, PanelSourceOrchestrator panelSourceOrchestrator) : base(sharedStorage)
         {
+            _profileOrchestrator = profileOrchestrator;
+            _panelSourceOrchestrator = panelSourceOrchestrator;
+
             AddProfileCommand = new DelegateCommand(OnAddProfile);
             NextProfileCommand = new DelegateCommand(OnNextProfile);
             PreviousProfileCommand = new DelegateCommand(OnPreviousProfile);
@@ -42,35 +45,35 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
             var dialog = new AddProfileDialog();
             var result = await DialogHost.Show(dialog, ROOT_DIALOG_HOST, null, dialog.ClosingEventHandler, null);
 
-            if (result.ToString() == "ADD")
+            if (result != null && result.ToString() == "ADD")
                 UpdateProfileTransitionIndex();
         }
 
         private void OnNextProfile()
         {
             ProfileData.ResetActiveProfile();
-            Orchestrator.PanelSource.CloseAllPanelSource();
-            Orchestrator.Profile.MoveToNextProfile();
+            _panelSourceOrchestrator.CloseAllPanelSource();
+            _profileOrchestrator.MoveToNextProfile();
             UpdateProfileTransitionIndex();
         }
 
         private void OnPreviousProfile()
         {
             ProfileData.ResetActiveProfile();
-            Orchestrator.PanelSource.CloseAllPanelSource();
-            Orchestrator.Profile.MoveToPreviousProfile();
+            _panelSourceOrchestrator.CloseAllPanelSource();
+            _profileOrchestrator.MoveToPreviousProfile();
             UpdateProfileTransitionIndex();
         }
 
         private void OnSearchProfileSelected()
         {
-            if (SearchProfileSelectedItem != null)
-            {
-                Orchestrator.Profile.ChangeProfile(SearchProfileSelectedItem);
-                UpdateProfileTransitionIndex();
+            if (SearchProfileSelectedItem == null) 
+                return;
 
-                OnProfileSelected?.Invoke(this, null);
-            }
+            _profileOrchestrator.ChangeProfile(SearchProfileSelectedItem);
+            UpdateProfileTransitionIndex();
+
+            OnProfileSelected?.Invoke(this, EventArgs.Empty);
         }
 
         private void UpdateProfileTransitionIndex()

@@ -6,14 +6,21 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
     {
         public static List<SimConnectDataDefinition> GetRequiredDefinitions()
         {
-            var definitions = new List<SimConnectDataDefinition>();
-            definitions.Add(new SimConnectDataDefinition() { DefinitionId = DATA_DEFINITION.REQUIRED_DEFINITION, RequestId = DATA_REQUEST.REQUIRED_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.ElectricalMasterBattery, VariableName = "ELECTRICAL MASTER BATTERY", SimConnectUnit = "Bool", DataType = DataType.Float64 });
-            definitions.Add(new SimConnectDataDefinition() { DefinitionId = DATA_DEFINITION.REQUIRED_DEFINITION, RequestId = DATA_REQUEST.REQUIRED_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.AvionicsMasterSwitch, VariableName = "AVIONICS MASTER SWITCH", SimConnectUnit = "Bool", DataType = DataType.Float64 });
-            definitions.Add(new SimConnectDataDefinition() { DefinitionId = DATA_DEFINITION.REQUIRED_DEFINITION, RequestId = DATA_REQUEST.REQUIRED_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.TrackIREnable, VariableName = "TRACK IR ENABLE", SimConnectUnit = "Bool", DataType = DataType.Float64 });
-            definitions.Add(new SimConnectDataDefinition() { DefinitionId = DATA_DEFINITION.REQUIRED_DEFINITION, RequestId = DATA_REQUEST.REQUIRED_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.PlaneInParkingSpot, VariableName = "ATC ON PARKING SPOT", SimConnectUnit = "Bool", DataType = DataType.Float64 });
-            definitions.Add(new SimConnectDataDefinition() { DefinitionId = DATA_DEFINITION.REQUIRED_DEFINITION, RequestId = DATA_REQUEST.REQUIRED_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.CameraState, VariableName = "CAMERA STATE", SimConnectUnit = "Number", DataType = DataType.Float64 });
-            definitions.Add(new SimConnectDataDefinition() { DefinitionId = DATA_DEFINITION.REQUIRED_DEFINITION, RequestId = DATA_REQUEST.REQUIRED_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.CockpitCameraZoom, VariableName = "COCKPIT CAMERA ZOOM", SimConnectUnit = "Percentage", DataType = DataType.Float64 });
-            definitions.Add(new SimConnectDataDefinition() { DefinitionId = DATA_DEFINITION.REQUIRED_DEFINITION, RequestId = DATA_REQUEST.REQUIRED_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.CameraViewTypeAndIndex1, VariableName = "CAMERA VIEW TYPE AND INDEX:1", SimConnectUnit = "Enum", DataType = DataType.Float64 });
+            var definitions = new List<SimConnectDataDefinition>
+            {
+                new() { DefinitionId = DataDefinition.REQUIRED_DEFINITION, RequestId = DataRequest.REQUIRED_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.ElectricalMasterBattery, VariableName = "ELECTRICAL MASTER BATTERY", SimConnectUnit = "Bool", DataType = DataType.Float64 },
+                new() { DefinitionId = DataDefinition.REQUIRED_DEFINITION, RequestId = DataRequest.REQUIRED_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.AvionicsMasterSwitch, VariableName = "AVIONICS MASTER SWITCH", SimConnectUnit = "Bool", DataType = DataType.Float64 },
+                new() { DefinitionId = DataDefinition.REQUIRED_DEFINITION, RequestId = DataRequest.REQUIRED_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.TrackIREnable, VariableName = "TRACK IR ENABLE", SimConnectUnit = "Bool", DataType = DataType.Float64 },
+                new() { DefinitionId = DataDefinition.REQUIRED_DEFINITION, RequestId = DataRequest.REQUIRED_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.PlaneInParkingSpot, VariableName = "ATC ON PARKING SPOT", SimConnectUnit = "Bool", DataType = DataType.Float64 },
+                new() { DefinitionId = DataDefinition.REQUIRED_DEFINITION, RequestId = DataRequest.REQUIRED_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.CameraState, VariableName = "CAMERA STATE", SimConnectUnit = "Number", DataType = DataType.Float64 },
+                new() { DefinitionId = DataDefinition.REQUIRED_DEFINITION, RequestId = DataRequest.REQUIRED_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.CockpitCameraZoom, VariableName = "COCKPIT CAMERA ZOOM", SimConnectUnit = "Percentage", DataType = DataType.Float64 },
+                new() { DefinitionId = DataDefinition.REQUIRED_DEFINITION, RequestId = DataRequest.REQUIRED_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.PlaneAltAboveGround, VariableName = "PLANE ALT ABOVE GROUND", SimConnectUnit = "Feet", DataType = DataType.Float64 },
+                new() { DefinitionId = DataDefinition.REQUIRED_DEFINITION, RequestId = DataRequest.REQUIRED_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.CameraViewTypeAndIndex0, VariableName = "CAMERA VIEW TYPE AND INDEX:0", SimConnectUnit = "Enum", DataType = DataType.Float64 },
+                new() { DefinitionId = DataDefinition.REQUIRED_DEFINITION, RequestId = DataRequest.REQUIRED_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.CameraViewTypeAndIndex1, VariableName = "CAMERA VIEW TYPE AND INDEX:1", SimConnectUnit = "Enum", DataType = DataType.Float64 },
+                new() { DefinitionId = DataDefinition.REQUIRED_DEFINITION, RequestId = DataRequest.REQUIRED_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.CameraViewTypeAndIndex1Max, VariableName = "CAMERA VIEW TYPE AND INDEX MAX:1", SimConnectUnit = "Number", DataType = DataType.Float64 },
+                new() { DefinitionId = DataDefinition.REQUIRED_DEFINITION, RequestId = DataRequest.REQUIRED_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.CameraViewTypeAndIndex2Max, VariableName = "CAMERA VIEW TYPE AND INDEX MAX:2", SimConnectUnit = "Number", DataType = DataType.Float64 },
+
+            };
             return definitions;
         }
 
@@ -27,9 +34,9 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
                     definitions = GetSharedHudBarDefinitions();
                     definitions.AddRange(GetGenericAircraftHudBarDefinitions());
                     return definitions;
-                case SimDataDefinitionType.PMDG737HudBar:
+                case SimDataDefinitionType.Pmdg737HudBar:
                     definitions = GetSharedHudBarDefinitions();
-                    definitions.AddRange(GetPMDG37HudBarDefinitions());
+                    definitions.AddRange(GetPmdg737HudBarDefinitions());
                     return definitions;
                 case SimDataDefinitionType.NoHudBar:
                 default:
@@ -39,32 +46,38 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
 
         private static List<SimConnectDataDefinition> GetSharedHudBarDefinitions()
         {
-            var definitions = new List<SimConnectDataDefinition>();
-            definitions.Add(new SimConnectDataDefinition() { DefinitionId = DATA_DEFINITION.HUDBAR_DEFINITION, RequestId = DATA_REQUEST.HUDBAR_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.SimRate, VariableName = "SIMULATION RATE", SimConnectUnit = "Number", DataType = DataType.Float64 });
-            definitions.Add(new SimConnectDataDefinition() { DefinitionId = DATA_DEFINITION.HUDBAR_DEFINITION, RequestId = DATA_REQUEST.HUDBAR_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.ParkingBrake, VariableName = "BRAKE PARKING INDICATOR", SimConnectUnit = "Bool", DataType = DataType.Float64 });
-            definitions.Add(new SimConnectDataDefinition() { DefinitionId = DATA_DEFINITION.HUDBAR_DEFINITION, RequestId = DATA_REQUEST.HUDBAR_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.GearLeft, VariableName = "GEAR LEFT POSITION", SimConnectUnit = "Percent", DataType = DataType.Float64 });
-            definitions.Add(new SimConnectDataDefinition() { DefinitionId = DATA_DEFINITION.HUDBAR_DEFINITION, RequestId = DATA_REQUEST.HUDBAR_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.GearCenter, VariableName = "GEAR CENTER POSITION", SimConnectUnit = "Percent", DataType = DataType.Float64 });
-            definitions.Add(new SimConnectDataDefinition() { DefinitionId = DATA_DEFINITION.HUDBAR_DEFINITION, RequestId = DATA_REQUEST.HUDBAR_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.GearRight, VariableName = "GEAR RIGHT POSITION", SimConnectUnit = "Percent", DataType = DataType.Float64 });
+            var definitions = new List<SimConnectDataDefinition>
+            {
+                new() { DefinitionId = DataDefinition.HUDBAR_DEFINITION, RequestId = DataRequest.HUDBAR_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.SimRate, VariableName = "SIMULATION RATE", SimConnectUnit = "Number", DataType = DataType.Float64 },
+                new() { DefinitionId = DataDefinition.HUDBAR_DEFINITION, RequestId = DataRequest.HUDBAR_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.ParkingBrake, VariableName = "BRAKE PARKING INDICATOR", SimConnectUnit = "Bool", DataType = DataType.Float64 },
+                new() { DefinitionId = DataDefinition.HUDBAR_DEFINITION, RequestId = DataRequest.HUDBAR_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.GearLeft, VariableName = "GEAR LEFT POSITION", SimConnectUnit = "Percent", DataType = DataType.Float64 },
+                new() { DefinitionId = DataDefinition.HUDBAR_DEFINITION, RequestId = DataRequest.HUDBAR_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.GearCenter, VariableName = "GEAR CENTER POSITION", SimConnectUnit = "Percent", DataType = DataType.Float64 },
+                new() { DefinitionId = DataDefinition.HUDBAR_DEFINITION, RequestId = DataRequest.HUDBAR_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.GearRight, VariableName = "GEAR RIGHT POSITION", SimConnectUnit = "Percent", DataType = DataType.Float64 }
+            };
             return definitions;
         }
 
         private static List<SimConnectDataDefinition> GetGenericAircraftHudBarDefinitions()
         {
-            var definitions = new List<SimConnectDataDefinition>();
-            definitions.Add(new SimConnectDataDefinition() { DefinitionId = DATA_DEFINITION.HUDBAR_DEFINITION, RequestId = DATA_REQUEST.HUDBAR_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.ElevatorTrim, VariableName = "ELEVATOR TRIM PCT", SimConnectUnit = "percent", DataType = DataType.Float64 });
-            definitions.Add(new SimConnectDataDefinition() { DefinitionId = DATA_DEFINITION.HUDBAR_DEFINITION, RequestId = DATA_REQUEST.HUDBAR_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.AileronTrim, VariableName = "AILERON TRIM", SimConnectUnit = "radians", DataType = DataType.Float64 });
-            definitions.Add(new SimConnectDataDefinition() { DefinitionId = DATA_DEFINITION.HUDBAR_DEFINITION, RequestId = DATA_REQUEST.HUDBAR_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.RudderTrim, VariableName = "RUDDER TRIM", SimConnectUnit = "radians", DataType = DataType.Float64 });
-            definitions.Add(new SimConnectDataDefinition() { DefinitionId = DATA_DEFINITION.HUDBAR_DEFINITION, RequestId = DATA_REQUEST.HUDBAR_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.Flap, VariableName = "TRAILING EDGE FLAPS LEFT ANGLE", SimConnectUnit = "degrees", DataType = DataType.Float64 });
+            var definitions = new List<SimConnectDataDefinition>
+            {
+                new() { DefinitionId = DataDefinition.HUDBAR_DEFINITION, RequestId = DataRequest.HUDBAR_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.ElevatorTrim, VariableName = "ELEVATOR TRIM PCT", SimConnectUnit = "percent", DataType = DataType.Float64 },
+                new() { DefinitionId = DataDefinition.HUDBAR_DEFINITION, RequestId = DataRequest.HUDBAR_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.AileronTrim, VariableName = "AILERON TRIM", SimConnectUnit = "radians", DataType = DataType.Float64 },
+                new() { DefinitionId = DataDefinition.HUDBAR_DEFINITION, RequestId = DataRequest.HUDBAR_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.RudderTrim, VariableName = "RUDDER TRIM", SimConnectUnit = "radians", DataType = DataType.Float64 },
+                new() { DefinitionId = DataDefinition.HUDBAR_DEFINITION, RequestId = DataRequest.HUDBAR_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.Flap, VariableName = "TRAILING EDGE FLAPS LEFT ANGLE", SimConnectUnit = "degrees", DataType = DataType.Float64 }
+            };
             return definitions;
         }
 
-        private static List<SimConnectDataDefinition> GetPMDG37HudBarDefinitions()
+        private static List<SimConnectDataDefinition> GetPmdg737HudBarDefinitions()
         {
-            var definitions = new List<SimConnectDataDefinition>();
-            definitions.Add(new SimConnectDataDefinition() { DefinitionId = DATA_DEFINITION.HUDBAR_DEFINITION, RequestId = DATA_REQUEST.HUDBAR_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.ElevatorTrim, VariableName = "L:switch_690_73X", SimConnectUnit = "number", DataType = DataType.Float64 });
-            definitions.Add(new SimConnectDataDefinition() { DefinitionId = DATA_DEFINITION.HUDBAR_DEFINITION, RequestId = DATA_REQUEST.HUDBAR_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.AileronTrim, VariableName = "AILERON POSITION", SimConnectUnit = "Position 16k", DataType = DataType.Float64 });
-            definitions.Add(new SimConnectDataDefinition() { DefinitionId = DATA_DEFINITION.HUDBAR_DEFINITION, RequestId = DATA_REQUEST.HUDBAR_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.RudderTrim, VariableName = "RUDDER DEFLECTION PCT", SimConnectUnit = "Percent Over 100", DataType = DataType.Float64 });
-            definitions.Add(new SimConnectDataDefinition() { DefinitionId = DATA_DEFINITION.HUDBAR_DEFINITION, RequestId = DATA_REQUEST.HUDBAR_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.Flap, VariableName = "FLAPS HANDLE INDEX", SimConnectUnit = "Number", DataType = DataType.Float64 });
+            var definitions = new List<SimConnectDataDefinition>
+            {
+                new() { DefinitionId = DataDefinition.HUDBAR_DEFINITION, RequestId = DataRequest.HUDBAR_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.ElevatorTrim, VariableName = "L:switch_690_73X", SimConnectUnit = "number", DataType = DataType.Float64 },
+                new() { DefinitionId = DataDefinition.HUDBAR_DEFINITION, RequestId = DataRequest.HUDBAR_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.AileronTrim, VariableName = "AILERON POSITION", SimConnectUnit = "Position 16k", DataType = DataType.Float64 },
+                new() { DefinitionId = DataDefinition.HUDBAR_DEFINITION, RequestId = DataRequest.HUDBAR_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.RudderTrim, VariableName = "RUDDER DEFLECTION PCT", SimConnectUnit = "Percent Over 100", DataType = DataType.Float64 },
+                new() { DefinitionId = DataDefinition.HUDBAR_DEFINITION, RequestId = DataRequest.HUDBAR_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.Flap, VariableName = "FLAPS HANDLE INDEX", SimConnectUnit = "Number", DataType = DataType.Float64 }
+            };
             return definitions;
         }
 
@@ -75,9 +88,14 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
             public static string TrackIREnable = "TrackIREnable";
             public static string PlaneInParkingSpot = "PlaneInParkingSpot";
             public static string CameraState = "CameraState";
-            public static string AircraftName = "AircraftName";
             public static string CockpitCameraZoom = "CockpitCameraZoom";
+            public static string CameraViewTypeAndIndex0 = "CameraViewTypeAndIndex0";
             public static string CameraViewTypeAndIndex1 = "CameraViewTypeAndIndex1";
+            public static string CameraViewTypeAndIndex1Max = "CameraViewTypeAndIndex1Max";
+            public static string CameraViewTypeAndIndex2Max = "CameraViewTypeAndIndex2Max";
+
+            // Dynamic LOD
+            public static string PlaneAltAboveGround = "PlaneAltAboveGround";
 
             // Hud Bar data
             public static string ElevatorTrim = "ElevatorTrim";
@@ -91,11 +109,13 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
             public static string SimRate = "SimRate";
         }
 
-        public enum WriteableVariableName
+        public enum WritableVariableName
         {
             TrackIREnable,
             CockpitCameraZoom,
-            CameraRequestAction
+            CameraRequestAction,
+            CameraViewTypeAndIndex0,
+            CameraViewTypeAndIndex1
         }
     }
 
@@ -103,6 +123,6 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
     {
         NoHudBar,
         GenericHudBar,
-        PMDG737HudBar
+        Pmdg737HudBar
     }
 }

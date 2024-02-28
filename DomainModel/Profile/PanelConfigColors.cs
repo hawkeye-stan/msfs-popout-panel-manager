@@ -8,7 +8,7 @@ namespace MSFSPopoutPanelManager.DomainModel.Profile
     {
         public static string GetNextAvailableColor(List<PanelConfig> panelConfigs)
         {
-            foreach (string colorName in Enum.GetNames<Colors>())
+            foreach (var colorName in Enum.GetNames<Colors>())
             {
                 if (panelConfigs.Any(p => p.PanelSource.Color == colorName))
                     continue;

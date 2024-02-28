@@ -5,6 +5,5 @@
         public string PropertyName { get; set; }
 
         public double Value { get; set; }
-
     }
 }

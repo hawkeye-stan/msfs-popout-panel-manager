@@ -6,11 +6,9 @@ namespace MSFSPopoutPanelManager.DomainModel.Setting
     {
         public RefocusSetting()
         {
-            RefocusGameWindow = new RefocusGameWindow();
-
             InitializeChildPropertyChangeBinding();
         }
 
-        public RefocusGameWindow RefocusGameWindow { get; set; }
+        public RefocusGameWindow RefocusGameWindow { get; set; } = new();
     }
 }

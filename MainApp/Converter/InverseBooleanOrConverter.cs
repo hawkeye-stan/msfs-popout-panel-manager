@@ -1,22 +1,23 @@
 ﻿using System;
 using System.Windows.Data;
 
-namespace MSFSPopoutPanelManager.MainApp
+namespace MSFSPopoutPanelManager.MainApp.Converter
 {
     public class InverseBooleanOrConverter : IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            if (values.LongLength > 0)
+            if (values.LongLength <= 0) 
+                return true;
+
+            foreach (var value in values)
             {
-                foreach (var value in values)
+                if (value is true)
                 {
-                    if (value is bool && (bool)value)
-                    {
-                        return false;
-                    }
+                    return false;
                 }
             }
+
             return true;
         }
 

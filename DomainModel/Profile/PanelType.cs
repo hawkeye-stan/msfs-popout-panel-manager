@@ -11,6 +11,7 @@
         PanelSourceWindow = 6,
         StatusMessageWindow = 7,
         RefocusDisplay = 8,
+        NumPadWindow = 9,
         Unknown = 100
     }
 }

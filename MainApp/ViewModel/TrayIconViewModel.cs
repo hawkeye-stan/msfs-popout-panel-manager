@@ -8,19 +8,25 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
 {
     public class TrayIconViewModel : BaseViewModel
     {
+        private readonly AppOrchestrator _appOrchestrator;
+        private readonly PanelPopOutOrchestrator _panelPopOutOrchestrator;
+
         public DelegateCommand<object> ChangeProfileCommand { get; }
 
         public ICommand StartPopOutCommand { get; }
 
         public ICommand ExitAppCommand { get; }
 
-        public TrayIconViewModel(MainOrchestrator orchestrator) : base(orchestrator)
+        public TrayIconViewModel(SharedStorage sharedStorage, AppOrchestrator appOrchestrator, PanelPopOutOrchestrator panelPopOutOrchestrator) : base(sharedStorage)
         {
-            StartPopOutCommand = new DelegateCommand(OnStartPopOut, () => ProfileData != null && ProfileData.ActiveProfile != null && ProfileData.ActiveProfile.PanelConfigs.Count > 0 && !ProfileData.ActiveProfile.HasUnidentifiedPanelSource && !ProfileData.ActiveProfile.IsEditingPanelSource && FlightSimData.IsInCockpit)
-                                                                            .ObservesProperty(() => ProfileData.ActiveProfile)
-                                                                            .ObservesProperty(() => ProfileData.ActiveProfile.PanelConfigs.Count)
-                                                                            .ObservesProperty(() => ProfileData.ActiveProfile.HasUnidentifiedPanelSource)
-                                                                            .ObservesProperty(() => ProfileData.ActiveProfile.IsEditingPanelSource)
+            _appOrchestrator = appOrchestrator;
+            _panelPopOutOrchestrator = panelPopOutOrchestrator;
+
+            StartPopOutCommand = new DelegateCommand(OnStartPopOut, () => ProfileData != null && ActiveProfile != null && ActiveProfile.PanelConfigs.Count > 0 && !ActiveProfile.HasUnidentifiedPanelSource && !ActiveProfile.IsEditingPanelSource && FlightSimData.IsInCockpit)
+                                                                            .ObservesProperty(() => ActiveProfile)
+                                                                            .ObservesProperty(() => ActiveProfile.PanelConfigs.Count)
+                                                                            .ObservesProperty(() => ActiveProfile.HasUnidentifiedPanelSource)
+                                                                            .ObservesProperty(() => ActiveProfile.IsEditingPanelSource)
                                                                             .ObservesProperty(() => FlightSimData.IsInCockpit);
 
             ChangeProfileCommand = new DelegateCommand<object>(OnChangeProfile);
@@ -39,14 +45,14 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
             ProfileData.SetActiveProfile(new Guid(profileId));
         }
 
-        private void OnStartPopOut()
+        private async void OnStartPopOut()
         {
-            Orchestrator.PanelPopOut.ManualPopOut();
+            await _panelPopOutOrchestrator.ManualPopOut();
         }
 
         private void OnExitApp()
         {
-            Orchestrator.ApplicationClose();
+            _appOrchestrator.ApplicationClose();
 
             if (Application.Current != null)
                 Environment.Exit(0);

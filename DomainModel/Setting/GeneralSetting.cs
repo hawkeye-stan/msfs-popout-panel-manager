@@ -7,35 +7,25 @@ namespace MSFSPopoutPanelManager.DomainModel.Setting
     {
         public GeneralSetting()
         {
-            AlwaysOnTop = true;
-            MinimizeToTray = false;
-            StartMinimized = false;
-            AutoClose = true;
-            CheckForUpdate = true;
-            TurboMode = false;
-
             InitializeChildPropertyChangeBinding();
         }
 
-        public bool AlwaysOnTop { get; set; }
+        public bool AlwaysOnTop { get; set; } = true;
 
-        public bool AutoClose { get; set; }
+        public bool AutoClose { get; set; } = true;
 
-        public bool MinimizeToTray { get; set; }
+        public bool MinimizeToTray { get; set; } = false;
 
-        public bool StartMinimized { get; set; }
+        public bool StartMinimized { get; set; } = false;
 
-        public bool CheckForUpdate { get; set; }
+        public bool CheckForUpdate { get; set; } = true;
 
-        public bool TurboMode { get; set; }
+        public bool TurboMode { get; set; } = false;
 
         [JsonIgnore, IgnorePropertyChanged]
         public bool AutoStart
         {
-            get
-            {
-                return AppAutoStart.CheckIsAutoStart();
-            }
+            get => AppAutoStart.CheckIsAutoStart();
             set
             {
                 if (value)

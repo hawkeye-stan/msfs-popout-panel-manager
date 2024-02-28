@@ -8,7 +8,7 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
         {
             get
             {
-                TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+                var textInfo = new CultureInfo("en-US", false).TextInfo;
                 return $"Confirm {textInfo.ToTitleCase(ConfirmButtonText.ToLower())}";
             }
         }

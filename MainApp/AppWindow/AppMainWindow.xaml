@@ -1,0 +1,165 @@
+﻿<Window
+    x:Class="MSFSPopoutPanelManager.MainApp.AppWindow.AppMainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:appUserControl="clr-namespace:MSFSPopoutPanelManager.MainApp.AppUserControl"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:system="clr-namespace:System;assembly=mscorlib"
+    xmlns:viewmodel="clr-namespace:MSFSPopoutPanelManager.MainApp.ViewModel"
+    Title="MSFS POP OUT PANEL MANAGER"
+    Width="1000"
+    Height="600"
+    AllowsTransparency="True"
+    Background="Transparent"
+    Icon="../logo.ico"
+    ResizeMode="NoResize"
+    Style="{StaticResource MaterialDesignWindow}"
+    WindowState="{Binding InitialWindowState, Mode=OneWay}"
+    WindowStyle="None"
+    mc:Ignorable="d">
+    <Window.Resources>
+        <system:Double x:Key="IconSize">28</system:Double>
+    </Window.Resources>
+    <Border
+        Margin="0"
+        Background="{StaticResource MaterialDesignDarkBackground}"
+        CornerRadius="15">
+        <Grid d:DataContext="{d:DesignInstance viewmodel:ApplicationViewModel}">
+            <appUserControl:TrayIcon x:Name="SystemTrayIcon" />
+            <materialDesign:DialogHost
+                Background="Transparent"
+                DialogTheme="Inherit"
+                Identifier="RootDialog">
+                <materialDesign:DrawerHost
+                    OpenMode="Standard"
+                    OverlayBackground="Transparent"
+                    RightDrawerCornerRadius="15">
+                    <materialDesign:DrawerHost.RightDrawerContent>
+                        <DockPanel>
+                            <Button
+                                Width="{StaticResource IconSize}"
+                                Height="{StaticResource IconSize}"
+                                Margin="8,8,36,0"
+                                HorizontalAlignment="Right"
+                                Command="{x:Static materialDesign:DrawerHost.CloseDrawerCommand}"
+                                DockPanel.Dock="Top"
+                                Style="{StaticResource MaterialDesignIconButton}">
+                                <materialDesign:PackIcon
+                                    Width="{StaticResource IconSize}"
+                                    Height="{StaticResource IconSize}"
+                                    Kind="ArrowRight" />
+                            </Button>
+                            <StackPanel Name="PanelDrawers" />
+                        </DockPanel>
+                    </materialDesign:DrawerHost.RightDrawerContent>
+                    <DockPanel>
+                        <materialDesign:ColorZone
+                            Padding="12,4,12,4"
+                            materialDesign:ElevationAssist.Elevation="Dp4"
+                            CornerRadius="15,15,0,0"
+                            DockPanel.Dock="Top"
+                            Mode="PrimaryDark">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="200" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="200" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" Margin="0,0,0,0">
+                                    <Button
+                                        Margin="0"
+                                        Padding="0"
+                                        HorizontalAlignment="Left"
+                                        IsHitTestVisible="false">
+                                        <Button.Style>
+                                            <Style BasedOn="{StaticResource MaterialDesignFlatButton}" TargetType="Button">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding FlightSimData.IsSimConnectDataReceived}" Value="True">
+                                                        <Setter Property="Foreground" Value="LightGreen" />
+                                                        <Setter Property="Content" Value="{materialDesign:PackIcon Kind=AccessPointNetwork, Size={StaticResource IconSize}}" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding FlightSimData.IsSimConnectDataReceived}" Value="False">
+                                                        <Setter Property="Foreground" Value="Red" />
+                                                        <Setter Property="Content" Value="{materialDesign:PackIcon Kind=AccessPointNetworkOff, Size={StaticResource IconSize}}" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Width="Auto">
+                                    <TextBlock
+                                        Margin="0,4,0,0"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Foreground="White"
+                                        Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                                        Text="MSFS POP OUT PANEL MANAGER" />
+                                </StackPanel>
+                                <StackPanel
+                                    Grid.Column="2"
+                                    Margin="0,0,0,0"
+                                    HorizontalAlignment="Right"
+                                    Orientation="Horizontal">
+                                    <Button
+                                        Width="{StaticResource IconSize}"
+                                        Height="{StaticResource IconSize}"
+                                        Margin="0,0,0,0"
+                                        Click="SettingsButton_Click"
+                                        Command="{x:Static materialDesign:DrawerHost.OpenDrawerCommand}"
+                                        Foreground="White"
+                                        Style="{StaticResource MaterialDesignIconButton}"
+                                        ToolTip="Preferences">
+                                        <materialDesign:PackIcon Kind="Cog" />
+                                    </Button>
+                                    <Button
+                                        Width="{StaticResource IconSize}"
+                                        Height="{StaticResource IconSize}"
+                                        Margin="10,0,0,0"
+                                        Click="HelpButton_Click"
+                                        Command="{x:Static materialDesign:DrawerHost.OpenDrawerCommand}"
+                                        Foreground="White"
+                                        Style="{StaticResource MaterialDesignIconButton}"
+                                        ToolTip="Help">
+                                        <materialDesign:PackIcon Kind="Help" />
+                                    </Button>
+                                    <Button
+                                        x:Name="BtnMinimize"
+                                        Width="{StaticResource IconSize}"
+                                        Height="{StaticResource IconSize}"
+                                        Margin="10,0,0,0"
+                                        Click="BtnMinimize_Click"
+                                        Foreground="White"
+                                        Style="{StaticResource MaterialDesignIconButton}"
+                                        ToolTip="Minimize application">
+                                        <materialDesign:PackIcon Kind="WindowMinimize" />
+                                    </Button>
+                                    <Button
+                                        x:Name="BtnClose"
+                                        Width="{StaticResource IconSize}"
+                                        Height="{StaticResource IconSize}"
+                                        Margin="10,0,0,0"
+                                        Click="BtnClose_Click"
+                                        Foreground="White"
+                                        Style="{StaticResource MaterialDesignIconButton}"
+                                        ToolTip="Close application">
+                                        <materialDesign:PackIcon Kind="Close" />
+                                    </Button>
+                                </StackPanel>
+                            </Grid>
+                        </materialDesign:ColorZone>
+                        <appUserControl:ProfileCardList
+                            x:Name="ProfileCardList"
+                            Width="1024"
+                            Margin="0,8,0,8"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            DockPanel.Dock="Top" />
+                    </DockPanel>
+                </materialDesign:DrawerHost>
+            </materialDesign:DialogHost>
+        </Grid>
+    </Border>
+</Window>

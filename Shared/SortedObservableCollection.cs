@@ -11,26 +11,23 @@ namespace MSFSPopoutPanelManager.Shared
     [SuppressPropertyChangedWarnings]
     public class SortedObservableCollection<T> : ObservableCollection<T> where T : IComparable<T>
     {
-        public SortedObservableCollection() : base() { }
+        public SortedObservableCollection() { }
 
         public SortedObservableCollection(IEnumerable<T> objects) : base(objects) { }
 
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
             base.OnCollectionChanged(e);
-            if (e.Action != NotifyCollectionChangedAction.Reset &&
-                e.Action != NotifyCollectionChangedAction.Move &&
-                e.Action != NotifyCollectionChangedAction.Remove)
+
+            if (e.Action is NotifyCollectionChangedAction.Reset or NotifyCollectionChangedAction.Move or NotifyCollectionChangedAction.Remove) 
+                return;
+
+            var query = this.Select((item, index) => (Item: item, Index: index)).OrderBy(tuple => tuple.Item, Comparer.Default);
+            var map = query.Select((tuple, index) => (OldIndex: tuple.Index, NewIndex: index)).Where(o => o.OldIndex != o.NewIndex);
+            using var enumerator = map.GetEnumerator();
+            if (enumerator.MoveNext())
             {
-                var query = this.Select((item, index) => (Item: item, Index: index)).OrderBy(tuple => tuple.Item, Comparer.Default);
-                var map = query.Select((tuple, index) => (OldIndex: tuple.Index, NewIndex: index)).Where(o => o.OldIndex != o.NewIndex);
-                using (var enumerator = map.GetEnumerator())
-                {
-                    if (enumerator.MoveNext())
-                    {
-                        base.MoveItem(enumerator.Current.OldIndex, enumerator.Current.NewIndex);
-                    }
-                }
+                base.MoveItem(enumerator.Current.OldIndex, enumerator.Current.NewIndex);
             }
         }
 
@@ -40,7 +37,7 @@ namespace MSFSPopoutPanelManager.Shared
 
         private class Comparer : IComparer<T>
         {
-            public static readonly Comparer Default = new Comparer();
+            public static readonly Comparer Default = new();
 
             public int Compare(T x, T y) => x.CompareTo(y);
         }

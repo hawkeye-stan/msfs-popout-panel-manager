@@ -18,7 +18,7 @@ namespace MSFSPopoutPanelManager.MainApp.CustomControl
         {
             base.OnApplyTemplate();
 
-            TextBox? textBox = GetTemplateChild("PART_TextBox") as TextBox;
+            TextBox textBox = GetTemplateChild("PART_TextBox") as TextBox;
             if (textBox != null)
             {
                 PART_TextBox = textBox;
@@ -27,13 +27,13 @@ namespace MSFSPopoutPanelManager.MainApp.CustomControl
                 PART_TextBox.Text = Value.ToString();
             }
 
-            ButtonBase? PART_ButtonUp = GetTemplateChild("PART_ButtonUp") as ButtonBase;
+            ButtonBase PART_ButtonUp = GetTemplateChild("PART_ButtonUp") as ButtonBase;
             if (PART_ButtonUp != null)
             {
                 PART_ButtonUp.Click += buttonUp_Click;
             }
 
-            ButtonBase? PART_ButtonDown = GetTemplateChild("PART_ButtonDown") as ButtonBase;
+            ButtonBase PART_ButtonDown = GetTemplateChild("PART_ButtonDown") as ButtonBase;
             if (PART_ButtonDown != null)
             {
                 PART_ButtonDown.Click += buttonDown_Click;
@@ -62,16 +62,16 @@ namespace MSFSPopoutPanelManager.MainApp.CustomControl
 
         public int Places
         {
-            get { return (int)GetValue(PlacesProperty); }
-            set { SetValue(PlacesProperty, value); }
+            get => (int)GetValue(PlacesProperty);
+            set => SetValue(PlacesProperty, value);
         }
 
         public static readonly DependencyProperty PlacesProperty = DependencyProperty.Register("Places", typeof(int), typeof(NumericUpDown));
 
         public double MaxValue
         {
-            get { return (double)GetValue(MaxValueProperty); }
-            set { SetValue(MaxValueProperty, value); }
+            get => (double)GetValue(MaxValueProperty);
+            set => SetValue(MaxValueProperty, value);
         }
         public static readonly DependencyProperty MaxValueProperty =
             DependencyProperty.Register("MaxValue", typeof(double), typeof(NumericUpDown), new FrameworkPropertyMetadata(100D, maxValueChangedCallback, coerceMaxValueCallback));
@@ -92,8 +92,8 @@ namespace MSFSPopoutPanelManager.MainApp.CustomControl
 
         public double MinValue
         {
-            get { return (double)GetValue(MinValueProperty); }
-            set { SetValue(MinValueProperty, value); }
+            get => (double)GetValue(MinValueProperty);
+            set => SetValue(MinValueProperty, value);
         }
 
         public static readonly DependencyProperty MinValueProperty =
@@ -117,11 +117,13 @@ namespace MSFSPopoutPanelManager.MainApp.CustomControl
 
         public double Increment
         {
-            get { return (double)GetValue(IncrementProperty); }
-            set { SetValue(IncrementProperty, value); }
+            get => (double)GetValue(IncrementProperty);
+            set => SetValue(IncrementProperty, value);
         }
+        
         public static readonly DependencyProperty IncrementProperty =
-            DependencyProperty.Register("Increment", typeof(double), typeof(NumericUpDown), new FrameworkPropertyMetadata(1D, null, coerceIncrementCallback));
+            DependencyProperty.Register(nameof(Increment), typeof(double), typeof(NumericUpDown), new FrameworkPropertyMetadata(1D, null, coerceIncrementCallback));
+        
         private static object coerceIncrementCallback(DependencyObject d, object value)
         {
             NumericUpDown numericUpDown = ((NumericUpDown)d);
@@ -134,11 +136,13 @@ namespace MSFSPopoutPanelManager.MainApp.CustomControl
 
         public double Value
         {
-            get { return (double)GetValue(ValueProperty); }
-            set { SetValue(ValueProperty, value); }
+            get => (double)GetValue(ValueProperty);
+            set => SetValue(ValueProperty, value);
         }
+
         public static readonly DependencyProperty ValueProperty =
-            DependencyProperty.Register("Value", typeof(double), typeof(NumericUpDown), new FrameworkPropertyMetadata(0D, valueChangedCallback, coerceValueCallback), validateValueCallback);
+            DependencyProperty.Register(nameof(Value), typeof(double), typeof(NumericUpDown), new FrameworkPropertyMetadata(0D, valueChangedCallback, coerceValueCallback), validateValueCallback);
+
         private static void valueChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             NumericUpDown numericUpDown = (NumericUpDown)d;
@@ -147,6 +151,7 @@ namespace MSFSPopoutPanelManager.MainApp.CustomControl
             numericUpDown.RaiseEvent(ea);
             numericUpDown.PART_TextBox.Text = e.NewValue.ToString();
         }
+
         private static bool validateValueCallback(object value)
         {
             double val = (double)value;
@@ -155,6 +160,7 @@ namespace MSFSPopoutPanelManager.MainApp.CustomControl
             else
                 return false;
         }
+
         private static object coerceValueCallback(DependencyObject d, object value)
         {
             double val = (double)value;

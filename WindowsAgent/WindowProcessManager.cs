@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace MSFSPopoutPanelManager.WindowsAgent
 {
@@ -7,12 +8,26 @@ namespace MSFSPopoutPanelManager.WindowsAgent
     {
         public static string GetApplicationVersion()
         {
-            var systemAssemblyVersion = System.Reflection.Assembly.GetEntryAssembly().GetName().Version;
-            var appVersion = $"{systemAssemblyVersion.Major}.{systemAssemblyVersion.Minor}.{systemAssemblyVersion.Build}";
-            if (systemAssemblyVersion.Revision > 0)
-                appVersion += "." + systemAssemblyVersion.Revision.ToString("D4");
+            var assembly = Assembly.GetEntryAssembly();
 
-            return appVersion;
+            if (assembly != null)
+            {
+                var assemblyName = assembly.GetName();
+
+                var systemAssemblyVersion = assemblyName.Version;
+
+                if (systemAssemblyVersion == null)
+                    throw new ApplicationException("Unable to get application version number.");
+
+                var appVersion =
+                    $"{systemAssemblyVersion.Major}.{systemAssemblyVersion.Minor}.{systemAssemblyVersion.Build}";
+                if (systemAssemblyVersion.Revision > 0)
+                    appVersion += "." + systemAssemblyVersion.Revision.ToString("D4");
+
+                return appVersion;
+            }
+
+            throw new ApplicationException("Unable to get application version number.");
         }
 
         public static WindowProcess SimulatorProcess { get; private set; }
@@ -37,7 +52,8 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                     {
                         ProcessId = process.Id,
                         ProcessName = process.ProcessName,
-                        Handle = process.MainWindowHandle
+                        Handle = process.MainWindowHandle,
+                        Modules = process.Modules
                     };
                 }
             }
@@ -53,5 +69,7 @@ namespace MSFSPopoutPanelManager.WindowsAgent
         public string ProcessName { get; set; }
 
         public IntPtr Handle { get; set; }
+
+        public ProcessModuleCollection Modules { get; set; }
     }
 }

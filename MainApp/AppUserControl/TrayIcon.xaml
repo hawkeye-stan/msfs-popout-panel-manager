@@ -1,0 +1,55 @@
+﻿<UserControl
+    x:Class="MSFSPopoutPanelManager.MainApp.AppUserControl.TrayIcon"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:tb="http://www.hardcodet.net/taskbar"
+    xmlns:viewModel="clr-namespace:MSFSPopoutPanelManager.MainApp.ViewModel"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style TargetType="MenuItem">
+            <Setter Property="FontSize" Value="14" />
+        </Style>
+    </UserControl.Resources>
+    <tb:TaskbarIcon
+        x:Name="Tray"
+        d:DataContext="{d:DesignInstance viewModel:TrayIconViewModel}"
+        IconSource="../logo.ico"
+        MenuActivation="RightClick"
+        Visibility="Visible">
+        <tb:TaskbarIcon.ContextMenu>
+            <ContextMenu>
+                <MenuItem
+                    x:Name="MenuItemProfiles"
+                    Click="MenuItem_Click"
+                    Header="Profiles"
+                    ItemsSource="{Binding ProfileData.Profiles}"
+                    Style="{StaticResource MaterialDesignMenuItem}">
+                    <MenuItem.ItemContainerStyle>
+                        <Style BasedOn="{StaticResource MaterialDesignMenuItem}" TargetType="MenuItem">
+                            <Setter Property="Header" Value="{Binding Name}" />
+                            <Setter Property="IsCheckable" Value="True" />
+                            <Setter Property="IsChecked" Value="{Binding IsActive}" />
+                            <Setter Property="Command" Value="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}, Path=DataContext.ChangeProfileCommand}" />
+                            <Setter Property="CommandParameter" Value="{Binding Id}" />
+                            <Setter Property="FlowDirection" Value="LeftToRight" />
+                            <Setter Property="Margin" Value="0" />
+                        </Style>
+                    </MenuItem.ItemContainerStyle>
+                </MenuItem>
+                <MenuItem
+                    Command="{Binding StartPopOutCommand}"
+                    Header="Start Pop Out"
+                    Style="{StaticResource MaterialDesignMenuItem}" />
+                <Separator />
+                <MenuItem
+                    Command="{Binding ExitAppCommand}"
+                    Header="Exit"
+                    Style="{StaticResource MaterialDesignMenuItem}" />
+            </ContextMenu>
+        </tb:TaskbarIcon.ContextMenu>
+    </tb:TaskbarIcon>
+</UserControl>

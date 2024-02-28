@@ -8,7 +8,6 @@ namespace MSFSPopoutPanelManager.DomainModel.Profile
     {
         public RefocusOnDisplay()
         {
-            IsEnabled = false;
             Monitors = new ObservableCollection<MonitorInfo>();
 
             Monitors.CollectionChanged += (sender, e) =>
@@ -16,14 +15,13 @@ namespace MSFSPopoutPanelManager.DomainModel.Profile
                 switch (e.Action)
                 {
                     case System.Collections.Specialized.NotifyCollectionChangedAction.Add:
-                        if (e.NewItems[0] == null)
+                        if (e.NewItems?[0] == null)
                             return;
 
-                        ((MonitorInfo)e.NewItems[0]).PropertyChanged += (sender, e) =>
+                        ((MonitorInfo)e.NewItems[0]).PropertyChanged += (innerSender, innerArg) =>
                         {
-                            var evtArg = e as PropertyChangedExtendedEventArgs;
-                            if (!evtArg.DisableSave)
-                                base.OnPropertyChanged(sender, e);
+                            if (innerArg is PropertyChangedExtendedEventArgs { DisableSave: false })
+                                base.OnPropertyChanged(innerSender, innerArg);
                         };
                         base.OnPropertyChanged(sender, new PropertyChangedEventArgs("Monitors"));
                         break;
@@ -39,7 +37,7 @@ namespace MSFSPopoutPanelManager.DomainModel.Profile
             InitializeChildPropertyChangeBinding();
         }
 
-        public bool IsEnabled { get; set; }
+        public bool IsEnabled { get; set; } = false;
 
 
         public ObservableCollection<MonitorInfo> Monitors { get; set; }

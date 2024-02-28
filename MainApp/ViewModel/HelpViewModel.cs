@@ -1,4 +1,5 @@
 ﻿using MaterialDesignThemes.Wpf;
+using MSFSPopoutPanelManager.MainApp.AppUserControl.Dialog;
 using MSFSPopoutPanelManager.Orchestration;
 using MSFSPopoutPanelManager.WindowsAgent;
 using Prism.Commands;
@@ -9,6 +10,8 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
 {
     public class HelpViewModel : BaseViewModel
     {
+        private readonly HelpOrchestrator _helpOrchestrator;
+
         public DelegateCommand<string> HyperLinkCommand { get; private set; }
 
         public ICommand DeleteAppCacheCommand { get; private set; }
@@ -21,23 +24,26 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
 
         public bool HasOrphanAppCache { get; private set; }
 
-        public HelpViewModel(MainOrchestrator orchestrator) : base(orchestrator)
+        public HelpViewModel(SharedStorage sharedStorage, HelpOrchestrator helpOrchestrator) : base(sharedStorage)
         {
+            _helpOrchestrator = helpOrchestrator;
+
             HyperLinkCommand = new DelegateCommand<string>(OnHyperLinkActivated);
             DeleteAppCacheCommand = new DelegateCommand(OnDeleteAppCache);
             RollBackCommand = new DelegateCommand(OnRollBack);
 
-            var buildConfig = string.Empty;
 #if DEBUG
-            buildConfig = " (Debug)";
+            var buildConfig = " (Debug)";
 #elif LOCAL
-            buildConfig = " (Local)";
+            var buildConfig = " (Local)";
+#else
+            var buildConfig = string.Empty;
 #endif
 
             ApplicationVersion = $"{WindowProcessManager.GetApplicationVersion()}{buildConfig}";
 
-            IsRollBackCommandVisible = Orchestrator.Help.IsRollBackUpdateEnabled();
-            HasOrphanAppCache = Orchestrator.Help.HasOrphanAppCache();
+            IsRollBackCommandVisible = _helpOrchestrator.IsRollBackUpdateEnabled();
+            HasOrphanAppCache = _helpOrchestrator.HasOrphanAppCache();
         }
 
         private void OnHyperLinkActivated(string commandParameter)
@@ -45,36 +51,36 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
             switch (commandParameter)
             {
                 case "Getting Started":
-                    Orchestrator.Help.OpenGettingStarted();
+                    _helpOrchestrator.OpenGettingStarted();
                     break;
                 case "User Guide":
-                    Orchestrator.Help.OpenUserGuide();
+                    _helpOrchestrator.OpenUserGuide();
                     break;
                 case "Download Latest GitHub":
-                    Orchestrator.Help.OpenLatestDownloadGitHub();
+                    _helpOrchestrator.OpenLatestDownloadGitHub();
                     break;
                 case "Download Latest FlightsimTo":
-                    Orchestrator.Help.OpenLatestDownloadFligthsimTo();
+                    _helpOrchestrator.OpenLatestDownloadFligthsimTo();
                     break;
                 case "License":
-                    Orchestrator.Help.OpenLicense();
+                    _helpOrchestrator.OpenLicense();
                     break;
                 case "Version Info":
-                    Orchestrator.Help.OpenVersionInfo();
+                    _helpOrchestrator.OpenVersionInfo();
                     break;
                 case "Open Data Folder":
-                    Orchestrator.Help.OpenDataFolder();
+                    _helpOrchestrator.OpenDataFolder();
                     break;
                 case "Download VCC Library":
-                    Orchestrator.Help.DownloadVCCLibrary();
+                    _helpOrchestrator.DownloadVccLibrary();
                     break;
             }
         }
 
         private void OnDeleteAppCache()
         {
-            Orchestrator.Help.DeleteAppCache();
-            HasOrphanAppCache = Orchestrator.Help.HasOrphanAppCache();
+            _helpOrchestrator.DeleteAppCache();
+            HasOrphanAppCache = _helpOrchestrator.HasOrphanAppCache();
         }
 
         private async void OnRollBack()
@@ -83,7 +89,7 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
 
             if (result != null && result.Equals("CONFIRM"))
             {
-                Orchestrator.Help.RollBackUpdate();
+                _helpOrchestrator.RollBackUpdate();
             }
         }
     }

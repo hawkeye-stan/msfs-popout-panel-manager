@@ -6,36 +6,25 @@ namespace MSFSPopoutPanelManager.DomainModel.Setting
     {
         public PopOutSetting()
         {
-            MinimizeDuringPopOut = true;
-            MinimizeAfterPopOut = false;
-            UseLeftRightControlToPopOut = false;
-            AutoActivePause = false;
-            EnablePopOutMessages = true;
-
-            AfterPopOutCameraView = new AfterPopOutCameraView();
-            AutoPanning = new AutoPanning();
-            PopOutTitleBarCustomization = new PopOutTitleBarCustomization();
-            EnablePanelResetWhenLocked = true;
-
             InitializeChildPropertyChangeBinding();
         }
 
-        public AutoPanning AutoPanning { get; set; }
+        public AutoPanning AutoPanning { get; set; } = new();
 
-        public AfterPopOutCameraView AfterPopOutCameraView { get; set; }
+        public AfterPopOutCameraView AfterPopOutCameraView { get; set; } = new();
 
-        public bool MinimizeDuringPopOut { get; set; }
+        public bool MinimizeDuringPopOut { get; set; } = true;
 
-        public bool MinimizeAfterPopOut { get; set; }
+        public bool MinimizeAfterPopOut { get; set; } = false;
 
-        public bool UseLeftRightControlToPopOut { get; set; }
+        public bool UseLeftRightControlToPopOut { get; set; } = false;
 
-        public bool EnablePanelResetWhenLocked { get; set; }
+        public bool EnablePanelResetWhenLocked { get; set; } = true;
 
-        public bool EnablePopOutMessages { get; set; }
+        public bool EnablePopOutMessages { get; set; } = true;
 
-        public bool AutoActivePause { get; set; }
+        public bool AutoActivePause { get; set; } = false;
 
-        public PopOutTitleBarCustomization PopOutTitleBarCustomization { get; set; }
+        public PopOutTitleBarCustomization PopOutTitleBarCustomization { get; set; } = new();
     };
 }

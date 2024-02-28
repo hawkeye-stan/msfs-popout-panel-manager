@@ -4,12 +4,7 @@ namespace MSFSPopoutPanelManager.DomainModel.Profile
 {
     public class PanelConfigItem
     {
-        public PanelConfigItem()
-        {
-            PanelHandle = IntPtr.Zero;
-        }
-
-        public IntPtr PanelHandle { get; set; }
+        public IntPtr PanelHandle { get; set; } = IntPtr.Zero;
 
         public PanelConfigPropertyName PanelConfigProperty { get; set; }
     }

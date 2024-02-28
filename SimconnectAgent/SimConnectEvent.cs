@@ -2,9 +2,9 @@
 {
     public enum SimConnectEvent
     {
-        SIMSTART,
-        SIMSTOP,
-        AIRCRAFTLOADED,
+        SIM_START,
+        SIM_STOP,
+        AIRCRAFT_LOADED,
         VIEW
     }
 

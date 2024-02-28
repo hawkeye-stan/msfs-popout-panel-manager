@@ -12,13 +12,13 @@ namespace MSFSPopoutPanelManager.WindowsAgent
     public class TouchEventManager
     {
         private static IntPtr _hHook = IntPtr.Zero;
-        private static PInvoke.WindowsHookExProc callbackDelegate = HookCallBack;
+        private static readonly PInvoke.WindowsHookExProc CallbackDelegate = HookCallBack;
         private static bool _isTouchDownCompleted = true;
         private static bool _isTouchUpCompleted = true;
-        private static bool _isDragged = false;
-        private static int _refocusedTaskIndex = 0;
+        private static bool _isDragged;
+        private static int _refocusedTaskIndex;
 
-        private static object _lock = new object();
+        private static object _lock = new();
 
         private const int PANEL_MENUBAR_HEIGHT = 31;
         private const uint TOUCH_FLAG = 0xFF515700;
@@ -29,7 +29,6 @@ namespace MSFSPopoutPanelManager.WindowsAgent
         private const uint WM_RBUTTONUP = 0x0205;
         private const uint MOUSEEVENTF_LEFTDOWN = 0x0002;
         private const uint MOUSEEVENTF_LEFTUP = 0x0004;
-        private const uint MOUSEEVENTF_MOVE = 0x0001;
 
         public static UserProfile ActiveProfile { private get; set; }
 
@@ -39,11 +38,14 @@ namespace MSFSPopoutPanelManager.WindowsAgent
         {
             Debug.WriteLine("Executing touch event manager mouse hook...");
 
-            Process curProcess = Process.GetCurrentProcess();
-            ProcessModule curModule = curProcess.MainModule;
-            var hookWindowPtr = PInvoke.GetModuleHandle(Process.GetCurrentProcess().MainModule.ModuleName);
+            var curProcess = Process.GetCurrentProcess();
+            var curModule = curProcess.MainModule;
 
-            _hHook = PInvoke.SetWindowsHookEx(HookType.WH_MOUSE_LL, callbackDelegate, hookWindowPtr, 0);
+            if (curModule == null) 
+                return;
+
+            var hookWindowPtr = PInvoke.GetModuleHandle(curModule.ModuleName);
+            _hHook = PInvoke.SetWindowsHookEx(HookType.WH_MOUSE_LL, CallbackDelegate, hookWindowPtr, 0);
         }
 
         public static void UnHook()
@@ -57,14 +59,19 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             }
         }
 
-        public static bool IsHooked { get { return _hHook != IntPtr.Zero; } }
+        public static bool IsHooked => _hHook != IntPtr.Zero;
 
         private static int HookCallBack(int code, IntPtr wParam, IntPtr lParam)
         {
             if (code != 0)
                 return PInvoke.CallNextHookEx(_hHook, code, wParam, lParam);
 
-            var info = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT));
+            var ptrToStructure = Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT));
+
+            if (ptrToStructure == null)
+                return 0;
+
+            var info = (MSLLHOOKSTRUCT) ptrToStructure;
             var extraInfo = (uint)info.dwExtraInfo;
             var isTouched = (extraInfo & TOUCH_FLAG) == TOUCH_FLAG;
 

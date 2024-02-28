@@ -10,14 +10,9 @@ namespace MSFSPopoutPanelManager.Orchestration
 {
     public class ProfileData : ObservableObject
     {
-        public event PropertyChangedEventHandler ActiveProfileChanged;
+        public event PropertyChangedEventHandler OnActiveProfileChanged;
 
-        public ProfileData()
-        {
-            Profiles = new SortedObservableCollection<UserProfile>();
-        }
-
-        public SortedObservableCollection<UserProfile> Profiles { get; private set; }
+        public SortedObservableCollection<UserProfile> Profiles { get; private set; } = new();
 
         [IgnorePropertyChanged]
         internal FlightSimData FlightSimDataRef { private get; set; }
@@ -27,9 +22,8 @@ namespace MSFSPopoutPanelManager.Orchestration
 
         public void AddProfile(string profileName)
         {
-            var newProfile = new UserProfile();
-            newProfile.Name = profileName;
-            newProfile.ProfileChanged += (sender, e) => WriteProfiles();
+            var newProfile = new UserProfile { Name = profileName, IsUsedLegacyCameraSystem = false };
+            newProfile.OnProfileChanged += (_, _) => WriteProfiles();
 
             Profiles.Add(newProfile);
             SetActiveProfile(newProfile.Id);
@@ -44,8 +38,7 @@ namespace MSFSPopoutPanelManager.Orchestration
             if (copiedProfile == null)
                 return;
 
-            var newProfile = new UserProfile();
-            newProfile.Name = profileName;
+            var newProfile = new UserProfile { Name = profileName};
 
             foreach (var copiedPanelConfig in copiedProfile.PanelConfigs)
             {
@@ -54,13 +47,18 @@ namespace MSFSPopoutPanelManager.Orchestration
                 copied.Id = Guid.NewGuid();
                 copied.PanelHandle = IntPtr.MaxValue;
                 copied.IsEditingPanel = false;
+                copied.IsSelectedPanelSource = false;
+                copied.IsShownPanelSource = false;
 
                 newProfile.PanelConfigs.Add(copied);
             }
 
             newProfile.ProfileSetting = copiedProfile.ProfileSetting.Copy();
             newProfile.MsfsGameWindowConfig = copiedProfile.MsfsGameWindowConfig.Copy();
-            newProfile.ProfileChanged += (sender, e) => WriteProfiles();
+            newProfile.PanelSourceCockpitZoomFactor = copiedProfile.PanelSourceCockpitZoomFactor;
+            newProfile.IsUsedLegacyCameraSystem = copiedProfile.IsUsedLegacyCameraSystem;
+
+            newProfile.OnProfileChanged += (_, _) => WriteProfiles();
 
             Profiles.Add(newProfile);
             SetActiveProfile(newProfile.Id);
@@ -94,7 +92,7 @@ namespace MSFSPopoutPanelManager.Orchestration
             if (ActiveProfile == null)
                 return;
 
-            var boundProfile = Profiles.FirstOrDefault(p => p.AircraftBindings.Any(p => p == aircraft));
+            var boundProfile = Profiles.FirstOrDefault(p => p.AircraftBindings.Any(a => a == aircraft));
             if (boundProfile != null)
                 return;
 
@@ -118,10 +116,10 @@ namespace MSFSPopoutPanelManager.Orchestration
         public void ReadProfiles()
         {
             Profiles = new SortedObservableCollection<UserProfile>(ProfileDataManager.ReadProfiles());
-            Profiles.ToList().ForEach(p => p.ProfileChanged += (sender, e) => WriteProfiles());
+            Profiles.ToList().ForEach(p => p.OnProfileChanged += (_, _) => WriteProfiles());
 
             // Detect profiles collection changes
-            Profiles.CollectionChanged += (sender, e) =>
+            Profiles.CollectionChanged += (_, e) =>
             {
                 switch (e.Action)
                 {
@@ -157,45 +155,44 @@ namespace MSFSPopoutPanelManager.Orchestration
             {
                 ActiveProfile = Profiles.FirstOrDefault(p => p.Id == id);
 
-                if (ActiveProfile == null && Profiles.Count > 0)
+                switch (ActiveProfile)
                 {
-                    ActiveProfile = Profiles.First();
-                    AppSettingDataRef.ApplicationSetting.SystemSetting.LastUsedProfileId = ActiveProfile.Id;
-                }
-                else if (ActiveProfile == null && Profiles.Count == 0)
-                {
-                    AppSettingDataRef.ApplicationSetting.SystemSetting.LastUsedProfileId = Guid.Empty;
-                    return;
-                }
-                else
-                {
-                    AppSettingDataRef.ApplicationSetting.SystemSetting.LastUsedProfileId = ActiveProfile.Id;
+                    case null when Profiles.Count > 0:
+                        ActiveProfile = Profiles.First();
+                        AppSettingDataRef.ApplicationSetting.SystemSetting.LastUsedProfileId = ActiveProfile.Id;
+                        break;
+                    case null when Profiles.Count == 0:
+                        AppSettingDataRef.ApplicationSetting.SystemSetting.LastUsedProfileId = Guid.Empty;
+                        return;
+                    default:
+                    {
+                        if(ActiveProfile != null)
+                            AppSettingDataRef.ApplicationSetting.SystemSetting.LastUsedProfileId = ActiveProfile.Id;
+                        break;
+                    }
                 }
             }
 
             ResetActiveProfile();
 
-            // Set active profile flag, this is used only for MVVM binding
-            if (Profiles.Count > 0)
-            {
-                Profiles.ToList().ForEach(p => p.IsActive = false);
+            // Set active profile flag, this is used only for UI binding
+            if (Profiles.Count <= 0) 
+                return;
+            
+            Profiles.ToList().ForEach(p => p.IsActive = false);
+
+            if(ActiveProfile != null)
                 ActiveProfile.IsActive = true;
-            }
+            
         }
 
         public void SetActiveProfile(int profileIndex)
         {
-            if (profileIndex == -1)
-                SetActiveProfile(Guid.Empty);
-            else
-                SetActiveProfile(Profiles[profileIndex].Id);
-
-            ActiveProfileChanged?.Invoke(this, null);
+            SetActiveProfile(profileIndex == -1 ? Guid.Empty : Profiles[profileIndex].Id);
+            OnActiveProfileChanged?.Invoke(this, new PropertyChangedEventArgs(string.Empty));
         }
 
         public UserProfile ActiveProfile { get; private set; }
-
-        public bool HasActiveProfile { get { return ActiveProfile != null; } }
 
         public bool IsAircraftBoundToProfile
         {
@@ -233,10 +230,7 @@ namespace MSFSPopoutPanelManager.Orchestration
 
             ActiveProfile = null;
 
-            if (profileIndex == -1)
-                SetActiveProfile(Guid.Empty);
-            else
-                SetActiveProfile(Profiles[profileIndex].Id);
+            SetActiveProfile(profileIndex == -1 ? Guid.Empty : Profiles[profileIndex].Id);
         }
 
         public void ResetActiveProfile()
@@ -249,10 +243,12 @@ namespace MSFSPopoutPanelManager.Orchestration
 
             ActiveProfile.CurrentMoveResizePanelId = Guid.Empty;
             ActiveProfile.IsEditingPanelSource = false;
+            ActiveProfile.IsSelectingPanelSource = false;
             ActiveProfile.IsPoppedOut = false;
-
+            
             foreach (var panelConfig in ActiveProfile.PanelConfigs)
             {
+                panelConfig.IsSelectedPanelSource = false;
                 panelConfig.IsEditingPanel = false;
                 panelConfig.PanelHandle = IntPtr.MaxValue;
             }
@@ -277,7 +273,7 @@ namespace MSFSPopoutPanelManager.Orchestration
             if (ActiveProfile == null)
                 return;
 
-            var msfsGameWindowConfig = WindowsAgent.WindowActionManager.GetMsfsGameWindowLocation();
+            var msfsGameWindowConfig = WindowActionManager.GetMsfsGameWindowLocation();
             if (msfsGameWindowConfig.IsValid)
             {
                 ActiveProfile.MsfsGameWindowConfig = msfsGameWindowConfig;

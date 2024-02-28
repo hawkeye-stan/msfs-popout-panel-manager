@@ -4,14 +4,8 @@ namespace MSFSPopoutPanelManager.DomainModel.Setting
 {
     public class KeyboardShortcutSetting : ObservableObject
     {
-        public KeyboardShortcutSetting()
-        {
-            IsEnabled = true;
-            StartPopOutKeyBinding = "O";
-        }
+        public bool IsEnabled { get; set; } = true;
 
-        public bool IsEnabled { get; set; }
-
-        public string StartPopOutKeyBinding { get; set; }
+        public string StartPopOutKeyBinding { get; set; } = "O";
     }
 }

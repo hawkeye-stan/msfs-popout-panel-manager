@@ -1,0 +1,139 @@
+﻿<UserControl
+    x:Class="MSFSPopoutPanelManager.MainApp.AppUserControl.PopOutPanelList"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:appUserControl="clr-namespace:MSFSPopoutPanelManager.MainApp.AppUserControl"
+    xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:dd="clr-namespace:GongSolutions.Wpf.DragDrop;assembly=GongSolutions.WPF.DragDrop"
+    xmlns:local="clr-namespace:MSFSPopoutPanelManager.MainApp"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModel="clr-namespace:MSFSPopoutPanelManager.MainApp.ViewModel"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <appUserControl:DummyConverter x:Key="DummyConverter" />
+    </UserControl.Resources>
+    <ScrollViewer
+        Height="350"
+        materialDesign:ScrollViewerAssist.IsAutoHideEnabled="True"
+        HorizontalScrollBarVisibility="Hidden"
+        VerticalScrollBarVisibility="Auto">
+        <DockPanel d:DataContext="{d:DesignInstance viewModel:PopOutPanelListViewModel}">
+            <ListView
+                Height="Auto"
+                Margin="16,0,0,0"
+                Padding="0"
+                HorizontalAlignment="Left"
+                DockPanel.Dock="Top"
+                ItemsSource="{Binding ActiveProfile.PanelConfigs, Mode=TwoWay}"
+                Visibility="{c:Binding 'ActiveProfile.IsEditingPanelSource and !ActiveProfile.IsUsedLegacyCameraSystem'}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <appUserControl:PopOutPanelSourceCard Height="Auto" DataItem="{Binding '', Converter={StaticResource DummyConverter}}" />
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="BorderBrush" Value="Transparent" />
+                        <Setter Property="VerticalContentAlignment" Value="Center" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListViewItem">
+                                    <Border
+                                        Name="Border"
+                                        Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}">
+                                        <ContentPresenter
+                                            Margin="{TemplateBinding Padding}"
+                                            Content="{TemplateBinding Content}"
+                                            ContentTemplate="{TemplateBinding ContentTemplate}" />
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
+            <ListView
+                Height="Auto"
+                Margin="16,0,0,0"
+                Padding="0"
+                HorizontalAlignment="Left"
+                DockPanel.Dock="Top"
+                ItemsSource="{Binding ActiveProfile.PanelConfigs, Mode=TwoWay}"
+                Visibility="{c:Binding 'ActiveProfile.IsEditingPanelSource and ActiveProfile.IsUsedLegacyCameraSystem'}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <appUserControl:PopOutPanelSourceLegacyCard Height="Auto" DataItem="{Binding '', Converter={StaticResource DummyConverter}}" />
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="BorderBrush" Value="Transparent" />
+                        <Setter Property="VerticalContentAlignment" Value="Center" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListViewItem">
+                                    <Border
+                                        Name="Border"
+                                        Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}">
+                                        <ContentPresenter
+                                            Margin="{TemplateBinding Padding}"
+                                            Content="{TemplateBinding Content}"
+                                            ContentTemplate="{TemplateBinding ContentTemplate}" />
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
+            <ListView
+                Height="Auto"
+                Margin="16,0,0,0"
+                Padding="0"
+                HorizontalAlignment="Left"
+                dd:DragDrop.IsDragSource="{c:Binding '!ActiveProfile.IsLocked'}"
+                dd:DragDrop.IsDropTarget="True"
+                dd:DragDrop.UseDefaultEffectDataTemplate="True"
+                DockPanel.Dock="Top"
+                ItemsSource="{Binding ActiveProfile.PanelConfigs, Mode=TwoWay}"
+                Visibility="{c:Binding !ActiveProfile.IsEditingPanelSource}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <appUserControl:PopOutPanelConfigCard Height="Auto" DataItem="{Binding '', Converter={StaticResource DummyConverter}}" />
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="BorderBrush" Value="Transparent" />
+                        <Setter Property="VerticalContentAlignment" Value="Center" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListViewItem">
+                                    <Border
+                                        Name="Border"
+                                        Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}">
+                                        <ContentPresenter
+                                            Margin="{TemplateBinding Padding}"
+                                            Content="{TemplateBinding Content}"
+                                            ContentTemplate="{TemplateBinding ContentTemplate}" />
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
+        </DockPanel>
+    </ScrollViewer>
+</UserControl>

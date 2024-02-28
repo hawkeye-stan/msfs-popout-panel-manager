@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
-using System.Threading.Tasks;
 using static MSFSPopoutPanelManager.SimConnectAgent.SimDataDefinitions;
 
 namespace MSFSPopoutPanelManager.SimConnectAgent
@@ -13,10 +12,10 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
         private const int MSFS_DATA_REFRESH_TIMEOUT = 500;
         private const int MSFS_HUDBAR_DATA_REFRESH_TIMEOUT = 200;
 
-        private SimConnector _simConnector;
+        private readonly SimConnector _simConnector;
 
         private bool _isHandlingCriticalError;
-        private List<SimDataItem> _requiedSimData;
+        private List<SimDataItem> _requiredSimData;
 
         private System.Timers.Timer _requiredRequestDataTimer;
         private System.Timers.Timer _hudBarRequestDataTimer;
@@ -40,12 +39,12 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
         {
             _simConnector = new SimConnector();
             _simConnector.OnConnected += HandleSimConnected;
-            _simConnector.OnDisconnected += HandleSimDisonnected;
+            _simConnector.OnDisconnected += HandleSimDisconnected;
             _simConnector.OnException += HandleSimException;
             _simConnector.OnReceiveSystemEvent += HandleReceiveSystemEvent;
             _simConnector.OnReceivedRequiredData += HandleRequiredDataReceived;
             _simConnector.OnReceivedHudBarData += HandleHudBarDataReceived;
-            _simConnector.OnActiveAircraftChanged += (sender, e) => OnActiveAircraftChanged?.Invoke(this, e);
+            _simConnector.OnActiveAircraftChanged += (_, e) => OnActiveAircraftChanged?.Invoke(this, e);
 
             _isHandlingCriticalError = false;
 
@@ -65,7 +64,7 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
             _simConnector.Stop();
 
             if (!appExit)
-                OnDisconnected?.Invoke(this, null);
+                OnDisconnected?.Invoke(this, EventArgs.Empty);
         }
 
         public void StopAndReconnect()
@@ -94,7 +93,7 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
                     _hudBarRequestDataTimer.Start();
                     break;
                 case HudBarType.PMDG_737:
-                    _simConnector.SetSimConnectHudBarDataDefinition(SimDataDefinitionType.PMDG737HudBar);
+                    _simConnector.SetSimConnectHudBarDataDefinition(SimDataDefinitionType.Pmdg737HudBar);
                     _hudBarRequestDataTimer.Start();
                     break;
                 default:
@@ -111,110 +110,107 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
 
         public void TurnOnPower(bool isRequiredForColdStart)
         {
-            if (!isRequiredForColdStart || _requiedSimData == null)
+            if (!isRequiredForColdStart || _requiredSimData == null)
                 return;
 
             // Wait for _simData.AtcOnParkingSpot to refresh
             Thread.Sleep(MSFS_DATA_REFRESH_TIMEOUT + 500);
 
-            var planeInParkingSpot = Convert.ToBoolean(_requiedSimData.Find(d => d.PropertyName == SimDataDefinitions.PropName.PlaneInParkingSpot).Value);
+            var planeInParkingSpot = Convert.ToBoolean(_requiredSimData.Find(d => d.PropertyName == PropName.PlaneInParkingSpot).Value);
 
-            if (isRequiredForColdStart && planeInParkingSpot)
-            {
-                Debug.WriteLine("Turn On Battery Power...");
+            if (!planeInParkingSpot) 
+                return;
 
-                _isPowerOnForPopOut = true;
-                _simConnector.TransmitActionEvent(ActionEvent.MASTER_BATTERY_SET, 1);
-            }
+            Debug.WriteLine("Turn On Battery Power...");
+
+            _isPowerOnForPopOut = true;
+            _simConnector.TransmitActionEvent(ActionEvent.MASTER_BATTERY_SET, 1);
         }
 
         public void TurnOffPower(bool isRequiredForColdStart)
         {
-            if (!isRequiredForColdStart || _requiedSimData == null)
+            if (!isRequiredForColdStart || _requiredSimData == null)
                 return;
 
-            if (_isPowerOnForPopOut)
-            {
-                Debug.WriteLine("Turn Off Battery Power...");
+            if (!_isPowerOnForPopOut)
+                return;
 
-                _simConnector.TransmitActionEvent(ActionEvent.MASTER_BATTERY_SET, 0);
-                _isPowerOnForPopOut = false;
-            }
+            Debug.WriteLine("Turn Off Battery Power...");
+
+            _simConnector.TransmitActionEvent(ActionEvent.MASTER_BATTERY_SET, 0);
+            _isPowerOnForPopOut = false;
         }
 
         public void TurnOnAvionics(bool isRequiredForColdStart)
         {
-            if (!isRequiredForColdStart || _requiedSimData == null)
+            if (!isRequiredForColdStart || _requiredSimData == null)
                 return;
 
-            var planeInParkingSpot = Convert.ToBoolean(_requiedSimData.Find(d => d.PropertyName == SimDataDefinitions.PropName.PlaneInParkingSpot).Value);
+            var planeInParkingSpot = Convert.ToBoolean(_requiredSimData.Find(d => d.PropertyName == PropName.PlaneInParkingSpot).Value);
+            
+            if (!planeInParkingSpot)
+                return;
 
             Debug.WriteLine("Turn On Avionics...");
 
-            if (isRequiredForColdStart && planeInParkingSpot)
-            {
-                _isAvionicsOnForPopOut = true;
-                _simConnector.TransmitActionEvent(ActionEvent.AVIONICS_MASTER_SET, 1);
-            }
+            _isAvionicsOnForPopOut = true;
+            _simConnector.TransmitActionEvent(ActionEvent.AVIONICS_MASTER_SET, 1);
         }
 
         public void TurnOffAvionics(bool isRequiredForColdStart)
         {
-            if (!isRequiredForColdStart || _requiedSimData == null)
+            if (!isRequiredForColdStart || _requiredSimData == null)
                 return;
 
-            if (_isAvionicsOnForPopOut)
-            {
-                Debug.WriteLine("Turn Off Avionics...");
+            if (!_isAvionicsOnForPopOut) 
+                return;
 
-                _simConnector.TransmitActionEvent(ActionEvent.AVIONICS_MASTER_SET, 0);
-                _isAvionicsOnForPopOut = false;
-            }
+            Debug.WriteLine("Turn Off Avionics...");
+
+            _simConnector.TransmitActionEvent(ActionEvent.AVIONICS_MASTER_SET, 0);
+            _isAvionicsOnForPopOut = false;
         }
 
         public void TurnOnTrackIR()
         {
-            if (_requiedSimData != null)
-            {
-                var trackIREnable = Convert.ToBoolean(_requiedSimData.Find(d => d.PropertyName == SimDataDefinitions.PropName.TrackIREnable).Value);
+            if (_requiredSimData == null)
+                return;
 
-                if (_isTrackIRManaged)
-                {
-                    Debug.WriteLine("Turn On TrackIR...");
-                    SetTrackIREnable(true);
-                    _isTrackIRManaged = false;
-                }
-            }
+            if (!_isTrackIRManaged)
+                return;
+
+            Debug.WriteLine("Turn On TrackIR...");
+            SetTrackIREnable(true);
+            _isTrackIRManaged = false;
         }
 
         public void TurnOffTrackIR()
         {
-            if (_requiedSimData != null)
-            {
-                var trackIREnable = Convert.ToBoolean(_requiedSimData.Find(d => d.PropertyName == SimDataDefinitions.PropName.TrackIREnable).Value);
+            if (_requiredSimData == null) 
+                return;
 
-                if (trackIREnable)
-                {
-                    Debug.WriteLine("Turn Off TrackIR...");
+            var trackIREnable = Convert.ToBoolean(_requiredSimData.Find(d => d.PropertyName == PropName.TrackIREnable).Value);
 
-                    SetTrackIREnable(false);
-                    _isTrackIRManaged = true;
-                }
-            }
+            if (!trackIREnable) 
+                return;
 
+            Debug.WriteLine("Turn Off TrackIR...");
+
+            SetTrackIREnable(false);
+            _isTrackIRManaged = true;
             Thread.Sleep(200);
         }
 
         public void TurnOnActivePause()
         {
-            Debug.WriteLine($"Acitve Pause On...");
+            Debug.WriteLine("Active Pause On...");
 
             _simConnector.TransmitActionEvent(ActionEvent.PAUSE_SET, 1);
         }
 
         public void TurnOffActivePause()
         {
-            Debug.WriteLine($"Acitve Pause Off...");
+            Debug.WriteLine("Active Pause Off...");
 
             _simConnector.TransmitActionEvent(ActionEvent.PAUSE_SET, 0);
         }
@@ -233,51 +229,85 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
 
         public void SetCockpitCameraZoomLevel(int zoomLevel)
         {
-            _simConnector.SetDataObject(WriteableVariableName.CockpitCameraZoom, Convert.ToDouble(zoomLevel));
+            _simConnector.SetDataObject(WritableVariableName.CockpitCameraZoom, Convert.ToDouble(zoomLevel));
         }
 
         public void SetCameraRequestAction(int actionEnum)
         {
-            _simConnector.SetDataObject(WriteableVariableName.CameraRequestAction, Convert.ToDouble(actionEnum));
+            _simConnector.SetDataObject(WritableVariableName.CameraRequestAction, Convert.ToDouble(actionEnum));
         }
-        
+
+        public void SetCameraViewTypeAndIndex0(int actionEnum)
+        {
+            _simConnector.SetDataObject(WritableVariableName.CameraViewTypeAndIndex0, Convert.ToDouble(actionEnum));
+        }
+
+        public void SetCameraViewTypeAndIndex1(int actionEnum)
+        {
+            _simConnector.SetDataObject(WritableVariableName.CameraViewTypeAndIndex1, Convert.ToDouble(actionEnum));
+        }
+
         private void SetTrackIREnable(bool enable)
         {
-            _simConnector.SetDataObject(WriteableVariableName.TrackIREnable, enable ? Convert.ToDouble(1) : Convert.ToDouble(0));
+            _simConnector.SetDataObject(WritableVariableName.TrackIREnable, enable ? Convert.ToDouble(1) : Convert.ToDouble(0));
         }
 
         private void HandleSimConnected(object source, EventArgs e)
         {
             // Setup required data request timer
-            _requiredRequestDataTimer = new System.Timers.Timer();
-            _requiredRequestDataTimer.Interval = MSFS_DATA_REFRESH_TIMEOUT;
+            _requiredRequestDataTimer = new()
+            {
+                Interval = MSFS_DATA_REFRESH_TIMEOUT
+            };
             _requiredRequestDataTimer.Start();
-            _requiredRequestDataTimer.Elapsed += (sender, e) => { try { _simConnector.RequestRequiredData(); } catch { } };
-            _requiredRequestDataTimer.Elapsed += (sender, e) => { try { _simConnector.ReceiveMessage(); } catch { } };
+            _requiredRequestDataTimer.Elapsed += (_, _) =>
+            {
+                try
+                {
+                    _simConnector.RequestRequiredData(); 
+                    _simConnector.ReceiveMessage();
+                }
+                catch
+                {
+                    // ignored
+                }
+            };
 
             // Setup hudbar data request timer
-            _hudBarRequestDataTimer = new System.Timers.Timer();
-            _hudBarRequestDataTimer.Interval = MSFS_HUDBAR_DATA_REFRESH_TIMEOUT;
+            _hudBarRequestDataTimer = new()
+            {
+                Interval = MSFS_HUDBAR_DATA_REFRESH_TIMEOUT,
+            };
             _hudBarRequestDataTimer.Stop();
-            _hudBarRequestDataTimer.Elapsed += (sender, e) => { try { _simConnector.RequestHudBarData(); } catch { } };
+            _hudBarRequestDataTimer.Elapsed += (_, _) =>
+            {
+                try
+                {
+                    _simConnector.RequestHudBarData();
+                }
+                catch
+                {
+                    // ignored
+                }
+            };
 
             if (_isHudBarDataActive)
                 SetHudBarConfig(_activeHudBarType);
 
-            OnConnected?.Invoke(this, null);
+            OnConnected?.Invoke(this, EventArgs.Empty);
         }
 
-        private void HandleSimDisonnected(object source, EventArgs e)
+        private void HandleSimDisconnected(object source, EventArgs e)
         {
             _requiredRequestDataTimer.Stop();
             _hudBarRequestDataTimer.Stop();
-            OnDisconnected?.Invoke(this, null);
+            OnDisconnected?.Invoke(this, EventArgs.Empty);
             StopAndReconnect();
         }
 
         private void HandleSimException(object source, string e)
         {
-            OnException?.Invoke(this, null);
+            OnException?.Invoke(this, EventArgs.Empty);
 
             _requiredRequestDataTimer.Stop();
             _hudBarRequestDataTimer.Stop();
@@ -292,7 +322,7 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
 
         private void HandleRequiredDataReceived(object sender, List<SimDataItem> e)
         {
-            _requiedSimData = e;
+            _requiredSimData = e;
             DetectFlightStartedOrStopped(e);
             OnSimConnectDataRequiredRefreshed?.Invoke(this, e);
         }
@@ -310,7 +340,7 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
         private void DetectFlightStartedOrStopped(List<SimDataItem> simData)
         {
             // Determine is flight started or ended
-            var cameraState = Convert.ToInt32(simData.Find(d => d.PropertyName == SimDataDefinitions.PropName.CameraState).Value);
+            var cameraState = Convert.ToInt32(simData.Find(d => d.PropertyName == PropName.CameraState).Value);
 
             if (_currentCameraState == cameraState)
                 return;
@@ -325,7 +355,7 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
                     if (cameraState == CAMERA_STATE_COCKPIT)
                     {
                         _currentCameraState = cameraState;
-                        OnFlightStarted?.Invoke(this, null);
+                        OnFlightStarted?.Invoke(this, EventArgs.Empty);
                     }
 
                     break;
@@ -333,7 +363,7 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
                     if (cameraState == CAMERA_STATE_LOAD_SCREEN || cameraState == CAMERA_STATE_HOME_SCREEN)
                     {
                         _currentCameraState = cameraState;
-                        OnFlightStopped?.Invoke(this, null);
+                        OnFlightStopped?.Invoke(this, EventArgs.Empty);
                         OnIsInCockpitChanged?.Invoke(this, false);
 
                         _isHudBarDataActive = false;
@@ -343,7 +373,7 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
                     break;
             }
 
-            if (cameraState == CAMERA_STATE_COCKPIT || cameraState == CAMERA_STATE_HOME_SCREEN || cameraState == CAMERA_STATE_LOAD_SCREEN)
+            if (cameraState is CAMERA_STATE_COCKPIT or CAMERA_STATE_HOME_SCREEN or CAMERA_STATE_LOAD_SCREEN)
                 _currentCameraState = cameraState;
         }
 

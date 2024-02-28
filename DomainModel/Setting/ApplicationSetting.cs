@@ -7,45 +7,35 @@ namespace MSFSPopoutPanelManager.DomainModel.Setting
     {
         public ApplicationSetting()
         {
-            GeneralSetting = new GeneralSetting();
-            AutoPopOutSetting = new AutoPopOutSetting();
-            PopOutSetting = new PopOutSetting();
-            RefocusSetting = new RefocusSetting();
-            TouchSetting = new TouchSetting();
-            TrackIRSetting = new TrackIRSetting();
-            WindowedModeSetting = new WindowedModeSetting();
-            SystemSetting = new SystemSetting();
-            KeyboardShortcutSetting = new KeyboardShortcutSetting();
-
             InitializeChildPropertyChangeBinding();
 
-            this.PropertyChanged += (sender, e) =>
+            PropertyChanged += (_, e) =>
             {
-                var evtArg = e as PropertyChangedExtendedEventArgs;
-
-                if (evtArg.ObjectName == "MSFSPopoutPanelManager.DomainModel.Setting.KeyboardShortcutSetting" && evtArg.PropertyName == "IsEnabled")
-                    IsUsedKeyboardShortcutChanged?.Invoke(this, KeyboardShortcutSetting.IsEnabled);
+                if (e is PropertyChangedExtendedEventArgs { ObjectName: "MSFSPopoutPanelManager.DomainModel.Setting.KeyboardShortcutSetting", PropertyName: "IsEnabled" })
+                    OnIsUsedKeyboardShortcutChanged?.Invoke(this, KeyboardShortcutSetting.IsEnabled);
             };
         }
 
-        public GeneralSetting GeneralSetting { get; set; }
+        public GeneralSetting GeneralSetting { get; set; } = new();
 
-        public AutoPopOutSetting AutoPopOutSetting { get; set; }
+        public AutoPopOutSetting AutoPopOutSetting { get; set; } = new();
 
-        public PopOutSetting PopOutSetting { get; set; }
+        public PopOutSetting PopOutSetting { get; set; } = new();
 
-        public RefocusSetting RefocusSetting { get; set; }
+        public RefocusSetting RefocusSetting { get; set; } = new();
 
-        public TouchSetting TouchSetting { get; set; }
+        public TouchSetting TouchSetting { get; set; } = new();
 
-        public TrackIRSetting TrackIRSetting { get; set; }
+        public TrackIRSetting TrackIRSetting { get; set; } = new();
 
-        public WindowedModeSetting WindowedModeSetting { get; set; }
+        public WindowedModeSetting WindowedModeSetting { get; set; } = new();
 
-        public SystemSetting SystemSetting { get; set; }
+        public SystemSetting SystemSetting { get; set; } = new();
 
-        public KeyboardShortcutSetting KeyboardShortcutSetting { get; set; }
+        public KeyboardShortcutSetting KeyboardShortcutSetting { get; set; } = new();
 
-        public event EventHandler<bool> IsUsedKeyboardShortcutChanged;
+        public DynamicLodSetting DynamicLodSetting { get; set; } = new();
+
+        public event EventHandler<bool> OnIsUsedKeyboardShortcutChanged;
     }
 }

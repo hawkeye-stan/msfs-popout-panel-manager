@@ -1,9 +1,8 @@
-﻿using MSFSPopoutPanelManager.DomainModel.DataFile;
-using MSFSPopoutPanelManager.DomainModel.Legacy;
+﻿using System;
+using MSFSPopoutPanelManager.DomainModel.DataFile;
 using MSFSPopoutPanelManager.DomainModel.Setting;
 using MSFSPopoutPanelManager.Shared;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 using System.IO;
 
@@ -19,25 +18,10 @@ namespace MSFSPopoutPanelManager.Orchestration
             {
                 Debug.WriteLine("Reading application settings data file...");
 
-                bool isNeededMigration = false;
-                string fileContent;
+                using var reader = new StreamReader(Path.Combine(FileIo.GetUserDataFilePath(), APP_SETTING_DATA_FILENAME));
+                var fileContent = reader.ReadToEnd();
 
-                using (StreamReader reader = new StreamReader(Path.Combine(FileIo.GetUserDataFilePath(), APP_SETTING_DATA_FILENAME)))
-                {
-                    fileContent = reader.ReadToEnd();
-                    var jTokens = JObject.Parse(fileContent);
-
-                    isNeededMigration = jTokens["FileVersion"] == null;
-                }
-
-                if (isNeededMigration)
-                {
-                    var appSetting = MigrateData.MigrateAppSettingFile(fileContent) ?? new ApplicationSetting();
-                    WriteAppSetting(appSetting);
-                    return appSetting;
-                }
-
-                return JsonConvert.DeserializeObject<AppSetttingFile>(fileContent).ApplicationSetting;
+                return JsonConvert.DeserializeObject<AppSettingFile>(fileContent).ApplicationSetting;
             }
             catch
             {
@@ -51,36 +35,21 @@ namespace MSFSPopoutPanelManager.Orchestration
             {
                 Debug.WriteLine("Saving application settings data file...");
 
-                var userProfilePath = FileIo.GetUserDataFilePath();
-                if (!Directory.Exists(userProfilePath))
-                    Directory.CreateDirectory(userProfilePath);
+                var dataFilePath = FileIo.GetUserDataFilePath();
 
-                using (StreamWriter file = File.CreateText(Path.Combine(userProfilePath, APP_SETTING_DATA_FILENAME)))
-                {
-                    JsonSerializer serializer = new JsonSerializer();
-                    serializer.Serialize(file, new AppSetttingFile { ApplicationSetting = appSetting });
-                }
+                if (string.IsNullOrEmpty(dataFilePath))
+                    throw new Exception("Unable to get app setting data file path.");
+
+                if (!Directory.Exists(dataFilePath))
+                    Directory.CreateDirectory(dataFilePath);
+
+                using var file = File.CreateText(Path.Combine(dataFilePath, APP_SETTING_DATA_FILENAME));
+                var serializer = new JsonSerializer();
+                serializer.Serialize(file, new AppSettingFile { ApplicationSetting = appSetting });
             }
             catch
             {
                 FileLogger.WriteLog($"Unable to write app setting data file: {APP_SETTING_DATA_FILENAME}", StatusMessageType.Error);
-            }
-        }
-
-        public static LegacyAppSetting LegacyReadAppSetting()
-        {
-            try
-            {
-                Debug.WriteLine("Reading legacy (pre-v4) application settings file...");
-
-                using (StreamReader reader = new StreamReader(Path.Combine(FileIo.GetUserDataFilePath(), APP_SETTING_DATA_FILENAME)))
-                {
-                    return JsonConvert.DeserializeObject<LegacyAppSetting>(reader.ReadToEnd());
-                }
-            }
-            catch
-            {
-                return null;
             }
         }
     }

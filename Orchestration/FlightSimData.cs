@@ -14,14 +14,13 @@ namespace MSFSPopoutPanelManager.Orchestration
             IsSimConnectActive = false;
         }
 
+        public event EventHandler OnAltAboveGroundChanged;
+
         public bool IsSimConnectActive { get; set; }
 
         public string AircraftName { get; set; }
 
-        public bool HasAircraftName
-        {
-            get { return !String.IsNullOrEmpty(AircraftName); }
-        }
+        public bool HasAircraftName => !String.IsNullOrEmpty(AircraftName);
 
         public bool ElectricalMasterBatteryStatus { get; set; }
 
@@ -33,15 +32,25 @@ namespace MSFSPopoutPanelManager.Orchestration
 
         public int CockpitCameraZoom { get; set; }
 
+        public int CameraViewTypeAndIndex0 { get; set; }
+
         public int CameraViewTypeAndIndex1 { get; set; }
 
+        public int CameraViewTypeAndIndex1Max { get; set; }
+
+        public int CameraViewTypeAndIndex2Max { get; set; }
+
         public bool PlaneInParkingSpot { get; set; }
+
+        public int PlaneAltAboveGround { get; set; }
 
         public bool IsSimulatorStarted { get; set; }
 
         public bool IsSimConnectDataReceived { get; set; }
 
         public bool IsInCockpit { get; set; }
+
+        public bool IsFlightStarted { get; set; }
 
         public IHudBarData HudBarData { get; set; }
 
@@ -55,6 +64,9 @@ namespace MSFSPopoutPanelManager.Orchestration
             // Automatic switching of active profile when SimConnect active aircraft change
             if (e.PropertyName == "AircraftName")
                 ProfileDataRef.AutoSwitchProfile();
+
+            if(e.PropertyName == "PlaneAltAboveGround")
+                OnAltAboveGroundChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public void Reset()
@@ -72,6 +84,9 @@ namespace MSFSPopoutPanelManager.Orchestration
             PlaneInParkingSpot = false;
             CameraState = -1;
             IsSimulatorStarted = false;
+            PlaneAltAboveGround = 0;
+            CameraViewTypeAndIndex1Max = 0;
+            CameraViewTypeAndIndex2Max = 0;
         }
     }
 }

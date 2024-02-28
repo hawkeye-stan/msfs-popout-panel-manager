@@ -6,7 +6,6 @@
         Success,
         Failure,
         Executing,
-        Error,
-        Debug
+        Error
     }
 }

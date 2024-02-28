@@ -6,36 +6,49 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Media;
+using MSFSPopoutPanelManager.MainApp.AppWindow;
 
 namespace MSFSPopoutPanelManager.MainApp.ViewModel
 {
-    public class OrchestratorUIHelper : BaseViewModel
+    public class OrchestratorUiHelper : BaseViewModel
     {
         private bool _minimizeForPopOut;
-
-        public OrchestratorUIHelper(MainOrchestrator orchestrator) : base(orchestrator)
+        
+        public OrchestratorUiHelper(SharedStorage sharedStorage, PanelSourceOrchestrator panelSourceOrchestrator, PanelPopOutOrchestrator panelPopOutOrchestrator) : base(sharedStorage)
         {
-            Orchestrator.PanelSource.OnOverlayShowed += HandleShowOverlay;
-            Orchestrator.PanelSource.OnNonEditOverlayShowed += HandleShowNonEditOverlay;
-            Orchestrator.PanelSource.OnOverlayRemoved += HandleRemoveOverlay;
+            panelSourceOrchestrator.OnOverlayShowed -= HandleShowOverlay;
+            panelSourceOrchestrator.OnOverlayShowed += HandleShowOverlay;
 
-            Orchestrator.PanelPopOut.OnPopOutStarted += HandleOnPopOutStarted;
-            Orchestrator.PanelPopOut.OnPopOutCompleted += HandleOnPopOutCompleted;
-            Orchestrator.PanelPopOut.OnHudBarOpened += HandleOnHudBarOpened;
+            panelSourceOrchestrator.OnNonEditOverlayShowed -= HandleShowNonEditOverlay;
+            panelSourceOrchestrator.OnNonEditOverlayShowed += HandleShowNonEditOverlay;
+
+            panelSourceOrchestrator.OnOverlayRemoved -= HandleRemoveOverlay;
+            panelSourceOrchestrator.OnOverlayRemoved += HandleRemoveOverlay;
+
+            panelPopOutOrchestrator.OnPopOutStarted -= HandleOnPopOutStarted;
+            panelPopOutOrchestrator.OnPopOutStarted += HandleOnPopOutStarted;
+
+            panelPopOutOrchestrator.OnPopOutCompleted -= HandleOnPopOutCompleted;
+            panelPopOutOrchestrator.OnPopOutCompleted += HandleOnPopOutCompleted;
+
+            panelPopOutOrchestrator.OnHudBarOpened -= HandleOnHudBarOpened;
+            panelPopOutOrchestrator.OnHudBarOpened += HandleOnHudBarOpened;
+
+            panelPopOutOrchestrator.OnNumPadOpened -= HandleOnNumPadOpened;
+            panelPopOutOrchestrator.OnNumPadOpened += HandleOnNumPadOpened;
         }
 
-        private void HandleShowOverlay(object? sender, PanelConfig panelConfig)
+        private void HandleShowOverlay(object sender, PanelConfig panelConfig)
         {
-            ShowOverlay(panelConfig, false);
+            ShowOverlay(panelConfig);
         }
 
-        private void HandleShowNonEditOverlay(object? sender, PanelConfig panelConfig)
+        private void HandleShowNonEditOverlay(object sender, PanelConfig panelConfig)
         {
             ShowOverlay(panelConfig, true);
         }
 
-        private void HandleRemoveOverlay(object? sender, PanelConfig panelConfig)
+        private void HandleRemoveOverlay(object sender, PanelConfig panelConfig)
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
@@ -54,14 +67,14 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
             });
         }
 
-        private void HandleOnHudBarOpened(object? sender, PanelConfig panelConfig)
+        private void HandleOnHudBarOpened(object sender, PanelConfig panelConfig)
         {
             Application.Current.Dispatcher.Invoke(async () =>
             {
-                HudBar hudBar = new HudBar(panelConfig.Id);
+                var hudBar = new HudBar(panelConfig.Id);
                 hudBar.Show();
 
-                Task.Run(async () =>
+                await Task.Run(() =>
                 {
                     Thread.Sleep(1000);
                     WindowActionManager.MoveWindow(panelConfig.PanelHandle, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height);
@@ -70,36 +83,52 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
             });
         }
 
-        private void HandleOnPopOutStarted(object? sender, EventArgs e)
+        private void HandleOnNumPadOpened(object sender, PanelConfig panelConfig)
         {
-            if (!Orchestrator.AppSettingData.ApplicationSetting.PopOutSetting.MinimizeDuringPopOut)
+            Application.Current.Dispatcher.Invoke(async () =>
+            {
+                var numPad = new NumPad(panelConfig.Id);
+                numPad.Show();
+
+                await Task.Run(() =>
+                {
+                    Thread.Sleep(1000);
+                    WindowActionManager.MoveWindow(panelConfig.PanelHandle, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height);
+                    WindowActionManager.MoveWindow(panelConfig.PanelHandle, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height);
+                });
+            });
+        }
+
+        private void HandleOnPopOutStarted(object sender, EventArgs e)
+        {
+            if (!AppSettingData.ApplicationSetting.PopOutSetting.MinimizeDuringPopOut)
                 return;
 
             Application.Current.Dispatcher.Invoke(() =>
             {
                 // Temporary minimize the app for pop out process
-                _minimizeForPopOut = Orchestrator.ApplicationWindow.WindowState != WindowState.Minimized;
+                _minimizeForPopOut = ApplicationWindow.WindowState != WindowState.Minimized;
                 if (_minimizeForPopOut)
-                    WindowActionManager.MinimizeWindow(Orchestrator.ApplicationHandle);
+                    WindowActionManager.MinimizeWindow(ApplicationHandle);
             });
         }
 
-        private void HandleOnPopOutCompleted(object? sender, EventArgs arg)
+        private void HandleOnPopOutCompleted(object sender, EventArgs arg)
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                if (Orchestrator.AppSettingData.ApplicationSetting.PopOutSetting.MinimizeAfterPopOut)
+                if (AppSettingData.ApplicationSetting.PopOutSetting.MinimizeAfterPopOut)
                 {
-                    WindowActionManager.MinimizeWindow(Orchestrator.ApplicationHandle);
+                    WindowActionManager.MinimizeWindow(ApplicationHandle);
                 }
                 else if (_minimizeForPopOut)
                 {
-                    Orchestrator.ApplicationWindow.Show();
-                    WindowActionManager.BringWindowToForeground(Orchestrator.ApplicationHandle);
+                    ApplicationWindow.Show();
+                    WindowActionManager.BringWindowToForeground(ApplicationHandle);
                 }
-                else if (!Orchestrator.AppSettingData.ApplicationSetting.GeneralSetting.AlwaysOnTop)
+                else if (!AppSettingData.ApplicationSetting.GeneralSetting.AlwaysOnTop)
                 {
-                    WindowActionManager.BringWindowToForeground(Orchestrator.ApplicationHandle);
+                    WindowActionManager.BringWindowToForeground(ApplicationHandle);
                 }
             });
 
@@ -116,26 +145,26 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
                 // Remove existing overlay if exist
                 HandleRemoveOverlay(this, panelConfig);
 
-                PanelCoorOverlay overlay = new PanelCoorOverlay(panelConfig.Id, !nonEdit);
-                overlay.IsEditingPanelLocation = true;
-                overlay.WindowStartupLocation = WindowStartupLocation.Manual;
+                var overlay = new PanelCoorOverlay(panelConfig.Id, !nonEdit)
+                {
+                    IsEditingPanelLocation = true,
+                    WindowStartupLocation = WindowStartupLocation.Manual
+                };
+
                 overlay.SetWindowCoor(Convert.ToInt32(panelConfig.PanelSource.X), Convert.ToInt32(panelConfig.PanelSource.Y));
                 overlay.ShowInTaskbar = false;
 
                 // Fix MS.Win32.UnsafeNativeMethods.GetWindowText exception
                 try { overlay.Show(); } catch { overlay.Show(); }
 
-                overlay.WindowLocationChanged += (sender, e) =>
+                overlay.OnWindowLocationChanged += (_, e) =>
                 {
-                    if (Orchestrator.ProfileData.ActiveProfile != null)
-                    {
-                        var panelSource = Orchestrator.ProfileData.ActiveProfile.PanelConfigs.FirstOrDefault(p => p.Id == panelConfig.Id);
-                        if (panelSource != null)
-                        {
-                            panelSource.PanelSource.X = e.X;
-                            panelSource.PanelSource.Y = e.Y;
-                        }
-                    }
+                    var panelSource = ActiveProfile?.PanelConfigs.FirstOrDefault(p => p.Id == panelConfig.Id);
+                    if (panelSource == null) 
+                        return;
+
+                    panelSource.PanelSource.X = e.X;
+                    panelSource.PanelSource.Y = e.Y;
                 };
             });
         }

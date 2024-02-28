@@ -1,65 +1,58 @@
-﻿using MSFSPopoutPanelManager.Orchestration;
+﻿using System;
+using System.Windows;
+using MSFSPopoutPanelManager.DomainModel.Profile;
+using MSFSPopoutPanelManager.Orchestration;
 using MSFSPopoutPanelManager.Shared;
-using System;
-using System.Collections.Generic;
-using System.Windows.Documents;
-using System.Windows.Media;
 
 namespace MSFSPopoutPanelManager.MainApp.ViewModel
 {
     public abstract class BaseViewModel : ObservableObject
     {
+        private SharedStorage SharedStorage { get; }
+
         protected const string ROOT_DIALOG_HOST = "RootDialog";
 
-        protected MainOrchestrator Orchestrator { get; set; }
-
-        public BaseViewModel(MainOrchestrator orchestrator)
+        protected BaseViewModel(SharedStorage sharedStorage)
         {
-            Orchestrator = orchestrator;
-
-            Orchestrator.PanelPopOut.OnPopOutStarted += (sender, e) => Orchestrator.PanelPopOut.IsDisabledStartPopOut = true;
-            Orchestrator.PanelPopOut.OnPopOutCompleted += (sender, e) => Orchestrator.PanelPopOut.IsDisabledStartPopOut = false;
-            Orchestrator.PanelSource.OnPanelSourceSelectionStarted += (sender, e) => Orchestrator.PanelPopOut.IsDisabledStartPopOut = true;
-            Orchestrator.PanelSource.OnPanelSourceSelectionCompleted += (sender, e) => Orchestrator.PanelPopOut.IsDisabledStartPopOut = false;
+            SharedStorage = sharedStorage;
+            InitializeChildPropertyChangeBinding();
         }
 
-        public AppSettingData AppSettingData => Orchestrator.AppSettingData;
+        public AppSettingData AppSettingData => SharedStorage.AppSettingData;
 
-        public ProfileData ProfileData => Orchestrator.ProfileData;
-
-        public FlightSimData FlightSimData => Orchestrator.FlightSimData;
-
-        protected List<Run> FormatStatusMessages(List<StatusMessage> messages)
+        public ProfileData ProfileData
         {
-            List<Run> runs = new List<Run>();
+            get => SharedStorage.ProfileData;
+            set => SharedStorage.ProfileData = value;
+        }
 
-            foreach (var statusMessage in messages)
+        public FlightSimData FlightSimData => SharedStorage.FlightSimData;
+
+        public UserProfile ActiveProfile => SharedStorage.ProfileData.ActiveProfile;
+
+        public IntPtr ApplicationHandle
+        {
+            get => SharedStorage.ApplicationHandle;
+            set => SharedStorage.ApplicationHandle = value;
+        }
+
+        public Window ApplicationWindow
+        {
+            get => SharedStorage.ApplicationWindow;
+            set => SharedStorage.ApplicationWindow = value;
+        }
+
+        public bool LocalCompileOnly
+        {
+            get
             {
-                var run = new Run();
-                run.Text = statusMessage.Message;
+                #if LOCAL
+                    return true;
+                #endif
 
-                switch (statusMessage.StatusMessageType)
-                {
-                    case StatusMessageType.Success:
-                        run.Foreground = new SolidColorBrush(Colors.LimeGreen);
-                        break;
-                    case StatusMessageType.Failure:
-                        run.Foreground = new SolidColorBrush(Colors.IndianRed);
-                        break;
-                    case StatusMessageType.Executing:
-                        run.Foreground = new SolidColorBrush(Colors.NavajoWhite);
-                        break;
-                    case StatusMessageType.Info:
-                        break;
-                }
+                return false;
 
-                runs.Add(run);
-
-                if (statusMessage.NewLine)
-                    runs.Add(new Run { Text = Environment.NewLine });
             }
-
-            return runs;
         }
     }
 }

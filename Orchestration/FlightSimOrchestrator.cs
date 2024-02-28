@@ -6,110 +6,122 @@ using MSFSPopoutPanelManager.WindowsAgent;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace MSFSPopoutPanelManager.Orchestration
 {
-    public class FlightSimOrchestrator : ObservableObject
+    public class FlightSimOrchestrator : BaseOrchestrator
     {
         private const int MSFS_GAME_EXIT_DETECTION_INTERVAL = 3000;
         private System.Timers.Timer _msfsGameExitDetectionTimer;
         private SimConnectProvider _simConnectProvider;
 
-        private ProfileData _profileData;
-        private AppSettingData _appSettingData;
-        private FlightSimData _flightSimData;
         private bool _isTurnedOnPower;
         private bool _isTurnedOnAvionics;
 
-        public FlightSimOrchestrator(ProfileData profileData, AppSettingData appSettingData, FlightSimData flightSimData)
+        public FlightSimOrchestrator(SharedStorage sharedStorage) : base(sharedStorage)
         {
-            _profileData = profileData;
-            _appSettingData = appSettingData;
-            _flightSimData = flightSimData;
-
             _simConnectProvider = new SimConnectProvider();
         }
 
-        internal PanelPopOutOrchestrator PanelPopOutOrchestrator { get; set; }
-
-        internal PanelConfigurationOrchestrator PanelConfigurationOrchestrator { get; set; }
-
-        internal SimConnectProvider SimConnectProvider { get { return _simConnectProvider; } }
-
         public event EventHandler OnSimulatorExited;
+
+        public event EventHandler OnFlightStarted;
+
+        public event EventHandler OnFlightStopped;
 
         public void StartSimConnectServer()
         {
-            if (_simConnectProvider == null)
-                _simConnectProvider = new SimConnectProvider();
+            _simConnectProvider ??= new SimConnectProvider();
 
-            _simConnectProvider.OnConnected += (sender, e) =>
+            _simConnectProvider.OnConnected += (_, _) =>
             {
-                _flightSimData.IsSimConnectActive = true;
-                _flightSimData.IsSimulatorStarted = true;
+                FlightSimData.IsSimConnectActive = true;
+                FlightSimData.IsSimulatorStarted = true;
                 WindowProcessManager.GetSimulatorProcess();     // refresh simulator process
                 DetectMsfsExit();
+
+                DynamicLodManager.Attach(FlightSimData, AppSettingData);     // Attach in memory override for Dynamic LOD
             };
 
-            _simConnectProvider.OnDisconnected += (sender, e) =>
+            _simConnectProvider.OnDisconnected += (_, _) =>
             {
-                _flightSimData.IsSimConnectDataReceived = false;
-                _flightSimData.IsSimConnectActive = false;
+                FlightSimData.IsSimConnectDataReceived = false;
+                FlightSimData.IsSimConnectActive = false;
                 WindowProcessManager.GetSimulatorProcess();     // refresh simulator process
-                _flightSimData.Reset();
+                FlightSimData.Reset();
             };
 
-            _simConnectProvider.OnException += (sender, e) =>
+            _simConnectProvider.OnException += (_, _) =>
             {
-                _flightSimData.IsSimConnectDataReceived = false;
-                _flightSimData.IsSimConnectActive = false;
+                FlightSimData.IsSimConnectDataReceived = false;
+                FlightSimData.IsSimConnectActive = false;
             };
 
-            _simConnectProvider.OnSimConnectDataRequiredRefreshed += (sender, e) =>
+            _simConnectProvider.OnSimConnectDataRequiredRefreshed += (_, e) =>
             {
                 var electricalMasterBattery = Convert.ToBoolean(e.Find(d => d.PropertyName == SimDataDefinitions.PropName.ElectricalMasterBattery).Value);
-                if (electricalMasterBattery != _flightSimData.ElectricalMasterBatteryStatus)
-                    _flightSimData.ElectricalMasterBatteryStatus = electricalMasterBattery;
+                if (electricalMasterBattery != FlightSimData.ElectricalMasterBatteryStatus)
+                    FlightSimData.ElectricalMasterBatteryStatus = electricalMasterBattery;
 
                 var avionicsMasterSwitch = Convert.ToBoolean(e.Find(d => d.PropertyName == SimDataDefinitions.PropName.AvionicsMasterSwitch).Value);
-                if (avionicsMasterSwitch != _flightSimData.AvionicsMasterSwitchStatus)
-                    _flightSimData.AvionicsMasterSwitchStatus = avionicsMasterSwitch;
+                if (avionicsMasterSwitch != FlightSimData.AvionicsMasterSwitchStatus)
+                    FlightSimData.AvionicsMasterSwitchStatus = avionicsMasterSwitch;
 
                 var trackIR = Convert.ToBoolean(e.Find(d => d.PropertyName == SimDataDefinitions.PropName.TrackIREnable).Value);
-                if (trackIR != _flightSimData.TrackIRStatus)
-                    _flightSimData.TrackIRStatus = trackIR;
+                if (trackIR != FlightSimData.TrackIRStatus)
+                    FlightSimData.TrackIRStatus = trackIR;
 
                 var cockpitCameraZoom = Convert.ToInt32(e.Find(d => d.PropertyName == SimDataDefinitions.PropName.CockpitCameraZoom).Value);
-                if (cockpitCameraZoom != _flightSimData.CockpitCameraZoom)
-                    _flightSimData.CockpitCameraZoom = cockpitCameraZoom;
+                if (cockpitCameraZoom != FlightSimData.CockpitCameraZoom)
+                    FlightSimData.CockpitCameraZoom = cockpitCameraZoom;
+
+                var planeAltAboveGround = Convert.ToInt32(e.Find(d => d.PropertyName == SimDataDefinitions.PropName.PlaneAltAboveGround).Value);
+                if (planeAltAboveGround != FlightSimData.PlaneAltAboveGround)
+                    FlightSimData.PlaneAltAboveGround = planeAltAboveGround;
+
+                var cameraViewTypeAndIndex0 = Convert.ToInt32(e.Find(d => d.PropertyName == SimDataDefinitions.PropName.CameraViewTypeAndIndex0).Value);
+                if (cameraViewTypeAndIndex0 != FlightSimData.CameraViewTypeAndIndex0)
+                    FlightSimData.CameraViewTypeAndIndex0 = cameraViewTypeAndIndex0;
 
                 var cameraViewTypeAndIndex1 = Convert.ToInt32(e.Find(d => d.PropertyName == SimDataDefinitions.PropName.CameraViewTypeAndIndex1).Value);
-                if (cameraViewTypeAndIndex1 != _flightSimData.CameraViewTypeAndIndex1)
-                    _flightSimData.CameraViewTypeAndIndex1 = cameraViewTypeAndIndex1;
+                if (cameraViewTypeAndIndex1 != FlightSimData.CameraViewTypeAndIndex1)
+                    FlightSimData.CameraViewTypeAndIndex1 = cameraViewTypeAndIndex1;
 
-                _flightSimData.IsSimConnectDataReceived = true;
+                var cameraViewTypeAndIndex1Max = Convert.ToInt32(e.Find(d => d.PropertyName == SimDataDefinitions.PropName.CameraViewTypeAndIndex1Max).Value);
+                if (cameraViewTypeAndIndex1Max != FlightSimData.CameraViewTypeAndIndex1Max)
+                    FlightSimData.CameraViewTypeAndIndex1Max = cameraViewTypeAndIndex1Max;
+
+                var cameraViewTypeAndIndex2Max = Convert.ToInt32(e.Find(d => d.PropertyName == SimDataDefinitions.PropName.CameraViewTypeAndIndex2Max).Value);
+                if (cameraViewTypeAndIndex2Max != FlightSimData.CameraViewTypeAndIndex2Max)
+                    FlightSimData.CameraViewTypeAndIndex2Max = cameraViewTypeAndIndex2Max;
+
+                FlightSimData.IsSimConnectDataReceived = true;
             };
 
-            _simConnectProvider.OnSimConnectDataHudBarRefreshed += (sender, e) =>
+            _simConnectProvider.OnSimConnectDataHudBarRefreshed += (_, e) =>
             {
-                if (_profileData.ActiveProfile.ProfileSetting.HudBarConfig.IsEnabled)
+                if (ProfileData.ActiveProfile.ProfileSetting.HudBarConfig.IsEnabled)
                     MapHudBarSimConnectData(e);
             };
 
-            _simConnectProvider.OnActiveAircraftChanged += (sender, e) =>
+            _simConnectProvider.OnActiveAircraftChanged += (_, e) =>
             {
                 var aircraftName = String.IsNullOrEmpty(e) ? null : e;
-                if (_flightSimData.AircraftName != aircraftName)
+                if (FlightSimData.AircraftName != aircraftName)
                 {
-                    _flightSimData.AircraftName = aircraftName;
-                    _profileData.RefreshProfile();
+                    FlightSimData.AircraftName = aircraftName;
+                    ProfileData.RefreshProfile();
                 }
             };
 
             _simConnectProvider.OnFlightStarted += HandleOnFlightStarted;
             _simConnectProvider.OnFlightStopped += HandleOnFlightStopped;
-            _simConnectProvider.OnIsInCockpitChanged += (sender, e) => _flightSimData.IsInCockpit = e;
+            _simConnectProvider.OnIsInCockpitChanged += (_, e) =>
+            {
+                FlightSimData.IsInCockpit = e;
+                if (e)
+                    FlightSimData.IsFlightStarted = true;
+            };
             _simConnectProvider.Start();
         }
 
@@ -124,21 +136,21 @@ namespace MSFSPopoutPanelManager.Orchestration
             if (_simConnectProvider == null)
                 return;
 
-            if (!_appSettingData.ApplicationSetting.TrackIRSetting.AutoDisableTrackIR)
+            if (!AppSettingData.ApplicationSetting.TrackIRSetting.AutoDisableTrackIR)
                 return;
 
             WorkflowStepWithMessage.Execute("Turning on TrackIR", () =>
             {
-                int count = 0;
+                var count = 0;
                 do
                 {
                     _simConnectProvider.TurnOnTrackIR();
                     Thread.Sleep(500);
                     count++;
                 }
-                while (!_flightSimData.TrackIRStatus && count < 5);
+                while (!FlightSimData.TrackIRStatus && count < 5);
 
-                return _flightSimData.TrackIRStatus;
+                return FlightSimData.TrackIRStatus;
             });
         }
 
@@ -147,21 +159,21 @@ namespace MSFSPopoutPanelManager.Orchestration
             if (_simConnectProvider == null)
                 return;
 
-            if (!_appSettingData.ApplicationSetting.TrackIRSetting.AutoDisableTrackIR)
+            if (!AppSettingData.ApplicationSetting.TrackIRSetting.AutoDisableTrackIR)
                 return;
 
             WorkflowStepWithMessage.Execute("Turning off TrackIR", () =>
             {
-                int count = 0;
+                var count = 0;
                 do
                 {
                     _simConnectProvider.TurnOffTrackIR();
                     Thread.Sleep(500);
                     count++;
                 }
-                while (_flightSimData.TrackIRStatus && count < 5);
+                while (FlightSimData.TrackIRStatus && count < 5);
 
-                return !_flightSimData.TrackIRStatus;
+                return !FlightSimData.TrackIRStatus;
             });
         }
 
@@ -170,23 +182,23 @@ namespace MSFSPopoutPanelManager.Orchestration
             if (_simConnectProvider == null)
                 return;
 
-            if (_profileData.ActiveProfile == null || _flightSimData.ElectricalMasterBatteryStatus)
+            if (ProfileData.ActiveProfile == null || FlightSimData.ElectricalMasterBatteryStatus)
                 return;
 
             _isTurnedOnPower = true;
 
             WorkflowStepWithMessage.Execute("Turning on battery", () =>
             {
-                int count = 0;
+                var count = 0;
                 do
                 {
-                    _simConnectProvider.TurnOnPower(_profileData.ActiveProfile.ProfileSetting.PowerOnRequiredForColdStart);
+                    _simConnectProvider.TurnOnPower(ProfileData.ActiveProfile.ProfileSetting.PowerOnRequiredForColdStart);
                     Thread.Sleep(500);
                     count++;
                 }
-                while (!_flightSimData.ElectricalMasterBatteryStatus && count < 10);
+                while (!FlightSimData.ElectricalMasterBatteryStatus && count < 10);
 
-                return _flightSimData.ElectricalMasterBatteryStatus;
+                return FlightSimData.ElectricalMasterBatteryStatus;
             });
         }
 
@@ -195,21 +207,21 @@ namespace MSFSPopoutPanelManager.Orchestration
             if (_simConnectProvider == null)
                 return;
 
-            if (_profileData.ActiveProfile == null || !_isTurnedOnPower)
+            if (ProfileData.ActiveProfile == null || !_isTurnedOnPower)
                 return;
 
             WorkflowStepWithMessage.Execute("Turning off battery", () =>
             {
-                int count = 0;
+                var count = 0;
                 do
                 {
-                    _simConnectProvider.TurnOffPower(_profileData.ActiveProfile.ProfileSetting.PowerOnRequiredForColdStart);
+                    _simConnectProvider.TurnOffPower(ProfileData.ActiveProfile.ProfileSetting.PowerOnRequiredForColdStart);
                     Thread.Sleep(500);
                     count++;
                 }
-                while (_flightSimData.ElectricalMasterBatteryStatus && count < 10);
+                while (FlightSimData.ElectricalMasterBatteryStatus && count < 10);
 
-                return !_flightSimData.ElectricalMasterBatteryStatus;
+                return !FlightSimData.ElectricalMasterBatteryStatus;
             });
 
             _isTurnedOnPower = false;
@@ -220,23 +232,23 @@ namespace MSFSPopoutPanelManager.Orchestration
             if (_simConnectProvider == null)
                 return;
 
-            if (_profileData.ActiveProfile == null || _flightSimData.AvionicsMasterSwitchStatus)
+            if (ProfileData.ActiveProfile == null || FlightSimData.AvionicsMasterSwitchStatus)
                 return;
 
             _isTurnedOnAvionics = true;
 
             WorkflowStepWithMessage.Execute("Turning on avionics", () =>
             {
-                int count = 0;
+                var count = 0;
                 do
                 {
-                    _simConnectProvider.TurnOnAvionics(_profileData.ActiveProfile.ProfileSetting.PowerOnRequiredForColdStart);
+                    _simConnectProvider.TurnOnAvionics(ProfileData.ActiveProfile.ProfileSetting.PowerOnRequiredForColdStart);
                     Thread.Sleep(500);
                     count++;
                 }
-                while (!_flightSimData.AvionicsMasterSwitchStatus && count < 10);
+                while (!FlightSimData.AvionicsMasterSwitchStatus && count < 10);
 
-                return _flightSimData.AvionicsMasterSwitchStatus;
+                return FlightSimData.AvionicsMasterSwitchStatus;
             });
         }
 
@@ -245,21 +257,21 @@ namespace MSFSPopoutPanelManager.Orchestration
             if (_simConnectProvider == null)
                 return;
 
-            if (_profileData.ActiveProfile == null || !_isTurnedOnAvionics)
+            if (ProfileData.ActiveProfile == null || !_isTurnedOnAvionics)
                 return;
 
             WorkflowStepWithMessage.Execute("Turning off avionics", () =>
             {
-                int count = 0;
+                var count = 0;
                 do
                 {
-                    _simConnectProvider.TurnOffAvionics(_profileData.ActiveProfile.ProfileSetting.PowerOnRequiredForColdStart);
+                    _simConnectProvider.TurnOffAvionics(ProfileData.ActiveProfile.ProfileSetting.PowerOnRequiredForColdStart);
                     Thread.Sleep(500);
                     count++;
                 }
-                while (_flightSimData.AvionicsMasterSwitchStatus && count < 10);
+                while (FlightSimData.AvionicsMasterSwitchStatus && count < 10);
 
-                return !_flightSimData.AvionicsMasterSwitchStatus;
+                return !FlightSimData.AvionicsMasterSwitchStatus;
             });
 
             _isTurnedOnAvionics = false;
@@ -270,7 +282,7 @@ namespace MSFSPopoutPanelManager.Orchestration
             if (_simConnectProvider == null)
                 return;
 
-            if (!_appSettingData.ApplicationSetting.PopOutSetting.AutoActivePause)
+            if (!AppSettingData.ApplicationSetting.PopOutSetting.AutoActivePause)
                 return;
 
             WorkflowStepWithMessage.Execute("Turning on active pause", () =>
@@ -284,7 +296,7 @@ namespace MSFSPopoutPanelManager.Orchestration
             if (_simConnectProvider == null)
                 return;
 
-            if (!_appSettingData.ApplicationSetting.PopOutSetting.AutoActivePause)
+            if (!AppSettingData.ApplicationSetting.PopOutSetting.AutoActivePause)
                 return;
 
             WorkflowStepWithMessage.Execute("Turning off active pause", () =>
@@ -298,7 +310,7 @@ namespace MSFSPopoutPanelManager.Orchestration
             if (_simConnectProvider == null)
                 return;
 
-            if (_flightSimData.HudBarData.SimRate == 16)
+            if (Convert.ToInt32(FlightSimData.HudBarData.SimRate) == 16)
                 return;
 
             _simConnectProvider.IncreaseSimRate();
@@ -309,7 +321,7 @@ namespace MSFSPopoutPanelManager.Orchestration
             if (_simConnectProvider == null)
                 return;
 
-            if (_flightSimData.HudBarData.SimRate == 0.25)
+            if (FlightSimData.HudBarData.SimRate.ToString("N2") == "0.25")
                 return;
 
             _simConnectProvider.DecreaseSimRate();
@@ -325,20 +337,27 @@ namespace MSFSPopoutPanelManager.Orchestration
             _simConnectProvider.SetCameraRequestAction(1);
         }
 
+        public void SetFixedCamera(CameraType cameraType, int index)
+        {
+            _simConnectProvider.SetCameraViewTypeAndIndex0(Convert.ToInt32(cameraType));
+            Thread.Sleep(250);
+            _simConnectProvider.SetCameraViewTypeAndIndex1(index);
+        }
+
         public void SetHudBarConfig()
         {
             if (_simConnectProvider == null)
                 return;
 
-            var hudBarType = _profileData.ActiveProfile.ProfileSetting.HudBarConfig.HudBarType;
+            var hudBarType = ProfileData.ActiveProfile.ProfileSetting.HudBarConfig.HudBarType;
             switch (hudBarType)
             {
                 case HudBarType.PMDG_737:
-                    _flightSimData.HudBarData = new HudBarData737();
+                    FlightSimData.HudBarData = new HudBarData737();
                     break;
                 case HudBarType.Generic_Aircraft:
                 default:
-                    _flightSimData.HudBarData = new HudBarDataGeneric();
+                    FlightSimData.HudBarData = new HudBarDataGeneric();
                     break;
             }
 
@@ -352,20 +371,26 @@ namespace MSFSPopoutPanelManager.Orchestration
 
         private void HandleOnFlightStarted(object sender, EventArgs e)
         {
-            if (_appSettingData.ApplicationSetting.AutoPopOutSetting.IsEnabled)
-                PanelPopOutOrchestrator.AutoPopOut();
+            OnFlightStarted?.Invoke(this, EventArgs.Empty);
+
+            FlightSimData.IsFlightStarted = true;
+
+            DynamicLodManager.Attach(FlightSimData, AppSettingData);     // Attach in memory override for Dynamic LOD
         }
 
         private void HandleOnFlightStopped(object sender, EventArgs e)
         {
-            _profileData.ResetActiveProfile();
-            PanelConfigurationOrchestrator.EndConfiguration();
-            PanelConfigurationOrchestrator.EndTouchHook();
+            ProfileData.ResetActiveProfile();
 
+            OnFlightStopped?.Invoke(this, EventArgs.Empty);
+            
             WindowActionManager.CloseAllPopOuts();
 
-            if (_flightSimData.HudBarData != null)
-                _flightSimData.HudBarData.Clear();
+            FlightSimData.HudBarData?.Clear();
+
+            FlightSimData.IsFlightStarted = false;
+
+            DynamicLodManager.Detach();     // Detach in memory override for Dynamic LOD
         }
 
         private void DetectMsfsExit()
@@ -373,52 +398,51 @@ namespace MSFSPopoutPanelManager.Orchestration
             _msfsGameExitDetectionTimer = new System.Timers.Timer();
             _msfsGameExitDetectionTimer.Interval = MSFS_GAME_EXIT_DETECTION_INTERVAL;
             _msfsGameExitDetectionTimer.Enabled = true;
-            _msfsGameExitDetectionTimer.Elapsed += (source, e) =>
+            _msfsGameExitDetectionTimer.Elapsed += (_, _) =>
             {
                 WindowProcessManager.GetSimulatorProcess();
-                if (WindowProcessManager.SimulatorProcess == null)
+                if (WindowProcessManager.SimulatorProcess != null) 
+                    return;
+
+                if (AppSettingData.ApplicationSetting.GeneralSetting.AutoClose)
                 {
-                    if (_appSettingData.ApplicationSetting.GeneralSetting.AutoClose)
-                        OnSimulatorExited?.Invoke(this, null);
-                    else
-                    {
-                        _flightSimData.Reset();
-                        _simConnectProvider.StopAndReconnect();
-                    }
+                    OnSimulatorExited?.Invoke(this, EventArgs.Empty);
+                    return;
                 }
+                
+                FlightSimData.Reset();
+                _simConnectProvider.StopAndReconnect();
             };
         }
 
         private void MapHudBarSimConnectData(List<SimDataItem> simData)
         {
-            double newValue;
+            if (CompareSimConnectData(simData, SimDataDefinitions.PropName.ElevatorTrim, FlightSimData.HudBarData.ElevatorTrim, out var newValue))
+                FlightSimData.HudBarData.ElevatorTrim = newValue;
 
-            if (CompareSimConnectData(simData, SimDataDefinitions.PropName.ElevatorTrim, _flightSimData.HudBarData.ElevatorTrim, out newValue))
-                _flightSimData.HudBarData.ElevatorTrim = newValue;
+            if (CompareSimConnectData(simData, SimDataDefinitions.PropName.AileronTrim, FlightSimData.HudBarData.AileronTrim, out newValue))
+                FlightSimData.HudBarData.AileronTrim = newValue;
 
-            if (CompareSimConnectData(simData, SimDataDefinitions.PropName.AileronTrim, _flightSimData.HudBarData.AileronTrim, out newValue))
-                _flightSimData.HudBarData.AileronTrim = newValue;
+            if (CompareSimConnectData(simData, SimDataDefinitions.PropName.RudderTrim, FlightSimData.HudBarData.RudderTrim, out newValue))
+                FlightSimData.HudBarData.RudderTrim = newValue;
 
-            if (CompareSimConnectData(simData, SimDataDefinitions.PropName.RudderTrim, _flightSimData.HudBarData.RudderTrim, out newValue))
-                _flightSimData.HudBarData.RudderTrim = newValue;
+            if (CompareSimConnectData(simData, SimDataDefinitions.PropName.ParkingBrake, FlightSimData.HudBarData.ParkingBrake, out newValue))
+                FlightSimData.HudBarData.ParkingBrake = newValue;
 
-            if (CompareSimConnectData(simData, SimDataDefinitions.PropName.ParkingBrake, _flightSimData.HudBarData.ParkingBrake, out newValue))
-                _flightSimData.HudBarData.ParkingBrake = newValue;
+            if (CompareSimConnectData(simData, SimDataDefinitions.PropName.Flap, FlightSimData.HudBarData.Flap, out newValue))
+                FlightSimData.HudBarData.Flap = newValue;
 
-            if (CompareSimConnectData(simData, SimDataDefinitions.PropName.Flap, _flightSimData.HudBarData.Flap, out newValue))
-                _flightSimData.HudBarData.Flap = newValue;
+            if (CompareSimConnectData(simData, SimDataDefinitions.PropName.GearLeft, FlightSimData.HudBarData.GearLeft, out newValue))
+                FlightSimData.HudBarData.GearLeft = newValue;
 
-            if (CompareSimConnectData(simData, SimDataDefinitions.PropName.GearLeft, _flightSimData.HudBarData.GearLeft, out newValue))
-                _flightSimData.HudBarData.GearLeft = newValue;
+            if (CompareSimConnectData(simData, SimDataDefinitions.PropName.GearCenter, FlightSimData.HudBarData.GearCenter, out newValue))
+                FlightSimData.HudBarData.GearCenter = newValue;
 
-            if (CompareSimConnectData(simData, SimDataDefinitions.PropName.GearCenter, _flightSimData.HudBarData.GearCenter, out newValue))
-                _flightSimData.HudBarData.GearCenter = newValue;
+            if (CompareSimConnectData(simData, SimDataDefinitions.PropName.GearRight, FlightSimData.HudBarData.GearRight, out newValue))
+                FlightSimData.HudBarData.GearRight = newValue;
 
-            if (CompareSimConnectData(simData, SimDataDefinitions.PropName.GearRight, _flightSimData.HudBarData.GearRight, out newValue))
-                _flightSimData.HudBarData.GearRight = newValue;
-
-            if (CompareSimConnectData(simData, SimDataDefinitions.PropName.SimRate, _flightSimData.HudBarData.SimRate, out newValue))
-                _flightSimData.HudBarData.SimRate = newValue;
+            if (CompareSimConnectData(simData, SimDataDefinitions.PropName.SimRate, FlightSimData.HudBarData.SimRate, out newValue))
+                FlightSimData.HudBarData.SimRate = newValue;
         }
 
         private bool CompareSimConnectData(List<SimDataItem> simData, string propName, double source, out double newValue)
@@ -432,7 +456,7 @@ namespace MSFSPopoutPanelManager.Orchestration
             }
 
             var value = Convert.ToDouble(simData.Find(d => d.PropertyName == propName).Value);
-            if (value != source)
+            if (Math.Abs(value - source) > 0.000000000000001)
             {
                 newValue = value;
                 return true;

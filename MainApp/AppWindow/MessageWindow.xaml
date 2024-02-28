@@ -1,0 +1,53 @@
+﻿<Window
+    x:Class="MSFSPopoutPanelManager.MainApp.AppWindow.MessageWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodel="clr-namespace:MSFSPopoutPanelManager.MainApp.ViewModel"
+    Title="MSFS Pop Out Panel Manager"
+    Width="Auto"
+    Height="Auto"
+    AllowsTransparency="True"
+    ResizeMode="NoResize"
+    ShowInTaskbar="False"
+    SizeToContent="WidthAndHeight"
+    Topmost="True"
+    WindowStyle="None"
+    mc:Ignorable="d">
+    <materialDesign:ColorZone
+        Width="Auto"
+        Height="Auto"
+        Mode="Dark">
+        <DockPanel
+            Width="{Binding WindowWidth}"
+            Height="{Binding WindowHeight}"
+            d:DataContext="{d:DesignInstance viewmodel:MessageWindowViewModel}">
+            <WrapPanel
+                Height="30"
+                Background="SlateGray"
+                DockPanel.Dock="Top">
+                <TextBlock
+                    Padding="10,5,10,5"
+                    HorizontalAlignment="Stretch"
+                    Style="{StaticResource MaterialDesignBody1TextBlock}">
+                    MSFS POP OUT PANEL MANAGER
+                </TextBlock>
+            </WrapPanel>
+            <WrapPanel Margin="20,5,20,10">
+                <ScrollViewer
+                    x:Name="ScrollViewerMessage"
+                    Height="Auto"
+                    DockPanel.Dock="Bottom"
+                    HorizontalScrollBarVisibility="Hidden"
+                    VerticalScrollBarVisibility="Hidden">
+                    <TextBlock
+                        x:Name="TextBlockMessage"
+                        LineHeight="18"
+                        LineStackingStrategy="BlockLineHeight" />
+                </ScrollViewer>
+            </WrapPanel>
+        </DockPanel>
+    </materialDesign:ColorZone>
+</Window>

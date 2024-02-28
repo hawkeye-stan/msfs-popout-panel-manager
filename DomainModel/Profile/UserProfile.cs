@@ -12,46 +12,38 @@ namespace MSFSPopoutPanelManager.DomainModel.Profile
     {
         public UserProfile()
         {
-            Id = Guid.NewGuid();
-            IsLocked = false;
-
-            AircraftBindings = new ObservableCollection<string>();
-            PanelConfigs = new ObservableCollection<PanelConfig>();
-            ProfileSetting = new ProfileSetting();
-            MsfsGameWindowConfig = new MsfsGameWindowConfig();
-            PanelSourceCockpitZoomFactor = 50;
-
-            this.PropertyChanged += (sender, e) =>
+            this.PropertyChanged += (_, e) =>
             {
-                var evtArg = e as PropertyChangedExtendedEventArgs;
-                if (!evtArg.DisableSave)
-                    ProfileChanged?.Invoke(this, null);
+                if (e is PropertyChangedExtendedEventArgs { DisableSave: false })
+                    OnProfileChanged?.Invoke(this, EventArgs.Empty);
+
+                if (e.PropertyName == nameof(IsUsedLegacyCameraSystem))
+                    OnPanelConfigChanged();
             };
 
-            PanelConfigs.CollectionChanged += (sender, e) =>
+            PanelConfigs.CollectionChanged += (_, e) =>
             {
                 switch (e.Action)
                 {
                     case System.Collections.Specialized.NotifyCollectionChangedAction.Add:
-                        if (e.NewItems[0] == null)
+                        if (e.NewItems?[0] == null)
                             return;
 
-                        ((PanelConfig)e.NewItems[0]).PropertyChanged += (sender, e) =>
+                        ((PanelConfig)e.NewItems[0]).PropertyChanged += (_, arg) =>
                         {
-                            var evtArg = e as PropertyChangedExtendedEventArgs;
-                            if (!evtArg.DisableSave)
-                                ProfileChanged?.Invoke(this, null);
+                            if (arg is PropertyChangedExtendedEventArgs { DisableSave: false })
+                                OnProfileChanged?.Invoke(this, EventArgs.Empty);
 
-                            OnPanelConfigChanged(sender, e);
+                            OnPanelConfigChanged();
                         };
-                        ProfileChanged?.Invoke(this, null);
-                        OnPanelConfigChanged(sender, e);
+                        OnProfileChanged?.Invoke(this, EventArgs.Empty);
+                        OnPanelConfigChanged();
                         break;
                     case System.Collections.Specialized.NotifyCollectionChangedAction.Remove:
                     case System.Collections.Specialized.NotifyCollectionChangedAction.Move:
                     case System.Collections.Specialized.NotifyCollectionChangedAction.Replace:
-                        ProfileChanged?.Invoke(this, null);
-                        OnPanelConfigChanged(sender, e);
+                        OnProfileChanged?.Invoke(this, EventArgs.Empty);
+                        OnPanelConfigChanged();
                         break;
                 }
             };
@@ -59,30 +51,29 @@ namespace MSFSPopoutPanelManager.DomainModel.Profile
             InitializeChildPropertyChangeBinding();
         }
 
-        public event EventHandler ProfileChanged;
+        public event EventHandler OnProfileChanged;
 
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         public string Name { get; set; }
 
-        public bool IsLocked { get; set; }
+        public bool IsLocked { get; set; } = false;
 
-        public ObservableCollection<string> AircraftBindings { get; set; }
+        public ObservableCollection<string> AircraftBindings { get; set; } = new();
 
-        public ObservableCollection<PanelConfig> PanelConfigs { get; set; }
+        public ObservableCollection<PanelConfig> PanelConfigs { get; set; } = new();
 
-        public ProfileSetting ProfileSetting { get; set; }
+        public ProfileSetting ProfileSetting { get; set; } = new();
 
-        public MsfsGameWindowConfig MsfsGameWindowConfig { get; set; }
+        public MsfsGameWindowConfig MsfsGameWindowConfig { get; set; } = new();
 
-        public int PanelSourceCockpitZoomFactor { get; set; }
+        public int PanelSourceCockpitZoomFactor { get; set; } = 50;
+
+        public bool IsUsedLegacyCameraSystem { get; set; } = true;
 
         public int CompareTo(UserProfile other)
         {
-            int result = this.Name.ToLower().CompareTo(other.Name.ToLower());
-            if (result == 0)
-                result = this.Name.ToLower().CompareTo(other.Name.ToLower());
-            return result;
+            return string.Compare(Name.ToLower(), other.Name.ToLower(), StringComparison.Ordinal);
         }
 
         [JsonIgnore]
@@ -91,20 +82,23 @@ namespace MSFSPopoutPanelManager.DomainModel.Profile
         [JsonIgnore]
         public bool IsEditingPanelSource { get; set; }
 
+        [JsonIgnore]
+        public bool IsSelectingPanelSource { get; set; }
+
         private bool _isPoppedOut;
         [JsonIgnore]
         public bool IsPoppedOut
         {
-            get { return _isPoppedOut; }
+            get => _isPoppedOut;
             set
             {
                 _isPoppedOut = value;
 
-                if (!value)
-                {
-                    foreach (var panelConfig in PanelConfigs)
-                        panelConfig.PanelHandle = IntPtr.MaxValue;   // reset panel is popped out status
-                }
+                if (value) 
+                    return;
+
+                foreach (var panelConfig in PanelConfigs)
+                    panelConfig.PanelHandle = IntPtr.MaxValue;   // reset panel is popped out status
             }
         }
 
@@ -115,12 +109,12 @@ namespace MSFSPopoutPanelManager.DomainModel.Profile
         public bool HasUnidentifiedPanelSource { get; private set; }
 
         [JsonIgnore]
-        public bool HasAircraftBindings => AircraftBindings != null && AircraftBindings.Count > 0;
+        public bool IsDisabledStartPopOut { get; set; }
 
         [JsonIgnore]
-        public bool HasCustomPanels => PanelConfigs.Count(p => p.PanelType == PanelType.CustomPopout) > 0;
+        public bool HasCustomPanels => PanelConfigs != null && PanelConfigs.Count(p => p.PanelType == PanelType.CustomPopout) > 0;
 
-        private void OnPanelConfigChanged(object sender, EventArgs e)
+        private void OnPanelConfigChanged()
         {
             HasUnidentifiedPanelSource = PanelConfigs.Any(p => p.PanelType == PanelType.CustomPopout && p.PanelSource.X == null);
         }

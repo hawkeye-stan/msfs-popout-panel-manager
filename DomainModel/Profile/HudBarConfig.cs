@@ -4,15 +4,9 @@ namespace MSFSPopoutPanelManager.DomainModel.Profile
 {
     public class HudBarConfig : ObservableObject
     {
-        public HudBarConfig()
-        {
-            IsEnabled = false;
-            HudBarType = HudBarType.Generic_Aircraft;
-        }
+        public bool IsEnabled { get; set; } = false;
 
-        public bool IsEnabled { get; set; }
-
-        public HudBarType HudBarType { get; set; }
+        public HudBarType HudBarType { get; set; } = HudBarType.Generic_Aircraft;
     }
 
     public enum HudBarType

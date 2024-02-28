@@ -11,7 +11,6 @@ namespace MSFSPopoutPanelManager.WindowsAgent
         public const int SW_SHOWMINIMIZED = 2;
         public const int SW_SHOWMAXIMIZED = 3;
         public const int SW_SHOW = 5;
-        public const int SW_SHOWDEFAULT = 10;
         public const int SW_MINIMIZE = 6;
         public const int SW_RESTORE = 9;
 
@@ -39,22 +38,31 @@ namespace MSFSPopoutPanelManager.WindowsAgent
 
     public class PInvoke
     {
-        [DllImport("user32", SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern IntPtr OpenProcess(int dwDesiredAccess, bool bInheritHandle, int dwProcessId);
+
+        [DllImport("ntdll.dll", SetLastError = true)]
+        public static extern IntPtr NtWriteVirtualMemory(int processHandle, long baseAddress, byte[] buffer, int numberOfBytesToWrite, out int numberOfBytesWritten);
+
+        [DllImport("ntdll.dll", SetLastError = true)]
+        public static extern bool NtReadVirtualMemory(int processHandle, long baseAddress, byte[] buffer, int numberOfBytesToRead, out int numberOfBytesRead);
+
+        [DllImport("user32.dll", SetLastError = true)]
         public static extern int EnumWindows(CallBack callback, int lParam);
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
         [DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true)]
-        public static extern IntPtr FindWindowByCaption(IntPtr ZeroOnly, string lpWindowName);
+        public static extern IntPtr FindWindowByCaption(IntPtr zeroOnly, string lpWindowName);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        private static extern int GetClassName(IntPtr hwnd, StringBuilder strPtrClassName, Int32 nMaxCount);
+        private static extern int GetClassName(IntPtr hWnd, StringBuilder strPtrClassName, Int32 nMaxCount);
 
-        public static string GetClassName(IntPtr hwnd)
+        public static string GetClassName(IntPtr hWnd)
         {
-            StringBuilder sb = new StringBuilder(255);
-            GetClassName(hwnd, sb, sb.Capacity);
+            var sb = new StringBuilder(255);
+            GetClassName(hWnd, sb, sb.Capacity);
             return sb.ToString();
         }
 
@@ -62,10 +70,10 @@ namespace MSFSPopoutPanelManager.WindowsAgent
         public static extern bool GetCursorPos(out Point lpPoint);
 
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern IntPtr GetWindowLong(IntPtr hwnd, int nIndex);
+        public static extern IntPtr GetWindowLong(IntPtr hWnd, int nIndex);
 
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern uint GetWindowThreadProcessId(IntPtr hWnd, IntPtr ProcessId);
+        public static extern uint GetWindowThreadProcessId(IntPtr hWnd, IntPtr processId);
 
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern uint GetCurrentThreadId();
@@ -81,20 +89,20 @@ namespace MSFSPopoutPanelManager.WindowsAgent
 
         [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool GetWindowPlacement(IntPtr hwnd, ref WINDOWPLACEMENT lpwndpl);
+        public static extern bool GetWindowPlacement(IntPtr hWnd, ref WINDOWPLACEMENT lpWndPl);
 
         [DllImport("user32.dll", SetLastError = true)]
-        private static extern int GetWindowRect(IntPtr hwnd, out Rectangle lpRect);
+        private static extern int GetWindowRect(IntPtr hWnd, out Rectangle lpRect);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        private static extern int GetWindowText(IntPtr hwnd, StringBuilder lpWindowText, int nMaxCount);
+        private static extern int GetWindowText(IntPtr hWnd, StringBuilder lpWindowText, int nMaxCount);
 
-        public static string GetWindowText(IntPtr hwnd)
+        public static string GetWindowText(IntPtr hWnd)
         {
             try
             {
-                StringBuilder sb = new StringBuilder(255);
-                GetWindowText(hwnd, sb, sb.Capacity);
+                var sb = new StringBuilder(255);
+                GetWindowText(hWnd, sb, sb.Capacity);
                 return sb.ToString();
             }
             catch { return string.Empty; }
@@ -104,12 +112,11 @@ namespace MSFSPopoutPanelManager.WindowsAgent
         public static extern bool GetClientRect(IntPtr hWnd, out Rectangle lpRect);
 
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern bool MoveWindow(IntPtr hwnd, int x, int y, int width, int height, bool repaint);
-
+        public static extern bool MoveWindow(IntPtr hWnd, int x, int y, int width, int height, bool repaint);
 
         [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool IsWindow(IntPtr hwnd);
+        public static extern bool IsWindow(IntPtr hWnd);
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, int dwExtraInfo);
@@ -118,34 +125,34 @@ namespace MSFSPopoutPanelManager.WindowsAgent
         public static extern void mouse_event(uint dwFlags, int dx, int dy, uint cButtons, uint dwExtraInfo);
 
         [DllImport("User32.dll", SetLastError = true)]
-        public static extern bool SetCursorPos(int X, int Y);
+        public static extern bool SetCursorPos(int x, int y);
 
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern bool SetForegroundWindow(IntPtr hwnd);
+        public static extern bool SetForegroundWindow(IntPtr hWnd);
 
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern IntPtr SetFocus(IntPtr hwnd);
+        public static extern IntPtr SetFocus(IntPtr hWnd);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        public static extern IntPtr SendMessage(IntPtr hwnd, UInt32 Msg, IntPtr wParam, IntPtr lParam);
+        public static extern IntPtr SendMessage(IntPtr hWnd, UInt32 msg, IntPtr wParam, IntPtr lParam);
 
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern bool ShowWindowAsync(HandleRef hwnd, int nCmdShow);
+        public static extern bool ShowWindowAsync(HandleRef hWnd, int nCmdShow);
 
         [DllImport("USER32.dll", SetLastError = true)]
-        public static extern int SetWindowLong(IntPtr hwnd, int nIndex, uint dwNewLong);
+        public static extern int SetWindowLong(IntPtr hWnd, int nIndex, uint dwNewLong);
 
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern IntPtr SetWindowPos(IntPtr hwnd, IntPtr hwndInsertAfter, int x, int y, int cx, int cy, uint wFlags);
+        public static extern IntPtr SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy, uint wFlags);
 
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern bool SetWindowText(System.IntPtr hwnd, System.String lpString);
+        public static extern bool SetWindowText(IntPtr hWnd, string lpString);
 
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern IntPtr SetWinEventHook(uint eventMin, uint eventMax, IntPtr hmodWinEventProc, WinEventProc lpfnWinEventProc, int idProcess, int idThread, uint dwflags);
+        public static extern IntPtr SetWinEventHook(uint eventMin, uint eventMax, IntPtr hModWinEventProc, WinEventProc lpFnWinEventProc, int idProcess, int idThread, uint dwFlags);
 
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern bool ShowWindow(IntPtr hwnd, int nCmdShow);
+        public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern int UnhookWinEvent(IntPtr hWinEventHook);
@@ -154,7 +161,7 @@ namespace MSFSPopoutPanelManager.WindowsAgent
         public static extern IntPtr GetModuleHandle(string lpModuleName);
 
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern IntPtr SetWindowsHookEx(HookType hookType, WindowsHookExProc lpfn, IntPtr hMod, uint dwThreadId);
+        public static extern IntPtr SetWindowsHookEx(HookType hookType, WindowsHookExProc lpFn, IntPtr hMod, uint dwThreadId);
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern bool UnhookWindowsHookEx(IntPtr hook);
@@ -164,22 +171,21 @@ namespace MSFSPopoutPanelManager.WindowsAgent
 
         public delegate int WindowsHookExProc(int code, IntPtr wParam, IntPtr lParam);
 
-        public delegate bool CallBack(IntPtr hwnd, int lParam);
+        public delegate bool CallBack(IntPtr hWnd, int lParam);
 
-        public delegate void WinEventProc(IntPtr hWinEventHook, uint iEvent, IntPtr hwnd, int idObject, int idChild, int dwEventThread, int dwmsEventTime);
+        public delegate void WinEventProc(IntPtr hWinEventHook, uint iEvent, IntPtr hWnd, int idObject, int idChild, int dwEventThread, int dwmsEventTime);
 
 
         [DllImport("dwmapi.dll", SetLastError = true)]
-        public static extern int DwmGetWindowAttribute(IntPtr hwnd, int dwAttribute, out RECT pvAttribute, int cbAttribute);
+        public static extern int DwmGetWindowAttribute(IntPtr hWnd, int dwAttribute, out RECT pvAttribute, int cbAttribute);
 
         [DllImport("dwmapi.dll", PreserveSig = true)]
-        public static extern int DwmSetWindowAttribute(IntPtr hwnd, DwmWindowAttribute attr, ref int attrValue, int attrSize);
+        public static extern int DwmSetWindowAttribute(IntPtr hWnd, DwmWindowAttribute attr, ref int attrValue, int attrSize);
 
         public static Rectangle GetWindowRectShadow(IntPtr handle)
         {
-            Rectangle includeShadow;
             var excludeShadow = GetWindowRectangleDwm(handle);
-            GetWindowRect(handle, out includeShadow);
+            GetWindowRect(handle, out var includeShadow);
 
             var left = includeShadow.Left - excludeShadow.Left;
             var right = includeShadow.Width - excludeShadow.Right;
@@ -193,14 +199,11 @@ namespace MSFSPopoutPanelManager.WindowsAgent
 
         internal static Rectangle GetWindowRectangleDwm(IntPtr hWnd)
         {
-            RECT rect;
-
-            int size = Marshal.SizeOf(typeof(RECT));
-            DwmGetWindowAttribute(hWnd, (int)DwmWindowAttribute.DWMWA_EXTENDED_FRAME_BOUNDS, out rect, size);
+            var size = Marshal.SizeOf(typeof(RECT));
+            DwmGetWindowAttribute(hWnd, (int)DwmWindowAttribute.DWMWA_EXTENDED_FRAME_BOUNDS, out var rect, size);
 
             return new Rectangle(rect.Left, rect.Top, rect.Right - rect.Left, rect.Bottom - rect.Top);
         }
-
     }
 
     public struct RECT

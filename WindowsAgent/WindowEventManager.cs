@@ -25,8 +25,8 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             UnhookWinEvent();
             Debug.WriteLine("Executing HookWinEvent()...");
 
-            bool isRequiredPanelConfiguration = false;
-            bool isUsedNontouchPanelRefocusLogic = false;
+            var isRequiredPanelConfiguration = false;
+            var isUsedNonTouchPanelRefocusLogic = false;
 
             if ((!ActiveProfile.IsLocked || (ActiveProfile.IsLocked && ApplicationSetting.PopOutSetting.EnablePanelResetWhenLocked))
                 && ActiveProfile.PanelConfigs.Any(p => p.IsPopOutSuccess != null && (bool)p.IsPopOutSuccess))
@@ -35,11 +35,11 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             if (ActiveProfile.PanelConfigs.Any(p => p.AutoGameRefocus && !p.TouchEnabled && p.IsPopOutSuccess != null && (bool)p.IsPopOutSuccess)
                 && !ActiveProfile.PanelConfigs.All(p => p.TouchEnabled)
                 && ApplicationSetting.RefocusSetting.RefocusGameWindow.IsEnabled)
-                isUsedNontouchPanelRefocusLogic = true;
+                isUsedNonTouchPanelRefocusLogic = true;
 
             uint winEventMin, winEventMax;
 
-            if (isRequiredPanelConfiguration && isUsedNontouchPanelRefocusLogic)
+            if (isRequiredPanelConfiguration && isUsedNonTouchPanelRefocusLogic)
             {
                 winEventMin = PInvokeConstant.EVENT_SYSTEM_CAPTURESTART;
                 winEventMax = PInvokeConstant.EVENT_OBJECT_STATECHANGE;
@@ -49,7 +49,7 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                 winEventMin = PInvokeConstant.EVENT_SYSTEM_MOVESIZEEND;
                 winEventMax = PInvokeConstant.EVENT_OBJECT_STATECHANGE;
             }
-            else if (isUsedNontouchPanelRefocusLogic)
+            else if (isUsedNonTouchPanelRefocusLogic)
             {
                 winEventMin = PInvokeConstant.EVENT_SYSTEM_CAPTURESTART;
                 winEventMax = PInvokeConstant.EVENT_SYSTEM_CAPTUREEND;
@@ -59,7 +59,7 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                 return;
             }
 
-            _winEvent = new PInvoke.WinEventProc(EventCallback);
+            _winEvent = EventCallback;
             _winEventHook = PInvoke.SetWinEventHook(winEventMin, winEventMax, IntPtr.Zero, _winEvent, 0, 0, PInvokeConstant.WINEVENT_OUTOFCONTEXT);
 
             Debug.WriteLine($"WinEventMin: {winEventMin} WinEventMax: {winEventMax}");
@@ -70,11 +70,11 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             _prevShowWinCmd = null;
 
             // Unhook all Win API events
-            if (_winEventHook != IntPtr.Zero)
-            {
-                Debug.WriteLine("Executing UnhookWinEvent()...");
-                PInvoke.UnhookWinEvent(_winEventHook);
-            }
+            if (_winEventHook == IntPtr.Zero)
+                return;
+
+            Debug.WriteLine("Executing UnhookWinEvent()...");
+            PInvoke.UnhookWinEvent(_winEventHook);
         }
 
         private static void EventCallback(IntPtr hWinEventHook, uint iEvent, IntPtr hwnd, int idObject, int idChild, int dwEventThread, int dwmsEventTime)
@@ -94,8 +94,6 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                         return;
 
                     HandleEventCallback(hwnd, iEvent);
-                    break;
-                default:
                     break;
             }
         }
@@ -119,14 +117,14 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                     {
                         // Pop out is closed
                         var rect = WindowActionManager.GetWindowRectangle(panelConfig.PanelHandle);
-                        if (rect.Width == 0 && rect.Height == 0)        
+                        if (rect is { Width: 0, Height: 0 })        
                         {
                             panelConfig.PanelHandle = IntPtr.MaxValue;
                             _prevShowWinCmd = null;
                             return;
                         }
 
-                        WINDOWPLACEMENT wp = new WINDOWPLACEMENT();
+                        var wp = new WINDOWPLACEMENT();
                         wp.length = System.Runtime.InteropServices.Marshal.SizeOf(wp);
                         PInvoke.GetWindowPlacement(hwnd, ref wp);
 
@@ -137,20 +135,28 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                             break;
                         }
 
-                        if (wp.showCmd == PInvokeConstant.SW_SHOWMAXIMIZED && _prevShowWinCmd == PInvokeConstant.SW_SHOWNORMAL)
-                            PInvoke.ShowWindow(hwnd, PInvokeConstant.SW_RESTORE);
-                        else if (wp.showCmd == PInvokeConstant.SW_SHOWMAXIMIZED && _prevShowWinCmd == PInvokeConstant.SW_SHOWMINIMIZED)
-                            PInvoke.ShowWindow(hwnd, PInvokeConstant.SW_SHOWMINIMIZED);
-                        else if (wp.showCmd == PInvokeConstant.SW_SHOWMINIMIZED && _prevShowWinCmd == PInvokeConstant.SW_SHOWNORMAL)
-                            PInvoke.ShowWindow(hwnd, PInvokeConstant.SW_RESTORE);
-                        else if (wp.showCmd == PInvokeConstant.SW_SHOWMINIMIZED && _prevShowWinCmd == PInvokeConstant.SW_SHOWMAXIMIZED)
-                            PInvoke.ShowWindow(hwnd, PInvokeConstant.SW_SHOWMAXIMIZED);
-                        else if (wp.showCmd == PInvokeConstant.SW_SHOWNORMAL && _prevShowWinCmd == PInvokeConstant.SW_SHOWMAXIMIZED)
-                            PInvoke.ShowWindow(hwnd, PInvokeConstant.SW_SHOWMAXIMIZED);
-                        else if (wp.showCmd == PInvokeConstant.SW_SHOWNORMAL && _prevShowWinCmd == PInvokeConstant.SW_SHOWMINIMIZED)
-                            PInvoke.ShowWindow(hwnd, PInvokeConstant.SW_SHOWMINIMIZED);
-                        else if (wp.showCmd == PInvokeConstant.SW_SHOWNORMAL && _prevShowWinCmd == PInvokeConstant.SW_SHOWNORMAL)
-                            WindowActionManager.MoveWindow(panelConfig.PanelHandle, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height);
+                        switch (wp.showCmd)
+                        {
+                            case PInvokeConstant.SW_SHOWMAXIMIZED when _prevShowWinCmd == PInvokeConstant.SW_SHOWNORMAL:
+                                PInvoke.ShowWindow(hwnd, PInvokeConstant.SW_RESTORE);
+                                break;
+                            case PInvokeConstant.SW_SHOWMAXIMIZED when _prevShowWinCmd == PInvokeConstant.SW_SHOWMINIMIZED:
+                                PInvoke.ShowWindow(hwnd, PInvokeConstant.SW_SHOWMINIMIZED);
+                                break;
+                            case PInvokeConstant.SW_SHOWMINIMIZED when _prevShowWinCmd == PInvokeConstant.SW_SHOWNORMAL:
+                                PInvoke.ShowWindow(hwnd, PInvokeConstant.SW_RESTORE);
+                                break;
+                            case PInvokeConstant.SW_SHOWMINIMIZED when _prevShowWinCmd == PInvokeConstant.SW_SHOWMAXIMIZED:
+                            case PInvokeConstant.SW_SHOWNORMAL when _prevShowWinCmd == PInvokeConstant.SW_SHOWMAXIMIZED:
+                                PInvoke.ShowWindow(hwnd, PInvokeConstant.SW_SHOWMAXIMIZED);
+                                break;
+                            case PInvokeConstant.SW_SHOWNORMAL when _prevShowWinCmd == PInvokeConstant.SW_SHOWMINIMIZED:
+                                PInvoke.ShowWindow(hwnd, PInvokeConstant.SW_SHOWMINIMIZED);
+                                break;
+                            case PInvokeConstant.SW_SHOWNORMAL when _prevShowWinCmd == PInvokeConstant.SW_SHOWNORMAL:
+                                WindowActionManager.MoveWindow(panelConfig.PanelHandle, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height);
+                                break;
+                        }
 
                         _prevShowWinCmd = null;
                     }
@@ -174,7 +180,7 @@ namespace MSFSPopoutPanelManager.WindowsAgent
         {
             var rect = WindowActionManager.GetWindowRectangle(panelConfig.PanelHandle);
 
-            if (rect.Width == 0 && rect.Height == 0)        // don't set if width and height = 0
+            if (rect is { Width: 0, Height: 0 })        // don't set if width and height = 0
             {
                 panelConfig.PanelHandle = IntPtr.MaxValue;
                 return;

@@ -2,7 +2,6 @@
 using MSFSPopoutPanelManager.DomainModel.Setting;
 using System;
 using System.Diagnostics;
-using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -10,9 +9,9 @@ namespace MSFSPopoutPanelManager.WindowsAgent
 {
     public class GameRefocusManager
     {
-        private static int _winEventClickLock = 0;
-        private static object _hookLock = new object();
-        private static bool _isHookMouseDown = false;
+        private static int _winEventClickLock;
+        private static readonly object HookLock = new();
+        private static bool _isHookMouseDown;
 
         public static ApplicationSetting ApplicationSetting { get; set; }
 
@@ -22,10 +21,9 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             if (!_isHookMouseDown)
             {
                 Debug.WriteLine("Executing touch down event...");
-                lock (_hookLock)
+                lock (HookLock)
                 {
-                    Point point;
-                    PInvoke.GetCursorPos(out point);
+                    PInvoke.GetCursorPos(out var point);
 
                     // Disable left clicking if user is touching the title bar area or the borders (with 5 extra pixels for margin of error)
                     // Title bar
@@ -57,12 +55,11 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                 Debug.WriteLine("Executing touch up event...");
                 Thread.Sleep(ApplicationSetting.TouchSetting.TouchDownUpDelay);
 
-                lock (_hookLock)
+                lock (HookLock)
                 {
                     _isHookMouseDown = false;
 
-                    Point point;
-                    PInvoke.GetCursorPos(out point);
+                    PInvoke.GetCursorPos(out var point);
 
                     // Disable left clicking if user is touching the title bar area
                     if (point.Y - panelConfig.Top > (panelConfig.HideTitlebar ? 5 : 31))
@@ -83,15 +80,14 @@ namespace MSFSPopoutPanelManager.WindowsAgent
         {
             Thread.Sleep(Convert.ToInt32(ApplicationSetting.RefocusSetting.RefocusGameWindow.Delay * 1000));
 
-            if (prevWinEventClickLock == _winEventClickLock)
-            {
-                if (!_isHookMouseDown)
-                {
-                    // ToDo: Fix this for POPM overlap game window
-                    var rect = WindowActionManager.GetWindowRectangle(WindowProcessManager.SimulatorProcess.Handle);
-                    PInvoke.SetCursorPos(rect.X + rect.Width / 2, rect.Y + rect.Height / 2);
-                }
-            }
+            if (prevWinEventClickLock != _winEventClickLock) 
+                return;
+
+            if (_isHookMouseDown) 
+                return;
+
+            var rect = WindowActionManager.GetWindowRectangle(WindowProcessManager.SimulatorProcess.Handle);
+            PInvoke.SetCursorPos(rect.X + rect.Width / 2, rect.Y + rect.Height / 2);
         }
     }
 }

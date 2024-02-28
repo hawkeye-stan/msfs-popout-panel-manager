@@ -2,9 +2,9 @@
 {
     public class SimConnectDataDefinition
     {
-        public DATA_DEFINITION DefinitionId { get; set; }
+        public DataDefinition DefinitionId { get; set; }
 
-        public DATA_REQUEST RequestId { get; set; }
+        public DataRequest RequestId { get; set; }
 
         public string PropName { get; set; }
 

@@ -4,14 +4,8 @@ namespace MSFSPopoutPanelManager.DomainModel.Setting
 {
     public class AutoPopOutSetting : ObservableObject
     {
-        public AutoPopOutSetting()
-        {
-            IsEnabled = true;
-            ReadyToFlyDelay = 3;
-        }
+        public bool IsEnabled { get; set; } = true;
 
-        public bool IsEnabled { get; set; }
-
-        public int ReadyToFlyDelay { get; set; }
+        public int ReadyToFlyDelay { get; set; } = 3;
     }
 }

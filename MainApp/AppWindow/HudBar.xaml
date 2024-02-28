@@ -1,0 +1,284 @@
+﻿<Window
+    x:Class="MSFSPopoutPanelManager.MainApp.AppWindow.HudBar"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:system="clr-namespace:System;assembly=mscorlib"
+    xmlns:viewmodel="clr-namespace:MSFSPopoutPanelManager.MainApp.ViewModel"
+    Title="HudBar"
+    Width="1920"
+    MinWidth="1920"
+    MinHeight="40"
+    MaxHeight="40"
+    ResizeMode="NoResize"
+    WindowStyle="None"
+    mc:Ignorable="d">
+    <Window.Resources>
+        <system:Double x:Key="IconSize">22</system:Double>
+        <system:Double x:Key="ButtonSize">28</system:Double>
+        <Style
+            x:Key="TxtBoxTitle"
+            BasedOn="{StaticResource MaterialDesignBody1TextBlock}"
+            TargetType="{x:Type TextBlock}">
+            <Setter Property="Margin" Value="10,5,10,5" />
+            <Setter Property="Foreground" Value="White" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding FlightSimData.IsSimConnectActive}" Value="False">
+                    <Setter Property="Foreground" Value="Red" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style
+            x:Key="TxtBoxLabel"
+            BasedOn="{StaticResource MaterialDesignBody1TextBlock}"
+            TargetType="TextBlock">
+            <Setter Property="Margin" Value="10,5,10,5" />
+            <Setter Property="Foreground" Value="White" />
+        </Style>
+        <Style
+            x:Key="TxtBoxData"
+            BasedOn="{StaticResource MaterialDesignBody1TextBlock}"
+            TargetType="TextBlock">
+            <Setter Property="Margin" Value="0,5,10,5" />
+            <Setter Property="Foreground" Value="Lime" />
+            <Setter Property="HorizontalAlignment" Value="Right" />
+        </Style>
+        <Style
+            x:Key="VerticalSeparator"
+            BasedOn="{StaticResource {x:Type Separator}}"
+            TargetType="Separator">
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Margin" Value="6,0,6,0" />
+            <Setter Property="LayoutTransform">
+                <Setter.Value>
+                    <TransformGroup>
+                        <TransformGroup.Children>
+                            <TransformCollection>
+                                <RotateTransform Angle="90" />
+                            </TransformCollection>
+                        </TransformGroup.Children>
+                    </TransformGroup>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <materialDesign:ColorZone Height="40" Mode="Dark">
+        <Grid d:DataContext="{d:DesignInstance viewmodel:HudBarViewModel}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="130" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="6*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="4*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="100" />
+            </Grid.ColumnDefinitions>
+            <TextBlock
+                Grid.Column="0"
+                Margin="10,5,0,0"
+                Style="{StaticResource TxtBoxTitle}"
+                Text="{Binding HudBarTypeText}" />
+            <DockPanel Grid.Column="1">
+                <Separator Style="{StaticResource VerticalSeparator}" />
+            </DockPanel>
+            <DockPanel Grid.Column="2">
+                <TextBlock Style="{StaticResource TxtBoxLabel}">Elevator Trim:</TextBlock>
+                <TextBlock Style="{StaticResource TxtBoxData}" Text="{Binding FlightSimData.HudBarData.ElevatorTrimFormatted}" />
+            </DockPanel>
+            <DockPanel Grid.Column="3">
+                <Separator Style="{StaticResource VerticalSeparator}" />
+            </DockPanel>
+            <DockPanel Grid.Column="4">
+                <TextBlock Style="{StaticResource TxtBoxLabel}">Aileron Trim:</TextBlock>
+                <TextBlock Style="{StaticResource TxtBoxData}" Text="{Binding FlightSimData.HudBarData.AileronTrimFormatted}" />
+            </DockPanel>
+            <DockPanel Grid.Column="5">
+                <Separator Style="{StaticResource VerticalSeparator}" />
+            </DockPanel>
+            <DockPanel Grid.Column="6">
+                <TextBlock Style="{StaticResource TxtBoxLabel}">Rudder Trim:</TextBlock>
+                <TextBlock Style="{StaticResource TxtBoxData}" Text="{Binding FlightSimData.HudBarData.RudderTrimFormatted}" />
+            </DockPanel>
+            <DockPanel Grid.Column="7">
+                <Separator Style="{StaticResource VerticalSeparator}" />
+            </DockPanel>
+            <DockPanel Grid.Column="8">
+                <TextBlock Style="{StaticResource TxtBoxLabel}">Flaps:</TextBlock>
+                <TextBlock Style="{StaticResource TxtBoxData}" Text="{Binding FlightSimData.HudBarData.FlapFormatted}" />
+            </DockPanel>
+            <DockPanel Grid.Column="9">
+                <Separator Style="{StaticResource VerticalSeparator}" />
+            </DockPanel>
+            <DockPanel Grid.Column="10">
+                <TextBlock Style="{StaticResource TxtBoxLabel}">Brake:</TextBlock>
+                <TextBlock Text="{Binding FlightSimData.HudBarData.ParkingBrakeFormatted}">
+                    <TextBlock.Style>
+                        <Style BasedOn="{StaticResource TxtBoxData}" TargetType="TextBlock">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding FlightSimData.HudBarData.ParkingBrakeFormatted}" Value="Disengaged">
+                                    <Setter Property="TextBlock.Foreground" Value="DimGray" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding FlightSimData.HudBarData.ParkingBrakeFormatted}" Value="Engaged">
+                                    <Setter Property="TextBlock.Foreground" Value="Red" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </DockPanel>
+            <DockPanel Grid.Column="11">
+                <Separator Style="{StaticResource VerticalSeparator}" />
+            </DockPanel>
+            <DockPanel Grid.Column="12">
+                <TextBlock Style="{StaticResource TxtBoxLabel}">Gear:</TextBlock>
+                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                    <TextBlock Text="L">
+                        <TextBlock.Style>
+                            <Style BasedOn="{StaticResource TxtBoxData}" TargetType="TextBlock">
+                                <Setter Property="Margin" Value="10,5,10,0" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding FlightSimData.HudBarData.GearLeftFormatted}" Value="DOWN">
+                                        <Setter Property="TextBlock.Foreground" Value="Lime" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding FlightSimData.HudBarData.GearLeftFormatted}" Value="UP">
+                                        <Setter Property="TextBlock.Foreground" Value="DimGray" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding FlightSimData.HudBarData.GearLeftFormatted}" Value="MOVING">
+                                        <Setter Property="TextBlock.Foreground" Value="Red" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                    <TextBlock Text="C">
+                        <TextBlock.Style>
+                            <Style BasedOn="{StaticResource TxtBoxData}" TargetType="TextBlock">
+                                <Setter Property="Margin" Value="10,5,10,0" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding FlightSimData.HudBarData.GearCenterFormatted}" Value="DOWN">
+                                        <Setter Property="TextBlock.Foreground" Value="Lime" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding FlightSimData.HudBarData.GearCenterFormatted}" Value="UP">
+                                        <Setter Property="TextBlock.Foreground" Value="DimGray" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding FlightSimData.HudBarData.GearCenterFormatted}" Value="MOVING">
+                                        <Setter Property="TextBlock.Foreground" Value="Red" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                    <TextBlock Text="R">
+                        <TextBlock.Style>
+                            <Style BasedOn="{StaticResource TxtBoxData}" TargetType="TextBlock">
+                                <Setter Property="Margin" Value="10,5,10,0" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding FlightSimData.HudBarData.GearRightFormatted}" Value="DOWN">
+                                        <Setter Property="TextBlock.Foreground" Value="Lime" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding FlightSimData.HudBarData.GearRightFormatted}" Value="UP">
+                                        <Setter Property="TextBlock.Foreground" Value="DimGray" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding FlightSimData.HudBarData.GearRightFormatted}" Value="MOVING">
+                                        <Setter Property="TextBlock.Foreground" Value="Red" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </StackPanel>
+            </DockPanel>
+            <DockPanel Grid.Column="13">
+                <Separator Style="{StaticResource VerticalSeparator}" />
+            </DockPanel>
+            <DockPanel Grid.Column="14">
+                <TextBlock Style="{StaticResource TxtBoxLabel}">Timer:</TextBlock>
+                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                    <TextBlock Style="{StaticResource TxtBoxData}" Text="{Binding Timer, StringFormat={}{0:HH:mm:ss}}" />
+                    <Button
+                        Width="80"
+                        Height="28"
+                        Margin="10,0,0,0"
+                        Command="{Binding StartStopTimerCommand}"
+                        Style="{StaticResource MaterialDesignOutlinedButton}">
+                        <TextBlock Foreground="White" Text="{c:Binding 'IsTimerStarted ? &quot;STOP&quot; : &quot;START&quot;'}" />
+                    </Button>
+                    <Button
+                        Width="80"
+                        Height="28"
+                        Margin="15,0,10,0"
+                        Command="{Binding ResetTimerCommand}"
+                        Style="{StaticResource MaterialDesignOutlinedButton}">
+                        <TextBlock Foreground="White" Text="RESET" />
+                    </Button>
+                </StackPanel>
+            </DockPanel>
+            <DockPanel Grid.Column="15">
+                <Separator Style="{StaticResource VerticalSeparator}" />
+            </DockPanel>
+            <DockPanel Grid.Column="16">
+                <TextBlock Style="{StaticResource TxtBoxLabel}">Sim Rate:</TextBlock>
+                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                    <TextBlock
+                        Margin="0,5,5,0"
+                        Style="{StaticResource TxtBoxData}"
+                        Text="{Binding FlightSimData.HudBarData.SimRate}" />
+                    <TextBlock
+                        Margin="0,5,20,0"
+                        Style="{StaticResource TxtBoxData}"
+                        Text="X" />
+                    <Button
+                        Width="{StaticResource ButtonSize}"
+                        Height="{StaticResource ButtonSize}"
+                        Margin="0,0,15,0"
+                        Command="{Binding IncreaseSimRateCommand}"
+                        Style="{StaticResource MaterialDesignFloatingActionButton}">
+                        <materialDesign:PackIcon
+                            Width="{StaticResource IconSize}"
+                            Height="{StaticResource IconSize}"
+                            Kind="ArrowUp" />
+                    </Button>
+                    <Button
+                        Width="{StaticResource ButtonSize}"
+                        Height="{StaticResource ButtonSize}"
+                        Margin="0,0,10,0"
+                        Command="{Binding DecreaseSimRateCommand}"
+                        Style="{StaticResource MaterialDesignFloatingActionButton}">
+                        <materialDesign:PackIcon
+                            Width="{StaticResource IconSize}"
+                            Height="{StaticResource IconSize}"
+                            Kind="ArrowDown" />
+                    </Button>
+                </StackPanel>
+            </DockPanel>
+            <DockPanel Grid.Column="17">
+                <Separator Style="{StaticResource VerticalSeparator}" />
+            </DockPanel>
+            <DockPanel Grid.Column="18">
+                <Button
+                    x:Name="BtnClose"
+                    Width="80"
+                    Height="28"
+                    Click="BtnClose_Click"
+                    Style="{StaticResource MaterialDesignOutlinedButton}">
+                    <TextBlock Foreground="White" Text="Close" />
+                </Button>
+            </DockPanel>
+        </Grid>
+    </materialDesign:ColorZone>
+</Window>

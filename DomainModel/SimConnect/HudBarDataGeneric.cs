@@ -1,7 +1,6 @@
 ﻿using MSFSPopoutPanelManager.DomainModel.Profile;
 using MSFSPopoutPanelManager.Shared;
 using System;
-using System.Reflection;
 
 namespace MSFSPopoutPanelManager.DomainModel.SimConnect
 {
@@ -45,8 +44,9 @@ namespace MSFSPopoutPanelManager.DomainModel.SimConnect
 
         private string MapGear(double gear)
         {
-            if (gear == 100)
+            if (Convert.ToInt32(gear) == 100)
                 return "DOWN";
+
             if (gear == 0)
                 return "UP";
 
@@ -55,12 +55,12 @@ namespace MSFSPopoutPanelManager.DomainModel.SimConnect
 
         public void Clear()
         {
-            Type type = this.GetType();
-            PropertyInfo[] properties = type.GetProperties();
-            for (int i = 0; i < properties.Length; ++i)
+            var type = this.GetType();
+            var properties = type.GetProperties();
+            foreach (var property in properties)
             {
-                if (properties[i].SetMethod != null)
-                    properties[i].SetValue(this, 0);
+                if (property.SetMethod != null)
+                    property.SetValue(this, 0);
             }
         }
     }

@@ -1,13 +1,14 @@
 ﻿using MSFSPopoutPanelManager.DomainModel.Setting;
 using MSFSPopoutPanelManager.Shared;
 using System;
+using System.Collections.Specialized;
 
 namespace MSFSPopoutPanelManager.Orchestration
 {
     public class AppSettingData : ObservableObject
     {
-        public event EventHandler<bool> AlwaysOnTopChanged;
-        public event EventHandler<bool> EnablePanelResetWhenLockedChanged;
+        public event EventHandler<bool> OnAlwaysOnTopChanged;
+        public event EventHandler<bool> OnEnablePanelResetWhenLockedChanged;
 
         public ApplicationSetting ApplicationSetting { get; private set; }
 
@@ -21,20 +22,32 @@ namespace MSFSPopoutPanelManager.Orchestration
                 AppSettingDataManager.WriteAppSetting(ApplicationSetting);
             }
 
-            // Autosave data
-            ApplicationSetting.PropertyChanged += (sender, e) =>
+            // Auto Save data
+            ApplicationSetting.PropertyChanged += (_, e) =>
             {
                 AppSettingDataManager.WriteAppSetting(ApplicationSetting);
 
                 switch (e.PropertyName)
                 {
                     case "AlwaysOnTop":
-                        AlwaysOnTopChanged?.Invoke(this, ApplicationSetting.GeneralSetting.AlwaysOnTop);
+                        OnAlwaysOnTopChanged?.Invoke(this, ApplicationSetting.GeneralSetting.AlwaysOnTop);
                         break;
                     case "EnablePanelResetWhenLocked":
-                        EnablePanelResetWhenLockedChanged?.Invoke(this, ApplicationSetting.PopOutSetting.EnablePanelResetWhenLocked);
+                        OnEnablePanelResetWhenLockedChanged?.Invoke(this,
+                            ApplicationSetting.PopOutSetting.EnablePanelResetWhenLocked);
                         break;
                 }
+            };
+
+            ApplicationSetting.DynamicLodSetting.TlodConfigs.CollectionChanged += (_, e) =>
+            {
+                if (e.Action == NotifyCollectionChangedAction.Reset)
+                    AppSettingDataManager.WriteAppSetting(ApplicationSetting);
+            };
+
+            ApplicationSetting.DynamicLodSetting.OlodConfigs.CollectionChanged += (_, _) =>
+            {
+                AppSettingDataManager.WriteAppSetting(ApplicationSetting);
             };
         }
     }

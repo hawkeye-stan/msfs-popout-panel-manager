@@ -8,8 +8,12 @@ namespace MSFSPopoutPanelManager.MainApp.CustomControl
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            double v = (double)value;
+            if (value == null) 
+                return 0.0;
+
+            var v = (double)value;
             return v * 0.6;
+
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

@@ -10,7 +10,7 @@ namespace MSFSPopoutPanelManager.Shared
 {
     public class FileLogger
     {
-        private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod()?.DeclaringType);
 
         static FileLogger()
         {
@@ -21,7 +21,9 @@ namespace MSFSPopoutPanelManager.Shared
             // https://github.com/dotnet/designs/blob/main/accepted/2020/single-file/design.md#api-semantics
             XmlConfigurator.Configure(logRepository, new FileInfo(Path.Combine(AppContext.BaseDirectory, "log4net.config")));
 
-            var errorLogAppender = LogManager.GetRepository(Assembly.GetEntryAssembly()).GetAppenders().First() as RollingFileAppender;
+            if (LogManager.GetRepository(Assembly.GetEntryAssembly()).GetAppenders().First() is not RollingFileAppender errorLogAppender) 
+                return;
+
             errorLogAppender.File = FileIo.GetErrorLogFilePath();
             errorLogAppender.ActivateOptions();
 

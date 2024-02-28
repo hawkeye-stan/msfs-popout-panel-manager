@@ -122,11 +122,6 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             }
         }
 
-        public static IntPtr FindWindowByCaption(string caption)
-        {
-            return PInvoke.FindWindowByCaption(IntPtr.Zero, caption);
-        }
-
         public static string GetWindowCaption(IntPtr hwnd)
         {
             try { return PInvoke.GetWindowText(hwnd); }
@@ -143,41 +138,11 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             return PInvoke.GetWindowRectangleDwm(hwnd);
         }
 
-        public static Rectangle GetClientRectangle(IntPtr hwnd)
-        {
-            Rectangle rect;
-            PInvoke.GetClientRect(hwnd, out rect);
-
-            return rect;
-        }
-
-        public static bool IsWindow(IntPtr hwnd)
-        {
-            return PInvoke.IsWindow(hwnd);
-        }
-
-        public static int GetWindowsCountByPanelType(List<PanelType> panelTypes)
-        {
-            var count = 0;
-
-            PInvoke.EnumWindows((IntPtr hwnd, int lParam) =>
-            {
-                var panelType = GetWindowPanelType(hwnd);
-
-                if (panelTypes.Contains(panelType))
-                    count++;
-
-                return true;
-            }, 0);
-
-            return count;
-        }
-
         public static List<IntPtr> GetWindowsByPanelType(List<PanelType> panelTypes)
         {
-            List<IntPtr> windowHandles = new List<IntPtr>();
+            var windowHandles = new List<IntPtr>();
 
-            PInvoke.EnumWindows((IntPtr hwnd, int lParam) =>
+            PInvoke.EnumWindows((hwnd, _) =>
             {
                 var panelType = GetWindowPanelType(hwnd);
 
@@ -197,21 +162,27 @@ namespace MSFSPopoutPanelManager.WindowsAgent
 
             if (className == "AceApp")      // MSFS windows designation
             {
-                if (String.IsNullOrEmpty(caption) || caption.IndexOf("(Custom)") > -1)      // Pop Out window
+                if (string.IsNullOrEmpty(caption) || caption.IndexOf("(Custom)", StringComparison.Ordinal) > -1)      // Pop Out window
                     return PanelType.CustomPopout;
-                else if (caption.IndexOf("Microsoft Flight Simulator") > -1)                // MSFS main game window
+                
+                if (caption.IndexOf("Microsoft Flight Simulator", StringComparison.Ordinal) > -1)                // MSFS main game window
                     return PanelType.FlightSimMainWindow;
-                else if (caption.IndexOf("WINDOW") > -1)                                    // MSFS multi-monitor window
+                
+                if (caption.IndexOf("WINDOW", StringComparison.Ordinal) > -1)                                    // MSFS multi-monitor window
                     return PanelType.MultiMonitorWindow;
-                else
-                    return PanelType.BuiltInPopout;                                         // MSFS built-in window such as ATC, VFRMap
+                
+                return PanelType.BuiltInPopout;                                         // MSFS built-in window such as ATC, VFRMap
             }
-            else if (className.IndexOf("HwndWrapper[MSFSPopoutPanelManager") > -1)
+
+            if (className.IndexOf("HwndWrapper[MSFSPopoutPanelManager", StringComparison.Ordinal) > -1)
             {
-                if (caption.IndexOf("HudBar") > -1)
+                if (caption.IndexOf("HudBar", StringComparison.Ordinal) > -1)
                     return PanelType.HudBarWindow;
-                else
-                    return PanelType.PopOutManager;
+                
+                if (caption.IndexOf("Virtual NumPad", StringComparison.Ordinal) > -1)
+                    return PanelType.NumPadWindow;
+                
+                return PanelType.PopOutManager;
             }
 
             return PanelType.Unknown;
@@ -219,11 +190,11 @@ namespace MSFSPopoutPanelManager.WindowsAgent
 
         public static void CloseAllPopOuts()
         {
-            PInvoke.EnumWindows((IntPtr hwnd, int lParam) =>
+            PInvoke.EnumWindows((hwnd, _) =>
             {
                 var panelType = GetWindowPanelType(hwnd);
 
-                if (panelType == PanelType.CustomPopout || panelType == PanelType.HudBarWindow)
+                if (panelType == PanelType.CustomPopout || panelType == PanelType.HudBarWindow || panelType == PanelType.NumPadWindow)
                     CloseWindow(hwnd);
 
                 return true;
@@ -273,7 +244,7 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             IntPtr msfsGameWindowHandle = IntPtr.Zero;
 
             // Get game window handle
-            PInvoke.EnumWindows(new PInvoke.CallBack((IntPtr hwnd, int lParam) =>
+            PInvoke.EnumWindows((hwnd, _) =>
             {
                 var className = PInvoke.GetClassName(hwnd);
 
@@ -281,22 +252,21 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                 {
                     var caption = GetWindowCaption(hwnd);
 
-                    if (caption.IndexOf("Microsoft Flight Simulator") > -1)        // MSFS main game window
+                    if (caption.IndexOf("Microsoft Flight Simulator", StringComparison.Ordinal) > -1)        // MSFS main game window
                     {
                         msfsGameWindowHandle = hwnd;
                     }
                 }
 
                 return true;
-            }), 0);
+            }, 0);
 
             return msfsGameWindowHandle;
         }
 
         public static void SetWindowTitleBarColor(IntPtr hwnd, string hexColor)
         {
-            int color;
-            if (int.TryParse(hexColor, NumberStyles.HexNumber, null, out color))
+            if (int.TryParse(hexColor, NumberStyles.HexNumber, null, out var color))
                 PInvoke.DwmSetWindowAttribute(hwnd, DwmWindowAttribute.DWMWA_CAPTION_COLOR, ref color, sizeof(Int32));
         }
 
@@ -304,12 +274,26 @@ namespace MSFSPopoutPanelManager.WindowsAgent
         {
             var monitors = new List<MonitorInfo>();
 
-            foreach (Screen screen in Screen.AllScreens)
-            {
-                monitors.Add(new MonitorInfo { Name = screen.DeviceName.Substring(screen.DeviceName.LastIndexOf("\\") + 1), X = screen.Bounds.X, Y = screen.Bounds.Y, Width = screen.Bounds.Width, Height = screen.Bounds.Height });
-            }
-
+            foreach (var screen in Screen.AllScreens)
+                monitors.Add(new MonitorInfo { Name = screen.DeviceName.Substring(screen.DeviceName.LastIndexOf("\\", StringComparison.Ordinal) + 1), X = screen.Bounds.X, Y = screen.Bounds.Y, Width = screen.Bounds.Width, Height = screen.Bounds.Height });
+            
             return monitors;
+        }
+
+        public static bool IsPointInsideAppWindow(Point point)
+        {
+            var appHandle = WindowProcessManager.GetApplicationProcess().Handle;
+
+            if (appHandle == IntPtr.Zero)
+                return true;
+
+            var rect = PInvoke.GetWindowRectangleDwm(appHandle);
+
+            var rightEdge = rect.X + rect.Width;
+            var bottomEdge = rect.Y + rect.Height;
+
+            return point.X >= rect.X && point.X <= rightEdge && point.Y >= rect.Y && point.Y <= bottomEdge;
+
         }
     }
 }

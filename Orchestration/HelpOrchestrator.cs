@@ -46,10 +46,10 @@ namespace MSFSPopoutPanelManager.Orchestration
 
         public bool HasOrphanAppCache()
         {
-            var applocal = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            var srcPath = Path.Combine(applocal, @"temp\.net\MSFSPopoutPanelManager");
+            var appLocal = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            var srcPath = Path.Combine(appLocal, @"temp\.net\MSFSPopoutPanelManager");
 
-            DirectoryInfo di = new DirectoryInfo(srcPath);
+            var di = new DirectoryInfo(srcPath);
 
             if (di.Exists)
                 return di.GetDirectories().Length > 1;
@@ -57,28 +57,36 @@ namespace MSFSPopoutPanelManager.Orchestration
             return false;
         }
 
-        public void DownloadVCCLibrary()
+        public void DownloadVccLibrary()
         {
-            string target = "https://aka.ms/vs/17/release/vc_redist.x64.exe";
+            var target = "https://aka.ms/vs/17/release/vc_redist.x64.exe";
             try
             {
-                var psi = new ProcessStartInfo();
-                psi.UseShellExecute = true;
-                psi.FileName = target;
+                var psi = new ProcessStartInfo
+                {
+                    UseShellExecute = true,
+                    FileName = target
+                };
 
                 Process.Start(psi);
             }
-            catch { }
+            catch
+            {
+                // ignored
+            }
         }
 
         public void DeleteAppCache()
         {
-            var applocal = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            var srcPath = Path.Combine(applocal, @"temp\.net\MSFSPopoutPanelManager");
+            var appLocal = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            var srcPath = Path.Combine(appLocal, @"temp\.net\MSFSPopoutPanelManager");
 
             try
             {
                 var currentAppPath = Directory.GetParent(Assembly.GetExecutingAssembly().Location);
+
+                if (currentAppPath == null)
+                    throw new ApplicationException("Unable to determine POPM application path.");
 
                 var dir = new DirectoryInfo(srcPath);
                 var subDirs = dir.GetDirectories();

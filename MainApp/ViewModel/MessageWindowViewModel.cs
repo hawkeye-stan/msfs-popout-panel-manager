@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Windows;
 using System.Windows.Documents;
+using System.Windows.Media;
+using Colors = System.Windows.Media.Colors;
 
 namespace MSFSPopoutPanelManager.MainApp.ViewModel
 {
@@ -26,7 +28,7 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
 
         public bool IsVisible
         {
-            get { return _isVisible; }
+            get => _isVisible;
             set
             {
                 if (!AppSettingData.ApplicationSetting.PopOutSetting.EnablePopOutMessages)
@@ -44,36 +46,36 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
 
         public int WindowHeight { get; set; }
 
-        public MessageWindowViewModel(MainOrchestrator orchestrator) : base(orchestrator)
+        public MessageWindowViewModel(SharedStorage sharedStorage, PanelSourceOrchestrator panelSourceOrchestrator, PanelPopOutOrchestrator panelPopOutOrchestrator) : base(sharedStorage)
         {
             IsVisible = false;
-            Orchestrator.PanelPopOut.OnPopOutStarted += (sender, e) =>
+            panelPopOutOrchestrator.OnPopOutStarted += (_, _) =>
             {
                 IsVisible = true;
                 WindowWidth = WINDOW_WIDTH_POPOUT_MESSAGE;
                 WindowHeight = WINDOW_HEIGHT_POPOUT_MESSAGE;
             };
-            Orchestrator.PanelPopOut.OnPopOutCompleted += (sender, e) =>
+            panelPopOutOrchestrator.OnPopOutCompleted += (_, _) =>
             {
                 Thread.Sleep(1000);
                 IsVisible = false;
                 WindowWidth = WINDOW_WIDTH_POPOUT_MESSAGE;
                 WindowHeight = WINDOW_HEIGHT_POPOUT_MESSAGE;
             };
-            Orchestrator.PanelSource.OnStatusMessageStarted += (sender, e) =>
+            panelSourceOrchestrator.OnStatusMessageStarted += (_, _) =>
             {
                 IsVisible = true;
                 WindowWidth = WINDOW_WIDTH_REGULAR_MESSAGE;
                 WindowHeight = WINDOW_HEIGHT_REGULAR_MESSAGE;
             };
-            Orchestrator.PanelSource.OnStatusMessageEnded += (sender, e) =>
+            panelSourceOrchestrator.OnStatusMessageEnded += (_, _) =>
             {
                 IsVisible = false;
                 WindowWidth = WINDOW_WIDTH_REGULAR_MESSAGE;
                 WindowHeight = WINDOW_HEIGHT_REGULAR_MESSAGE;
             };
 
-            StatusMessageWriter.OnStatusMessage += (sender, e) =>
+            StatusMessageWriter.OnStatusMessage += (_, e) =>
             {
                 Application.Current.Dispatcher.Invoke(() =>
                 {
@@ -98,6 +100,44 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
             var top = simulatorRectangle.Top + simulatorRectangle.Height / 2 - WindowHeight / 2;
             WindowActionManager.MoveWindow(Handle, left, top, WindowWidth, WindowHeight);
             WindowActionManager.ApplyAlwaysOnTop(Handle, PanelType.StatusMessageWindow, true);
+        }
+
+        private List<Run> FormatStatusMessages(List<StatusMessage> messages)
+        {
+            var runs = new List<Run>
+            {
+                Capacity = 0
+            };
+
+            foreach (var statusMessage in messages)
+            {
+                var run = new Run
+                {
+                    Text = statusMessage.Message
+                };
+
+                switch (statusMessage.StatusMessageType)
+                {
+                    case StatusMessageType.Success:
+                        run.Foreground = new SolidColorBrush(Colors.LimeGreen);
+                        break;
+                    case StatusMessageType.Failure:
+                        run.Foreground = new SolidColorBrush(Colors.IndianRed);
+                        break;
+                    case StatusMessageType.Executing:
+                        run.Foreground = new SolidColorBrush(Colors.NavajoWhite);
+                        break;
+                    case StatusMessageType.Info:
+                        break;
+                }
+
+                runs.Add(run);
+
+                if (statusMessage.NewLine)
+                    runs.Add(new Run { Text = Environment.NewLine });
+            }
+
+            return runs;
         }
     }
 }

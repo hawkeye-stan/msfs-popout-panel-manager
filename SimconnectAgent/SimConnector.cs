@@ -19,9 +19,9 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
         private Timer _connectionTimer;
         private bool _isDisabledReconnect;
 
-        private List<SimConnectDataDefinition> _simConnectRequiredDataDefinitions;
+        private readonly List<SimConnectDataDefinition> _simConnectRequiredDataDefinitions = SimDataDefinitions.GetRequiredDefinitions();
         private List<SimConnectDataDefinition> _simConnectHudBarDataDefinitions;
-        private FieldInfo[] _simConnectStructFields;
+        private readonly FieldInfo[] _simConnectStructFields = typeof(SimConnectStruct).GetFields(BindingFlags.Public | BindingFlags.Instance);
 
         public event EventHandler<string> OnException;
         public event EventHandler<List<SimDataItem>> OnReceivedRequiredData;
@@ -33,18 +33,15 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
 
         public bool Connected { get; set; }
 
-        public SimConnector()
-        {
-            _simConnectStructFields = typeof(SimConnectStruct).GetFields(BindingFlags.Public | BindingFlags.Instance);
-            _simConnectRequiredDataDefinitions = SimDataDefinitions.GetRequiredDefinitions();
-        }
-
         public void Start()
         {
-            _connectionTimer = new Timer();
-            _connectionTimer.Interval = MSFS_CONNECTION_RETRY_TIMEOUT;
-            _connectionTimer.Enabled = true;
-            _connectionTimer.Elapsed += (source, e) =>
+            _connectionTimer = new()
+            {
+                Interval = MSFS_CONNECTION_RETRY_TIMEOUT,
+                Enabled = true
+            };
+
+            _connectionTimer.Elapsed += (_, _) =>
             {
                 try
                 {
@@ -76,22 +73,16 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
 
         public void StopAndReconnect()
         {
-            if (!_isDisabledReconnect)
-            {
-                Stop();
-                InitializeSimConnect();
-            }
+            if (_isDisabledReconnect)
+                return;
+
+            Stop();
+            InitializeSimConnect();
         }
 
         public void Stop()
         {
-            if (_simConnect != null)
-            {
-                // Dispose serves the same purpose as SimConnect_Close()
-                //try { _simConnect.Dispose(); } catch { }
-                _simConnect = null;
-            }
-
+            _simConnect = null;
             Connected = false;
         }
 
@@ -102,7 +93,7 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
 
             try
             {
-                _simConnect.RequestDataOnSimObjectType(DATA_REQUEST.REQUIRED_REQUEST, DATA_DEFINITION.REQUIRED_DEFINITION, 0, SIMCONNECT_SIMOBJECT_TYPE.USER);
+                _simConnect.RequestDataOnSimObjectType(DataRequest.REQUIRED_REQUEST, DataDefinition.REQUIRED_DEFINITION, 0, SIMCONNECT_SIMOBJECT_TYPE.USER);
             }
             catch
             {
@@ -122,7 +113,7 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
             {
 
                 if (_simConnectHudBarDataDefinitions != null)
-                    _simConnect.RequestDataOnSimObjectType(DATA_REQUEST.HUDBAR_REQUEST, DATA_DEFINITION.HUDBAR_DEFINITION, 0, SIMCONNECT_SIMOBJECT_TYPE.USER);
+                    _simConnect.RequestDataOnSimObjectType(DataRequest.HUDBAR_REQUEST, DataDefinition.HUDBAR_DEFINITION, 0, SIMCONNECT_SIMOBJECT_TYPE.USER);
             }
             catch
             {
@@ -160,40 +151,51 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
             }
         }
 
-        public void TransmitActionEvent(ActionEvent eventID, uint data)
+        public void TransmitActionEvent(ActionEvent eventId, uint data)
         {
             if (_simConnect != null)
             {
                 try
                 {
-                    _simConnect.TransmitClientEvent(0U, eventID, data, NotificationGroup.GROUP0, SIMCONNECT_EVENT_FLAG.GROUPID_IS_PRIORITY);
+                    _simConnect.TransmitClientEvent(0U, eventId, data, NotificationGroup.GROUP0, SIMCONNECT_EVENT_FLAG.GROUPID_IS_PRIORITY);
                     System.Threading.Thread.Sleep(200);
                 }
                 catch (Exception ex)
                 {
-                    var eventName = eventID.ToString()[4..];        // trim out KEY_ prefix
+                    var eventName = eventId.ToString()[4..];        // trim out KEY_ prefix
                     FileLogger.WriteLog($"SimConnector: SimConnect transmit event exception - EventName: {eventName} - {ex.Message}", StatusMessageType.Error);
                 }
             }
         }
 
-        public void SetDataObject(WriteableVariableName propName, object dValue)
+        public void SetDataObject(WritableVariableName propName, object dValue)
         {
             try
             {
-                var dataStruct = new WriteableDataStruct();
-                dataStruct.Prop0 = (double)dValue;
+                if (_simConnect == null)
+                    return;
+
+                var dataStruct = new WritableDataStruct
+                {
+                    Prop0 = (double)dValue
+                };
 
                 switch (propName)
                 {
-                    case WriteableVariableName.TrackIREnable:
-                        _simConnect.SetDataOnSimObject(DATA_DEFINITION.WRITEABLE_TRACKIR_DEFINITION, SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_DATA_SET_FLAG.DEFAULT, dataStruct);
+                    case WritableVariableName.TrackIREnable:
+                        _simConnect.SetDataOnSimObject(DataDefinition.WRITABLE_TRACK_IR_DEFINITION, SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_DATA_SET_FLAG.DEFAULT, dataStruct);
                         break;
-                    case WriteableVariableName.CockpitCameraZoom:
-                        _simConnect.SetDataOnSimObject(DATA_DEFINITION.WRITEABLE_COCKPITCAMERAZOOM_DEFINITION, SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_DATA_SET_FLAG.DEFAULT, dataStruct);
+                    case WritableVariableName.CockpitCameraZoom:
+                        _simConnect.SetDataOnSimObject(DataDefinition.WRITABLE_COCKPIT_CAMERA_ZOOM_DEFINITION, SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_DATA_SET_FLAG.DEFAULT, dataStruct);
                         break;
-                    case WriteableVariableName.CameraRequestAction:
-                        _simConnect.SetDataOnSimObject(DATA_DEFINITION.WRITEABLE_CAMERAREQUESTACTION_DEFINITION, SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_DATA_SET_FLAG.DEFAULT, dataStruct);
+                    case WritableVariableName.CameraRequestAction:
+                        _simConnect.SetDataOnSimObject(DataDefinition.WRITABLE_CAMERA_REQUEST_ACTION_DEFINITION, SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_DATA_SET_FLAG.DEFAULT, dataStruct);
+                        break;
+                    case WritableVariableName.CameraViewTypeAndIndex0:
+                        _simConnect.SetDataOnSimObject(DataDefinition.WRITABLE_CAMERA_VIEW_TYPE_INDEX_0_DEFINITION, SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_DATA_SET_FLAG.DEFAULT, dataStruct);
+                        break;
+                    case WritableVariableName.CameraViewTypeAndIndex1:
+                        _simConnect.SetDataOnSimObject(DataDefinition.WRITABLE_CAMERA_VIEW_TYPE_INDEX_1_DEFINITION, SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_DATA_SET_FLAG.DEFAULT, dataStruct);
                         break;
                 }
             }
@@ -211,30 +213,30 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
 
             _connectionTimer.Enabled = false;
 
-            // Listen to connect and quit msgs
+            // Listen to connect and quit messages
             _simConnect.OnRecvOpen += HandleOnRecvOpen;
             _simConnect.OnRecvQuit += HandleOnRecvQuit;
             _simConnect.OnRecvException += HandleOnRecvException;
             _simConnect.OnRecvEvent += HandleOnReceiveSystemEvent;
-            _simConnect.OnRecvSimobjectDataBytype += HandleOnRecvSimobjectDataBytype;
+            _simConnect.OnRecvSimobjectDataBytype += HandleOnRecvSimObjectDataByType;
             _simConnect.OnRecvEventFilename += HandleOnRecvEventFilename;
             _simConnect.OnRecvSystemState += HandleOnRecvSystemState;
 
             // Register simConnect system events
-            _simConnect.UnsubscribeFromSystemEvent(SimConnectEvent.SIMSTART);
-            _simConnect.SubscribeToSystemEvent(SimConnectEvent.SIMSTART, "SimStart");
-            _simConnect.UnsubscribeFromSystemEvent(SimConnectEvent.SIMSTOP);
-            _simConnect.SubscribeToSystemEvent(SimConnectEvent.SIMSTOP, "SimStop");
+            _simConnect.UnsubscribeFromSystemEvent(SimConnectEvent.SIM_START);
+            _simConnect.SubscribeToSystemEvent(SimConnectEvent.SIM_START, "SimStart");
+            _simConnect.UnsubscribeFromSystemEvent(SimConnectEvent.SIM_STOP);
+            _simConnect.SubscribeToSystemEvent(SimConnectEvent.SIM_STOP, "SimStop");
             _simConnect.UnsubscribeFromSystemEvent(SimConnectEvent.VIEW);
             _simConnect.SubscribeToSystemEvent(SimConnectEvent.VIEW, "View");
-            _simConnect.UnsubscribeFromSystemEvent(SimConnectEvent.AIRCRAFTLOADED);
-            _simConnect.SubscribeToSystemEvent(SimConnectEvent.AIRCRAFTLOADED, "AircraftLoaded");
+            _simConnect.UnsubscribeFromSystemEvent(SimConnectEvent.AIRCRAFT_LOADED);
+            _simConnect.SubscribeToSystemEvent(SimConnectEvent.AIRCRAFT_LOADED, "AircraftLoaded");
 
 
             AddRequiredDataDefinitions();
             SetupActionEvents();
 
-            _simConnect.RequestSystemState(SystemStateRequestId.AIRCRAFTPATH, "AircraftLoaded");
+            _simConnect.RequestSystemState(SystemStateRequestId.AIRCRAFT_PATH, "AircraftLoaded");
 
             _isDisabledReconnect = false;
 
@@ -247,7 +249,7 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
                 }
             });
 
-            OnConnected?.Invoke(this, null);
+            OnConnected?.Invoke(this, EventArgs.Empty);
             Connected = true;
         }
 
@@ -255,7 +257,7 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
         {
             switch ((SystemStateRequestId)Enum.Parse(typeof(SystemStateRequestId), data.dwRequestID.ToString()))
             {
-                case SystemStateRequestId.AIRCRAFTPATH:
+                case SystemStateRequestId.AIRCRAFT_PATH:
                     SetActiveAircraftTitle(data.szString);
                     break;
             }
@@ -265,7 +267,7 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
         {
             switch (data.uEventID)
             {
-                case (uint)SimConnectEvent.AIRCRAFTLOADED:
+                case (uint)SimConnectEvent.AIRCRAFT_LOADED:
                     SetActiveAircraftTitle(data.szFileName);
                     break;
             }
@@ -273,13 +275,9 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
 
         private void SetupActionEvents()
         {
-            // Setup SimEvent mapping
-            //_simConnect.SetInputGroupPriority(NotificationGroup.GROUP0, (uint)SIMCONNECT_EVENT_FLAG.GROUPID_IS_PRIORITY);
-
             foreach (ActionEvent item in Enum.GetValues(typeof(ActionEvent)))
             {
                 _simConnect.MapClientEventToSimEvent(item, item.ToString());
-                //_simConnect.AddClientEventToNotificationGroup(NotificationGroup.GROUP0, item, true);
             }
         }
 
@@ -290,33 +288,37 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
 
             foreach (var definition in _simConnectRequiredDataDefinitions)
             {
-                if (definition.DefinitionId == DATA_DEFINITION.REQUIRED_DEFINITION && definition.DataDefinitionType == DataDefinitionType.SimConnect)
-                {
-                    SIMCONNECT_DATATYPE simmConnectDataType;
-                    switch (definition.DataType)
-                    {
-                        case DataType.String:
-                            simmConnectDataType = SIMCONNECT_DATATYPE.STRING256;
-                            break;
-                        case DataType.Float64:
-                            simmConnectDataType = SIMCONNECT_DATATYPE.FLOAT64;
-                            break;
-                        default:
-                            simmConnectDataType = SIMCONNECT_DATATYPE.FLOAT64;
-                            break;
-                    }
+                if (definition.DefinitionId != DataDefinition.REQUIRED_DEFINITION ||
+                    definition.DataDefinitionType != DataDefinitionType.SimConnect) continue;
 
-                    _simConnect.AddToDataDefinition(definition.DefinitionId, definition.VariableName, definition.SimConnectUnit, simmConnectDataType, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+                SIMCONNECT_DATATYPE simConnectDataType;
+                switch (definition.DataType)
+                {
+                    case DataType.String:
+                        simConnectDataType = SIMCONNECT_DATATYPE.STRING256;
+                        break;
+                    case DataType.Float64:
+                        simConnectDataType = SIMCONNECT_DATATYPE.FLOAT64;
+                        break;
+                    default:
+                        simConnectDataType = SIMCONNECT_DATATYPE.FLOAT64;
+                        break;
                 }
+
+                _simConnect.AddToDataDefinition(definition.DefinitionId, definition.VariableName, definition.SimConnectUnit, simConnectDataType, 0.0f, SimConnect.SIMCONNECT_UNUSED);
             }
 
-            _simConnect.AddToDataDefinition(DATA_DEFINITION.WRITEABLE_TRACKIR_DEFINITION, "TRACK IR ENABLE", "bool", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-            _simConnect.AddToDataDefinition(DATA_DEFINITION.WRITEABLE_COCKPITCAMERAZOOM_DEFINITION, "COCKPIT CAMERA ZOOM", "percentage", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-            _simConnect.AddToDataDefinition(DATA_DEFINITION.WRITEABLE_CAMERAREQUESTACTION_DEFINITION, "CAMERA REQUEST ACTION", "enum", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+            _simConnect.AddToDataDefinition(DataDefinition.WRITABLE_TRACK_IR_DEFINITION, "TRACK IR ENABLE", "bool", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+            _simConnect.AddToDataDefinition(DataDefinition.WRITABLE_COCKPIT_CAMERA_ZOOM_DEFINITION, "COCKPIT CAMERA ZOOM", "percentage", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+            _simConnect.AddToDataDefinition(DataDefinition.WRITABLE_CAMERA_REQUEST_ACTION_DEFINITION, "CAMERA REQUEST ACTION", "enum", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+            _simConnect.AddToDataDefinition(DataDefinition.WRITABLE_CAMERA_VIEW_TYPE_INDEX_0_DEFINITION, "CAMERA VIEW TYPE AND INDEX:0", "number", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+            _simConnect.AddToDataDefinition(DataDefinition.WRITABLE_CAMERA_VIEW_TYPE_INDEX_1_DEFINITION, "CAMERA VIEW TYPE AND INDEX:1", "number", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
 
-            _simConnect.RegisterDataDefineStruct<SimConnectStruct>(DATA_DEFINITION.REQUIRED_DEFINITION);
-            _simConnect.RegisterDataDefineStruct<SimConnectStruct>(DATA_DEFINITION.WRITEABLE_TRACKIR_DEFINITION);
-            _simConnect.RegisterDataDefineStruct<SimConnectStruct>(DATA_DEFINITION.WRITEABLE_COCKPITCAMERAZOOM_DEFINITION);
+            _simConnect.RegisterDataDefineStruct<SimConnectStruct>(DataDefinition.REQUIRED_DEFINITION);
+            _simConnect.RegisterDataDefineStruct<SimConnectStruct>(DataDefinition.WRITABLE_TRACK_IR_DEFINITION);
+            _simConnect.RegisterDataDefineStruct<SimConnectStruct>(DataDefinition.WRITABLE_COCKPIT_CAMERA_ZOOM_DEFINITION);
+            _simConnect.RegisterDataDefineStruct<SimConnectStruct>(DataDefinition.WRITABLE_CAMERA_VIEW_TYPE_INDEX_0_DEFINITION);
+            _simConnect.RegisterDataDefineStruct<SimConnectStruct>(DataDefinition.WRITABLE_CAMERA_VIEW_TYPE_INDEX_1_DEFINITION);
         }
 
         private void AddHudBarDataDefinitions()
@@ -324,45 +326,45 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
             if (_simConnect == null)
                 return;
 
-            _simConnect.ClearDataDefinition(DATA_DEFINITION.HUDBAR_DEFINITION);
+            _simConnect.ClearDataDefinition(DataDefinition.HUDBAR_DEFINITION);
 
             if (_simConnectHudBarDataDefinitions == null)
                 return;
 
             foreach (var definition in _simConnectHudBarDataDefinitions)
             {
-                if (definition.DefinitionId == DATA_DEFINITION.HUDBAR_DEFINITION && definition.DataDefinitionType == DataDefinitionType.SimConnect)
-                {
-                    SIMCONNECT_DATATYPE simmConnectDataType;
-                    switch (definition.DataType)
-                    {
-                        case DataType.String:
-                            simmConnectDataType = SIMCONNECT_DATATYPE.STRING256;
-                            break;
-                        case DataType.Float64:
-                            simmConnectDataType = SIMCONNECT_DATATYPE.FLOAT64;
-                            break;
-                        default:
-                            simmConnectDataType = SIMCONNECT_DATATYPE.FLOAT64;
-                            break;
-                    }
+                if (definition.DefinitionId != DataDefinition.HUDBAR_DEFINITION ||
+                    definition.DataDefinitionType != DataDefinitionType.SimConnect) continue;
 
-                    _simConnect.AddToDataDefinition(definition.DefinitionId, definition.VariableName, definition.SimConnectUnit, simmConnectDataType, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+                SIMCONNECT_DATATYPE simConnectDataType;
+                switch (definition.DataType)
+                {
+                    case DataType.String:
+                        simConnectDataType = SIMCONNECT_DATATYPE.STRING256;
+                        break;
+                    case DataType.Float64:
+                        simConnectDataType = SIMCONNECT_DATATYPE.FLOAT64;
+                        break;
+                    default:
+                        simConnectDataType = SIMCONNECT_DATATYPE.FLOAT64;
+                        break;
                 }
+
+                _simConnect.AddToDataDefinition(definition.DefinitionId, definition.VariableName, definition.SimConnectUnit, simConnectDataType, 0.0f, SimConnect.SIMCONNECT_UNUSED);
             }
 
-            _simConnect.RegisterDataDefineStruct<SimConnectStruct>(DATA_DEFINITION.HUDBAR_DEFINITION);
+            _simConnect.RegisterDataDefineStruct<SimConnectStruct>(DataDefinition.HUDBAR_DEFINITION);
         }
 
         private void HandleOnRecvQuit(SimConnect sender, SIMCONNECT_RECV data)
         {
             Stop();
-            OnDisconnected?.Invoke(this, null);
+            OnDisconnected?.Invoke(this, EventArgs.Empty);
         }
 
         private void HandleOnRecvException(SimConnect sender, SIMCONNECT_RECV_EXCEPTION data)
         {
-            SIMCONNECT_EXCEPTION e = (SIMCONNECT_EXCEPTION)data.dwException;
+            var e = (SIMCONNECT_EXCEPTION)data.dwException;
 
             switch (e)
             {
@@ -373,7 +375,7 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
                 case SIMCONNECT_EXCEPTION.EVENT_ID_DUPLICATE:
                     break;
                 default:
-                    OnException?.Invoke(this, $"SimConnector: SimConnect on recieve exception - {e}");
+                    OnException?.Invoke(this, $"SimConnector: SimConnect on receive exception - {e}");
                     break;
             }
         }
@@ -384,15 +386,20 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
             OnReceiveSystemEvent?.Invoke(this, systemEvent);
         }
 
-        private void HandleOnRecvSimobjectDataBytype(SimConnect sender, SIMCONNECT_RECV_SIMOBJECT_DATA_BYTYPE data)
+        private void HandleOnRecvSimObjectDataByType(SimConnect sender, SIMCONNECT_RECV_SIMOBJECT_DATA_BYTYPE data)
         {
             if (_simConnect == null || !Connected)
                 return;
 
-            if (data.dwRequestID == (int)DATA_REQUEST.REQUIRED_REQUEST)
-                ParseRequiredReceivedSimData(data);
-            else if (data.dwRequestID == (int)DATA_REQUEST.HUDBAR_REQUEST)
-                ParseHudBarReceivedSimData(data);
+            switch (data.dwRequestID)
+            {
+                case (int)DataRequest.REQUIRED_REQUEST:
+                    ParseRequiredReceivedSimData(data);
+                    break;
+                case (int)DataRequest.HUDBAR_REQUEST:
+                    ParseHudBarReceivedSimData(data);
+                    break;
+            }
         }
 
 
@@ -406,14 +413,22 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
                 var simData = new List<SimDataItem>();
                 var simDataStruct = (SimConnectStruct)data.dwData[0];
 
-                int i = 0;
+                var i = 0;
                 foreach (var definition in _simConnectRequiredDataDefinitions)
                 {
-                    if (definition.DataDefinitionType == DataDefinitionType.SimConnect)
+                    if (definition.DataDefinitionType != DataDefinitionType.SimConnect) 
+                        continue;
+
+                    var dataValue = _simConnectStructFields[i].GetValue(simDataStruct);
+
+                    var simDataItem = new SimDataItem
                     {
-                        simData.Add(new SimDataItem { PropertyName = definition.PropName, Value = (double)_simConnectStructFields[i].GetValue(simDataStruct) });
-                        i++;
-                    }
+                        PropertyName = definition.PropName,
+                        Value = dataValue == null ? 0 : (double)dataValue
+                    };
+
+                    simData.Add(simDataItem);
+                    i++;
                 }
 
                 OnReceivedRequiredData?.Invoke(this, simData);
@@ -434,16 +449,23 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
                 var simData = new List<SimDataItem>();
                 var simDataStruct = (SimConnectStruct)data.dwData[0];
 
-                int i = 0;
+                var i = 0;
                 lock (_simConnectHudBarDataDefinitions)
                 {
                     foreach (var definition in _simConnectHudBarDataDefinitions)
                     {
-                        if (definition.DataDefinitionType == DataDefinitionType.SimConnect)
+                        if (definition.DataDefinitionType != DataDefinitionType.SimConnect)
+                            continue;
+
+                        var dataValue = _simConnectStructFields[i].GetValue(simDataStruct);
+                        var simDataItem = new SimDataItem
                         {
-                            simData.Add(new SimDataItem { PropertyName = definition.PropName, Value = (double)_simConnectStructFields[i].GetValue(simDataStruct) });
-                            i++;
-                        }
+                            PropertyName = definition.PropName,
+                            Value = dataValue == null ? 0 : (double)dataValue
+                        };
+
+                        simData.Add(simDataItem);
+                        i++;
                     }
                 }
 
@@ -462,7 +484,7 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
 
             if (filePathToken.Length > 1)
             {
-                var aircraftName = filePathToken[filePathToken.Length - 2];
+                var aircraftName = filePathToken[^2];
                 aircraftName = aircraftName.Replace("_", " ").ToUpper();
 
                 OnActiveAircraftChanged?.Invoke(this, aircraftName);

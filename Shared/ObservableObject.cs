@@ -12,41 +12,50 @@ namespace MSFSPopoutPanelManager.Shared
 
         protected virtual void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            bool hasJsonIgnoreAttribute = false;
+            var hasJsonIgnoreAttribute = false;
 
             var type = sender.GetType();
-            var propertyInfo = type.GetProperty(e.PropertyName);
-
-            if (propertyInfo != null)
+            if (e.PropertyName != null)
             {
-                if (Attribute.IsDefined(propertyInfo, typeof(IgnorePropertyChanged)))
-                    return;
+                var propertyInfo = type.GetProperty(e.PropertyName);
 
-                hasJsonIgnoreAttribute = Attribute.IsDefined(propertyInfo, typeof(JsonIgnoreAttribute));
+                if (propertyInfo != null)
+                {
+                    if (Attribute.IsDefined(propertyInfo, typeof(IgnorePropertyChanged)))
+                        return;
+
+                    hasJsonIgnoreAttribute = Attribute.IsDefined(propertyInfo, typeof(JsonIgnoreAttribute));
+                }
             }
 
-            PropertyChanged?.Invoke(this, new PropertyChangedExtendedEventArgs(e?.PropertyName, sender.ToString(), hasJsonIgnoreAttribute));
+            PropertyChanged?.Invoke(this, new PropertyChangedExtendedEventArgs(e.PropertyName, sender.ToString(), hasJsonIgnoreAttribute));
         }
 
         protected void InitializeChildPropertyChangeBinding()
         {
-            Type type = this.GetType();
-            PropertyInfo[] properties = type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            var type = this.GetType();
+            var properties = type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
-            foreach (PropertyInfo propertyInfo in properties)
+            foreach (var propertyInfo in properties)
             {
                 if (Attribute.IsDefined(propertyInfo, typeof(IgnorePropertyChanged)))
                     continue;
 
-                Type childType = propertyInfo.PropertyType;
+                var childType = propertyInfo.PropertyType;
 
-                if (childType.IsSubclassOf(typeof(ObservableObject)))
-                {
-                    EventInfo eventInfo = childType.GetEvent("PropertyChanged");
-                    MethodInfo methodInfo = type.GetMethod("OnPropertyChanged", BindingFlags.NonPublic | BindingFlags.Instance);
-                    Delegate dg = Delegate.CreateDelegate(eventInfo.EventHandlerType, this, methodInfo);
+                if (!childType.IsSubclassOf(typeof(ObservableObject))) 
+                    continue;
+
+                var eventInfo = childType.GetEvent("PropertyChanged");
+                var methodInfo = type.GetMethod("OnPropertyChanged", BindingFlags.NonPublic | BindingFlags.Instance);
+
+                if (eventInfo == null || eventInfo.EventHandlerType == null || methodInfo == null)
+                    continue;
+
+                var dg = Delegate.CreateDelegate(eventInfo.EventHandlerType, this, methodInfo);
+
+                if(propertyInfo.GetValue(this, null) != null)
                     eventInfo.AddEventHandler(propertyInfo.GetValue(this, null), dg);
-                }
             }
         }
     }

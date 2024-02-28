@@ -11,6 +11,8 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
 {
     public class HudBarViewModel : BaseViewModel
     {
+        private readonly FlightSimOrchestrator _flightSimOrchestrator;
+
         public ICommand IncreaseSimRateCommand { get; }
 
         public ICommand DecreaseSimRateCommand { get; }
@@ -23,18 +25,20 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
 
         public Guid PanelId { get; set; }
 
-        public PanelConfig PanelConfig => ProfileData.ActiveProfile.PanelConfigs.First(p => p.Id == PanelId);
+        public PanelConfig PanelConfig => ActiveProfile.PanelConfigs.FirstOrDefault(p => p.Id == PanelId);
 
         public bool IsTimerStarted { get; private set; }
 
         public DateTime Timer { get; set; }
 
-        public string HudBarTypeText => ProfileData.ActiveProfile.ProfileSetting.HudBarConfig.HudBarType.ToString().Replace("_", " ");
+        public string HudBarTypeText => ActiveProfile.ProfileSetting.HudBarConfig.HudBarType.ToString().Replace("_", " ");
 
-        private Timer _clock;
+        private readonly Timer _clock;
 
-        public HudBarViewModel(MainOrchestrator orchestrator) : base(orchestrator)
+        public HudBarViewModel(SharedStorage sharedStorage, FlightSimOrchestrator flightSimOrchestrator) : base(sharedStorage)
         {
+            _flightSimOrchestrator = flightSimOrchestrator;
+
             IncreaseSimRateCommand = new DelegateCommand(OnIncreaseSimRate);
             DecreaseSimRateCommand = new DelegateCommand(OnDecreaseSimRate);
             StartStopTimerCommand = new DelegateCommand(OnStartStopTimer);
@@ -46,19 +50,19 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
             _clock = new Timer();
             _clock.Interval = 1000;
             _clock.Enabled = false;
-            _clock.Elapsed += (sender, e) => Application.Current.Dispatcher.Invoke(() => Timer = Timer.AddSeconds(1));
+            _clock.Elapsed += (_, _) => Application.Current.Dispatcher.Invoke(() => Timer = Timer.AddSeconds(1));
 
-            Orchestrator.FlightSim.SetHudBarConfig();
+            _flightSimOrchestrator.SetHudBarConfig();
         }
 
         private void OnIncreaseSimRate()
         {
-            Orchestrator.FlightSim.IncreaseSimRate();
+            _flightSimOrchestrator.IncreaseSimRate();
         }
 
         private void OnDecreaseSimRate()
         {
-            Orchestrator.FlightSim.DecreaseSimRate();
+            _flightSimOrchestrator.DecreaseSimRate();
         }
 
         private void OnStartStopTimer()
@@ -76,7 +80,7 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
 
         private void OnClose()
         {
-            Orchestrator.FlightSim.StopHudBar();
+            _flightSimOrchestrator.StopHudBar();
         }
     }
 }

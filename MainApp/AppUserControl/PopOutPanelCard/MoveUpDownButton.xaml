@@ -1,0 +1,52 @@
+﻿<UserControl
+    x:Class="MSFSPopoutPanelManager.MainApp.AppUserControl.PopOutPanelCard.MoveUpDownButton"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:system="clr-namespace:System;assembly=mscorlib"
+    xmlns:viewModel="clr-namespace:MSFSPopoutPanelManager.MainApp.ViewModel"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <system:Double x:Key="UpDownButtonSize">22</system:Double>
+    </UserControl.Resources>
+    <StackPanel
+        Width="25"
+        Height="52"
+        Margin="0"
+        VerticalAlignment="Center"
+        d:DataContext="{d:DesignInstance viewModel:PopOutPanelConfigCardViewModel}">
+        <WrapPanel
+            Height="26"
+            Margin="0,4,0,-4"
+            VerticalAlignment="Center">
+            <Button
+                x:Name="BtnMovePanelUp"
+                Width="{StaticResource UpDownButtonSize}"
+                Height="{StaticResource UpDownButtonSize}"
+                Command="{Binding MovePanelUpCommand}"
+                KeyboardNavigation.AcceptsReturn="False"
+                ToolTip="Move panel Up">
+                <materialDesign:PackIcon
+                    Width="{StaticResource UpDownButtonSize}"
+                    Height="{StaticResource UpDownButtonSize}"
+                    Kind="CaretUp" />
+            </Button>
+        </WrapPanel>
+        <WrapPanel Height="26" VerticalAlignment="Center">
+            <Button
+                x:Name="BtnMovePanelDown"
+                Width="{StaticResource UpDownButtonSize}"
+                Height="{StaticResource UpDownButtonSize}"
+                Command="{Binding MovePanelDownCommand}"
+                KeyboardNavigation.AcceptsReturn="False"
+                ToolTip="Move panel down">
+                <materialDesign:PackIcon
+                    Width="{StaticResource UpDownButtonSize}"
+                    Height="{StaticResource UpDownButtonSize}"
+                    Kind="CaretDown" />
+            </Button>
+        </WrapPanel>
+    </StackPanel>
+</UserControl>

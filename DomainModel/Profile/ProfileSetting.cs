@@ -6,9 +6,6 @@ namespace MSFSPopoutPanelManager.DomainModel.Profile
     {
         public ProfileSetting()
         {
-            HudBarConfig = new HudBarConfig();
-            RefocusOnDisplay = new RefocusOnDisplay();
-
             InitializeChildPropertyChangeBinding();
         }
 
@@ -16,8 +13,10 @@ namespace MSFSPopoutPanelManager.DomainModel.Profile
 
         public bool IncludeInGamePanels { get; set; }
 
-        public HudBarConfig HudBarConfig { get; set; }
+        public HudBarConfig HudBarConfig { get; set; } = new();
 
-        public RefocusOnDisplay RefocusOnDisplay { get; set; }
+        public RefocusOnDisplay RefocusOnDisplay { get; set; } = new();
+
+        public NumPadConfig NumPadConfig { get; set; } = new();
     }
 }

@@ -14,7 +14,7 @@ namespace MSFSPopoutPanelManager.DomainModel.Setting
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             var filePath = GetFilePath();
             var autoStartArg = new LaunchAddOn() { Name = "MSFS Popout Panel Manager", Disabled = "false", Path = $@"{Directory.GetCurrentDirectory()}\MSFSPopoutPanelManager.exe" };
-            XmlSerializer serializer = new XmlSerializer(typeof(SimBaseDocument));
+            var serializer = new XmlSerializer(typeof(SimBaseDocument));
 
             if (filePath != null && File.Exists(filePath))
             {
@@ -26,32 +26,33 @@ namespace MSFSPopoutPanelManager.DomainModel.Setting
 
                 SimBaseDocument data;
 
-                using (Stream stream = new FileStream(filePath, FileMode.Open))
+                using (var stream = new FileStream(filePath, FileMode.Open))
                 {
                     data = (SimBaseDocument)serializer.Deserialize(stream);
                 }
 
-                if (data != null)
+                if (data == null) 
+                    return;
+                
+                if (data.LaunchAddOn.Count == 0)
                 {
-                    if (data.LaunchAddOn.Count == 0)
-                    {
-                        data.LaunchAddOn.Add(autoStartArg);
-                    }
+                    data.LaunchAddOn.Add(autoStartArg);
+                }
+                else
+                {
+                    var autoStartIndex = data.LaunchAddOn.FindIndex(x => x.Name == "MSFS Popout Panel Manager");
+
+                    if (autoStartIndex > -1)
+                        data.LaunchAddOn[autoStartIndex] = autoStartArg;
                     else
-                    {
-                        var autoStartIndex = data.LaunchAddOn.FindIndex(x => x.Name == "MSFS Popout Panel Manager");
+                        data.LaunchAddOn.Add(autoStartArg);
+                }
 
-                        if (autoStartIndex > -1)
-                            data.LaunchAddOn[autoStartIndex] = autoStartArg;
-                        else
-                            data.LaunchAddOn.Add(autoStartArg);
-                    }
-
-                    using (Stream stream = new FileStream(filePath, FileMode.Open))
-                    {
-                        stream.SetLength(0);
-                        serializer.Serialize(stream, data, new XmlSerializerNamespaces(new[] { XmlQualifiedName.Empty }));
-                    }
+                using (var stream = new FileStream(filePath, FileMode.Open))
+                {
+                    stream.SetLength(0);
+                    serializer.Serialize(stream, data,
+                        new XmlSerializerNamespaces(new[] { XmlQualifiedName.Empty }));
                 }
             }
             else
@@ -61,15 +62,16 @@ namespace MSFSPopoutPanelManager.DomainModel.Setting
                     Descr = "SimConnect",
                     Filename = "SimConnect.xml",
                     Disabled = "False",
-                    Type = "SimConnecct",
+                    Type = "SimConnect",
                     Version = "1,0",
                     LaunchAddOn = new List<LaunchAddOn>() { autoStartArg }
                 };
 
-                using (var file = File.Create(filePath))
-                {
-                    serializer.Serialize(file, data, new XmlSerializerNamespaces(new[] { XmlQualifiedName.Empty }));
-                }
+                if (filePath == null) 
+                    return;
+                
+                using var file = File.Create(filePath);
+                serializer.Serialize(file, data, new XmlSerializerNamespaces(new[] { XmlQualifiedName.Empty }));
             }
         }
 
@@ -77,32 +79,32 @@ namespace MSFSPopoutPanelManager.DomainModel.Setting
         {
             var filePath = GetFilePath();
 
-            if (filePath != null && File.Exists(filePath))
+            if (filePath == null || !File.Exists(filePath)) 
+                return;
+            
+            SimBaseDocument data;
+            var serializer = new XmlSerializer(typeof(SimBaseDocument));
+
+            using (var stream = new FileStream(filePath, FileMode.Open))
             {
-                SimBaseDocument data;
-                XmlSerializer serializer = new XmlSerializer(typeof(SimBaseDocument));
+                data = (SimBaseDocument)serializer.Deserialize(stream);
+            }
 
-                using (Stream stream = new FileStream(filePath, FileMode.Open))
-                {
-                    data = (SimBaseDocument)serializer.Deserialize(stream);
-                }
+            if (data == null) 
+                return;
 
-                if (data != null)
-                {
-                    if (data.LaunchAddOn.Count > 0)
-                    {
-                        var autoStartIndex = data.LaunchAddOn.FindIndex(x => x.Name == "MSFS Popout Panel Manager");
+            if (data.LaunchAddOn.Count > 0)
+            {
+                var autoStartIndex = data.LaunchAddOn.FindIndex(x => x.Name == "MSFS Popout Panel Manager");
 
-                        if (autoStartIndex > -1)
-                            data.LaunchAddOn.RemoveAt(autoStartIndex);
-                    }
+                if (autoStartIndex > -1)
+                    data.LaunchAddOn.RemoveAt(autoStartIndex);
+            }
 
-                    using (Stream stream = new FileStream(filePath, FileMode.Open))
-                    {
-                        stream.SetLength(0);
-                        serializer.Serialize(stream, data, new XmlSerializerNamespaces(new[] { XmlQualifiedName.Empty }));
-                    }
-                }
+            using (var stream = new FileStream(filePath, FileMode.Open))
+            {
+                stream.SetLength(0);
+                serializer.Serialize(stream, data, new XmlSerializerNamespaces(new[] { XmlQualifiedName.Empty }));
             }
         }
 
@@ -141,11 +143,11 @@ namespace MSFSPopoutPanelManager.DomainModel.Setting
 
         private static string GetFilePath()
         {
-            var filePathMSStore = Environment.ExpandEnvironmentVariables("%LocalAppData%") + @"\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\";
+            var filePathMsStore = Environment.ExpandEnvironmentVariables("%LocalAppData%") + @"\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\";
             var filePathSteam = Environment.ExpandEnvironmentVariables("%AppData%") + @"\Microsoft Flight Simulator\LocalCache\";
 
-            if (Directory.Exists(filePathMSStore))
-                return filePathMSStore + "exe.xml";
+            if (Directory.Exists(filePathMsStore))
+                return filePathMsStore + "exe.xml";
             else if (Directory.Exists(filePathSteam))
                 return filePathSteam + "exe.xml";
             else

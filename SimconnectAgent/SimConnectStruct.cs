@@ -28,7 +28,7 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public class WriteableDataStruct
+    public class WritableDataStruct
     {
         public double Prop0;
     }

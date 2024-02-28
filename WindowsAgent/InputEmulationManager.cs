@@ -1,5 +1,4 @@
-﻿using MSFSPopoutPanelManager.DomainModel.Profile;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Threading;
@@ -9,22 +8,34 @@ namespace MSFSPopoutPanelManager.WindowsAgent
 {
     public class InputEmulationManager
     {
-        const uint MOUSEEVENTF_LEFTDOWN = 0x02;
-        const uint MOUSEEVENTF_LEFTUP = 0x04;
-        const uint MOUSEEVENTF_RIGHTDOWN = 0x08;
-        const uint MOUSEEVENTF_RIGHTUP = 0x10;
-        const uint KEYEVENTF_EXTENDEDKEY = 0x01;
-        const uint KEYEVENTF_KEYDOWN = 0x0;
-        const uint KEYEVENTF_KEYUP = 0x2;
-        const uint VK_RMENU = 0xA5;
-        const uint VK_LMENU = 0xA4;
-        const uint VK_LCONTROL = 0xA2;
-        const uint VK_RCONTROL = 0xA3;
-        const uint VK_SPACE = 0x20;
-        const uint VK_ENT = 0x0D;
-        const uint KEY_0 = 0x30;
+        private const uint MOUSEEVENTF_LEFTDOWN = 0x02;
+        private const uint MOUSEEVENTF_LEFTUP = 0x04;
+        private const uint KEYEVENTF_KEYDOWN = 0x0;
+        private const uint KEYEVENTF_KEYUP = 0x2;
+        private const uint VK_LMENU = 0xA4;
+        private const uint VK_LCONTROL = 0xA2;
+        private const uint VK_ENT = 0x0D;
+        private const uint KEY_0 = 0x30;
 
-        private static InputSimulator InputSimulator = new InputSimulator();
+        private const uint NUMPAD_0 = 0x60;
+        private const uint NUMPAD_1 = 0x61;
+        private const uint NUMPAD_2 = 0x62;
+        private const uint NUMPAD_3 = 0x63;
+        private const uint NUMPAD_4 = 0x64;
+        private const uint NUMPAD_5 = 0x65;
+        private const uint NUMPAD_6 = 0x66;
+        private const uint NUMPAD_7 = 0x67;
+        private const uint NUMPAD_8 = 0x68;
+        private const uint NUMPAD_9 = 0x69;
+        private const uint NUMPAD_DECIMAL = 0x6E;
+        private const uint NUMPAD_ADD = 0x6B;
+        private const uint NUMPAD_SUBTRACT = 0x6D;
+        private const uint NUMPAD_DIVIDE = 0x6F;
+        private const uint NUMPAD_MULTIPLY = 0x6A;
+        private const uint NUMPAD_ENTER = 0x0D;
+        private const uint NUMPAD_TAB = 0x09;
+
+        private static readonly InputSimulator InputSimulator = new ();
 
         public static void LeftClick(int x, int y)
         {
@@ -35,13 +46,6 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             Thread.Sleep(200);
             PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, 0);
             Thread.Sleep(200);
-        }
-
-        public static void LeftClickFast(int x, int y)
-        {
-            PInvoke.mouse_event(MOUSEEVENTF_LEFTDOWN, x, y, 0, 0);
-            Thread.Sleep(50);
-            PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, 0);
         }
 
         public static void PrepareToPopOutPanel(int x, int y, bool isTurboMode)
@@ -71,12 +75,6 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                 Thread.Sleep(200);
                 PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, 0);
 
-                Thread.Sleep(isTurbo ? 0 : 200);
-
-                PInvoke.mouse_event(MOUSEEVENTF_LEFTDOWN, x, y, 0, 0);
-                Thread.Sleep(200);
-                PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, 0);
-
                 InputSimulator.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.RCONTROL);
                 InputSimulator.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.LCONTROL);
                 Thread.Sleep(100);
@@ -93,29 +91,26 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                 Thread.Sleep(200);
                 PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, 0);
 
-                Thread.Sleep(isTurbo ? 0 : 200);
-
-                PInvoke.mouse_event(MOUSEEVENTF_LEFTDOWN, x, y, 0, 0);
-                Thread.Sleep(200);
-                PInvoke.mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, 0);
-
                 InputSimulator.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.RMENU);
                 Thread.Sleep(100);
                 InputSimulator.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.RMENU);        // resend to make sure Alt key is up
             }
         }
 
-        public static void SaveCustomView(string keybinding)
+        public static void SaveCustomView(string keyBinding)
         {
             Debug.WriteLine("Saving custom view...");
 
-            var hwnd = WindowProcessManager.SimulatorProcess.Handle;
-            uint customViewKey = (uint)(Convert.ToInt32(keybinding) + KEY_0);
+            if (WindowProcessManager.SimulatorProcess == null)
+                return;
 
-            PInvoke.SetForegroundWindow(hwnd);
+            var hWnd = WindowProcessManager.SimulatorProcess.Handle;
+            var customViewKey = (uint)(Convert.ToInt32(keyBinding) + KEY_0);
+
+            PInvoke.SetForegroundWindow(hWnd);
             Thread.Sleep(200);
 
-            PInvoke.SetFocus(hwnd);
+            PInvoke.SetFocus(hWnd);
             Thread.Sleep(300);
 
             // Set view using Ctrl-Alt-0
@@ -129,15 +124,19 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             Thread.Sleep(200);
         }
 
-        public static void LoadCustomView(string keybinding)
+        public static void LoadCustomView(string keyBinding)
         {
             Debug.WriteLine("Loading custom view...");
 
-            var hwnd = WindowProcessManager.SimulatorProcess.Handle;
-            PInvoke.SetForegroundWindow(hwnd);
+            if (WindowProcessManager.SimulatorProcess == null)
+                return;
+
+            var hWnd = WindowProcessManager.SimulatorProcess.Handle;
+            
+            PInvoke.SetForegroundWindow(hWnd);
             Thread.Sleep(200);
 
-            uint customViewKey = (uint)(Convert.ToInt32(keybinding) + KEY_0);
+            var customViewKey = (uint)(Convert.ToInt32(keyBinding) + KEY_0);
 
             // Then load view using Alt-0
             PInvoke.keybd_event(Convert.ToByte(VK_LMENU), 0, KEYEVENTF_KEYDOWN, 0);
@@ -148,12 +147,12 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             Thread.Sleep(200);
         }
 
-        public static void ToggleFullScreenPanel(IntPtr hwnd)
+        public static void ToggleFullScreenPanel(IntPtr hWnd)
         {
-            PInvoke.SetForegroundWindow(hwnd);
+            PInvoke.SetForegroundWindow(hWnd);
             Thread.Sleep(200);
 
-            PInvoke.SetFocus(hwnd);
+            PInvoke.SetFocus(hWnd);
             Thread.Sleep(300);
 
             PInvoke.keybd_event(Convert.ToByte(VK_LMENU), 0, KEYEVENTF_KEYDOWN, 0);
@@ -164,43 +163,72 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             Thread.Sleep(200);
         }
 
-        public static void RefocusGameWindow(PanelType panelType)
+        public static void NumPadClick(string numPadKey)
         {
-            var rect = WindowActionManager.GetWindowRectangle(WindowProcessManager.SimulatorProcess.Handle);
-            PInvoke.SetCursorPos(rect.X + rect.Width / 2, rect.Y + rect.Height / 2);
-        }
+            var hWnd = WindowProcessManager.SimulatorProcess.Handle;
+            PInvoke.SetForegroundWindow(hWnd);
+            Thread.Sleep(200);
 
-        private static (int?, int?) GetGameWindowLeftClickPoint(int x, int y)
-        {
-            var applicationRectangle = WindowActionManager.GetWindowRectangle(WindowProcessManager.GetApplicationProcess().Handle);
-            var applicationRightEdge = applicationRectangle.X + applicationRectangle.Width;
-            var applicationBottomEdge = applicationRectangle.Y + applicationRectangle.Height;
+            var key = NUMPAD_DECIMAL;
 
-            var gameRectangle = WindowActionManager.GetWindowRectangle(WindowProcessManager.SimulatorProcess.Handle);
+            switch (numPadKey.ToUpper())
+            {
+                case "0":
+                    key = NUMPAD_0;
+                    break;
+                case "1":
+                    key = NUMPAD_1;
+                    break;
+                case "2":
+                    key = NUMPAD_2;
+                    break;
+                case "3":
+                    key = NUMPAD_3;
+                    break;
+                case "4":
+                    key = NUMPAD_4;
+                    break;
+                case "5":
+                    key = NUMPAD_5;
+                    break;
+                case "6":
+                    key = NUMPAD_6;
+                    break;
+                case "7":
+                    key = NUMPAD_7;
+                    break;
+                case "8":
+                    key = NUMPAD_8;
+                    break;
+                case "9":
+                    key = NUMPAD_9;
+                    break;
+                case "DECIMAL":
+                    key = NUMPAD_DECIMAL;
+                    break;
+                case "ADD":
+                    key = NUMPAD_ADD;
+                    break;
+                case "SUBTRACT":
+                    key = NUMPAD_SUBTRACT;
+                    break;
+                case "DIVIDE":
+                    key = NUMPAD_DIVIDE;
+                    break;
+                case "MULTIPLY":
+                    key = NUMPAD_MULTIPLY;
+                    break;
+                case "TAB":
+                    key = NUMPAD_TAB;
+                    break;
+                case "ENTER":
+                    key = NUMPAD_ENTER;
+                    break;
+            }
 
-            int offset = 10;
-
-            if (!IsPointWithinRectangle(x, y, applicationRectangle))
-                return (x, y);
-
-            // Try lower right corner (higher than bottom edge)
-            if (IsPointWithinRectangle(applicationRightEdge + offset, applicationBottomEdge - offset, gameRectangle))
-                return (applicationRightEdge + offset, applicationBottomEdge - offset);
-
-            // Try upper right corner (lower than title bar)
-            if (IsPointWithinRectangle(applicationRightEdge + offset, applicationRectangle.Top + offset, gameRectangle))
-                return (applicationRightEdge + offset, applicationRectangle.Top + offset);
-
-            // Try lower left corner (higher than bottom edge)
-            if (IsPointWithinRectangle(applicationRectangle.X - offset, applicationBottomEdge - offset, gameRectangle))
-                return (applicationRectangle.X - offset, applicationBottomEdge - offset);
-
-            // Try upper left corner (lower than title bar)
-            if (IsPointWithinRectangle(applicationRectangle.X - offset, applicationRectangle.Top + offset, gameRectangle))
-                return (applicationRectangle.X - offset, applicationRectangle.Top + offset);
-
-            // Application window totally overlapping click point
-            return (null, null);
+            PInvoke.keybd_event(Convert.ToByte(key), 0, KEYEVENTF_KEYDOWN, 0);
+            Thread.Sleep(200);
+            PInvoke.keybd_event(Convert.ToByte(key), 0, KEYEVENTF_KEYUP, 0);
         }
 
         private static void MoveAppWindowFromLeftClickPoint(int x, int y)
@@ -223,53 +251,5 @@ namespace MSFSPopoutPanelManager.WindowsAgent
 
             return x >= rect.X && x <= rightEdge && y >= rect.Y && y <= bottomEdge;
         }
-
-        #region Deprecated
-
-        public static void RightClickGameWindow()
-        {
-            if (WindowProcessManager.SimulatorProcess == null)
-                return;
-
-            var gameRectangle = WindowActionManager.GetWindowRectangle(WindowProcessManager.SimulatorProcess.Handle);
-            var gameCenterPointX = gameRectangle.X + gameRectangle.Width / 2;
-            var gameCenterPointY = gameRectangle.Y + gameRectangle.Height / 2;
-            var (x, y) = GetGameWindowLeftClickPoint(gameCenterPointX, gameCenterPointY);
-
-            PInvoke.SetForegroundWindow(WindowProcessManager.SimulatorProcess.Handle);
-
-            if (x == null || y == null)
-            {
-                int offset = 10;
-                var applicationRectangle = WindowActionManager.GetWindowRectangle(WindowProcessManager.GetApplicationProcess().Handle);
-
-                // Move app to outside game window
-                WindowActionManager.MoveWindow(WindowProcessManager.GetApplicationProcess().Handle, gameRectangle.X + gameRectangle.Width + offset, gameRectangle.Top + gameRectangle.Height + offset, applicationRectangle.Width, applicationRectangle.Height);
-
-                (x, y) = GetGameWindowLeftClickPoint(gameCenterPointX, gameCenterPointY);
-
-                RightClick((int)x, (int)y);
-
-                WindowActionManager.MoveWindow(WindowProcessManager.GetApplicationProcess().Handle, applicationRectangle);
-            }
-            else
-            {
-                RightClick((int)x, (int)y);
-            }
-        }
-
-        public static void RightClick(int x, int y)
-        {
-            PInvoke.SetCursorPos(x, y);
-            Thread.Sleep(300);
-
-            PInvoke.mouse_event(MOUSEEVENTF_RIGHTDOWN, x, y, 0, 0);
-            Thread.Sleep(200);
-            PInvoke.mouse_event(MOUSEEVENTF_RIGHTUP, x, y, 0, 0);
-
-            PInvoke.SetCursorPos(x + 5, y);
-        }
-
-        #endregion
     }
 }

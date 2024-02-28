@@ -4,14 +4,8 @@ namespace MSFSPopoutPanelManager.DomainModel.Setting
 {
     public class RefocusGameWindow : ObservableObject
     {
-        public RefocusGameWindow()
-        {
-            IsEnabled = true;
-            Delay = 1;
-        }
+        public bool IsEnabled { get; set; } = true;
 
-        public bool IsEnabled { get; set; }
-
-        public double Delay { get; set; }
+        public double Delay { get; set; } = 1;
     }
 }

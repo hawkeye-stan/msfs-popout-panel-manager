@@ -1,0 +1,556 @@
+﻿<UserControl
+    x:Class="MSFSPopoutPanelManager.MainApp.AppUserControl.DynamicLodPreference"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mainApp="clr-namespace:MSFSPopoutPanelManager.MainApp"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:system="clr-namespace:System;assembly=System.Runtime"
+    xmlns:viewModel="clr-namespace:MSFSPopoutPanelManager.MainApp.ViewModel"
+    xmlns:appUserControl="clr-namespace:MSFSPopoutPanelManager.MainApp.AppUserControl"
+    d:DesignHeight="800"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <system:Double x:Key="IconSize">22</system:Double>
+        <system:Double x:Key="ButtonSize">22</system:Double>
+        <Style
+            x:Key="TextBlockLabel"
+            BasedOn="{StaticResource {x:Type TextBlock}}"
+            TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Width" Value="650" />
+            <Setter Property="Margin" Value="5,0,0,0" />
+            <Setter Property="LineHeight" Value="20" />
+        </Style>
+        <Style
+            x:Key="ToggleButton"
+            BasedOn="{StaticResource MaterialDesignSwitchToggleButton}"
+            TargetType="ToggleButton">
+            <Setter Property="Margin" Value="4,0,4,0" />
+        </Style>
+    </UserControl.Resources>
+    <Grid d:DataContext="{d:DesignInstance viewModel:ApplicationViewModel}">
+        <WrapPanel Margin="30,10,0,0">
+            <!--  Terrain level of detail  -->
+            <WrapPanel Margin="20,0,0,0" Orientation="Vertical">
+                <TextBlock
+                    Margin="0,0,0,5"
+                    HorizontalAlignment="Center"
+                    FontSize="16"
+                    FontWeight="Bold">
+                    Terrain Level of Detail (TLOD)
+                </TextBlock>
+                <DataGrid
+                    Name="TlodGrid"
+                    Width="272"
+                    Height="248"
+                    Margin="0"
+                    HorizontalAlignment="Center"
+                    AutoGenerateColumns="False"
+                    BorderThickness="1"
+                    CanUserAddRows="False"
+                    CanUserDeleteRows="False"
+                    CanUserReorderColumns="False"
+                    CanUserResizeColumns="False"
+                    CanUserResizeRows="False"
+                    CanUserSortColumns="False"
+                    GridLinesVisibility="None"
+                    HeadersVisibility="Column"
+                    HorizontalScrollBarVisibility="Disabled"
+                    ItemsSource="{Binding AppSettingData.ApplicationSetting.DynamicLodSetting.TlodConfigs}"
+                    SelectionUnit="FullRow"
+                    VerticalGridLinesBrush="#B9B9B9">
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="Background" Value="{x:Null}" />
+                            <Setter Property="BorderBrush" Value="{x:Null}" />
+                        </Style>
+                    </DataGrid.RowStyle>
+                    <DataGrid.ColumnHeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="ContentTemplate">
+                                <Setter.Value>
+                                    <DataTemplate>
+                                        <TextBlock
+                                            FontSize="14"
+                                            Text="{Binding}"
+                                            TextAlignment="Center"
+                                            TextWrapping="Wrap" />
+                                    </DataTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="HorizontalContentAlignment" Value="Center" />
+                            <Setter Property="Height" Value="30" />
+                            <Setter Property="Background" Value="#FF576573" />
+                            <Setter Property="BorderThickness" Value="1" />
+                            <Setter Property="BorderBrush" Value="#FFB9B9B9" />
+                        </Style>
+                    </DataGrid.ColumnHeaderStyle>
+                    <DataGrid.CellStyle>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="TextBlock.TextAlignment" Value="Center" />
+                            <Setter Property="BorderBrush" Value="#FFB9B9B9" />
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="Foreground" Value="White" />
+                        </Style>
+                    </DataGrid.CellStyle>
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Width="100" Header="AGL">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox
+                                        Width="100"
+                                        materialDesign:ValidationAssist.HorizontalAlignment="Center"
+                                        BorderThickness="0"
+                                        FontSize="14">
+                                        <TextBox.Text>
+                                            <Binding
+                                                Mode="TwoWay"
+                                                Path="Agl"
+                                                UpdateSourceTrigger="LostFocus">
+                                                <Binding.ValidationRules>
+                                                    <appUserControl:AglValidationRule />
+                                                </Binding.ValidationRules>
+                                            </Binding>
+                                        </TextBox.Text>
+                                    </TextBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="100" Header="LOD">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox
+                                        Width="100"
+                                        materialDesign:ValidationAssist.HorizontalAlignment="Center"
+                                        BorderThickness="0"
+                                        FontSize="14">
+                                        <TextBox.Text>
+                                            <Binding
+                                                Mode="TwoWay"
+                                                Path="Lod"
+                                                UpdateSourceTrigger="LostFocus">
+                                                <Binding.ValidationRules>
+                                                    <appUserControl:LodValidationRule />
+                                                </Binding.ValidationRules>
+                                            </Binding>
+                                        </TextBox.Text>
+                                    </TextBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="70" Header="">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button
+                                        Width="{StaticResource ButtonSize}"
+                                        Height="{StaticResource ButtonSize}"
+                                        Margin="0"
+                                        HorizontalAlignment="Center"
+                                        Click="TLodDelete_Click"
+                                        KeyboardNavigation.AcceptsReturn="False"
+                                        Style="{StaticResource MaterialDesignIconForegroundButton}"
+                                        ToolTip="Delete TLOD configuration">
+                                        <materialDesign:PackIcon
+                                            Width="{StaticResource IconSize}"
+                                            Height="{StaticResource IconSize}"
+                                            Kind="Delete" />
+                                    </Button>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <WrapPanel Margin="0,5,0,0">
+                    <DataGrid
+                        Name="AddTlodGrid"
+                        Width="272"
+                        Height="50"
+                        Margin="0"
+                        HorizontalAlignment="Center"
+                        AutoGenerateColumns="False"
+                        BorderThickness="0"
+                        CanUserAddRows="False"
+                        CanUserDeleteRows="False"
+                        CanUserReorderColumns="False"
+                        CanUserResizeColumns="False"
+                        CanUserResizeRows="False"
+                        CanUserSortColumns="False"
+                        DataContext="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}"
+                        GridLinesVisibility="None"
+                        HeadersVisibility="None"
+                        HorizontalScrollBarVisibility="Disabled"
+                        ItemsSource="{Binding AddTlodConfigs}"
+                        SelectionUnit="FullRow"
+                        VerticalGridLinesBrush="#B9B9B9"
+                        VerticalScrollBarVisibility="Disabled">
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="Background" Value="{x:Null}" />
+                                <Setter Property="BorderBrush" Value="{x:Null}" />
+                            </Style>
+                        </DataGrid.RowStyle>
+                        <DataGrid.CellStyle>
+                            <Style TargetType="DataGridCell">
+                                <Setter Property="TextBlock.TextAlignment" Value="Center" />
+                                <Setter Property="BorderBrush" Value="#FFB9B9B9" />
+                                <Setter Property="Background" Value="Transparent" />
+                                <Setter Property="Foreground" Value="White" />
+                            </Style>
+                        </DataGrid.CellStyle>
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Width="100" Header="AGL">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBox
+                                            Width="100"
+                                            materialDesign:HintAssist.Hint="New AGL"
+                                            materialDesign:ValidationAssist.HorizontalAlignment="Center"
+                                            BorderThickness="0"
+                                            FontSize="14"
+                                            SourceUpdated="AddTlod_SourceUpdated">
+                                            <TextBox.Text>
+                                                <Binding
+                                                    Mode="TwoWay"
+                                                    NotifyOnSourceUpdated="True"
+                                                    Path="Agl"
+                                                    UpdateSourceTrigger="LostFocus">
+                                                    <Binding.ValidationRules>
+                                                        <appUserControl:AglValidationRule />
+                                                    </Binding.ValidationRules>
+                                                </Binding>
+                                            </TextBox.Text>
+                                        </TextBox>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Width="100" Header="LOD">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBox
+                                            Width="100"
+                                            materialDesign:HintAssist.Hint="New LOD"
+                                            materialDesign:ValidationAssist.HorizontalAlignment="Center"
+                                            BorderThickness="0"
+                                            FontSize="14"
+                                            SourceUpdated="AddTlod_SourceUpdated">
+                                            <TextBox.Text>
+                                                <Binding
+                                                    Mode="TwoWay"
+                                                    NotifyOnSourceUpdated="True"
+                                                    Path="Lod"
+                                                    UpdateSourceTrigger="LostFocus">
+                                                    <Binding.ValidationRules>
+                                                        <appUserControl:LodValidationRule />
+                                                    </Binding.ValidationRules>
+                                                </Binding>
+                                            </TextBox.Text>
+                                        </TextBox>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Width="70" Header="">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <materialDesign:PackIcon
+                                            Width="{StaticResource IconSize}"
+                                            Height="{StaticResource IconSize}"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Foreground="White"
+                                            Kind="Add" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </WrapPanel>
+            </WrapPanel>
+
+            <!--  Object level of detail  -->
+            <WrapPanel Margin="50,0,0,0" Orientation="Vertical">
+                <TextBlock
+                    Margin="0,0,0,5"
+                    HorizontalAlignment="Center"
+                    FontSize="16"
+                    FontWeight="Bold">
+                    Object Level of Detail (OLOD)
+                </TextBlock>
+                <DataGrid
+                    Name="OlodGrid"
+                    Width="272"
+                    Height="248"
+                    Margin="0"
+                    HorizontalAlignment="Center"
+                    AutoGenerateColumns="False"
+                    BorderThickness="1"
+                    CanUserAddRows="False"
+                    CanUserDeleteRows="False"
+                    CanUserReorderColumns="False"
+                    CanUserResizeColumns="False"
+                    CanUserResizeRows="False"
+                    CanUserSortColumns="False"
+                    GridLinesVisibility="None"
+                    HeadersVisibility="Column"
+                    HorizontalScrollBarVisibility="Disabled"
+                    ItemsSource="{Binding AppSettingData.ApplicationSetting.DynamicLodSetting.OlodConfigs}"
+                    SelectionUnit="FullRow"
+                    VerticalGridLinesBrush="#B9B9B9">
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="Background" Value="{x:Null}" />
+                            <Setter Property="BorderBrush" Value="{x:Null}" />
+                        </Style>
+                    </DataGrid.RowStyle>
+                    <DataGrid.ColumnHeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="ContentTemplate">
+                                <Setter.Value>
+                                    <DataTemplate>
+                                        <TextBlock
+                                            FontSize="14"
+                                            Text="{Binding}"
+                                            TextAlignment="Center"
+                                            TextWrapping="Wrap" />
+                                    </DataTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="HorizontalContentAlignment" Value="Center" />
+                            <Setter Property="Height" Value="30" />
+                            <Setter Property="Background" Value="#FF576573" />
+                            <Setter Property="BorderThickness" Value="1" />
+                            <Setter Property="BorderBrush" Value="#FFB9B9B9" />
+                        </Style>
+                    </DataGrid.ColumnHeaderStyle>
+                    <DataGrid.CellStyle>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="TextBlock.TextAlignment" Value="Center" />
+                            <Setter Property="BorderBrush" Value="#FFB9B9B9" />
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="Foreground" Value="White" />
+                        </Style>
+                    </DataGrid.CellStyle>
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Width="100" Header="AGL">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox
+                                        Width="100"
+                                        materialDesign:ValidationAssist.HorizontalAlignment="Center"
+                                        BorderThickness="0"
+                                        FontSize="14">
+                                        <TextBox.Text>
+                                            <Binding
+                                                Mode="TwoWay"
+                                                Path="Agl"
+                                                UpdateSourceTrigger="LostFocus">
+                                                <Binding.ValidationRules>
+                                                    <appUserControl:AglValidationRule />
+                                                </Binding.ValidationRules>
+                                            </Binding>
+                                        </TextBox.Text>
+                                    </TextBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="100" Header="LOD">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox
+                                        Width="100"
+                                        materialDesign:ValidationAssist.HorizontalAlignment="Center"
+                                        BorderThickness="0"
+                                        FontSize="14">
+                                        <TextBox.Text>
+                                            <Binding
+                                                Mode="TwoWay"
+                                                Path="Lod"
+                                                UpdateSourceTrigger="LostFocus">
+                                                <Binding.ValidationRules>
+                                                    <appUserControl:LodValidationRule />
+                                                </Binding.ValidationRules>
+                                            </Binding>
+                                        </TextBox.Text>
+                                    </TextBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="70" Header="">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button
+                                        Width="{StaticResource ButtonSize}"
+                                        Height="{StaticResource ButtonSize}"
+                                        Margin="0"
+                                        HorizontalAlignment="Center"
+                                        Click="OLodDelete_Click"
+                                        KeyboardNavigation.AcceptsReturn="False"
+                                        Style="{StaticResource MaterialDesignIconForegroundButton}"
+                                        ToolTip="Delete OLOD configuration">
+                                        <materialDesign:PackIcon
+                                            Width="{StaticResource IconSize}"
+                                            Height="{StaticResource IconSize}"
+                                            Kind="Delete" />
+                                    </Button>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <WrapPanel Margin="0,5,0,0">
+                    <DataGrid
+                        Name="AddOlodGrid"
+                        Width="272"
+                        Height="50"
+                        Margin="0"
+                        HorizontalAlignment="Center"
+                        AutoGenerateColumns="False"
+                        BorderThickness="0"
+                        CanUserAddRows="False"
+                        CanUserDeleteRows="False"
+                        CanUserReorderColumns="False"
+                        CanUserResizeColumns="False"
+                        CanUserResizeRows="False"
+                        CanUserSortColumns="False"
+                        DataContext="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}"
+                        GridLinesVisibility="None"
+                        HeadersVisibility="None"
+                        HorizontalScrollBarVisibility="Disabled"
+                        ItemsSource="{Binding AddOlodConfigs}"
+                        SelectionUnit="FullRow"
+                        VerticalGridLinesBrush="#B9B9B9"
+                        VerticalScrollBarVisibility="Disabled">
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="Background" Value="{x:Null}" />
+                                <Setter Property="BorderBrush" Value="{x:Null}" />
+                            </Style>
+                        </DataGrid.RowStyle>
+                        <DataGrid.CellStyle>
+                            <Style TargetType="DataGridCell">
+                                <Setter Property="TextBlock.TextAlignment" Value="Center" />
+                                <Setter Property="BorderBrush" Value="#FFB9B9B9" />
+                                <Setter Property="Background" Value="Transparent" />
+                                <Setter Property="Foreground" Value="White" />
+                            </Style>
+                        </DataGrid.CellStyle>
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Width="100" Header="AGL">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBox
+                                            Width="100"
+                                            materialDesign:HintAssist.Hint="New AGL"
+                                            materialDesign:ValidationAssist.HorizontalAlignment="Center"
+                                            BorderThickness="0"
+                                            FontSize="14"
+                                            SourceUpdated="AddOlod_SourceUpdated">
+                                            <TextBox.Text>
+                                                <Binding
+                                                    Mode="TwoWay"
+                                                    NotifyOnSourceUpdated="True"
+                                                    Path="Agl"
+                                                    UpdateSourceTrigger="LostFocus">
+                                                    <Binding.ValidationRules>
+                                                        <appUserControl:AglValidationRule />
+                                                    </Binding.ValidationRules>
+                                                </Binding>
+                                            </TextBox.Text>
+                                        </TextBox>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Width="100" Header="LOD">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBox
+                                            Width="100"
+                                            materialDesign:HintAssist.Hint="New LOD"
+                                            materialDesign:ValidationAssist.HorizontalAlignment="Center"
+                                            BorderThickness="0"
+                                            FontSize="14"
+                                            SourceUpdated="AddOlod_SourceUpdated">
+                                            <TextBox.Text>
+                                                <Binding
+                                                    Mode="TwoWay"
+                                                    NotifyOnSourceUpdated="True"
+                                                    Path="Lod"
+                                                    UpdateSourceTrigger="LostFocus">
+                                                    <Binding.ValidationRules>
+                                                        <appUserControl:LodValidationRule />
+                                                    </Binding.ValidationRules>
+                                                </Binding>
+                                            </TextBox.Text>
+                                        </TextBox>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Width="70" Header="">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <materialDesign:PackIcon
+                                            Width="{StaticResource IconSize}"
+                                            Height="{StaticResource IconSize}"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Foreground="White"
+                                            Kind="Add" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </WrapPanel>
+            </WrapPanel>
+            <WrapPanel Margin="0,20,0,0" Orientation="Horizontal">
+                <ToggleButton IsChecked="{Binding AppSettingData.ApplicationSetting.DynamicLodSetting.ResetEnabled, Mode=TwoWay}" Style="{StaticResource ToggleButton}" />
+                <TextBlock Style="{StaticResource TextBlockLabel}">
+                    Enable reset of TLOD and OLOD to the following values when flight session ends.
+                </TextBlock>
+                <WrapPanel IsEnabled="{Binding AppSettingData.ApplicationSetting.DynamicLodSetting.ResetEnabled}" Orientation="Horizontal">
+                    <TextBox
+                        Width="100"
+                        Height="40"
+                        Margin="45,5,0,0"
+                        VerticalAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        materialDesign:HintAssist.Hint="Reset TLOD"
+                        materialDesign:ValidationAssist.HorizontalAlignment="Center"
+                        BorderThickness="1"
+                        FontSize="14"
+                        Style="{StaticResource MaterialDesignFloatingHintTextBox}">
+                        <TextBox.Text>
+                            <Binding Mode="TwoWay" Path="AppSettingData.ApplicationSetting.DynamicLodSetting.ResetTlod">
+                                <Binding.ValidationRules>
+                                    <appUserControl:LodValidationRule />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                    <TextBox
+                        Width="100"
+                        Height="40"
+                        Margin="20,5,0,0"
+                        VerticalAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        materialDesign:HintAssist.Hint="Reset OLOD"
+                        materialDesign:ValidationAssist.HorizontalAlignment="Center"
+                        BorderThickness="1"
+                        FontSize="14"
+                        Style="{StaticResource MaterialDesignFloatingHintTextBox}">
+                        <TextBox.Text>
+                            <Binding Mode="TwoWay" Path="AppSettingData.ApplicationSetting.DynamicLodSetting.ResetOlod">
+                                <Binding.ValidationRules>
+                                    <appUserControl:LodValidationRule />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                </WrapPanel>
+            </WrapPanel>
+        </WrapPanel>
+    </Grid>
+</UserControl>

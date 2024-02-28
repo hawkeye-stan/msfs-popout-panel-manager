@@ -1,5 +1,4 @@
 ﻿using MSFSPopoutPanelManager.DomainModel.Profile;
-using MSFSPopoutPanelManager.Shared;
 using MSFSPopoutPanelManager.WindowsAgent;
 using System;
 using System.Diagnostics;
@@ -9,27 +8,25 @@ using System.Windows;
 
 namespace MSFSPopoutPanelManager.Orchestration
 {
-    public class PanelConfigurationOrchestrator : ObservableObject
+    public class PanelConfigurationOrchestrator : BaseOrchestrator
     {
-        private ProfileData _profileData;
-        private AppSettingData _appSettingData;
-        private FlightSimData _flightSimData;
-
-        public PanelConfigurationOrchestrator(ProfileData profileData, AppSettingData appSettingData, FlightSimData flightSimData)
+        public PanelConfigurationOrchestrator(SharedStorage sharedStorage, FlightSimOrchestrator flightSimOrchestrator) : base(sharedStorage)
         {
-            _profileData = profileData;
-            _appSettingData = appSettingData;
-            _flightSimData = flightSimData;
-
-            _appSettingData.EnablePanelResetWhenLockedChanged += (sender, e) =>
+            AppSettingData.OnEnablePanelResetWhenLockedChanged += (_, _) =>
             {
-                if (flightSimData.IsInCockpit)
+                if (FlightSimData.IsInCockpit)
                     StartConfiguration();
             };
-            _profileData.ActiveProfileChanged += (sender, e) => { EndConfiguration(); EndTouchHook(); };
+            ProfileData.OnActiveProfileChanged += (_, _) => { EndConfiguration(); EndTouchHook(); };
+
+            flightSimOrchestrator.OnFlightStopped += (_, _) =>
+            {
+                EndConfiguration();
+                EndTouchHook();
+            };
         }
 
-        private UserProfile ActiveProfile { get { return _profileData == null ? null : _profileData.ActiveProfile; } }
+        private UserProfile ActiveProfile => ProfileData?.ActiveProfile;
 
         public void StartConfiguration()
         {
@@ -38,27 +35,20 @@ namespace MSFSPopoutPanelManager.Orchestration
 
             Debug.WriteLine("Starting Panel Configuration...");
 
-            WindowEventManager.ActiveProfile = _profileData.ActiveProfile;
-            WindowEventManager.ApplicationSetting = _appSettingData.ApplicationSetting;
-            TouchEventManager.ActiveProfile = _profileData.ActiveProfile;
-            TouchEventManager.ApplicationSetting = _appSettingData.ApplicationSetting;
-            GameRefocusManager.ApplicationSetting = _appSettingData.ApplicationSetting;
+            WindowEventManager.ActiveProfile = ProfileData.ActiveProfile;
+            WindowEventManager.ApplicationSetting = AppSettingData.ApplicationSetting;
+            TouchEventManager.ActiveProfile = ProfileData.ActiveProfile;
+            TouchEventManager.ApplicationSetting = AppSettingData.ApplicationSetting;
+            GameRefocusManager.ApplicationSetting = AppSettingData.ApplicationSetting;
 
             // Must use application dispatcher to dispatch UI events (winEventHook)
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                WindowEventManager.HookWinEvent();
-            });
+            Application.Current.Dispatcher.Invoke(WindowEventManager.HookWinEvent);
         }
 
         public void EndConfiguration()
         {
             Debug.WriteLine("Ending Panel Configuration...");
-
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                WindowEventManager.UnhookWinEvent();
-            });
+            Application.Current.Dispatcher.Invoke(WindowEventManager.UnhookWinEvent);
         }
 
         public void StartTouchHook()
@@ -80,10 +70,7 @@ namespace MSFSPopoutPanelManager.Orchestration
 
         public void EndTouchHook()
         {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                TouchEventManager.UnHook();
-            });
+            Application.Current.Dispatcher.Invoke(TouchEventManager.UnHook);
         }
 
         public void PanelConfigPropertyUpdated(IntPtr panelHandle, PanelConfigPropertyName configPropertyName)
@@ -106,7 +93,7 @@ namespace MSFSPopoutPanelManager.Orchestration
                 {
                     var name = panelConfig.PanelName;
 
-                    if (panelConfig.PanelType == PanelType.CustomPopout && name.IndexOf("(Custom)") == -1)
+                    if (panelConfig.PanelType == PanelType.CustomPopout && name.IndexOf("(Custom)", StringComparison.Ordinal) == -1)
                     {
                         name = name + " (Custom)";
                         WindowActionManager.SetWindowCaption(panelConfig.PanelHandle, name);
@@ -164,7 +151,7 @@ namespace MSFSPopoutPanelManager.Orchestration
                     }
                 }
 
-                _profileData.WriteProfiles();
+                ProfileData.WriteProfiles();
             }
         }
     }

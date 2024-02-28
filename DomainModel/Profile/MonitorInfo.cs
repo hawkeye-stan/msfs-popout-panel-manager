@@ -6,21 +6,19 @@ namespace MSFSPopoutPanelManager.DomainModel.Profile
     {
         public MonitorInfo()
         {
-            IsSelected = false;
-
             InitializeChildPropertyChangeBinding();
         }
 
         public string Name { get; set; }
 
-        public bool IsSelected { get; set; }
+        public bool IsSelected { get; set; } = false;
 
-        public int X { get; set; }
+        public int X { get; set; } = 0;
 
-        public int Y { get; set; }
+        public int Y { get; set; } = 0;
 
-        public int Width { get; set; }
+        public int Width { get; set; } = 0;
 
-        public int Height { get; set; }
+        public int Height { get; set; } = 0;
     }
 }

@@ -1,0 +1,43 @@
+﻿<UserControl
+    x:Class="MSFSPopoutPanelManager.MainApp.AppUserControl.PopOutPanelCard.MoveAndResizePanelButton"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:system="clr-namespace:System;assembly=mscorlib"
+    xmlns:viewModel="clr-namespace:MSFSPopoutPanelManager.MainApp.ViewModel"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <system:Double x:Key="IconSize">22</system:Double>
+        <system:Double x:Key="ButtonSize">28</system:Double>
+    </UserControl.Resources>
+    <ToggleButton
+        Width="{StaticResource ButtonSize}"
+        Height="{StaticResource ButtonSize}"
+        d:DataContext="{d:DesignInstance viewModel:PopOutPanelConfigCardViewModel}"
+        materialDesign:ToggleButtonAssist.OnContent="{materialDesign:PackIcon Kind=MoveResize,
+                                                                              Size={StaticResource IconSize}}"
+        Background="Transparent"
+        Command="{Binding MoveResizePanelCommand}"
+        IsChecked="{Binding DataItem.IsEditingPanel, Mode=TwoWay}"
+        KeyboardNavigation.AcceptsReturn="False"
+        ToolTip="Use keyboard commands to edit panel size &#x0a;and location. Please see help for more info.">
+        <ToggleButton.Style>
+            <Style BasedOn="{StaticResource MaterialDesignActionSecondaryToggleButton}" TargetType="ToggleButton">
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding DataItem.IsEditingPanel}" Value="True">
+                        <Setter Property="Foreground" Value="LimeGreen" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding DataItem.IsEditingPanel}" Value="False">
+                        <Setter Property="Foreground" Value="White" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </ToggleButton.Style>
+        <materialDesign:PackIcon
+            Width="{StaticResource IconSize}"
+            Height="{StaticResource IconSize}"
+            Kind="MoveResize" />
+    </ToggleButton>
+</UserControl>
