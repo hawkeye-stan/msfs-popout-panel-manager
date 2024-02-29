@@ -113,6 +113,7 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
         {
             TrackIREnable,
             CockpitCameraZoom,
+            CameraState,
             CameraRequestAction,
             CameraViewTypeAndIndex0,
             CameraViewTypeAndIndex1

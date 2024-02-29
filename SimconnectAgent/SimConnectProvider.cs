@@ -227,6 +227,11 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
             Thread.Sleep(200);
         }
 
+        public void SetCameraState(CameraState cameraState)
+        {
+            _simConnector.SetDataObject(WritableVariableName.CameraState, Convert.ToDouble(cameraState));
+        }
+
         public void SetCockpitCameraZoomLevel(int zoomLevel)
         {
             _simConnector.SetDataObject(WritableVariableName.CockpitCameraZoom, Convert.ToDouble(zoomLevel));
@@ -332,35 +337,37 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
             OnSimConnectDataHudBarRefreshed?.Invoke(this, e);
         }
 
-        private const int CAMERA_STATE_COCKPIT = 2;
-        private const int CAMERA_STATE_LOAD_SCREEN = 11;
-        private const int CAMERA_STATE_HOME_SCREEN = 15;
-        private int _currentCameraState = -1;
+        private CameraState _currentCameraState = CameraState.Unknown;
 
         private void DetectFlightStartedOrStopped(List<SimDataItem> simData)
         {
             // Determine is flight started or ended
-            var cameraState = Convert.ToInt32(simData.Find(d => d.PropertyName == PropName.CameraState).Value);
+            var cameraStateInt = Convert.ToInt32(simData.Find(d => d.PropertyName == PropName.CameraState).Value);
+
+            var success = Enum.TryParse<CameraState>(cameraStateInt.ToString(), out var cameraState);
+            if(!success)
+                cameraState = CameraState.Unknown;
 
             if (_currentCameraState == cameraState)
                 return;
 
-            if (cameraState == CAMERA_STATE_COCKPIT)
+            if (cameraState == CameraState.Cockpit)
                 OnIsInCockpitChanged?.Invoke(this, true);
+
 
             switch (_currentCameraState)
             {
-                case CAMERA_STATE_HOME_SCREEN:
-                case CAMERA_STATE_LOAD_SCREEN:
-                    if (cameraState == CAMERA_STATE_COCKPIT)
+                case CameraState.HomeScreen:
+                case CameraState.LoadScreen:
+                    if (cameraState == CameraState.Cockpit)
                     {
                         _currentCameraState = cameraState;
                         OnFlightStarted?.Invoke(this, EventArgs.Empty);
                     }
 
                     break;
-                case CAMERA_STATE_COCKPIT:
-                    if (cameraState == CAMERA_STATE_LOAD_SCREEN || cameraState == CAMERA_STATE_HOME_SCREEN)
+                case CameraState.Cockpit:
+                    if (cameraState == CameraState.LoadScreen || cameraState == CameraState.HomeScreen)
                     {
                         _currentCameraState = cameraState;
                         OnFlightStopped?.Invoke(this, EventArgs.Empty);
@@ -369,11 +376,10 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
                         _isHudBarDataActive = false;
                         _hudBarRequestDataTimer.Stop();
                     }
-
                     break;
             }
 
-            if (cameraState is CAMERA_STATE_COCKPIT or CAMERA_STATE_HOME_SCREEN or CAMERA_STATE_LOAD_SCREEN)
+            if (cameraState is CameraState.Cockpit or CameraState.HomeScreen or CameraState.LoadScreen)
                 _currentCameraState = cameraState;
         }
 

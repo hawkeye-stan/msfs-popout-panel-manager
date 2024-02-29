@@ -2,6 +2,7 @@
 using MSFSPopoutPanelManager.Shared;
 using System;
 using System.ComponentModel;
+using MSFSPopoutPanelManager.SimConnectAgent;
 
 namespace MSFSPopoutPanelManager.Orchestration
 {
@@ -28,7 +29,7 @@ namespace MSFSPopoutPanelManager.Orchestration
 
         public bool TrackIRStatus { get; set; }
 
-        public int CameraState { get; set; }
+        public CameraState CameraState { get; set; }
 
         public int CockpitCameraZoom { get; set; }
 
@@ -82,7 +83,7 @@ namespace MSFSPopoutPanelManager.Orchestration
             TrackIRStatus = false;
             IsInCockpit = false;
             PlaneInParkingSpot = false;
-            CameraState = -1;
+            CameraState = CameraState.Unknown;
             IsSimulatorStarted = false;
             PlaneAltAboveGround = 0;
             CameraViewTypeAndIndex1Max = 0;

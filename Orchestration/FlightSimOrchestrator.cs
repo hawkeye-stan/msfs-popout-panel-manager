@@ -71,6 +71,13 @@ namespace MSFSPopoutPanelManager.Orchestration
                 if (trackIR != FlightSimData.TrackIRStatus)
                     FlightSimData.TrackIRStatus = trackIR;
 
+                var cameraStateInt = Convert.ToInt32(e.Find(d => d.PropertyName == SimDataDefinitions.PropName.CameraState).Value);
+                var result = Enum.TryParse<CameraState>(cameraStateInt.ToString(), out var cameraState);
+                if (!result)
+                    cameraState = CameraState.Unknown;
+                if (cameraState != FlightSimData.CameraState)
+                    FlightSimData.CameraState = cameraState;
+                
                 var cockpitCameraZoom = Convert.ToInt32(e.Find(d => d.PropertyName == SimDataDefinitions.PropName.CockpitCameraZoom).Value);
                 if (cockpitCameraZoom != FlightSimData.CockpitCameraZoom)
                     FlightSimData.CockpitCameraZoom = cockpitCameraZoom;
@@ -339,6 +346,14 @@ namespace MSFSPopoutPanelManager.Orchestration
 
         public void SetFixedCamera(CameraType cameraType, int index)
         {
+            if (FlightSimData.CameraState != CameraState.Cockpit)
+            {
+                _simConnectProvider.SetCameraState(CameraState.Cockpit);
+                Thread.Sleep(250);
+                ResetCameraView();
+                Thread.Sleep(250);
+            }
+
             _simConnectProvider.SetCameraViewTypeAndIndex0(Convert.ToInt32(cameraType));
             Thread.Sleep(250);
             _simConnectProvider.SetCameraViewTypeAndIndex1(index);
