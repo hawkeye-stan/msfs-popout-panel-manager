@@ -1,13 +1,15 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using MSFSPopoutPanelManager.DomainModel.Profile;
+using MSFSPopoutPanelManager.MainApp.AppUserControl.PopOutPanelCard;
+using MSFSPopoutPanelManager.MainApp.ViewModel;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using Microsoft.Extensions.DependencyInjection;
-using MSFSPopoutPanelManager.DomainModel.Profile;
-using MSFSPopoutPanelManager.MainApp.AppUserControl.PopOutPanelCard;
-using MSFSPopoutPanelManager.MainApp.ViewModel;
 
 namespace MSFSPopoutPanelManager.MainApp.AppUserControl
 {
@@ -66,6 +68,75 @@ namespace MSFSPopoutPanelManager.MainApp.AppUserControl
 
             if (!string.IsNullOrEmpty(param))
                 _viewModel.PanelAttributeUpdatedCommand.Execute(param);
+
+            if (sender is ToggleButton { Name: "TglBtnAllowFloatPanel" })
+                ComboBoxFloatPanelKeyBinding.SelectedIndex = 0;
+        }
+
+        private void ComboBoxFloatPanelKeyBinding_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var comboBox = (ComboBox)sender;
+
+            if (comboBox.SelectedIndex is 0 or -1)
+            {
+                _viewModel.DataItem.FloatingPanel.KeyBinding = null;
+                return;
+            }
+
+            var selectedValue = comboBox.SelectedValue.ToString();
+
+            if (_viewModel.ActiveProfile.PanelConfigs.Any(x => x.FloatingPanel.KeyBinding == selectedValue && x.Id != _viewModel.DataItem.Id))
+                comboBox.SelectedIndex = 0;
+
+
+            _viewModel.DataItem.FloatingPanel.KeyBinding = selectedValue;
+        }
+        
+        private readonly List<string> _floatKeyBindings = new()
+        {
+            "",
+            "Ctrl-1",
+            "Ctrl-2",
+            "Ctrl-3",
+            "Ctrl-4",
+            "Ctrl-5",
+            "Ctrl-6",
+            "Ctrl-7",
+            "Ctrl-8",
+            "Ctrl-9",
+            "Ctrl-0"
+        };
+
+        private void ComboBoxFloatPanelKeyBinding_OnPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            BindFloatPanelKeyBinding();
+        }
+
+        private void ComboBoxFloatPanelKeyBinding_OnLoaded(object sender, RoutedEventArgs e)
+        {
+            BindFloatPanelKeyBinding();
+        }
+
+        private void BindFloatPanelKeyBinding()
+        {
+            var items = new List<string>();
+            items.AddRange(_floatKeyBindings);
+
+            foreach (var panelConfig in _viewModel.ActiveProfile.PanelConfigs)
+            {
+                if (panelConfig.FloatingPanel.KeyBinding != null && panelConfig.Id != _viewModel.DataItem.Id)
+                    items.Remove(panelConfig.FloatingPanel.KeyBinding);
+            }
+
+            ComboBoxFloatPanelKeyBinding.ItemsSource = items;
+
+            var index = items.ToList().FindIndex(x => string.Equals(x, _viewModel.DataItem.FloatingPanel.KeyBinding, StringComparison.CurrentCultureIgnoreCase));
+
+            if (index == -1)
+                return;
+
+            this.ComboBoxFloatPanelKeyBinding.SelectedIndex = index;
         }
     }
 }
+

@@ -52,9 +52,9 @@
             x:Key="TextBlockLabel"
             BasedOn="{StaticResource {x:Type TextBlock}}"
             TargetType="TextBlock">
-            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontSize" Value="13" />
             <Setter Property="TextWrapping" Value="Wrap" />
-            <Setter Property="Margin" Value="5,0,40,0" />
+            <Setter Property="Margin" Value="5,0,13,0" />
             <Setter Property="LineHeight" Value="18" />
         </Style>
         <Style BasedOn="{StaticResource MaterialDesignIconForegroundButton}" TargetType="Button" />
@@ -284,9 +284,9 @@
             </Expander.Header>
             <StackPanel
                 Margin="42,8,24,16"
-                Orientation="Horizontal"
+                Orientation="Vertical"
                 TextBlock.Foreground="{DynamicResource MaterialDesignBody}">
-                <WrapPanel>
+                <WrapPanel Orientation="Horizontal">
                     <ToggleButton
                         x:Name="TglBtnAlwaysOnTop"
                         Margin="0,0,0,0"
@@ -297,9 +297,6 @@
                     <TextBlock Style="{StaticResource TxtBlockDisableWhenFullScreen}" ToolTip="Set this panel to be always on top">
                         Always on Top
                     </TextBlock>
-                </WrapPanel>
-
-                <WrapPanel>
                     <ToggleButton
                         x:Name="TglBtnFullScreen"
                         Margin="0,0,0,0"
@@ -307,9 +304,6 @@
                         SourceUpdated="Data_SourceUpdated"
                         Style="{StaticResource ToggleButton}" />
                     <TextBlock Style="{StaticResource TextBlockLabel}" ToolTip="Expand this panel into full screen (emulate keystroke Alt-Enter)">Full Screen Mode</TextBlock>
-                </WrapPanel>
-
-                <WrapPanel>
                     <ToggleButton
                         x:Name="TglBtnHideTitlebar"
                         Margin="0,0,0,0"
@@ -320,16 +314,37 @@
                     <TextBlock Style="{StaticResource TxtBlockDisableWhenFullScreen}" ToolTip="Hide the title bar for this panel">
                         Hide Title Bar
                     </TextBlock>
-                </WrapPanel>
-
-                <WrapPanel>
                     <ToggleButton
                         x:Name="TglBtnAutoGameRefocus"
                         Margin="0,0,0,0"
                         IsChecked="{Binding DataItem.AutoGameRefocus, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                         SourceUpdated="Data_SourceUpdated"
                         Style="{StaticResource ToggleButton}" />
-                    <TextBlock Style="{StaticResource TextBlockLabel}" ToolTip="Automatic game refocus when clicking this panel or when using touch on this panel">Automatic Game Refocus</TextBlock>
+                    <TextBlock Style="{StaticResource TextBlockLabel}" ToolTip="Automatic game refocus when clicking this panel or when using touch on this panel">Auto Game Refocus</TextBlock>
+
+                    <ToggleButton
+                        x:Name="TglBtnAllowFloatPanel"
+                        Margin="0"
+                        IsChecked="{Binding DataItem.FloatingPanel.IsEnabled, Mode=TwoWay, NotifyOnSourceUpdated=True}"
+                        SourceUpdated="Data_SourceUpdated"
+                        Style="{StaticResource ToggleButton}" />
+                    <TextBlock
+                        Margin="5,0,10,0"
+                        Style="{StaticResource TextBlockLabel}"
+                        ToolTip="Set the pop out panel that can float above other windows">
+                        Floating Window
+                    </TextBlock>
+                    <ComboBox
+                        x:Name="ComboBoxFloatPanelKeyBinding"
+                        Width="60"
+                        Margin="0"
+                        Padding="0"
+                        VerticalAlignment="top"
+                        Loaded="ComboBoxFloatPanelKeyBinding_OnLoaded"
+                        PreviewMouseLeftButtonDown="ComboBoxFloatPanelKeyBinding_OnPreviewMouseLeftButtonDown"
+                        SelectionChanged="ComboBoxFloatPanelKeyBinding_OnSelectionChanged"
+                        ToolTip="Key binding to toggle floating pop out on and off"
+                        Visibility="{c:Binding DataItem.FloatingPanel.IsEnabled}" />
                 </WrapPanel>
             </StackPanel>
         </Expander>

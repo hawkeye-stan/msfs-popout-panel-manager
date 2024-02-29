@@ -34,6 +34,20 @@ namespace MSFSPopoutPanelManager.DomainModel.Profile
                             if (arg is PropertyChangedExtendedEventArgs { DisableSave: false })
                                 OnProfileChanged?.Invoke(this, EventArgs.Empty);
 
+                            if (arg is PropertyChangedExtendedEventArgs changedArg)
+                            {
+                                if (changedArg.ObjectName == QualifyFullName.Of(nameof(MSFSPopoutPanelManager.DomainModel.Profile.FloatingPanel)) &&
+                                    changedArg.PropertyName == nameof(FloatingPanel.IsEnabled))
+                                {
+                                    if(PanelConfigs.Any(x => x.FloatingPanel.IsEnabled))
+                                        OnUseFloatingPanelChanged?.Invoke(this, true);
+                                    else
+                                        OnUseFloatingPanelChanged?.Invoke(this, false);
+                                }
+                            }
+
+
+
                             OnPanelConfigChanged();
                         };
                         OnProfileChanged?.Invoke(this, EventArgs.Empty);
@@ -51,6 +65,7 @@ namespace MSFSPopoutPanelManager.DomainModel.Profile
             InitializeChildPropertyChangeBinding();
         }
 
+        public event EventHandler<bool> OnUseFloatingPanelChanged;
         public event EventHandler OnProfileChanged;
 
         public Guid Id { get; set; } = Guid.NewGuid();

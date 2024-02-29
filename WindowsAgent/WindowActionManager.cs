@@ -89,6 +89,11 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             PInvoke.ShowWindow(hwnd, PInvokeConstant.SW_MINIMIZE);
         }
 
+        public static void RestoreWindow(IntPtr hwnd)
+        {
+            PInvoke.ShowWindow(hwnd, PInvokeConstant.SW_RESTORE);
+        }
+
         public static void BringWindowToForeground(IntPtr hwnd)
         {
             PInvoke.ShowWindowAsync(new HandleRef(null, hwnd), PInvokeConstant.SW_RESTORE);

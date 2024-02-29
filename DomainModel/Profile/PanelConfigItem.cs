@@ -21,6 +21,8 @@ namespace MSFSPopoutPanelManager.DomainModel.Profile
         FullScreen,
         TouchEnabled,
         AutoGameRefocus,
+        AllowFloatPanel,
+        FloatPanelKeyBinding,
         None
     }
 }

@@ -154,5 +154,34 @@ namespace MSFSPopoutPanelManager.Orchestration
                 ProfileData.WriteProfiles();
             }
         }
+
+        public void ToggleFloatPanel(string keyBinding)
+        {
+            var panel = ActiveProfile.PanelConfigs.FirstOrDefault(x => string.Equals(x.FloatingPanel.KeyBinding, keyBinding, StringComparison.CurrentCultureIgnoreCase));
+
+            if (panel == null)
+                return;
+
+            if (!panel.FloatingPanel.IsEnabled || panel.FullScreen)
+                return;
+
+            if (panel.PanelType is not (PanelType.CustomPopout or PanelType.BuiltInPopout)) 
+                return;
+
+            if (panel.IsPopOutSuccess == null || !(bool)panel.IsPopOutSuccess)
+                return;
+
+            if (!panel.IsFloating)
+            {
+                panel.IsFloating = true;
+                WindowActionManager.RestoreWindow(panel.PanelHandle);
+                WindowActionManager.ApplyAlwaysOnTop(panel.PanelHandle, panel.PanelType, true);
+            }
+            else
+            {
+                panel.IsFloating = false;
+                WindowActionManager.MinimizeWindow(panel.PanelHandle);
+            }
+        }
     }
 }

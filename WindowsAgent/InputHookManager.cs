@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using WindowsHook;
 
 namespace MSFSPopoutPanelManager.WindowsAgent
@@ -14,6 +16,8 @@ namespace MSFSPopoutPanelManager.WindowsAgent
         // Keyboard hooks
         private static IKeyboardMouseEvents _keyboardHook;
         public static event EventHandler<KeyUpEventArgs> OnKeyUp;
+
+        private static List<string> _keyboardHookSubscribers = new List<string>();
 
         public static void StartMouseHook()
         {
@@ -51,12 +55,12 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                 OnLeftClick?.Invoke(null, new Point(e.X, e.Y));
         }
 
-        public static void StartKeyboardHook()
+        public static void StartKeyboardHook(string subscriber)
         {
-            if (_keyboardHook != null)
-                EndKeyboardHook();
+            if(!_keyboardHookSubscribers.Contains(subscriber))
+                _keyboardHookSubscribers.Add(subscriber);
 
-            if (_keyboardHook == null)
+            if (_keyboardHook == null && _keyboardHookSubscribers.Count > 0)
             {
                 Debug.WriteLine("Starting Keyboard Hook...");
 
@@ -65,11 +69,32 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             }
         }
 
-        public static void EndKeyboardHook()
+        public static void EndKeyboardHook(string subscriber)
         {
-            if (_keyboardHook != null)
+            _keyboardHookSubscribers.Remove(subscriber);
+
+            if (_keyboardHook != null && _keyboardHookSubscribers.Count == 0)
             {
                 Debug.WriteLine("Ending Keyboard Hook...");
+                _keyboardHook.KeyUp -= HandleKeyboardHookKeyUp;
+                _keyboardHook.Dispose();
+                _keyboardHook = null;
+
+                if (OnKeyUp != null)
+                {
+                    foreach (Delegate d in OnKeyUp.GetInvocationList())
+                        OnKeyUp -= (EventHandler<KeyUpEventArgs>)d;
+                }
+            }
+        }
+
+        public static void EndKeyboardHookForced()
+        {
+            _keyboardHookSubscribers.Clear();
+
+            if (_keyboardHook != null)
+            {
+                Debug.WriteLine("Ending Keyboard Hook (forced)...");
                 _keyboardHook.KeyUp -= HandleKeyboardHookKeyUp;
                 _keyboardHook.Dispose();
                 _keyboardHook = null;

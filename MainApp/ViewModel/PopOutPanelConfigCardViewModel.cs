@@ -108,7 +108,7 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
                 ActiveProfile.CurrentMoveResizePanelId = DataItem.Id;
 
                 if (!AppSettingData.ApplicationSetting.KeyboardShortcutSetting.IsEnabled)
-                    InputHookManager.StartKeyboardHook();
+                    InputHookManager.StartKeyboardHook("KeyboardShortcut");
 
                 InputHookManager.OnKeyUp -= HandleKeyUpEvent;
                 InputHookManager.OnKeyUp += HandleKeyUpEvent;
@@ -118,7 +118,7 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
                 ActiveProfile.CurrentMoveResizePanelId = Guid.Empty;
 
                 if (!AppSettingData.ApplicationSetting.KeyboardShortcutSetting.IsEnabled)
-                    InputHookManager.EndKeyboardHook();
+                    InputHookManager.EndKeyboardHook("KeyboardShortcut");
 
                 InputHookManager.OnKeyUp -= HandleKeyUpEvent;
             }

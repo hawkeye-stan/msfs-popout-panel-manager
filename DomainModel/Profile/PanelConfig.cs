@@ -18,14 +18,19 @@ namespace MSFSPopoutPanelManager.DomainModel.Profile
 
         private void PanelConfig_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "FullScreen" && FullScreen)
+            if (e.PropertyName == nameof(FullScreen) && FullScreen)
             {
                 AlwaysOnTop = false;
                 HideTitlebar = false;
             }
-            else if (e.PropertyName == "TouchEnabled" && TouchEnabled)
+            else if (e.PropertyName == nameof(TouchEnabled) && TouchEnabled)
             {
                 AutoGameRefocus = true;
+            }
+            else if (e.PropertyName == nameof(FloatingPanel))
+            {
+                if(!FloatingPanel.IsEnabled)
+                    FloatingPanel.KeyBinding = null;
             }
         }
 
@@ -52,6 +57,8 @@ namespace MSFSPopoutPanelManager.DomainModel.Profile
         public bool TouchEnabled { get; set; }
 
         public bool AutoGameRefocus { get; set; } = true;
+
+        public FloatingPanel FloatingPanel { get; set; } = new();
 
         public PanelSource PanelSource { get; set; } = new();
 
@@ -84,6 +91,8 @@ namespace MSFSPopoutPanelManager.DomainModel.Profile
 
         [JsonIgnore]
         public bool IsShownPanelSource { get; set; }
+
+        [JsonIgnore] public bool IsFloating { get; set; } = true;
 
         [JsonIgnore]
         public bool IsDeletablePanel => PanelType != PanelType.HudBarWindow && PanelType != PanelType.RefocusDisplay &&
