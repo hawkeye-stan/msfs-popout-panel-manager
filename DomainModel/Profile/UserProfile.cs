@@ -46,8 +46,6 @@ namespace MSFSPopoutPanelManager.DomainModel.Profile
                                 }
                             }
 
-
-
                             OnPanelConfigChanged();
                         };
                         OnProfileChanged?.Invoke(this, EventArgs.Empty);

@@ -26,6 +26,8 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
 
         public ICommand MoveResizePanelCommand { get; set; }
 
+        public ICommand DetectFloatPanelKeyBindingCommand { get; set; }
+
         public DelegateCommand<string> PanelAttributeUpdatedCommand { get; set; }
 
         public PopOutPanelConfigCardViewModel(SharedStorage sharedStorage, PanelSourceOrchestrator panelSourceOrchestrator, PanelConfigurationOrchestrator panelConfigurationOrchestrator) : base(sharedStorage)
@@ -64,7 +66,11 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
                                                                                 .ObservesProperty(() => ActiveProfile);
 
             DeletePanelCommand = new DelegateCommand(OnDeletePanel);
+
+
             PanelAttributeUpdatedCommand = new DelegateCommand<string>(OnPanelAttributeUpdated);
+
+            DetectFloatPanelKeyBindingCommand = new DelegateCommand(OnDetectFloatPanelKeyBinding);
         }
         
         private void OnMovePanelUp()
@@ -204,6 +210,11 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
 
             if (panelConfigPropertyName != PanelConfigPropertyName.None)
                 _panelConfigurationOrchestrator.PanelConfigPropertyUpdated(DataItem.PanelHandle, panelConfigPropertyName);
+        }
+
+        private void OnDetectFloatPanelKeyBinding()
+        {
+            _panelConfigurationOrchestrator.StartDetectKeystroke(DataItem.Id);
         }
     }
 }

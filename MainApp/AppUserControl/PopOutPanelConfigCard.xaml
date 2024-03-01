@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
+    xmlns:converter="clr-namespace:MSFSPopoutPanelManager.MainApp.Converter"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -16,6 +17,7 @@
     <UserControl.Resources>
         <system:Double x:Key="IconSize">22</system:Double>
         <system:Double x:Key="ButtonSize">28</system:Double>
+        <converter:KeystrokeBindingsConverter x:Key="KeystrokeBindingsConverter" />
         <DataTrigger
             x:Key="TriggerIsProfileLocked"
             Binding="{Binding ActiveProfile.IsLocked}"
@@ -54,7 +56,7 @@
             TargetType="TextBlock">
             <Setter Property="FontSize" Value="13" />
             <Setter Property="TextWrapping" Value="Wrap" />
-            <Setter Property="Margin" Value="5,0,13,0" />
+            <Setter Property="Margin" Value="5,0,40,0" />
             <Setter Property="LineHeight" Value="18" />
         </Style>
         <Style BasedOn="{StaticResource MaterialDesignIconForegroundButton}" TargetType="Button" />
@@ -283,13 +285,13 @@
                 </StackPanel>
             </Expander.Header>
             <StackPanel
-                Margin="42,8,24,16"
+                Margin="46,8,24,16"
                 Orientation="Vertical"
                 TextBlock.Foreground="{DynamicResource MaterialDesignBody}">
                 <WrapPanel Orientation="Horizontal">
                     <ToggleButton
                         x:Name="TglBtnAlwaysOnTop"
-                        Margin="0,0,0,0"
+                        Margin="5,0,0,0"
                         IsChecked="{Binding DataItem.AlwaysOnTop, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                         IsEnabled="{c:Binding !DataItem.FullScreen}"
                         SourceUpdated="Data_SourceUpdated"
@@ -321,30 +323,73 @@
                         SourceUpdated="Data_SourceUpdated"
                         Style="{StaticResource ToggleButton}" />
                     <TextBlock Style="{StaticResource TextBlockLabel}" ToolTip="Automatic game refocus when clicking this panel or when using touch on this panel">Auto Game Refocus</TextBlock>
+                </WrapPanel>
+                <WrapPanel Margin="0,10,0,0" VerticalAlignment="Center">
+                    <Border
+                        BorderBrush="Gray"
+                        BorderThickness="1"
+                        CornerRadius="4">
+                        <WrapPanel Margin="4">
+                            <ToggleButton
+                                x:Name="TglBtnAllowFloatPanel"
+                                Margin="0,4,0,4"
+                                VerticalAlignment="Center"
+                                IsChecked="{Binding DataItem.FloatingPanel.IsEnabled, Mode=TwoWay, NotifyOnSourceUpdated=True}"
+                                SourceUpdated="Data_SourceUpdated"
+                                Style="{StaticResource ToggleButton}" />
+                            <TextBlock
+                                Margin="5,4,10,4"
+                                VerticalAlignment="Center"
+                                Style="{StaticResource TextBlockLabel}"
+                                ToolTip="Set the pop out panel that can float above other windows">
+                                Floating Window
+                            </TextBlock>
+                            <WrapPanel
+                                Margin="10,0,0,0"
+                                VerticalAlignment="Center"
+                                Visibility="{c:Binding DataItem.FloatingPanel.IsEnabled}">
 
-                    <ToggleButton
-                        x:Name="TglBtnAllowFloatPanel"
-                        Margin="0"
-                        IsChecked="{Binding DataItem.FloatingPanel.IsEnabled, Mode=TwoWay, NotifyOnSourceUpdated=True}"
-                        SourceUpdated="Data_SourceUpdated"
-                        Style="{StaticResource ToggleButton}" />
-                    <TextBlock
-                        Margin="5,0,10,0"
-                        Style="{StaticResource TextBlockLabel}"
-                        ToolTip="Set the pop out panel that can float above other windows">
-                        Floating Window
-                    </TextBlock>
-                    <ComboBox
-                        x:Name="ComboBoxFloatPanelKeyBinding"
-                        Width="60"
-                        Margin="0"
-                        Padding="0"
-                        VerticalAlignment="top"
-                        Loaded="ComboBoxFloatPanelKeyBinding_OnLoaded"
-                        PreviewMouseLeftButtonDown="ComboBoxFloatPanelKeyBinding_OnPreviewMouseLeftButtonDown"
-                        SelectionChanged="ComboBoxFloatPanelKeyBinding_OnSelectionChanged"
-                        ToolTip="Key binding to toggle floating pop out on and off"
-                        Visibility="{c:Binding DataItem.FloatingPanel.IsEnabled}" />
+                                <TextBlock
+                                    Margin="5,4,10,4"
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource TextBlockLabel}"
+                                    Text="Key Binding:" />
+                                <TextBlock
+                                    x:Name="TextBlockFloatPanelKeyBinding"
+                                    Margin="5,4,10,4"
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource TextBlockLabel}"
+                                    Text="{Binding DataItem.FloatingPanel.Binding, Converter={StaticResource KeystrokeBindingsConverter}, ConverterParameter=' + '}"
+                                    Visibility="{c:Binding '!DataItem.FloatingPanel.IsDetectingKeystroke'}" />
+                                <TextBlock
+                                    x:Name="TextBlockDetectingFloatPanelKeyBinding"
+                                    Margin="5,4,10,4"
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource TextBlockLabel}"
+                                    Text="Detecting..."
+                                    Visibility="{c:Binding 'DataItem.FloatingPanel.IsDetectingKeystroke'}" />
+                                <Button
+                                    x:Name="BtnDetectFloatPanelKeyBinding"
+                                    Width="80"
+                                    Height="25"
+                                    Margin="10,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Command="{Binding DetectFloatPanelKeyBindingCommand}"
+                                    Style="{StaticResource MaterialDesignOutlinedButton}">
+                                    Detect
+                                </Button>
+                                <!--<Button
+                                    x:Name="BtnTest"
+                                    Width="80"
+                                    Height="25"
+                                    Margin="10,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource MaterialDesignOutlinedButton}">
+                                    Test
+                                </Button>-->
+                            </WrapPanel>
+                        </WrapPanel>
+                    </Border>
                 </WrapPanel>
             </StackPanel>
         </Expander>

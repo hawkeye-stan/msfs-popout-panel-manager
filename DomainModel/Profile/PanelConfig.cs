@@ -18,19 +18,22 @@ namespace MSFSPopoutPanelManager.DomainModel.Profile
 
         private void PanelConfig_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(FullScreen) && FullScreen)
+            var arg = e as PropertyChangedExtendedEventArgs;
+
+            if (arg.PropertyName == nameof(FullScreen) && FullScreen)
             {
                 AlwaysOnTop = false;
                 HideTitlebar = false;
             }
-            else if (e.PropertyName == nameof(TouchEnabled) && TouchEnabled)
+            else if (arg.PropertyName == nameof(TouchEnabled) && TouchEnabled)
             {
                 AutoGameRefocus = true;
             }
-            else if (e.PropertyName == nameof(FloatingPanel))
+            else if (arg.ObjectName == QualifyFullName.Of(nameof(MSFSPopoutPanelManager.DomainModel.Profile.FloatingPanel)) &&
+                arg.PropertyName == nameof(FloatingPanel.IsEnabled))
             {
-                if(!FloatingPanel.IsEnabled)
-                    FloatingPanel.KeyBinding = null;
+                if (!FloatingPanel.IsEnabled)
+                    FloatingPanel.Binding = null;
             }
         }
 

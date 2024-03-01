@@ -10,8 +10,13 @@ namespace MSFSPopoutPanelManager.Orchestration
 {
     public class PanelConfigurationOrchestrator : BaseOrchestrator
     {
-        public PanelConfigurationOrchestrator(SharedStorage sharedStorage, FlightSimOrchestrator flightSimOrchestrator) : base(sharedStorage)
+        private UserProfile ActiveProfile => ProfileData?.ActiveProfile;
+        private readonly KeyboardOrchestrator _keyboardOrchestrator;
+
+        public PanelConfigurationOrchestrator(SharedStorage sharedStorage, FlightSimOrchestrator flightSimOrchestrator, KeyboardOrchestrator keyboardOrchestrator) : base(sharedStorage)
         {
+            _keyboardOrchestrator = keyboardOrchestrator;
+            
             AppSettingData.OnEnablePanelResetWhenLockedChanged += (_, _) =>
             {
                 if (FlightSimData.IsInCockpit)
@@ -24,9 +29,42 @@ namespace MSFSPopoutPanelManager.Orchestration
                 EndConfiguration();
                 EndTouchHook();
             };
-        }
 
-        private UserProfile ActiveProfile => ProfileData?.ActiveProfile;
+            _keyboardOrchestrator.OnKeystrokeDetected += (_, e) =>
+            {
+                var panel = ActiveProfile.PanelConfigs.FirstOrDefault(p => p.Id == e.PanelId);
+
+                if (panel != null && panel.FloatingPanel.IsDetectingKeystroke)
+                {
+                    panel.FloatingPanel.Binding = e.KeyBinding;
+                    panel.FloatingPanel.IsDetectingKeystroke = false;
+                }
+                else
+                {
+                    ToggleFloatPanel(e.KeyBinding);
+                }
+            };
+
+            ProfileData.OnUseFloatingPanelChanged += (_, e) =>
+            {
+                if (ActiveProfile == null) 
+                    return;
+
+                if (e)
+                    _keyboardOrchestrator.StartGlobalKeyboardHook();
+                else
+                    _keyboardOrchestrator.EndGlobalKeyboardHook();
+            };
+
+            ProfileData.OnActiveProfileChanged += (_, _) =>
+            {
+                if (ActiveProfile == null)
+                    return;
+
+                if (ActiveProfile.PanelConfigs.Any(x => x.FloatingPanel.IsEnabled))
+                    _keyboardOrchestrator.StartGlobalKeyboardHook();
+            };
+        }
 
         public void StartConfiguration()
         {
@@ -157,31 +195,50 @@ namespace MSFSPopoutPanelManager.Orchestration
 
         public void ToggleFloatPanel(string keyBinding)
         {
-            var panel = ActiveProfile.PanelConfigs.FirstOrDefault(x => string.Equals(x.FloatingPanel.KeyBinding, keyBinding, StringComparison.CurrentCultureIgnoreCase));
+            var panels = ActiveProfile.PanelConfigs.ToList().FindAll(x => string.Equals(x.FloatingPanel.Binding, keyBinding, StringComparison.Ordinal));
 
-            if (panel == null)
+            if (!panels.Any())
                 return;
 
-            if (!panel.FloatingPanel.IsEnabled || panel.FullScreen)
-                return;
-
-            if (panel.PanelType is not (PanelType.CustomPopout or PanelType.BuiltInPopout)) 
-                return;
-
-            if (panel.IsPopOutSuccess == null || !(bool)panel.IsPopOutSuccess)
-                return;
-
-            if (!panel.IsFloating)
+            foreach (var panel in panels)
             {
-                panel.IsFloating = true;
-                WindowActionManager.RestoreWindow(panel.PanelHandle);
-                WindowActionManager.ApplyAlwaysOnTop(panel.PanelHandle, panel.PanelType, true);
+
+                if (!panel.FloatingPanel.IsEnabled || panel.FullScreen)
+                    return;
+
+                if (panel.PanelType is not (PanelType.CustomPopout or PanelType.BuiltInPopout))
+                    return;
+
+                if (panel.IsPopOutSuccess == null || !(bool)panel.IsPopOutSuccess)
+                    return;
+
+                if (!panel.IsFloating)
+                {
+                    panel.IsFloating = true;
+                    WindowActionManager.RestoreWindow(panel.PanelHandle);
+                    WindowActionManager.ApplyAlwaysOnTop(panel.PanelHandle, panel.PanelType, true);
+                }
+                else
+                {
+                    panel.IsFloating = false;
+                    WindowActionManager.MinimizeWindow(panel.PanelHandle);
+                }
             }
-            else
-            {
-                panel.IsFloating = false;
-                WindowActionManager.MinimizeWindow(panel.PanelHandle);
-            }
+        }
+
+        public void StartDetectKeystroke(Guid panelId)
+        {
+            var panel = ActiveProfile.PanelConfigs.FirstOrDefault(p => p.Id == panelId);
+
+            if (panel != null)
+                panel.FloatingPanel.IsDetectingKeystroke = true;
+
+            _keyboardOrchestrator.StartGlobalKeyboardHook(panelId);
+        }
+
+        public void StopDetectKeystroke(Guid panelId)
+        {
+            _keyboardOrchestrator.EndGlobalKeyboardHook();
         }
     }
 }

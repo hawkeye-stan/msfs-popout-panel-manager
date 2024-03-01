@@ -11,6 +11,7 @@ namespace MSFSPopoutPanelManager.Orchestration
     public class ProfileData : ObservableObject
     {
         public event PropertyChangedEventHandler OnActiveProfileChanged;
+        public event EventHandler<bool> OnUseFloatingPanelChanged;
 
         public SortedObservableCollection<UserProfile> Profiles { get; private set; } = new();
 
@@ -181,15 +182,18 @@ namespace MSFSPopoutPanelManager.Orchestration
             
             Profiles.ToList().ForEach(p => p.IsActive = false);
 
-            if(ActiveProfile != null)
+            if (ActiveProfile != null)
+            {
                 ActiveProfile.IsActive = true;
-            
+                ActiveProfile.OnUseFloatingPanelChanged += (sender, e) => OnUseFloatingPanelChanged?.Invoke(sender, e);
+            }
+
+            OnActiveProfileChanged?.Invoke(this, new PropertyChangedEventArgs(string.Empty));
         }
 
         public void SetActiveProfile(int profileIndex)
         {
             SetActiveProfile(profileIndex == -1 ? Guid.Empty : Profiles[profileIndex].Id);
-            OnActiveProfileChanged?.Invoke(this, new PropertyChangedEventArgs(string.Empty));
         }
 
         public UserProfile ActiveProfile { get; private set; }

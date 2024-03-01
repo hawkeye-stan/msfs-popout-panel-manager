@@ -47,7 +47,7 @@ namespace MSFSPopoutPanelManager.Orchestration
 
             ProfileData.SetActiveProfile(AppSettingData.ApplicationSetting.SystemSetting.LastUsedProfileId);     // Load last used profile
 
-            Task.Run(() => _flightSimOrchestrator.StartSimConnectServer());                                                   // Start the SimConnect server
+            Task.Run(() => _flightSimOrchestrator.StartSimConnectServer());                                      // Start the SimConnect server
 
             _keyboardOrchestrator.Initialize();
         }

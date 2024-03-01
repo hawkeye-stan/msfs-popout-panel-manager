@@ -55,9 +55,9 @@ namespace MSFSPopoutPanelManager.MainApp
                         services.AddSingleton(s => new ProfileOrchestrator(SharedStorage));
                         services.AddSingleton(s => new PanelSourceOrchestrator(SharedStorage, s.GetRequiredService<FlightSimOrchestrator>()));
                         services.AddSingleton(s => new PanelPopOutOrchestrator(SharedStorage, s.GetRequiredService<FlightSimOrchestrator>(), s.GetRequiredService<PanelSourceOrchestrator>(), s.GetRequiredService<PanelConfigurationOrchestrator>()));
-                        services.AddSingleton(s => new PanelConfigurationOrchestrator(SharedStorage, s.GetRequiredService<FlightSimOrchestrator>()));
+                        services.AddSingleton(s => new PanelConfigurationOrchestrator(SharedStorage, s.GetRequiredService<FlightSimOrchestrator>(), s.GetRequiredService<KeyboardOrchestrator>()));
                         services.AddSingleton(s => new FlightSimOrchestrator(SharedStorage));
-                        services.AddSingleton(s => new KeyboardOrchestrator(SharedStorage, s.GetRequiredService<PanelPopOutOrchestrator>(), s.GetRequiredService<PanelConfigurationOrchestrator>()));
+                        services.AddSingleton(s => new KeyboardOrchestrator(SharedStorage));
                         services.AddSingleton(s => new HelpOrchestrator());
 
                         services.AddSingleton(s => new OrchestratorUiHelper(SharedStorage, s.GetRequiredService<PanelSourceOrchestrator>(), s.GetRequiredService<PanelPopOutOrchestrator>()));

@@ -1,21 +1,20 @@
-﻿using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using MSFSPopoutPanelManager.DomainModel.Profile;
-using MSFSPopoutPanelManager.WindowsAgent;
+﻿using MSFSPopoutPanelManager.WindowsAgent;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 
 namespace MSFSPopoutPanelManager.Orchestration
 {
     public class KeyboardOrchestrator : BaseOrchestrator
     {
-        private readonly PanelPopOutOrchestrator _panelPopOutOrchestrator;
-        private readonly PanelConfigurationOrchestrator _panelConfigurationOrchestrator;
+        private GlobalKeyboardHook _globalKeyboardHook;
 
-        public KeyboardOrchestrator(SharedStorage sharedStorage, PanelPopOutOrchestrator panelPopOutOrchestrator, PanelConfigurationOrchestrator panelConfigurationOrchestrator) : base(sharedStorage)
+        
+        public KeyboardOrchestrator(SharedStorage sharedStorage) : base(sharedStorage)
         {
-            _panelPopOutOrchestrator = panelPopOutOrchestrator;
-            _panelConfigurationOrchestrator = panelConfigurationOrchestrator;
         }
-
+        
         public void Initialize()
         {
             if (AppSettingData.ApplicationSetting.KeyboardShortcutSetting.IsEnabled)
@@ -40,73 +39,80 @@ namespace MSFSPopoutPanelManager.Orchestration
                 }
             };
 
-            if (ProfileData.ActiveProfile.PanelConfigs.Any(x => x.FloatingPanel.IsEnabled))
-            {
-                InputHookManager.StartKeyboardHook("FloatingPanel");
-                InputHookManager.OnKeyUp -= HandleFloatingPanelKeyboardHookKeyUpEvent;
-                InputHookManager.OnKeyUp += HandleFloatingPanelKeyboardHookKeyUpEvent;
-            }
 
 
-            ProfileData.ActiveProfile.OnUseFloatingPanelChanged += (_, e) =>
-            {
-                if (e)
-                {
-                    InputHookManager.StartKeyboardHook("FloatingPanel");
-                    InputHookManager.OnKeyUp -= HandleFloatingPanelKeyboardHookKeyUpEvent;
-                    InputHookManager.OnKeyUp += HandleFloatingPanelKeyboardHookKeyUpEvent;
-                }
-                else
-                {
-                    InputHookManager.EndKeyboardHook("FloatingPanel");
-                    InputHookManager.OnKeyUp -= HandleFloatingPanelKeyboardHookKeyUpEvent;
-                }
-            };
         }
-
         public async void HandleShortcutKeyboardHookKeyUpEvent(object sender, KeyUpEventArgs e)
         {
             // Start pop out
             if (e.IsHoldControl && e.IsHoldShift && e.KeyCode.ToUpper() ==
                 AppSettingData.ApplicationSetting.KeyboardShortcutSetting.StartPopOutKeyBinding)
             {
-                await _panelPopOutOrchestrator.ManualPopOut();
+                //await _panelPopOutOrchestrator.ManualPopOut();
                 return;
             }
         }
 
-        public void HandleFloatingPanelKeyboardHookKeyUpEvent(object sender, KeyUpEventArgs e)
+
+        private List<string> _keyPressCaptureList = new();
+        public event EventHandler<DetectKeystrokeEventArg> OnKeystrokeDetected;
+        private bool _isCapturingKeyPress;
+        private Guid? _panelId;
+
+        public void StartGlobalKeyboardHook(Guid? panelId = null)
         {
-            if (e.IsHoldControl)
+            _isCapturingKeyPress = true;
+            _panelId = panelId;
+
+            if (_globalKeyboardHook != null) 
+                return;
+
+            Debug.WriteLine("Starts Global Keyboard Hook");
+            _globalKeyboardHook ??= new GlobalKeyboardHook();
+            _globalKeyboardHook.KeyboardPressed -= HandleGlobalKeyboardHookOnKeyboardPressed;
+            _globalKeyboardHook.KeyboardPressed += HandleGlobalKeyboardHookOnKeyboardPressed;
+        }
+
+        public void EndGlobalKeyboardHook()
+        {
+            if (_globalKeyboardHook == null) 
+                return;
+
+            Debug.WriteLine("Ends Global Keyboard Hook");
+            _keyPressCaptureList = new List<string>();
+            _globalKeyboardHook.KeyboardPressed -= HandleGlobalKeyboardHookOnKeyboardPressed;
+            _globalKeyboardHook?.Dispose();
+            _globalKeyboardHook = null;
+        }
+       
+
+        private void HandleGlobalKeyboardHookOnKeyboardPressed(object sender, GlobalKeyboardHookEventArgs e)
+        {
+            switch (e.KeyboardState)
             {
-                switch (e.KeyCode)
+                case GlobalKeyboardHook.KeyboardState.KeyDown or GlobalKeyboardHook.KeyboardState.SysKeyDown:
+                    _isCapturingKeyPress = true;
+                    _keyPressCaptureList.Add(e.KeyboardData.Key.ToString());
+                    break;
+                case GlobalKeyboardHook.KeyboardState.KeyUp or GlobalKeyboardHook.KeyboardState.SysKeyUp when _isCapturingKeyPress:
                 {
-                    case "D1":
-                    case "D2":
-                    case "D3":
-                    case "D4":
-                    case "D5":
-                    case "D6":
-                    case "D7":
-                    case "D8":
-                    case "D9":
-                    case "D0":
-                        _panelConfigurationOrchestrator.ToggleFloatPanel($"Ctrl-{e.KeyCode[1..]}");
-                        break;
-                    case "NumPad1":
-                    case "NumPad2":
-                    case "NumPad3":
-                    case "NumPad4":
-                    case "NumPad5":
-                    case "NumPad6":
-                    case "NumPad7":
-                    case "NumPad8":
-                    case "NumPad9":
-                    case "NumPad0":
-                        _panelConfigurationOrchestrator.ToggleFloatPanel($"Ctrl-{e.KeyCode[6..]}");
-                        break;
+                    _isCapturingKeyPress = false;
+
+                    var keyBinding = string.Join("|", _keyPressCaptureList.DistinctBy(x => x).OrderBy(x => x).ToArray().Select(x => x));
+                    OnKeystrokeDetected?.Invoke(this, new DetectKeystrokeEventArg {PanelId = _panelId, KeyBinding = keyBinding});
+
+                    _panelId = null;
+                    _keyPressCaptureList.Clear();
+                    break;
                 }
             }
         }
+    }
+
+    public class DetectKeystrokeEventArg : EventArgs
+    {
+        public Guid? PanelId { get; set; }
+
+        public string KeyBinding { get; set; }
     }
 }
