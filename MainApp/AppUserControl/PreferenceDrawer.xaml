@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:appUserControl="clr-namespace:MSFSPopoutPanelManager.MainApp.AppUserControl"
     xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
+    xmlns:converter="clr-namespace:MSFSPopoutPanelManager.MainApp.Converter"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:localcontrol="clr-namespace:MSFSPopoutPanelManager.MainApp.CustomControl"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
@@ -12,6 +13,7 @@
     Width="1024"
     mc:Ignorable="d">
     <UserControl.Resources>
+        <converter:KeystrokeBindingsConverter x:Key="KeystrokeBindingsConverter" />
         <Style
             x:Key="TextBlockHeading"
             BasedOn="{StaticResource {x:Type TextBlock}}"
@@ -44,7 +46,7 @@
 
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </UserControl.Resources>
-    <DockPanel d:DataContext="{d:DesignInstance viewmodel:ApplicationViewModel}">
+    <DockPanel d:DataContext="{d:DesignInstance viewmodel:PreferenceDrawerViewModel}">
         <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
             <TreeView
                 Width="210"
@@ -512,54 +514,51 @@
                                 <TextBlock Style="{StaticResource TextBlockLabel}">Enable using of keyboard shortcuts to control application.</TextBlock>
                             </WrapPanel>
                         </WrapPanel>
+
+
                         <WrapPanel Orientation="Vertical" Visibility="{Binding AppSettingData.ApplicationSetting.KeyboardShortcutSetting.IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
-                            <StackPanel
-                                Width="Auto"
-                                Margin="44,15,0,0"
-                                VerticalAlignment="Top"
-                                Orientation="Horizontal">
-                                <WrapPanel>
-                                    <Label Content="Ctrl-Shift-" FontSize="14" />
-                                    <ComboBox
-                                        Width="40"
-                                        VerticalAlignment="top"
-                                        SelectedValue="{Binding AppSettingData.ApplicationSetting.KeyboardShortcutSetting.StartPopOutKeyBinding, Mode=TwoWay}"
-                                        SelectedValuePath="Tag">
-                                        <ComboBoxItem Content="A" Tag="A" />
-                                        <ComboBoxItem Content="B" Tag="B" />
-                                        <ComboBoxItem Content="C" Tag="C" />
-                                        <ComboBoxItem Content="D" Tag="D" />
-                                        <ComboBoxItem Content="E" Tag="E" />
-                                        <ComboBoxItem Content="F" Tag="F" />
-                                        <ComboBoxItem Content="G" Tag="G" />
-                                        <ComboBoxItem Content="H" Tag="H" />
-                                        <ComboBoxItem Content="I" Tag="I" />
-                                        <ComboBoxItem Content="J" Tag="J" />
-                                        <ComboBoxItem Content="K" Tag="K" />
-                                        <ComboBoxItem Content="L" Tag="L" />
-                                        <ComboBoxItem Content="M" Tag="M" />
-                                        <ComboBoxItem Content="N" Tag="N" />
-                                        <ComboBoxItem Content="O" Tag="O" />
-                                        <ComboBoxItem Content="P" Tag="P" />
-                                        <ComboBoxItem Content="Q" Tag="Q" />
-                                        <ComboBoxItem Content="R" Tag="R" />
-                                        <ComboBoxItem Content="S" Tag="S" />
-                                        <ComboBoxItem Content="T" Tag="T" />
-                                        <ComboBoxItem Content="U" Tag="U" />
-                                        <ComboBoxItem Content="V" Tag="V" />
-                                        <ComboBoxItem Content="W" Tag="W" />
-                                        <ComboBoxItem Content="X" Tag="X" />
-                                        <ComboBoxItem Content="Y" Tag="Y" />
-                                        <ComboBoxItem Content="Z" Tag="Z" />
-                                    </ComboBox>
-                                </WrapPanel>
-                                <TextBlock
-                                    Width="600"
-                                    Margin="10,3,0,0"
-                                    Style="{StaticResource TextBlockLabel}">
-                                    Configure key binding to initiate start pop out.
-                                </TextBlock>
-                            </StackPanel>
+                            <WrapPanel Margin="46,15,0,0" Orientation="Vertical">
+                                <TextBlock Style="{StaticResource TextBlockHeading}">Start Pop Out</TextBlock>
+                                <Line
+                                    Stretch="Fill"
+                                    Stroke="Gray"
+                                    X2="1" />
+                                <StackPanel
+                                    Margin="0"
+                                    VerticalAlignment="Center"
+                                    Orientation="Horizontal">
+                                    <TextBlock
+                                        Width="120"
+                                        Margin="0"
+                                        VerticalAlignment="Center"
+                                        FontSize="14"
+                                        Text="Keyboard Binding:" />
+                                    <TextBlock
+                                        x:Name="TextBlockStartPopOutKeyBinding"
+                                        Margin="0"
+                                        VerticalAlignment="Center"
+                                        FontSize="14"
+                                        Text="{Binding AppSettingData.ApplicationSetting.KeyboardShortcutSetting.PopOutKeyboardBinding, Converter={StaticResource KeystrokeBindingsConverter}, ConverterParameter=' + '}"
+                                        Visibility="{c:Binding '!IsDetectingKeystroke'}" />
+                                    <TextBlock
+                                        x:Name="TextBlockDetectingStartPopOutKeyBinding"
+                                        Margin="0"
+                                        VerticalAlignment="Center"
+                                        FontSize="14"
+                                        Text="Scanning..."
+                                        Visibility="{c:Binding 'IsDetectingKeystroke'}" />
+                                    <Button
+                                        x:Name="BtnDetectStartPopOutKeyBinding"
+                                        Width="80"
+                                        Height="25"
+                                        Margin="10,0,0,0"
+                                        VerticalAlignment="Center"
+                                        Command="{Binding DetectStartPopOutKeyBindingCommand}"
+                                        Style="{StaticResource MaterialDesignOutlinedButton}">
+                                        Detect
+                                    </Button>
+                                </StackPanel>
+                            </WrapPanel>
                         </WrapPanel>
                     </WrapPanel>
                 </WrapPanel>

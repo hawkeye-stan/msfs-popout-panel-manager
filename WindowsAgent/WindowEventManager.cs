@@ -110,9 +110,6 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                 case PInvokeConstant.EVENT_OBJECT_STATECHANGE:
                     if (!ActiveProfile.IsLocked)
                     {
-                        if (panelConfig.FloatingPanel.IsEnabled && panelConfig.IsFloating)       // do not update coordinate if floating window
-                            return;
-
                         Thread.Sleep(300);
                         UpdatePanelCoordinates(panelConfig);
                     }
@@ -191,7 +188,10 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                 panelConfig.PanelHandle = IntPtr.MaxValue;
                 return;
             }
-            
+
+            if (panelConfig.FloatingPanel.IsEnabled && panelConfig.IsFloating)       // do not update coordinate if floating panel
+                return;
+
             panelConfig.Left = rect.Left;
             panelConfig.Top = rect.Top;
 

@@ -1,5 +1,4 @@
-﻿using MSFSPopoutPanelManager.WindowsAgent;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -10,7 +9,14 @@ namespace MSFSPopoutPanelManager.Orchestration
     {
         private GlobalKeyboardHook _globalKeyboardHook;
 
-        
+        private readonly List<KeyboardHookClientType> _keyboardHookClients = new();
+        private List<string> _keyPressCaptureList = new();
+        private bool _isCapturingKeyPress;
+        private KeyboardHookClientType _clientType;
+        private Guid? _panelId;
+
+        public event EventHandler<DetectKeystrokeEventArg> OnKeystrokeDetected;
+
         public KeyboardOrchestrator(SharedStorage sharedStorage) : base(sharedStorage)
         {
         }
@@ -19,48 +25,24 @@ namespace MSFSPopoutPanelManager.Orchestration
         {
             if (AppSettingData.ApplicationSetting.KeyboardShortcutSetting.IsEnabled)
             {
-                InputHookManager.StartKeyboardHook("KeyboardShortcut");
-                InputHookManager.OnKeyUp -= HandleShortcutKeyboardHookKeyUpEvent;
-                InputHookManager.OnKeyUp += HandleShortcutKeyboardHookKeyUpEvent;
+                StartGlobalKeyboardHook(KeyboardHookClientType.StartPopOutKeyboardShortcut);
             }
 
             AppSettingData.ApplicationSetting.OnIsUsedKeyboardShortcutChanged += (_, e) =>
             {
                 if (e)
-                {
-                    InputHookManager.StartKeyboardHook("KeyboardShortcut");
-                    InputHookManager.OnKeyUp -= HandleShortcutKeyboardHookKeyUpEvent;
-                    InputHookManager.OnKeyUp += HandleShortcutKeyboardHookKeyUpEvent;
-                }
+                    StartGlobalKeyboardHook(KeyboardHookClientType.StartPopOutKeyboardShortcut);
                 else
-                {
-                    InputHookManager.EndKeyboardHook("KeyboardShortcut");
-                    InputHookManager.OnKeyUp -= HandleShortcutKeyboardHookKeyUpEvent;
-                }
+                    EndGlobalKeyboardHook(KeyboardHookClientType.StartPopOutKeyboardShortcut);
             };
-
-
-
         }
-        public async void HandleShortcutKeyboardHookKeyUpEvent(object sender, KeyUpEventArgs e)
+        
+        public void StartGlobalKeyboardHook(KeyboardHookClientType clientType, Guid? panelId = null)
         {
-            // Start pop out
-            if (e.IsHoldControl && e.IsHoldShift && e.KeyCode.ToUpper() ==
-                AppSettingData.ApplicationSetting.KeyboardShortcutSetting.StartPopOutKeyBinding)
-            {
-                //await _panelPopOutOrchestrator.ManualPopOut();
-                return;
-            }
-        }
+            if(!_keyboardHookClients.Exists(x => x == clientType))
+                _keyboardHookClients.Add(clientType);
 
-
-        private List<string> _keyPressCaptureList = new();
-        public event EventHandler<DetectKeystrokeEventArg> OnKeystrokeDetected;
-        private bool _isCapturingKeyPress;
-        private Guid? _panelId;
-
-        public void StartGlobalKeyboardHook(Guid? panelId = null)
-        {
+            _clientType = clientType;
             _isCapturingKeyPress = true;
             _panelId = panelId;
 
@@ -73,18 +55,24 @@ namespace MSFSPopoutPanelManager.Orchestration
             _globalKeyboardHook.KeyboardPressed += HandleGlobalKeyboardHookOnKeyboardPressed;
         }
 
-        public void EndGlobalKeyboardHook()
+        public void EndGlobalKeyboardHook(KeyboardHookClientType clientType)
         {
-            if (_globalKeyboardHook == null) 
+            _keyboardHookClients.Remove(clientType);
+
+            if (_globalKeyboardHook == null || _keyboardHookClients.Count > 0) 
                 return;
 
-            Debug.WriteLine("Ends Global Keyboard Hook");
+            EndGlobalKeyboardHookForced();
+        }
+
+        public void EndGlobalKeyboardHookForced()
+        {
+            Debug.WriteLine("Ends Global Keyboard Hook (Forced)");
             _keyPressCaptureList = new List<string>();
             _globalKeyboardHook.KeyboardPressed -= HandleGlobalKeyboardHookOnKeyboardPressed;
             _globalKeyboardHook?.Dispose();
             _globalKeyboardHook = null;
         }
-       
 
         private void HandleGlobalKeyboardHookOnKeyboardPressed(object sender, GlobalKeyboardHookEventArgs e)
         {
@@ -99,13 +87,42 @@ namespace MSFSPopoutPanelManager.Orchestration
                     _isCapturingKeyPress = false;
 
                     var keyBinding = string.Join("|", _keyPressCaptureList.DistinctBy(x => x).OrderBy(x => x).ToArray().Select(x => x));
-                    OnKeystrokeDetected?.Invoke(this, new DetectKeystrokeEventArg {PanelId = _panelId, KeyBinding = keyBinding});
 
+                    if(CheckForRegisteredKeystrokeEvent(keyBinding))
+                        OnKeystrokeDetected?.Invoke(this, new DetectKeystrokeEventArg {PanelId = _panelId, KeyBinding = keyBinding});
+
+                    _clientType = KeyboardHookClientType.Unknown;
                     _panelId = null;
                     _keyPressCaptureList.Clear();
                     break;
                 }
             }
+        }
+
+        private bool CheckForRegisteredKeystrokeEvent(string keyBinding)
+        {
+            if (_clientType is KeyboardHookClientType.FloatingPanelDetection or KeyboardHookClientType.PreferenceConfigurationDetection)
+                return true;
+
+            if (!FlightSimData.IsFlightStarted)
+                return false;
+
+            // Check if keystrokes are registered keyboard events
+            bool isRegistered = AppSettingData.ApplicationSetting.KeyboardShortcutSetting.IsEnabled;
+
+            if (ProfileData.ActiveProfile != null)
+            {
+                foreach (var panelConfig in ProfileData.ActiveProfile.PanelConfigs)
+                {
+                    if (panelConfig.FloatingPanel.IsEnabled && 
+                        panelConfig.PanelHandle != IntPtr.MaxValue && 
+                        panelConfig.PanelHandle != IntPtr.Zero &&  
+                        panelConfig.FloatingPanel.KeyboardBinding == keyBinding)
+                        isRegistered = true;
+                }
+            }
+
+            return isRegistered;
         }
     }
 
@@ -114,5 +131,16 @@ namespace MSFSPopoutPanelManager.Orchestration
         public Guid? PanelId { get; set; }
 
         public string KeyBinding { get; set; }
+    }
+
+    public enum KeyboardHookClientType
+    {
+        Unknown,
+        PreferenceConfigurationDetection,
+        StartPopOutKeyboardShortcut,
+        PanelPositionConfiguration,
+        FloatingPanelDetection,
+        FloatingPanel,
+        
     }
 }

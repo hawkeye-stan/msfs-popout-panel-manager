@@ -17,20 +17,30 @@ namespace MSFSPopoutPanelManager.Orchestration
         private const int CAMERA_VIEW_HOME_COCKPIT_MODE = 8;
         private const int CAMERA_VIEW_CUSTOM_CAMERA = 7;
 
+        private bool _isPopOutExecuting = false;
+
         private readonly FlightSimOrchestrator _flightSimOrchestrator;
         private readonly PanelSourceOrchestrator _panelSourceOrchestrator;
         private readonly PanelConfigurationOrchestrator _panelConfigurationOrchestrator;
+        private readonly KeyboardOrchestrator _keyboardOrchestrator;
 
-        public PanelPopOutOrchestrator(SharedStorage sharedStorage, FlightSimOrchestrator flightSimOrchestrator, PanelSourceOrchestrator panelSourceOrchestrator, PanelConfigurationOrchestrator panelConfigurationOrchestrator) : base(sharedStorage)
+        public PanelPopOutOrchestrator(SharedStorage sharedStorage, FlightSimOrchestrator flightSimOrchestrator, PanelSourceOrchestrator panelSourceOrchestrator, PanelConfigurationOrchestrator panelConfigurationOrchestrator, KeyboardOrchestrator keyboardOrchestrator) : base(sharedStorage)
         {
             _flightSimOrchestrator = flightSimOrchestrator;
             _panelSourceOrchestrator = panelSourceOrchestrator;
             _panelConfigurationOrchestrator = panelConfigurationOrchestrator;
+            _keyboardOrchestrator = keyboardOrchestrator;
 
             flightSimOrchestrator.OnFlightStarted += async (_, _) =>
             {
                 if (AppSettingData.ApplicationSetting.AutoPopOutSetting.IsEnabled)
                     await AutoPopOut();
+            };
+
+            _keyboardOrchestrator.OnKeystrokeDetected += (_, e) =>
+            {
+                if (e.KeyBinding == AppSetting.KeyboardShortcutSetting.PopOutKeyboardBinding && !ActiveProfile.IsDisabledStartPopOut)
+                    ManualPopOut();
             };
         }
 
@@ -56,6 +66,8 @@ namespace MSFSPopoutPanelManager.Orchestration
 
         public async Task AutoPopOut()
         {
+            _isPopOutExecuting = true;
+
             await Application.Current.Dispatcher.Invoke(async () =>
             {
                 ProfileData.AutoSwitchProfile();

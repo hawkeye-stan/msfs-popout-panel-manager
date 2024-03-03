@@ -32,12 +32,18 @@ namespace MSFSPopoutPanelManager.Orchestration
 
             _keyboardOrchestrator.OnKeystrokeDetected += (_, e) =>
             {
+                if (ActiveProfile == null)
+                    return;
+
                 var panel = ActiveProfile.PanelConfigs.FirstOrDefault(p => p.Id == e.PanelId);
 
                 if (panel != null && panel.FloatingPanel.IsDetectingKeystroke)
                 {
-                    panel.FloatingPanel.Binding = e.KeyBinding;
+                    panel.FloatingPanel.KeyboardBinding = e.KeyBinding;
                     panel.FloatingPanel.IsDetectingKeystroke = false;
+
+                    StopDetectKeystroke();
+                    _keyboardOrchestrator.StartGlobalKeyboardHook(KeyboardHookClientType.FloatingPanel);
                 }
                 else
                 {
@@ -51,9 +57,9 @@ namespace MSFSPopoutPanelManager.Orchestration
                     return;
 
                 if (e)
-                    _keyboardOrchestrator.StartGlobalKeyboardHook();
+                    _keyboardOrchestrator.StartGlobalKeyboardHook(KeyboardHookClientType.FloatingPanel);
                 else
-                    _keyboardOrchestrator.EndGlobalKeyboardHook();
+                    _keyboardOrchestrator.EndGlobalKeyboardHook(KeyboardHookClientType.FloatingPanel);
             };
 
             ProfileData.OnActiveProfileChanged += (_, _) =>
@@ -62,7 +68,7 @@ namespace MSFSPopoutPanelManager.Orchestration
                     return;
 
                 if (ActiveProfile.PanelConfigs.Any(x => x.FloatingPanel.IsEnabled))
-                    _keyboardOrchestrator.StartGlobalKeyboardHook();
+                    _keyboardOrchestrator.StartGlobalKeyboardHook(KeyboardHookClientType.FloatingPanel);
             };
         }
 
@@ -195,7 +201,7 @@ namespace MSFSPopoutPanelManager.Orchestration
 
         public void ToggleFloatPanel(string keyBinding)
         {
-            var panels = ActiveProfile.PanelConfigs.ToList().FindAll(x => string.Equals(x.FloatingPanel.Binding, keyBinding, StringComparison.Ordinal));
+            var panels = ActiveProfile.PanelConfigs.ToList().FindAll(x => string.Equals(x.FloatingPanel.KeyboardBinding, keyBinding, StringComparison.Ordinal));
 
             if (!panels.Any())
                 return;
@@ -233,12 +239,12 @@ namespace MSFSPopoutPanelManager.Orchestration
             if (panel != null)
                 panel.FloatingPanel.IsDetectingKeystroke = true;
 
-            _keyboardOrchestrator.StartGlobalKeyboardHook(panelId);
+            _keyboardOrchestrator.StartGlobalKeyboardHook(KeyboardHookClientType.FloatingPanelDetection, panelId);
         }
 
-        public void StopDetectKeystroke(Guid panelId)
+        public void StopDetectKeystroke()
         {
-            _keyboardOrchestrator.EndGlobalKeyboardHook();
+            _keyboardOrchestrator.EndGlobalKeyboardHook(KeyboardHookClientType.FloatingPanelDetection);
         }
     }
 }

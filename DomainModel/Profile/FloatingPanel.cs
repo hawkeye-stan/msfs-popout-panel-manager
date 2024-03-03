@@ -7,7 +7,7 @@ namespace MSFSPopoutPanelManager.DomainModel.Profile
     {
         public bool IsEnabled { get; set; }
 
-        public string Binding { get; set; }
+        public string KeyboardBinding { get; set; }
 
         [JsonIgnore]
         public bool IsDetectingKeystroke { get; set; }

@@ -327,7 +327,7 @@
                 <WrapPanel Margin="0,10,0,0" VerticalAlignment="Center">
                     <Border
                         BorderBrush="Gray"
-                        BorderThickness="1"
+                        BorderThickness="{c:Binding 'DataItem.FloatingPanel.IsEnabled ? 1 : 0'}"
                         CornerRadius="4">
                         <WrapPanel Margin="4">
                             <ToggleButton
@@ -342,31 +342,30 @@
                                 VerticalAlignment="Center"
                                 Style="{StaticResource TextBlockLabel}"
                                 ToolTip="Set the pop out panel that can float above other windows">
-                                Floating Window
+                                Floating Panel Toggle
                             </TextBlock>
                             <WrapPanel
                                 Margin="10,0,0,0"
                                 VerticalAlignment="Center"
                                 Visibility="{c:Binding DataItem.FloatingPanel.IsEnabled}">
-
                                 <TextBlock
                                     Margin="5,4,10,4"
                                     VerticalAlignment="Center"
                                     Style="{StaticResource TextBlockLabel}"
-                                    Text="Key Binding:" />
+                                    Text="Keyboard Binding:" />
                                 <TextBlock
                                     x:Name="TextBlockFloatPanelKeyBinding"
                                     Margin="5,4,10,4"
                                     VerticalAlignment="Center"
                                     Style="{StaticResource TextBlockLabel}"
-                                    Text="{Binding DataItem.FloatingPanel.Binding, Converter={StaticResource KeystrokeBindingsConverter}, ConverterParameter=' + '}"
+                                    Text="{Binding DataItem.FloatingPanel.KeyboardBinding, Converter={StaticResource KeystrokeBindingsConverter}, ConverterParameter=' + '}"
                                     Visibility="{c:Binding '!DataItem.FloatingPanel.IsDetectingKeystroke'}" />
                                 <TextBlock
                                     x:Name="TextBlockDetectingFloatPanelKeyBinding"
                                     Margin="5,4,10,4"
                                     VerticalAlignment="Center"
                                     Style="{StaticResource TextBlockLabel}"
-                                    Text="Detecting..."
+                                    Text="Scanning..."
                                     Visibility="{c:Binding 'DataItem.FloatingPanel.IsDetectingKeystroke'}" />
                                 <Button
                                     x:Name="BtnDetectFloatPanelKeyBinding"
@@ -378,15 +377,6 @@
                                     Style="{StaticResource MaterialDesignOutlinedButton}">
                                     Detect
                                 </Button>
-                                <!--<Button
-                                    x:Name="BtnTest"
-                                    Width="80"
-                                    Height="25"
-                                    Margin="10,0,0,0"
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource MaterialDesignOutlinedButton}">
-                                    Test
-                                </Button>-->
                             </WrapPanel>
                         </WrapPanel>
                     </Border>

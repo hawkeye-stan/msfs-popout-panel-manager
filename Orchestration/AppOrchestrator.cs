@@ -58,7 +58,8 @@ namespace MSFSPopoutPanelManager.Orchestration
             _panelConfigurationOrchestrator.EndConfiguration();
             _panelConfigurationOrchestrator.EndTouchHook();
 
-            InputHookManager.EndKeyboardHookForced();
+            InputHookManager.EndKeyboardHook();
+            _keyboardOrchestrator.EndGlobalKeyboardHookForced();
             _flightSimOrchestrator.EndSimConnectServer(true);
         }
 

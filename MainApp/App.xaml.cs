@@ -54,7 +54,7 @@ namespace MSFSPopoutPanelManager.MainApp
                         services.AddSingleton(s => new AppOrchestrator(SharedStorage, s.GetRequiredService<PanelConfigurationOrchestrator>(), s.GetRequiredService<FlightSimOrchestrator>(), s.GetRequiredService<HelpOrchestrator>(), s.GetRequiredService<KeyboardOrchestrator>()));
                         services.AddSingleton(s => new ProfileOrchestrator(SharedStorage));
                         services.AddSingleton(s => new PanelSourceOrchestrator(SharedStorage, s.GetRequiredService<FlightSimOrchestrator>()));
-                        services.AddSingleton(s => new PanelPopOutOrchestrator(SharedStorage, s.GetRequiredService<FlightSimOrchestrator>(), s.GetRequiredService<PanelSourceOrchestrator>(), s.GetRequiredService<PanelConfigurationOrchestrator>()));
+                        services.AddSingleton(s => new PanelPopOutOrchestrator(SharedStorage, s.GetRequiredService<FlightSimOrchestrator>(), s.GetRequiredService<PanelSourceOrchestrator>(), s.GetRequiredService<PanelConfigurationOrchestrator>(), s.GetRequiredService<KeyboardOrchestrator>()));
                         services.AddSingleton(s => new PanelConfigurationOrchestrator(SharedStorage, s.GetRequiredService<FlightSimOrchestrator>(), s.GetRequiredService<KeyboardOrchestrator>()));
                         services.AddSingleton(s => new FlightSimOrchestrator(SharedStorage));
                         services.AddSingleton(s => new KeyboardOrchestrator(SharedStorage));
@@ -66,10 +66,11 @@ namespace MSFSPopoutPanelManager.MainApp
                         services.AddSingleton(s => new ProfileCardListViewModel(SharedStorage, s.GetRequiredService<ProfileOrchestrator>(), s.GetRequiredService<PanelSourceOrchestrator>()));
                         services.AddSingleton(s => new ProfileCardViewModel(SharedStorage, s.GetRequiredService<ProfileOrchestrator>(), s.GetRequiredService<PanelSourceOrchestrator>(), s.GetRequiredService<PanelConfigurationOrchestrator>(), s.GetRequiredService<PanelPopOutOrchestrator>()));
                         services.AddSingleton(s => new TrayIconViewModel(SharedStorage, s.GetRequiredService<AppOrchestrator>(), s.GetRequiredService<PanelPopOutOrchestrator>()));
+                        services.AddSingleton(s => new PreferenceDrawerViewModel(SharedStorage, s.GetRequiredService<KeyboardOrchestrator>()));
 
                         services.AddTransient(s => new AddProfileViewModel(SharedStorage, s.GetRequiredService<ProfileOrchestrator>(), s.GetRequiredService<PanelSourceOrchestrator>()));
                         services.AddTransient(s => new PopOutPanelListViewModel(SharedStorage));
-                        services.AddTransient(s => new PopOutPanelConfigCardViewModel(SharedStorage, s.GetRequiredService<PanelSourceOrchestrator>(), s.GetRequiredService<PanelConfigurationOrchestrator>()));
+                        services.AddTransient(s => new PopOutPanelConfigCardViewModel(SharedStorage, s.GetRequiredService<PanelSourceOrchestrator>(), s.GetRequiredService<PanelConfigurationOrchestrator>(), s.GetRequiredService<KeyboardOrchestrator>()));
                         services.AddTransient(s => new PopOutPanelSourceCardViewModel(SharedStorage, s.GetRequiredService<PanelSourceOrchestrator>(), s.GetRequiredService<PanelConfigurationOrchestrator>()));
                         services.AddTransient(s => new PopOutPanelSourceLegacyCardViewModel(SharedStorage, s.GetRequiredService<PanelSourceOrchestrator>(), s.GetRequiredService<PanelConfigurationOrchestrator>()));
                         services.AddTransient(s => new PanelConfigFieldViewModel(SharedStorage, s.GetRequiredService<PanelConfigurationOrchestrator>()));

@@ -33,7 +33,7 @@ namespace MSFSPopoutPanelManager.DomainModel.Profile
                 arg.PropertyName == nameof(FloatingPanel.IsEnabled))
             {
                 if (!FloatingPanel.IsEnabled)
-                    FloatingPanel.Binding = null;
+                    FloatingPanel.KeyboardBinding = null;
             }
         }
 

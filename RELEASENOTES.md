@@ -10,6 +10,10 @@ Video showing how to update existing aircraft profile to use the new panel selec
 
 * Added new feature to allow pop up panel as floating window. You can assign hotkeys (Ctrl-0 to Ctrl-9) to have the pop out to toggle either showing on screen or minimize.
 
+Video showing how to manage floating panel: https://vimeo.com/918153200
+
 * Added a new button to easily close all Pop Out Panel Manager's managed pop outs.
+ 
+* Updated keyboard shortcut feature in preference setting to allow usage of custom keyboard shortcut instead of predefined set of keyboard shortcuts.
 
 * Fixed few reported bugs in the application.

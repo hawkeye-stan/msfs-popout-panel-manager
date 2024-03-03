@@ -13,6 +13,7 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
     {
         private readonly PanelSourceOrchestrator _panelSourceOrchestrator;
         private readonly PanelConfigurationOrchestrator _panelConfigurationOrchestrator;
+        private readonly KeyboardOrchestrator _keyboardOrchestrator;
 
         public PanelConfig DataItem { get; set; }
 
@@ -30,10 +31,11 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
 
         public DelegateCommand<string> PanelAttributeUpdatedCommand { get; set; }
 
-        public PopOutPanelConfigCardViewModel(SharedStorage sharedStorage, PanelSourceOrchestrator panelSourceOrchestrator, PanelConfigurationOrchestrator panelConfigurationOrchestrator) : base(sharedStorage)
+        public PopOutPanelConfigCardViewModel(SharedStorage sharedStorage, PanelSourceOrchestrator panelSourceOrchestrator, PanelConfigurationOrchestrator panelConfigurationOrchestrator, KeyboardOrchestrator keyboardOrchestrator) : base(sharedStorage)
         {
             _panelSourceOrchestrator = panelSourceOrchestrator;
             _panelConfigurationOrchestrator = panelConfigurationOrchestrator;
+            _keyboardOrchestrator = keyboardOrchestrator;
 
             DataItem = new PanelConfig();
 
@@ -113,20 +115,15 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
             {
                 ActiveProfile.CurrentMoveResizePanelId = DataItem.Id;
 
-                if (!AppSettingData.ApplicationSetting.KeyboardShortcutSetting.IsEnabled)
-                    InputHookManager.StartKeyboardHook("KeyboardShortcut");
-
+                InputHookManager.StartKeyboardHook();
                 InputHookManager.OnKeyUp -= HandleKeyUpEvent;
                 InputHookManager.OnKeyUp += HandleKeyUpEvent;
             }
             else
             {
                 ActiveProfile.CurrentMoveResizePanelId = Guid.Empty;
-
-                if (!AppSettingData.ApplicationSetting.KeyboardShortcutSetting.IsEnabled)
-                    InputHookManager.EndKeyboardHook("KeyboardShortcut");
-
                 InputHookManager.OnKeyUp -= HandleKeyUpEvent;
+                InputHookManager.EndKeyboardHook();
             }
         }
 
