@@ -39,7 +39,7 @@ namespace MSFSPopoutPanelManager.MainApp.AppWindow
             Closing += HudBar_Closing;
         }
 
-        private void HudBar_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void HudBar_Closing(object sender, CancelEventArgs e)
         {
             _viewModel.CloseCommand.Execute(null);
         }

@@ -17,8 +17,6 @@ namespace MSFSPopoutPanelManager.Orchestration
         private const int CAMERA_VIEW_HOME_COCKPIT_MODE = 8;
         private const int CAMERA_VIEW_CUSTOM_CAMERA = 7;
 
-        private bool _isPopOutExecuting = false;
-
         private readonly FlightSimOrchestrator _flightSimOrchestrator;
         private readonly PanelSourceOrchestrator _panelSourceOrchestrator;
         private readonly PanelConfigurationOrchestrator _panelConfigurationOrchestrator;
@@ -37,10 +35,10 @@ namespace MSFSPopoutPanelManager.Orchestration
                     await AutoPopOut();
             };
 
-            _keyboardOrchestrator.OnKeystrokeDetected += (_, e) =>
+            _keyboardOrchestrator.OnKeystrokeDetected += async (_, e) =>
             {
                 if (e.KeyBinding == AppSetting.KeyboardShortcutSetting.PopOutKeyboardBinding && !ActiveProfile.IsDisabledStartPopOut)
-                    ManualPopOut();
+                    await ManualPopOut();
             };
         }
 
@@ -66,8 +64,6 @@ namespace MSFSPopoutPanelManager.Orchestration
 
         public async Task AutoPopOut()
         {
-            _isPopOutExecuting = true;
-
             await Application.Current.Dispatcher.Invoke(async () =>
             {
                 ProfileData.AutoSwitchProfile();

@@ -7,8 +7,6 @@ namespace MSFSPopoutPanelManager.MainApp.AppUserControl
 {
     public partial class PreferenceDrawer
     {
-        private readonly PreferenceDrawerViewModel _viewModel;
-
         public PreferenceDrawer()
         {
             if (DesignerProperties.GetIsInDesignMode(new DependencyObject()))
@@ -17,10 +15,10 @@ namespace MSFSPopoutPanelManager.MainApp.AppUserControl
                 return;
             }
 
-            _viewModel = App.AppHost.Services.GetRequiredService<PreferenceDrawerViewModel>();
+            var viewModel = App.AppHost.Services.GetRequiredService<PreferenceDrawerViewModel>();
             Loaded += (_, _) =>
             {
-                DataContext = _viewModel;
+                DataContext = viewModel;
                 InitializeComponent();
             };
         }

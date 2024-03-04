@@ -13,7 +13,6 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
     {
         private readonly PanelSourceOrchestrator _panelSourceOrchestrator;
         private readonly PanelConfigurationOrchestrator _panelConfigurationOrchestrator;
-        private readonly KeyboardOrchestrator _keyboardOrchestrator;
 
         public PanelConfig DataItem { get; set; }
 
@@ -31,11 +30,10 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
 
         public DelegateCommand<string> PanelAttributeUpdatedCommand { get; set; }
 
-        public PopOutPanelConfigCardViewModel(SharedStorage sharedStorage, PanelSourceOrchestrator panelSourceOrchestrator, PanelConfigurationOrchestrator panelConfigurationOrchestrator, KeyboardOrchestrator keyboardOrchestrator) : base(sharedStorage)
+        public PopOutPanelConfigCardViewModel(SharedStorage sharedStorage, PanelSourceOrchestrator panelSourceOrchestrator, PanelConfigurationOrchestrator panelConfigurationOrchestrator) : base(sharedStorage)
         {
             _panelSourceOrchestrator = panelSourceOrchestrator;
             _panelConfigurationOrchestrator = panelConfigurationOrchestrator;
-            _keyboardOrchestrator = keyboardOrchestrator;
 
             DataItem = new PanelConfig();
 

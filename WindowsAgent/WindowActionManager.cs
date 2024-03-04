@@ -62,11 +62,6 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             }
         }
 
-        public static IntPtr FindWindowByClass(string className)
-        {
-            return PInvoke.FindWindow(className, null);
-        }
-
         public static void CloseWindow(IntPtr hwnd)
         {
             PInvoke.SendMessage(hwnd, PInvokeConstant.WM_CLOSE, IntPtr.Zero, IntPtr.Zero);

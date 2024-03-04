@@ -51,8 +51,8 @@ namespace MSFSPopoutPanelManager.Orchestration
 
             Debug.WriteLine("Starts Global Keyboard Hook");
             _globalKeyboardHook ??= new GlobalKeyboardHook();
-            _globalKeyboardHook.KeyboardPressed -= HandleGlobalKeyboardHookOnKeyboardPressed;
-            _globalKeyboardHook.KeyboardPressed += HandleGlobalKeyboardHookOnKeyboardPressed;
+            _globalKeyboardHook.OnKeyboardPressed -= HandleGlobalKeyboardHookOnKeyboardPressed;
+            _globalKeyboardHook.OnKeyboardPressed += HandleGlobalKeyboardHookOnKeyboardPressed;
         }
 
         public void EndGlobalKeyboardHook(KeyboardHookClientType clientType)
@@ -69,7 +69,7 @@ namespace MSFSPopoutPanelManager.Orchestration
         {
             Debug.WriteLine("Ends Global Keyboard Hook (Forced)");
             _keyPressCaptureList = new List<string>();
-            _globalKeyboardHook.KeyboardPressed -= HandleGlobalKeyboardHookOnKeyboardPressed;
+            _globalKeyboardHook.OnKeyboardPressed -= HandleGlobalKeyboardHookOnKeyboardPressed;
             _globalKeyboardHook?.Dispose();
             _globalKeyboardHook = null;
         }
@@ -138,7 +138,6 @@ namespace MSFSPopoutPanelManager.Orchestration
         Unknown,
         PreferenceConfigurationDetection,
         StartPopOutKeyboardShortcut,
-        PanelPositionConfiguration,
         FloatingPanelDetection,
         FloatingPanel,
         

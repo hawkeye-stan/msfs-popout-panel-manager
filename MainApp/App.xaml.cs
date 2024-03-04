@@ -52,13 +52,13 @@ namespace MSFSPopoutPanelManager.MainApp
                         services.AddSingleton<AppMainWindow>();
 
                         services.AddSingleton(s => new AppOrchestrator(SharedStorage, s.GetRequiredService<PanelConfigurationOrchestrator>(), s.GetRequiredService<FlightSimOrchestrator>(), s.GetRequiredService<HelpOrchestrator>(), s.GetRequiredService<KeyboardOrchestrator>()));
-                        services.AddSingleton(s => new ProfileOrchestrator(SharedStorage));
+                        services.AddSingleton(_ => new ProfileOrchestrator(SharedStorage));
                         services.AddSingleton(s => new PanelSourceOrchestrator(SharedStorage, s.GetRequiredService<FlightSimOrchestrator>()));
                         services.AddSingleton(s => new PanelPopOutOrchestrator(SharedStorage, s.GetRequiredService<FlightSimOrchestrator>(), s.GetRequiredService<PanelSourceOrchestrator>(), s.GetRequiredService<PanelConfigurationOrchestrator>(), s.GetRequiredService<KeyboardOrchestrator>()));
                         services.AddSingleton(s => new PanelConfigurationOrchestrator(SharedStorage, s.GetRequiredService<FlightSimOrchestrator>(), s.GetRequiredService<KeyboardOrchestrator>()));
-                        services.AddSingleton(s => new FlightSimOrchestrator(SharedStorage));
-                        services.AddSingleton(s => new KeyboardOrchestrator(SharedStorage));
-                        services.AddSingleton(s => new HelpOrchestrator());
+                        services.AddSingleton(_ => new FlightSimOrchestrator(SharedStorage));
+                        services.AddSingleton(_ => new KeyboardOrchestrator(SharedStorage));
+                        services.AddSingleton(_ => new HelpOrchestrator());
 
                         services.AddSingleton(s => new OrchestratorUiHelper(SharedStorage, s.GetRequiredService<PanelSourceOrchestrator>(), s.GetRequiredService<PanelPopOutOrchestrator>()));
                         services.AddSingleton(s => new ApplicationViewModel(SharedStorage, s.GetRequiredService<AppOrchestrator>()));
@@ -69,16 +69,16 @@ namespace MSFSPopoutPanelManager.MainApp
                         services.AddSingleton(s => new PreferenceDrawerViewModel(SharedStorage, s.GetRequiredService<KeyboardOrchestrator>()));
 
                         services.AddTransient(s => new AddProfileViewModel(SharedStorage, s.GetRequiredService<ProfileOrchestrator>(), s.GetRequiredService<PanelSourceOrchestrator>()));
-                        services.AddTransient(s => new PopOutPanelListViewModel(SharedStorage));
-                        services.AddTransient(s => new PopOutPanelConfigCardViewModel(SharedStorage, s.GetRequiredService<PanelSourceOrchestrator>(), s.GetRequiredService<PanelConfigurationOrchestrator>(), s.GetRequiredService<KeyboardOrchestrator>()));
+                        services.AddTransient(_ => new PopOutPanelListViewModel(SharedStorage));
+                        services.AddTransient(s => new PopOutPanelConfigCardViewModel(SharedStorage, s.GetRequiredService<PanelSourceOrchestrator>(), s.GetRequiredService<PanelConfigurationOrchestrator>()));
                         services.AddTransient(s => new PopOutPanelSourceCardViewModel(SharedStorage, s.GetRequiredService<PanelSourceOrchestrator>(), s.GetRequiredService<PanelConfigurationOrchestrator>()));
                         services.AddTransient(s => new PopOutPanelSourceLegacyCardViewModel(SharedStorage, s.GetRequiredService<PanelSourceOrchestrator>(), s.GetRequiredService<PanelConfigurationOrchestrator>()));
                         services.AddTransient(s => new PanelConfigFieldViewModel(SharedStorage, s.GetRequiredService<PanelConfigurationOrchestrator>()));
-                        services.AddTransient(s => new PanelCoorOverlayViewModel(SharedStorage));
+                        services.AddTransient(_ => new PanelCoorOverlayViewModel(SharedStorage));
 
                         services.AddTransient(s => new MessageWindowViewModel(SharedStorage, s.GetRequiredService<PanelSourceOrchestrator>(), s.GetRequiredService<PanelPopOutOrchestrator>()));
                         services.AddTransient(s => new HudBarViewModel(SharedStorage, s.GetRequiredService<FlightSimOrchestrator>()));
-                        services.AddTransient(s => new NumPadViewModel(SharedStorage));
+                        services.AddTransient(_ => new NumPadViewModel(SharedStorage));
 
                     }).Build();
 
