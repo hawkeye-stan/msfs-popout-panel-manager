@@ -22,7 +22,7 @@ namespace MSFSPopoutPanelManager.DomainModel.Profile
         TouchEnabled,
         AutoGameRefocus,
         AllowFloatPanel,
-        FloatPanelKeyBinding,
+        IsHiddenOnStart,
         None
     }
 }

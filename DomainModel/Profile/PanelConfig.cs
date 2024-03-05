@@ -20,20 +20,15 @@ namespace MSFSPopoutPanelManager.DomainModel.Profile
         {
             var arg = e as PropertyChangedExtendedEventArgs;
 
-            if (arg.PropertyName == nameof(FullScreen) && FullScreen)
+            switch (arg?.PropertyName)
             {
-                AlwaysOnTop = false;
-                HideTitlebar = false;
-            }
-            else if (arg.PropertyName == nameof(TouchEnabled) && TouchEnabled)
-            {
-                AutoGameRefocus = true;
-            }
-            else if (arg.ObjectName == QualifyFullName.Of(nameof(MSFSPopoutPanelManager.DomainModel.Profile.FloatingPanel)) &&
-                arg.PropertyName == nameof(FloatingPanel.IsEnabled))
-            {
-                if (!FloatingPanel.IsEnabled)
-                    FloatingPanel.KeyboardBinding = null;
+                case nameof(FullScreen) when FullScreen:
+                    AlwaysOnTop = false;
+                    HideTitlebar = false;
+                    break;
+                case nameof(TouchEnabled) when TouchEnabled:
+                    AutoGameRefocus = true;
+                    break;
             }
         }
 

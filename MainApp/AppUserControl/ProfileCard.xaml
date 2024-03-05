@@ -6,7 +6,6 @@
     xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:domain="clr-namespace:MSFSPopoutPanelManager.DomainModel.Profile;assembly=DomainModel"
-    xmlns:local="clr-namespace:MSFSPopoutPanelManager.MainApp"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:system="clr-namespace:System;assembly=mscorlib"

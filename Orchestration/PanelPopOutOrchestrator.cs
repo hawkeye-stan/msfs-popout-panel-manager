@@ -367,11 +367,8 @@ namespace MSFSPopoutPanelManager.Orchestration
                             panelConfig.PanelHandle = IntPtr.Zero;
                     }
 
-                    if (ActiveProfile.PanelConfigs.Any(p => p.PanelType == PanelType.BuiltInPopout && p.IsPopOutSuccess != null && !(bool)p.IsPopOutSuccess) ||
-                        ActiveProfile.PanelConfigs.Count(p => p.PanelType == PanelType.BuiltInPopout) == 0)
-                        return false;
-                    else
-                        return true;
+                    return !ActiveProfile.PanelConfigs.Any(p => p.PanelType == PanelType.BuiltInPopout && p.IsPopOutSuccess != null && !(bool)p.IsPopOutSuccess) &&
+                           ActiveProfile.PanelConfigs.Count(p => p.PanelType == PanelType.BuiltInPopout) != 0;
                 });
             }
         }
@@ -546,6 +543,12 @@ namespace MSFSPopoutPanelManager.Orchestration
                 Thread.Sleep(500);
                 InputEmulationManager.ToggleFullScreenPanel(panel.PanelHandle);
                 Thread.Sleep(250);
+            }
+
+            if (panel.FloatingPanel.IsEnabled && panel.FloatingPanel.HasKeyboardBinding && panel.FloatingPanel.IsHiddenOnStart)
+            {
+                panel.IsFloating = false;
+                WindowActionManager.MinimizeWindow(panel.PanelHandle);
             }
         }
 

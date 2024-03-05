@@ -377,6 +377,25 @@
                                     Style="{StaticResource MaterialDesignOutlinedButton}">
                                     Detect
                                 </Button>
+                                <WrapPanel
+                                    Margin="20,0,0,0"
+                                    Orientation="Horizontal"
+                                    Visibility="{c:Binding DataItem.FloatingPanel.HasKeyboardBinding}">
+                                    <ToggleButton
+                                        x:Name="TglBtnIsHiddenOnStart"
+                                        Margin="0,4,0,4"
+                                        VerticalAlignment="Center"
+                                        IsChecked="{Binding DataItem.FloatingPanel.IsHiddenOnStart, Mode=TwoWay, NotifyOnSourceUpdated=True}"
+                                        SourceUpdated="Data_SourceUpdated"
+                                        Style="{StaticResource ToggleButton}" />
+                                    <TextBlock
+                                        Margin="5,4,10,4"
+                                        VerticalAlignment="Center"
+                                        Style="{StaticResource TextBlockLabel}"
+                                        ToolTip="Hide the panel when pop out initially">
+                                        Hide on Start
+                                    </TextBlock>
+                                </WrapPanel>
                             </WrapPanel>
                         </WrapPanel>
                     </Border>
