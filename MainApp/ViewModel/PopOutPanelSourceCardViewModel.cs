@@ -3,6 +3,7 @@ using MSFSPopoutPanelManager.Orchestration;
 using MSFSPopoutPanelManager.Shared;
 using Prism.Commands;
 using System;
+using System.Threading;
 using System.Windows.Input;
 
 namespace MSFSPopoutPanelManager.MainApp.ViewModel
@@ -47,10 +48,12 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
 
         private void OnAddPanelSourceLocation()
         {
-            DataItem.IsEditingPanel = true;
+            _panelSourceOrchestrator.ShowPanelSourceForEdit(DataItem);      // This is to reset active panel source
 
             FixedCameraConfigs.Clear();
             FixedCameraConfigs.AddRange(_panelSourceOrchestrator.GetFixedCameraConfigs());
+
+            DataItem.IsEditingPanel = true;
             
             _panelSourceOrchestrator.StartPanelSelectionEvent();
 
@@ -64,11 +67,14 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
 
         private void OnEditPanelSource()
         {
+            if (!DataItem.HasPanelSource)
+                return;
+
             FixedCameraConfigs.Clear();
             FixedCameraConfigs.AddRange(_panelSourceOrchestrator.GetFixedCameraConfigs());
 
+            DataItem.IsSelectedPanelSource = true;
             _panelSourceOrchestrator.ShowPanelSourceForEdit(DataItem);
         }
     }
-
 }

@@ -76,7 +76,6 @@ namespace MSFSPopoutPanelManager.MainApp.AppUserControl
             foreach (var panelConfig in _viewModel.ActiveProfile.PanelConfigs)
                 panelConfig.IsSelectedPanelSource = false;
 
-            _viewModel.DataItem.IsSelectedPanelSource = true;
             _viewModel.EditPanelSourceCommand.Execute();
         }
     }
