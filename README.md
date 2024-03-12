@@ -13,7 +13,16 @@ Please follow [FlightSimulator.com](https://forums.flightsimulator.com/t/msfs-po
 
 ## Getting Started
 
-[Please see Getting Started guide to setup your first profile](./GETTING_STARTED.md)
+[Please see Getting Started guide to setup your first profile](./GETTING_STARTED.md) - Updated for version 4.1.
+
+Video showing how to create a new aircraft profile and panel source selection:</br> 
+https://vimeo.com/917361559
+
+Video showing how to update existing aircraft profile (Pre-Version 4.1) to use the new panel selection method:</br> 
+https://vimeo.com/917364912 
+
+Video showing how to use the new floating panel feature:</br> 
+https://vimeo.com/918153200
 
 <br>
 
@@ -58,7 +67,7 @@ Please follow [FlightSimulator.com](https://forums.flightsimulator.com/t/msfs-po
 
 * Cold Start Feature. Instrumentation panels can be popped out even when they're not powered on (for G1000 Only) to overcome an outstanding MSFS bug.
 
-* Auto Panning feature remembers the cockpit camera angle when you first define the pop out panels. You can now pan, zoom in, and zoom out to identify offscreen panels and the camera angle will be saved and reused. This feature requires the use of Ctrl-Alt-0 keyboard binding to save custom camera view per plane configuration. (Can be configured to use 0 through 9). If the keyboard binding is currently being used. The auto-panning feature will overwrite the saved camera view if enabled.
+* (Version 4.1+ backward compatibility support) Auto Panning feature remembers the cockpit camera angle when you first define the pop out panels. You can now pan, zoom in, and zoom out to identify offscreen panels and the camera angle will be saved and reused. This feature requires the use of Ctrl-Alt-0 keyboard binding to save custom camera view per plane configuration. (Can be configured to use 0 through 9). If the keyboard binding is currently being used. The auto-panning feature will overwrite the saved camera view if enabled.
 
 * Fine-grain control of positioning of panels down to pixel level. 
 
