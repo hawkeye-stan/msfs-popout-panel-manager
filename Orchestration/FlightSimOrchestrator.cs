@@ -40,7 +40,9 @@ namespace MSFSPopoutPanelManager.Orchestration
                 WindowProcessManager.GetSimulatorProcess();     // refresh simulator process
                 DetectMsfsExit();
 
-                DynamicLodManager.Attach(FlightSimData, AppSettingData);     // Attach in memory override for Dynamic LOD
+                // Attach in memory override for Dynamic LOD
+                if (AppSettingData != null && AppSettingData.ApplicationSetting.DynamicLodSetting.IsEnabled)
+                    DynamicLodManager.Attach(FlightSimData, AppSettingData);     
             };
 
             _simConnectProvider.OnDisconnected += (_, _) =>
@@ -390,7 +392,9 @@ namespace MSFSPopoutPanelManager.Orchestration
 
             FlightSimData.IsFlightStarted = true;
 
-            DynamicLodManager.Attach(FlightSimData, AppSettingData);     // Attach in memory override for Dynamic LOD
+            // Attach in memory override for Dynamic LOD
+            if (AppSettingData != null && AppSettingData.ApplicationSetting.DynamicLodSetting.IsEnabled)
+                DynamicLodManager.Attach(FlightSimData, AppSettingData);
         }
 
         private void HandleOnFlightStopped(object sender, EventArgs e)
@@ -398,14 +402,16 @@ namespace MSFSPopoutPanelManager.Orchestration
             ProfileData.ResetActiveProfile();
 
             OnFlightStopped?.Invoke(this, EventArgs.Empty);
-            
-            WindowActionManager.CloseAllPopOuts();
 
+            CloseAllPopOuts();
+            
             FlightSimData.HudBarData?.Clear();
 
             FlightSimData.IsFlightStarted = false;
 
-            DynamicLodManager.Detach();     // Detach in memory override for Dynamic LOD
+            // Detach in memory override for Dynamic LOD
+            if (AppSettingData != null && AppSettingData.ApplicationSetting.DynamicLodSetting.IsEnabled)
+                DynamicLodManager.Detach();    
         }
 
         private void DetectMsfsExit()

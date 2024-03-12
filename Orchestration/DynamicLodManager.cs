@@ -40,7 +40,7 @@ namespace MSFSPopoutPanelManager.Orchestration
 
         public static void Attach(FlightSimData flightSimData, AppSettingData appSettingData)
         {
-            if (appSettingData == null || !appSettingData.ApplicationSetting.DynamicLodSetting.IsEnabled || _isActive)
+            if (appSettingData == null || _isActive)
                 return;
 
             _flightSimData = flightSimData;
@@ -76,7 +76,7 @@ namespace MSFSPopoutPanelManager.Orchestration
             if (_appSettingData == null)
                 return;
 
-            if (_appSettingData.ApplicationSetting.DynamicLodSetting.IsEnabled && _appSettingData.ApplicationSetting.DynamicLodSetting.ResetEnabled)
+            if (_appSettingData.ApplicationSetting.DynamicLodSetting.ResetEnabled)
             {
                 WriteTlod(_appSettingData.ApplicationSetting.DynamicLodSetting.ResetTlod);
                 WriteOlod(_appSettingData.ApplicationSetting.DynamicLodSetting.ResetOlod);

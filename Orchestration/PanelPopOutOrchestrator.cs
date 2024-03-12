@@ -95,8 +95,7 @@ namespace MSFSPopoutPanelManager.Orchestration
 
         public void ClosePopOut()
         {
-            // Close all existing custom pop out panels
-            WindowActionManager.CloseAllPopOuts();
+            CloseAllPopOuts();
 
             if (ActiveProfile != null)
                 ActiveProfile.IsPoppedOut = false;
@@ -144,7 +143,7 @@ namespace MSFSPopoutPanelManager.Orchestration
             ProfileData.ResetActiveProfile();
 
             // Close all existing custom pop out panels
-            WindowActionManager.CloseAllPopOuts();
+            CloseAllPopOuts();
 
             // Close all panel source overlays
             _panelSourceOrchestrator.CloseAllPanelSource();
@@ -262,14 +261,8 @@ namespace MSFSPopoutPanelManager.Orchestration
                                 
                                 panelConfig.IsSelectedPanelSource = true;
 
-                                //if(!AppSetting.GeneralSetting.TurboMode)
-                                //    _panelSourceOrchestrator.ShowPanelSourceNonEdit(panelConfig);
-
                                 if(panelConfig.PanelSource.X != null && panelConfig.PanelSource.Y != null)
                                     InputEmulationManager.PrepareToPopOutPanel((int)panelConfig.PanelSource.X, (int)panelConfig.PanelSource.Y, AppSetting.GeneralSetting.TurboMode);
-                                
-                                //if(!AppSetting.GeneralSetting.TurboMode)
-                                //    _panelSourceOrchestrator.ClosePanelSourceNonEdit(panelConfig);
 
                                 ExecuteCustomPopout(panelConfig, builtInPanelHandles, index++);
 

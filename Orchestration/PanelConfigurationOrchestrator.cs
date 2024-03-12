@@ -32,7 +32,7 @@ namespace MSFSPopoutPanelManager.Orchestration
 
             _keyboardOrchestrator.OnKeystrokeDetected += (_, e) =>
             {
-                if (ActiveProfile == null)
+                if (ProfileData == null || ActiveProfile == null)
                     return;
 
                 var panel = ActiveProfile.PanelConfigs.FirstOrDefault(p => p.Id == e.PanelId);

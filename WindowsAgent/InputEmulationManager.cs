@@ -55,7 +55,7 @@ namespace MSFSPopoutPanelManager.WindowsAgent
 
             MoveAppWindowFromLeftClickPoint(x, y);
 
-            LeftClick(x + 30, y);  // Left click outside the circle area to focus game window
+            LeftClick(x, y);  // Left click outside the circle area to focus game window
 
             // Force cursor reset and focus 
             PInvoke.SetCursorPos(x, y);

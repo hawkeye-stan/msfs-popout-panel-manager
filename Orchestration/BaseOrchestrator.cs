@@ -1,4 +1,5 @@
 ﻿using MSFSPopoutPanelManager.Shared;
+using MSFSPopoutPanelManager.WindowsAgent;
 
 namespace MSFSPopoutPanelManager.Orchestration
 {
@@ -16,5 +17,16 @@ namespace MSFSPopoutPanelManager.Orchestration
         protected AppSettingData AppSettingData => _sharedStorage.AppSettingData;
 
         protected FlightSimData FlightSimData => _sharedStorage.FlightSimData;
+
+        protected void CloseAllPopOuts()
+        {
+            foreach (var panelConfig in ProfileData.ActiveProfile.PanelConfigs)
+            {
+                if (panelConfig.FloatingPanel.IsEnabled && !panelConfig.IsFloating)
+                    panelConfig.IsFloating = true;
+            }
+
+            WindowActionManager.CloseAllPopOuts();
+        }
     }
 }

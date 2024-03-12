@@ -139,7 +139,6 @@ namespace MSFSPopoutPanelManager.Orchestration
         PreferenceConfigurationDetection,
         StartPopOutKeyboardShortcut,
         FloatingPanelDetection,
-        FloatingPanel,
-        
+        FloatingPanel
     }
 }

@@ -189,7 +189,7 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                 return;
             }
 
-            if (panelConfig.FloatingPanel.IsEnabled && panelConfig.IsFloating)       // do not update coordinate if floating panel
+            if (panelConfig.FloatingPanel.IsEnabled && !panelConfig.IsFloating)       // do not update coordinate if floating panel
                 return;
 
             panelConfig.Left = rect.Left;

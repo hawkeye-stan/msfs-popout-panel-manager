@@ -216,7 +216,10 @@
 
 
                     <!--  Panel configurations  -->
-                    <StackPanel Width="440" VerticalAlignment="Center">
+                    <StackPanel
+                        Width="440"
+                        VerticalAlignment="Center"
+                        IsEnabled="{c:Binding 'DataItem.IsFloating'}">
                         <StackPanel
                             x:Name="StackPanelAdjustment"
                             Width="440"
