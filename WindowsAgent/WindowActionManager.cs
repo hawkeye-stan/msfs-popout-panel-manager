@@ -293,7 +293,12 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             var bottomEdge = rect.Y + rect.Height;
 
             return point.X >= rect.X && point.X <= rightEdge && point.Y >= rect.Y && point.Y <= bottomEdge;
+        }
 
+        public static bool IsMsfsInFocus()
+        {
+            var handle = PInvoke.GetForegroundWindow();
+            return PInvoke.GetWindowText(handle).Substring(0, 26).Equals("Microsoft Flight Simulator", StringComparison.InvariantCultureIgnoreCase);
         }
     }
 }

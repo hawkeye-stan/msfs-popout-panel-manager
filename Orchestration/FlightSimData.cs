@@ -2,6 +2,7 @@
 using MSFSPopoutPanelManager.Shared;
 using System;
 using System.ComponentModel;
+using MSFSPopoutPanelManager.DomainModel.DynamicLod;
 using MSFSPopoutPanelManager.SimConnectAgent;
 
 namespace MSFSPopoutPanelManager.Orchestration
@@ -14,8 +15,6 @@ namespace MSFSPopoutPanelManager.Orchestration
             InitializeChildPropertyChangeBinding();
             IsSimConnectActive = false;
         }
-
-        public event EventHandler OnAltAboveGroundChanged;
 
         public bool IsSimConnectActive { get; set; }
 
@@ -43,8 +42,6 @@ namespace MSFSPopoutPanelManager.Orchestration
 
         public bool PlaneInParkingSpot { get; set; }
 
-        public int PlaneAltAboveGround { get; set; }
-
         public bool IsSimulatorStarted { get; set; }
 
         public bool IsSimConnectDataReceived { get; set; }
@@ -54,6 +51,8 @@ namespace MSFSPopoutPanelManager.Orchestration
         public bool IsFlightStarted { get; set; }
 
         public IHudBarData HudBarData { get; set; }
+
+        public DynamicLodSimData DynamicLodSimData { get; set; } = new();
 
         [IgnorePropertyChanged]
         internal ProfileData ProfileDataRef { get; set; }
@@ -65,9 +64,6 @@ namespace MSFSPopoutPanelManager.Orchestration
             // Automatic switching of active profile when SimConnect active aircraft change
             if (e.PropertyName == "AircraftName")
                 ProfileDataRef.AutoSwitchProfile();
-
-            if(e.PropertyName == "PlaneAltAboveGround")
-                OnAltAboveGroundChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public void Reset()
@@ -85,7 +81,6 @@ namespace MSFSPopoutPanelManager.Orchestration
             PlaneInParkingSpot = false;
             CameraState = CameraState.Unknown;
             IsSimulatorStarted = false;
-            PlaneAltAboveGround = 0;
             CameraViewTypeAndIndex1Max = 0;
             CameraViewTypeAndIndex2Max = 0;
         }

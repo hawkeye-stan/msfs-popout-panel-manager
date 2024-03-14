@@ -15,11 +15,13 @@ namespace MSFSPopoutPanelManager.Orchestration
         private System.Timers.Timer _msfsGameExitDetectionTimer;
         private SimConnectProvider _simConnectProvider;
 
+        private DynamicLodOrchestrator _dynamicLodOrchestrator;
         private bool _isTurnedOnPower;
         private bool _isTurnedOnAvionics;
 
-        public FlightSimOrchestrator(SharedStorage sharedStorage) : base(sharedStorage)
+        public FlightSimOrchestrator(SharedStorage sharedStorage, DynamicLodOrchestrator dynamicLodOrchestrator) : base(sharedStorage)
         {
+            _dynamicLodOrchestrator = dynamicLodOrchestrator;
             _simConnectProvider = new SimConnectProvider();
         }
 
@@ -40,9 +42,7 @@ namespace MSFSPopoutPanelManager.Orchestration
                 WindowProcessManager.GetSimulatorProcess();     // refresh simulator process
                 DetectMsfsExit();
 
-                // Attach in memory override for Dynamic LOD
-                if (AppSettingData != null && AppSettingData.ApplicationSetting.DynamicLodSetting.IsEnabled)
-                    DynamicLodManager.Attach(FlightSimData, AppSettingData);     
+                StartDynamicLod();
             };
 
             _simConnectProvider.OnDisconnected += (_, _) =>
@@ -61,61 +61,39 @@ namespace MSFSPopoutPanelManager.Orchestration
 
             _simConnectProvider.OnSimConnectDataRequiredRefreshed += (_, e) =>
             {
-                var electricalMasterBattery = Convert.ToBoolean(e.Find(d => d.PropertyName == SimDataDefinitions.PropName.ElectricalMasterBattery).Value);
-                if (electricalMasterBattery != FlightSimData.ElectricalMasterBatteryStatus)
-                    FlightSimData.ElectricalMasterBatteryStatus = electricalMasterBattery;
-
-                var avionicsMasterSwitch = Convert.ToBoolean(e.Find(d => d.PropertyName == SimDataDefinitions.PropName.AvionicsMasterSwitch).Value);
-                if (avionicsMasterSwitch != FlightSimData.AvionicsMasterSwitchStatus)
-                    FlightSimData.AvionicsMasterSwitchStatus = avionicsMasterSwitch;
-
-                var trackIR = Convert.ToBoolean(e.Find(d => d.PropertyName == SimDataDefinitions.PropName.TrackIREnable).Value);
-                if (trackIR != FlightSimData.TrackIRStatus)
-                    FlightSimData.TrackIRStatus = trackIR;
-
-                var cameraStateInt = Convert.ToInt32(e.Find(d => d.PropertyName == SimDataDefinitions.PropName.CameraState).Value);
-                var result = Enum.TryParse<CameraState>(cameraStateInt.ToString(), out var cameraState);
-                if (!result)
-                    cameraState = CameraState.Unknown;
-                if (cameraState != FlightSimData.CameraState)
-                    FlightSimData.CameraState = cameraState;
-                
-                var cockpitCameraZoom = Convert.ToInt32(e.Find(d => d.PropertyName == SimDataDefinitions.PropName.CockpitCameraZoom).Value);
-                if (cockpitCameraZoom != FlightSimData.CockpitCameraZoom)
-                    FlightSimData.CockpitCameraZoom = cockpitCameraZoom;
-
-                var planeAltAboveGround = Convert.ToInt32(e.Find(d => d.PropertyName == SimDataDefinitions.PropName.PlaneAltAboveGround).Value);
-                if (planeAltAboveGround != FlightSimData.PlaneAltAboveGround)
-                    FlightSimData.PlaneAltAboveGround = planeAltAboveGround;
-
-                var cameraViewTypeAndIndex0 = Convert.ToInt32(e.Find(d => d.PropertyName == SimDataDefinitions.PropName.CameraViewTypeAndIndex0).Value);
-                if (cameraViewTypeAndIndex0 != FlightSimData.CameraViewTypeAndIndex0)
-                    FlightSimData.CameraViewTypeAndIndex0 = cameraViewTypeAndIndex0;
-
-                var cameraViewTypeAndIndex1 = Convert.ToInt32(e.Find(d => d.PropertyName == SimDataDefinitions.PropName.CameraViewTypeAndIndex1).Value);
-                if (cameraViewTypeAndIndex1 != FlightSimData.CameraViewTypeAndIndex1)
-                    FlightSimData.CameraViewTypeAndIndex1 = cameraViewTypeAndIndex1;
-
-                var cameraViewTypeAndIndex1Max = Convert.ToInt32(e.Find(d => d.PropertyName == SimDataDefinitions.PropName.CameraViewTypeAndIndex1Max).Value);
-                if (cameraViewTypeAndIndex1Max != FlightSimData.CameraViewTypeAndIndex1Max)
-                    FlightSimData.CameraViewTypeAndIndex1Max = cameraViewTypeAndIndex1Max;
-
-                var cameraViewTypeAndIndex2Max = Convert.ToInt32(e.Find(d => d.PropertyName == SimDataDefinitions.PropName.CameraViewTypeAndIndex2Max).Value);
-                if (cameraViewTypeAndIndex2Max != FlightSimData.CameraViewTypeAndIndex2Max)
-                    FlightSimData.CameraViewTypeAndIndex2Max = cameraViewTypeAndIndex2Max;
-
-                FlightSimData.IsSimConnectDataReceived = true;
+                MapRequiredSimConnectData(e);
             };
 
             _simConnectProvider.OnSimConnectDataHudBarRefreshed += (_, e) =>
             {
-                if (ProfileData.ActiveProfile.ProfileSetting.HudBarConfig.IsEnabled)
-                    MapHudBarSimConnectData(e);
+                if (!ProfileData.ActiveProfile.ProfileSetting.HudBarConfig.IsEnabled || !FlightSimData.IsFlightStarted) 
+                    return;
+
+                MapHudBarSimConnectData(e);
+            };
+
+            _simConnectProvider.OnSimConnectDataDynamicLodRefreshed += (_, e) =>
+            {
+                if (!AppSettingData.ApplicationSetting.DynamicLodSetting.IsEnabled || !FlightSimData.IsFlightStarted || !WindowActionManager.IsMsfsInFocus())
+                    return;
+
+                var isVr = _dynamicLodOrchestrator.ReadIsVr();
+
+                MapDynamicLodSimConnectData(e, isVr);
+                _dynamicLodOrchestrator.UpdateLod(isVr);
+            };
+
+            _simConnectProvider.OnSimConnectDataEventFrameRefreshed += (_, e) =>
+            {
+                if (!AppSettingData.ApplicationSetting.DynamicLodSetting.IsEnabled || !FlightSimData.IsFlightStarted)
+                    return;
+
+                MapEventFrameData(e);
             };
 
             _simConnectProvider.OnActiveAircraftChanged += (_, e) =>
             {
-                var aircraftName = String.IsNullOrEmpty(e) ? null : e;
+                var aircraftName = string.IsNullOrEmpty(e) ? null : e;
                 if (FlightSimData.AircraftName != aircraftName)
                 {
                     FlightSimData.AircraftName = aircraftName;
@@ -392,9 +370,7 @@ namespace MSFSPopoutPanelManager.Orchestration
 
             FlightSimData.IsFlightStarted = true;
 
-            // Attach in memory override for Dynamic LOD
-            if (AppSettingData != null && AppSettingData.ApplicationSetting.DynamicLodSetting.IsEnabled)
-                DynamicLodManager.Attach(FlightSimData, AppSettingData);
+            StartDynamicLod();
         }
 
         private void HandleOnFlightStopped(object sender, EventArgs e)
@@ -409,9 +385,8 @@ namespace MSFSPopoutPanelManager.Orchestration
 
             FlightSimData.IsFlightStarted = false;
 
-            // Detach in memory override for Dynamic LOD
-            if (AppSettingData != null && AppSettingData.ApplicationSetting.DynamicLodSetting.IsEnabled)
-                DynamicLodManager.Detach();    
+            StopDynamicLod();
+            FlightSimData.DynamicLodSimData.Clear();
         }
 
         private void DetectMsfsExit()
@@ -434,6 +409,50 @@ namespace MSFSPopoutPanelManager.Orchestration
                 FlightSimData.Reset();
                 _simConnectProvider.StopAndReconnect();
             };
+        }
+
+        private void MapRequiredSimConnectData(List<SimDataItem> simData)
+        {
+            var electricalMasterBattery = Convert.ToBoolean(simData.Find(d => d.PropertyName == SimDataDefinitions.PropName.ElectricalMasterBattery).Value);
+            if (electricalMasterBattery != FlightSimData.ElectricalMasterBatteryStatus)
+                    FlightSimData.ElectricalMasterBatteryStatus = electricalMasterBattery;
+
+            var avionicsMasterSwitch = Convert.ToBoolean(simData.Find(d => d.PropertyName == SimDataDefinitions.PropName.AvionicsMasterSwitch).Value);
+            if (avionicsMasterSwitch != FlightSimData.AvionicsMasterSwitchStatus)
+                FlightSimData.AvionicsMasterSwitchStatus = avionicsMasterSwitch;
+
+            var trackIR = Convert.ToBoolean(simData.Find(d => d.PropertyName == SimDataDefinitions.PropName.TrackIREnable).Value);
+            if (trackIR != FlightSimData.TrackIRStatus)
+                FlightSimData.TrackIRStatus = trackIR;
+
+            var cameraStateInt = Convert.ToInt32(simData.Find(d => d.PropertyName == SimDataDefinitions.PropName.CameraState).Value);
+            var result = Enum.TryParse<CameraState>(cameraStateInt.ToString(), out var cameraState);
+            if (!result)
+                cameraState = CameraState.Unknown;
+            if (cameraState != FlightSimData.CameraState)
+                FlightSimData.CameraState = cameraState;
+            
+            var cockpitCameraZoom = Convert.ToInt32(simData.Find(d => d.PropertyName == SimDataDefinitions.PropName.CockpitCameraZoom).Value);
+            if (cockpitCameraZoom != FlightSimData.CockpitCameraZoom)
+                FlightSimData.CockpitCameraZoom = cockpitCameraZoom;
+
+            var cameraViewTypeAndIndex0 = Convert.ToInt32(simData.Find(d => d.PropertyName == SimDataDefinitions.PropName.CameraViewTypeAndIndex0).Value);
+            if (cameraViewTypeAndIndex0 != FlightSimData.CameraViewTypeAndIndex0)
+                FlightSimData.CameraViewTypeAndIndex0 = cameraViewTypeAndIndex0;
+
+            var cameraViewTypeAndIndex1 = Convert.ToInt32(simData.Find(d => d.PropertyName == SimDataDefinitions.PropName.CameraViewTypeAndIndex1).Value);
+            if (cameraViewTypeAndIndex1 != FlightSimData.CameraViewTypeAndIndex1)
+                FlightSimData.CameraViewTypeAndIndex1 = cameraViewTypeAndIndex1;
+
+            var cameraViewTypeAndIndex1Max = Convert.ToInt32(simData.Find(d => d.PropertyName == SimDataDefinitions.PropName.CameraViewTypeAndIndex1Max).Value);
+            if (cameraViewTypeAndIndex1Max != FlightSimData.CameraViewTypeAndIndex1Max)
+                FlightSimData.CameraViewTypeAndIndex1Max = cameraViewTypeAndIndex1Max;
+
+            var cameraViewTypeAndIndex2Max = Convert.ToInt32(simData.Find(d => d.PropertyName == SimDataDefinitions.PropName.CameraViewTypeAndIndex2Max).Value);
+            if (cameraViewTypeAndIndex2Max != FlightSimData.CameraViewTypeAndIndex2Max)
+                FlightSimData.CameraViewTypeAndIndex2Max = cameraViewTypeAndIndex2Max;
+
+            FlightSimData.IsSimConnectDataReceived = true;
         }
 
         private void MapHudBarSimConnectData(List<SimDataItem> simData)
@@ -466,6 +485,49 @@ namespace MSFSPopoutPanelManager.Orchestration
                 FlightSimData.HudBarData.SimRate = newValue;
         }
 
+        private void MapDynamicLodSimConnectData(List<SimDataItem> simData, bool isVr)
+        {
+            if (CompareSimConnectData(simData, SimDataDefinitions.PropName.PlaneAltAboveGround, FlightSimData.DynamicLodSimData.Agl, out var newValue))
+                FlightSimData.DynamicLodSimData.Agl = newValue;
+
+            if (CompareSimConnectData(simData, SimDataDefinitions.PropName.PlaneAltAboveGround, FlightSimData.DynamicLodSimData.AltAboveGround, out newValue))
+                FlightSimData.DynamicLodSimData.AltAboveGround = newValue;
+
+            if (CompareSimConnectData(simData, SimDataDefinitions.PropName.PlaneAltAboveGroundMinusCg, FlightSimData.DynamicLodSimData.AltAboveGroundMinusCg, out newValue))
+                FlightSimData.DynamicLodSimData.AltAboveGroundMinusCg = newValue;
+
+            if (CompareSimConnectData(simData, SimDataDefinitions.PropName.GroundVelocity, FlightSimData.DynamicLodSimData.GroundVelocity, out newValue))
+                FlightSimData.DynamicLodSimData.GroundVelocity = newValue;
+
+            if (CompareSimConnectData(simData, SimDataDefinitions.PropName.SimOnGround, 1.0f, out newValue))
+                FlightSimData.DynamicLodSimData.PlaneOnGround = Convert.ToBoolean(newValue);
+
+            var tlod = _dynamicLodOrchestrator.ReadTlod(isVr);
+            if (FlightSimData.DynamicLodSimData.Tlod != tlod)
+                FlightSimData.DynamicLodSimData.Tlod = tlod;
+
+            var olod = _dynamicLodOrchestrator.ReadOlod(isVr);
+            if (FlightSimData.DynamicLodSimData.Olod != olod)
+                FlightSimData.DynamicLodSimData.Olod = olod;
+
+            var cloudQuality = _dynamicLodOrchestrator.ReadCloudQuality(isVr);
+            if (FlightSimData.DynamicLodSimData.CloudQuality != cloudQuality)
+                FlightSimData.DynamicLodSimData.CloudQuality = cloudQuality;
+
+            if (FlightSimData.IsFlightStarted && FlightSimData.IsInCockpit &&
+                (!AppSettingData.ApplicationSetting.DynamicLodSetting.PauseOutsideCockpitView || (AppSettingData.ApplicationSetting.DynamicLodSetting.PauseOutsideCockpitView && FlightSimData.CameraState == CameraState.Cockpit)))
+                FlightSimData.DynamicLodSimData.Fps = FpsCalc.GetAverageFps(_dynamicLodOrchestrator.ReadIsFg(isVr) ? _currentFps * 2 : _currentFps);
+        }
+
+        private int _currentFps;
+        private void MapEventFrameData(int fps)
+        {
+            if (!AppSettingData.ApplicationSetting.DynamicLodSetting.IsEnabled)
+                return;
+           
+            _currentFps = fps;
+        }
+
         private bool CompareSimConnectData(List<SimDataItem> simData, string propName, double source, out double newValue)
         {
             var propData = simData.Find(d => d.PropertyName == propName);
@@ -485,6 +547,27 @@ namespace MSFSPopoutPanelManager.Orchestration
 
             newValue = 0;
             return false;
+        }
+
+        private void StartDynamicLod()
+        {
+            if (_simConnectProvider != null)
+            {
+                // Attach in memory override for Dynamic LOD
+                if (AppSettingData != null && AppSettingData.ApplicationSetting.DynamicLodSetting.IsEnabled)
+                    _dynamicLodOrchestrator.Attach();
+
+                _simConnectProvider.StartDynamicLod();
+            }
+        }
+
+        private void StopDynamicLod()
+        {
+            // Detach in memory override for Dynamic LOD
+            if (AppSettingData != null && AppSettingData.ApplicationSetting.DynamicLodSetting.IsEnabled)
+                _dynamicLodOrchestrator.Detach();
+
+            _simConnectProvider.StopDynamicLod();
         }
     }
 }

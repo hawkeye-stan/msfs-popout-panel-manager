@@ -11,6 +11,7 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
     {
         private const int MSFS_DATA_REFRESH_TIMEOUT = 500;
         private const int MSFS_HUDBAR_DATA_REFRESH_TIMEOUT = 200;
+        private const int MSFS_DYNAMICLOD_DATA_REFRESH_TIMEOUT = 300;
 
         private readonly SimConnector _simConnector;
 
@@ -19,6 +20,7 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
 
         private System.Timers.Timer _requiredRequestDataTimer;
         private System.Timers.Timer _hudBarRequestDataTimer;
+        private System.Timers.Timer _dynamicLodRequestDataTimer;
         private bool _isPowerOnForPopOut;
         private bool _isAvionicsOnForPopOut;
         private bool _isTrackIRManaged;
@@ -33,6 +35,8 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
         public event EventHandler OnException;
         public event EventHandler<List<SimDataItem>> OnSimConnectDataRequiredRefreshed;
         public event EventHandler<List<SimDataItem>> OnSimConnectDataHudBarRefreshed;
+        public event EventHandler<List<SimDataItem>> OnSimConnectDataDynamicLodRefreshed;
+        public event EventHandler<int> OnSimConnectDataEventFrameRefreshed;
         public event EventHandler<string> OnActiveAircraftChanged;
 
         public SimConnectProvider()
@@ -43,7 +47,9 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
             _simConnector.OnException += HandleSimException;
             _simConnector.OnReceiveSystemEvent += HandleReceiveSystemEvent;
             _simConnector.OnReceivedRequiredData += HandleRequiredDataReceived;
-            _simConnector.OnReceivedHudBarData += HandleHudBarDataReceived;
+            _simConnector.OnReceivedHudBarData += (_, e) => OnSimConnectDataHudBarRefreshed?.Invoke(this, e); 
+            _simConnector.OnReceivedDynamicLodData += (_, e) => OnSimConnectDataDynamicLodRefreshed?.Invoke(this, e);
+            _simConnector.OnReceivedEventFrameData += (_, e) => OnSimConnectDataEventFrameRefreshed?.Invoke(this, e);
             _simConnector.OnActiveAircraftChanged += (_, e) => OnActiveAircraftChanged?.Invoke(this, e);
 
             _isHandlingCriticalError = false;
@@ -107,6 +113,29 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
         {
             _hudBarRequestDataTimer.Stop();
         }
+
+        public void StartDynamicLod()
+        {
+            if (_dynamicLodRequestDataTimer.Enabled)
+                return;
+            
+            // shut down data request and wait for the last request to be completed
+            _dynamicLodRequestDataTimer.Stop();
+            Thread.Sleep(MSFS_DYNAMICLOD_DATA_REFRESH_TIMEOUT);
+
+            _simConnector.SetSimConnectDynamicLodDataDefinition();
+
+            _dynamicLodRequestDataTimer.Start();
+
+            _simConnector.StartReceiveFrameData();
+        }
+
+        public void StopDynamicLod()
+        {
+            _dynamicLodRequestDataTimer.Stop();
+            _simConnector.StopReceiveFrameData();
+        }
+
 
         public void TurnOnPower(bool isRequiredForColdStart)
         {
@@ -295,9 +324,28 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
                     // ignored
                 }
             };
-
+            
             if (_isHudBarDataActive)
                 SetHudBarConfig(_activeHudBarType);
+
+            // Setup dynamic data request timer
+            _dynamicLodRequestDataTimer = new()
+            {
+                Interval = MSFS_DYNAMICLOD_DATA_REFRESH_TIMEOUT,
+            };
+            _dynamicLodRequestDataTimer.Stop();
+            _dynamicLodRequestDataTimer.Elapsed += (_, _) =>
+            {
+                try
+                {
+                    _simConnector.RequestDynamicLodData();
+                }
+                catch
+                {
+                    // ignored
+                }
+            };
+
 
             OnConnected?.Invoke(this, EventArgs.Empty);
         }
@@ -306,6 +354,7 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
         {
             _requiredRequestDataTimer.Stop();
             _hudBarRequestDataTimer.Stop();
+            _dynamicLodRequestDataTimer.Stop();
             OnDisconnected?.Invoke(this, EventArgs.Empty);
             StopAndReconnect();
         }
@@ -316,6 +365,7 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
 
             _requiredRequestDataTimer.Stop();
             _hudBarRequestDataTimer.Stop();
+            _dynamicLodRequestDataTimer.Stop();
 
             if (!_isHandlingCriticalError)
             {
@@ -330,11 +380,6 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
             _requiredSimData = e;
             DetectFlightStartedOrStopped(e);
             OnSimConnectDataRequiredRefreshed?.Invoke(this, e);
-        }
-
-        private void HandleHudBarDataReceived(object sender, List<SimDataItem> e)
-        {
-            OnSimConnectDataHudBarRefreshed?.Invoke(this, e);
         }
 
         private CameraState _currentCameraState = CameraState.Unknown;
@@ -375,6 +420,8 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
 
                         _isHudBarDataActive = false;
                         _hudBarRequestDataTimer.Stop();
+
+                        _dynamicLodRequestDataTimer.Stop();
                     }
                     break;
             }

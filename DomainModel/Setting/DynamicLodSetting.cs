@@ -1,8 +1,4 @@
-﻿using MSFSPopoutPanelManager.DomainModel.DynamicLod;
-using MSFSPopoutPanelManager.Shared;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Runtime.Serialization;
+﻿using MSFSPopoutPanelManager.Shared;
 
 namespace MSFSPopoutPanelManager.DomainModel.Setting
 {
@@ -11,31 +7,13 @@ namespace MSFSPopoutPanelManager.DomainModel.Setting
         public DynamicLodSetting()
         {
             InitializeChildPropertyChangeBinding();
-
-            TlodConfigs.CollectionChanged += (_, e) =>
-            {
-                if (e.Action == NotifyCollectionChangedAction.Add)
-                {
-                    if (e.NewItems?[0] is LodConfig item)
-                        item.PropertyChanged += (_, _) => TlodConfigs.OnNotifyCollectionChanged(NotifyCollectionChangedAction.Reset, item);
-                }
-            };
-
-            OlodConfigs.CollectionChanged += (_, e) =>
-            {
-                if (e.Action == NotifyCollectionChangedAction.Add)
-                {
-                    if (e.NewItems?[0] is LodConfig item)
-                        item.PropertyChanged += (_, _) => OlodConfigs.OnNotifyCollectionChanged(NotifyCollectionChangedAction.Reset, item);
-                }
-            };
         }
 
         public bool IsEnabled { get; set; } = false;
 
-        public ObservableLodConfigLinkedList TlodConfigs { get; set; } = new();
+        public bool PauseWhenMsfsLoseFocus { get; set; } = true;
 
-        public ObservableLodConfigLinkedList OlodConfigs { get; set; } = new();
+        public bool PauseOutsideCockpitView { get; set; } = true;
 
         public bool ResetEnabled { get; set; } = false;
 
@@ -43,29 +21,28 @@ namespace MSFSPopoutPanelManager.DomainModel.Setting
 
         public int ResetOlod { get; set; } = 100;
 
-        public void AddDefaultTLodConfigs()
-        {
-            TlodConfigs.AddLast(new LinkedListNode<LodConfig>(new LodConfig { Agl = 0, Lod = 100 }));
-            TlodConfigs.AddLast(new LinkedListNode<LodConfig>(new LodConfig { Agl = 5000, Lod = 200 }));
-            TlodConfigs.AddLast(new LinkedListNode<LodConfig>(new LodConfig { Agl = 10000, Lod = 300 }));
-            TlodConfigs.AddLast(new LinkedListNode<LodConfig>(new LodConfig { Agl = 20000, Lod = 400 }));
-        }
+        public int TargetedFps { get; set; } = 60;
 
-        public void AddDefaultOLodConfigs()
-        {
-            OlodConfigs.AddLast(new LinkedListNode<LodConfig>(new LodConfig { Agl = 0, Lod = 200 }));
-            OlodConfigs.AddLast(new LinkedListNode<LodConfig>(new LodConfig { Agl = 1000, Lod = 150 }));
-            OlodConfigs.AddLast(new LinkedListNode<LodConfig>(new LodConfig { Agl = 5000, Lod = 100 }));
-        }
+        public int FpsTolerance { get; set; } = 5;
 
-        [OnDeserialized]
-        private void OnDeserialization(StreamingContext context)
-        {
-            foreach (var item in TlodConfigs)
-                item.PropertyChanged += (_, _) => TlodConfigs.OnNotifyCollectionChanged(NotifyCollectionChangedAction.Reset, item);
+        public bool TlodMinOnGround { get; set; } = true;
 
-            foreach (var item in OlodConfigs)
-                item.PropertyChanged += (_, _) => OlodConfigs.OnNotifyCollectionChanged(NotifyCollectionChangedAction.Reset, item);
-        }
+        public int AltTlodBase { get; set; } = 1000;
+
+        public int TlodMin { get; set; } = 50;
+
+        public int TlodMax { get; set; } = 400;
+
+        public int CloudRecoveryTlod { get; set; } = 100;
+
+        public bool DecreaseCloudQuality { get; set; } = true;
+
+        public int OlodTop { get; set; } = 20;
+
+        public int OlodBase { get; set; } = 200;
+
+        public int AltOlodBase { get; set; } = 1000; 
+
+        public int AltOlodTop { get; set; } = 10000;
     }
 }

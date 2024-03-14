@@ -38,17 +38,6 @@ namespace MSFSPopoutPanelManager.Orchestration
                         break;
                 }
             };
-
-            ApplicationSetting.DynamicLodSetting.TlodConfigs.CollectionChanged += (_, e) =>
-            {
-                if (e.Action == NotifyCollectionChangedAction.Reset)
-                    AppSettingDataManager.WriteAppSetting(ApplicationSetting);
-            };
-
-            ApplicationSetting.DynamicLodSetting.OlodConfigs.CollectionChanged += (_, _) =>
-            {
-                AppSettingDataManager.WriteAppSetting(ApplicationSetting);
-            };
         }
     }
 }

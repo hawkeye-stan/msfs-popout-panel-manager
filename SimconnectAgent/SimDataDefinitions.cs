@@ -14,7 +14,6 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
                 new() { DefinitionId = DataDefinition.REQUIRED_DEFINITION, RequestId = DataRequest.REQUIRED_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.PlaneInParkingSpot, VariableName = "ATC ON PARKING SPOT", SimConnectUnit = "Bool", DataType = DataType.Float64 },
                 new() { DefinitionId = DataDefinition.REQUIRED_DEFINITION, RequestId = DataRequest.REQUIRED_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.CameraState, VariableName = "CAMERA STATE", SimConnectUnit = "Number", DataType = DataType.Float64 },
                 new() { DefinitionId = DataDefinition.REQUIRED_DEFINITION, RequestId = DataRequest.REQUIRED_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.CockpitCameraZoom, VariableName = "COCKPIT CAMERA ZOOM", SimConnectUnit = "Percentage", DataType = DataType.Float64 },
-                new() { DefinitionId = DataDefinition.REQUIRED_DEFINITION, RequestId = DataRequest.REQUIRED_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.PlaneAltAboveGround, VariableName = "PLANE ALT ABOVE GROUND", SimConnectUnit = "Feet", DataType = DataType.Float64 },
                 new() { DefinitionId = DataDefinition.REQUIRED_DEFINITION, RequestId = DataRequest.REQUIRED_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.CameraViewTypeAndIndex0, VariableName = "CAMERA VIEW TYPE AND INDEX:0", SimConnectUnit = "Enum", DataType = DataType.Float64 },
                 new() { DefinitionId = DataDefinition.REQUIRED_DEFINITION, RequestId = DataRequest.REQUIRED_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.CameraViewTypeAndIndex1, VariableName = "CAMERA VIEW TYPE AND INDEX:1", SimConnectUnit = "Enum", DataType = DataType.Float64 },
                 new() { DefinitionId = DataDefinition.REQUIRED_DEFINITION, RequestId = DataRequest.REQUIRED_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.CameraViewTypeAndIndex1Max, VariableName = "CAMERA VIEW TYPE AND INDEX MAX:1", SimConnectUnit = "Number", DataType = DataType.Float64 },
@@ -42,6 +41,18 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
                 default:
                     return null;
             }
+        }
+
+        public static List<SimConnectDataDefinition> GetDynamicLodDefinitions()
+        {
+            var definitions = new List<SimConnectDataDefinition>
+            {
+                new() { DefinitionId = DataDefinition.DYNAMICLOD_DEFINITION, RequestId = DataRequest.DYNAMICLOD_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.PlaneAltAboveGround, VariableName = "PLANE ALT ABOVE GROUND", SimConnectUnit = "feet", DataType = DataType.Float64 },
+                new() { DefinitionId = DataDefinition.DYNAMICLOD_DEFINITION, RequestId = DataRequest.DYNAMICLOD_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.PlaneAltAboveGroundMinusCg, VariableName = "PLANE ALT ABOVE GROUND MINUS CG", SimConnectUnit = "feet", DataType = DataType.Float64 },
+                new() { DefinitionId = DataDefinition.DYNAMICLOD_DEFINITION, RequestId = DataRequest.DYNAMICLOD_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.SimOnGround, VariableName = "SIM ON GROUND", SimConnectUnit = "Bool", DataType = DataType.Float64 },
+                new() { DefinitionId = DataDefinition.DYNAMICLOD_DEFINITION, RequestId = DataRequest.DYNAMICLOD_REQUEST, DataDefinitionType = DataDefinitionType.SimConnect, PropName = PropName.GroundVelocity, VariableName = "GROUND VELOCITY", SimConnectUnit = "knots", DataType = DataType.Float64 }
+            };
+            return definitions;
         }
 
         private static List<SimConnectDataDefinition> GetSharedHudBarDefinitions()
@@ -80,7 +91,7 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
             };
             return definitions;
         }
-
+        
         public static class PropName
         {
             public static string ElectricalMasterBattery = "ElectricalMasterBattery";
@@ -96,6 +107,9 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
 
             // Dynamic LOD
             public static string PlaneAltAboveGround = "PlaneAltAboveGround";
+            public static string PlaneAltAboveGroundMinusCg = "PlaneAltAboveGroundMinusCg";
+            public static string SimOnGround = "SimOnGround";
+            public static string GroundVelocity = "GroundVelocity";
 
             // Hud Bar data
             public static string ElevatorTrim = "ElevatorTrim";

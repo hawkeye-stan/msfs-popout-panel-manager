@@ -33,15 +33,6 @@ namespace MSFSPopoutPanelManager.Orchestration
 
         public void Initialize()
         {
-            // Add default dynamic LOD configs
-            if (!AppSettingData.ApplicationSetting.DynamicLodSetting.IsEnabled &&
-                AppSettingData.ApplicationSetting.DynamicLodSetting.TlodConfigs.Count == 0 &&
-                AppSettingData.ApplicationSetting.DynamicLodSetting.OlodConfigs.Count == 0)
-            {
-                AppSettingData.ApplicationSetting.DynamicLodSetting.AddDefaultTLodConfigs();
-                AppSettingData.ApplicationSetting.DynamicLodSetting.AddDefaultOLodConfigs();
-            }
-
             if (AppSettingData.ApplicationSetting.GeneralSetting.CheckForUpdate)
                 CheckForAutoUpdate();
 

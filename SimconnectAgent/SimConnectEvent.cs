@@ -5,15 +5,17 @@
         SIM_START,
         SIM_STOP,
         AIRCRAFT_LOADED,
-        VIEW
+        VIEW,
+        FRAME
     }
 
     public enum ActionEvent
     {
-        DUMMY1,         // must register 4 dummy events to reserve space for SimConnectEvent above
+        DUMMY1,         // must register 5 dummy events to reserve space for SimConnectEvent above
         DUMMY2,
         DUMMY3,
         DUMMY4,
+        DUMMY5,
         MASTER_BATTERY_SET,
         AVIONICS_MASTER_SET,
         PAUSE_SET,

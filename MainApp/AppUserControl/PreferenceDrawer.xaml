@@ -633,21 +633,23 @@
                 <WrapPanel Visibility="{c:Binding LocalCompileOnly}">
                     <WrapPanel Orientation="Vertical" Visibility="{Binding ElementName=CategoryDynamicLodSettings, Path=IsSelected, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
                         <WrapPanel Margin="0,0,20,20" Orientation="Vertical">
-                            <TextBlock Style="{StaticResource TextBlockHeading}">Dynamically adjust Terrain and Object Level of Details (Not Supported)</TextBlock>
+                            <WrapPanel>
+                                <TextBlock
+                                    Padding="0,0,5,0"
+                                    Foreground="Red"
+                                    Style="{StaticResource TextBlockHeading}">
+                                    (Unsupported Feature)
+                                </TextBlock>
+                                <TextBlock Style="{StaticResource TextBlockHeading}">Dynamically adjust Terrain and Object Level of Details</TextBlock>
+                            </WrapPanel>
                             <Line
                                 Stretch="Fill"
                                 Stroke="Gray"
                                 X2="1" />
-                            <TextBlock
-                                Margin="0,10,0,10"
-                                Foreground="Red"
-                                Style="{StaticResource TextBlockLabel}">
-                                *** Experimental and not supported. Use at your own risk since this feature directly modifies MSFS memory. ***
-                            </TextBlock>
                             <WrapPanel>
                                 <ToggleButton IsChecked="{Binding AppSettingData.ApplicationSetting.DynamicLodSetting.IsEnabled, Mode=TwoWay}" Style="{StaticResource ToggleButton}" />
                                 <TextBlock Style="{StaticResource TextBlockLabel}">
-                                    Enable automatic adjustment of terrain level of detail (TLOD) and object level of detail (OLOD) based on current aircraft's above ground level (in feet).
+                                    Enable automatic adjustments of TLOD and OLOD to get the desired targeted frame rate (FPS).
                                 </TextBlock>
                             </WrapPanel>
                             <WrapPanel Visibility="{Binding Path=AppSettingData.ApplicationSetting.DynamicLodSetting.IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
