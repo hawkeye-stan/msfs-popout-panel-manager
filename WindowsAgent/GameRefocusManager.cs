@@ -86,6 +86,8 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             if (_isHookMouseDown) 
                 return;
 
+            PInvoke.SetForegroundWindow(WindowProcessManager.SimulatorProcess.Handle);
+
             var rect = WindowActionManager.GetWindowRectangle(WindowProcessManager.SimulatorProcess.Handle);
             PInvoke.SetCursorPos(rect.X + rect.Width / 2, rect.Y + rect.Height / 2);
         }

@@ -298,7 +298,16 @@ namespace MSFSPopoutPanelManager.WindowsAgent
         public static bool IsMsfsInFocus()
         {
             var handle = PInvoke.GetForegroundWindow();
-            return PInvoke.GetWindowText(handle).Substring(0, 26).Equals("Microsoft Flight Simulator", StringComparison.InvariantCultureIgnoreCase);
+
+            var text = PInvoke.GetWindowText(handle);
+
+            if (text == null)
+                return false;
+
+            if (text.Length < 26)
+                return false;
+
+            return text.Substring(0, 26).Equals("Microsoft Flight Simulator", StringComparison.InvariantCultureIgnoreCase);
         }
     }
 }

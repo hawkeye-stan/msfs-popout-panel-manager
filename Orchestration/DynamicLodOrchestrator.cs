@@ -283,28 +283,30 @@ namespace MSFSPopoutPanelManager.Orchestration
                 return;
 
             // Adjust cloud quality if applicable
-            if (deltaFps < 0 && newTlod < DynamicLodSetting.CloudRecoveryTlod && !_isDecreasedCloudQualityActive)
+            if (DynamicLodSetting.DecreaseCloudQuality && (!DynamicLodSetting.TlodMinOnGround && !(SimData.AltAboveGround <= DynamicLodSetting.AltTlodBase)))
             {
-                _isDecreasedCloudQualityActive = true;
-                WriteMemory(isVr ? _addressCloudQVr : _addressCloudQ, ReadCloudQualitySimValue(isVr) - 1);       // High
+                switch (deltaFps)
+                {
+                    case < 0 when newTlod < DynamicLodSetting.CloudRecoveryTlod && !_isDecreasedCloudQualityActive:
+                        _isDecreasedCloudQualityActive = true;
+                        WriteMemory(isVr ? _addressCloudQVr : _addressCloudQ, ReadCloudQualitySimValue(isVr) - 1); 
 
-                _lastLodUpdateTime = _lastLodUpdateTime.AddSeconds(2);          // Add extra delay for cloud setting to take effect
-                Debug.WriteLine("New Cloud Quality written - 2.");
+                        _lastLodUpdateTime =
+                            _lastLodUpdateTime.AddSeconds(2); // Add extra delay for cloud setting to take effect
+                        Debug.WriteLine("New Cloud Quality written - 2.");
 
-                return;
+                        return;
+                    case > 0 when newTlod >= DynamicLodSetting.CloudRecoveryTlod && _isDecreasedCloudQualityActive:
+                        _isDecreasedCloudQualityActive = false;
+                        WriteMemory(isVr ? _addressCloudQVr : _addressCloudQ, ReadCloudQualitySimValue(isVr) + 1); 
+
+                        _lastLodUpdateTime = _lastLodUpdateTime.AddSeconds(2);
+                        Debug.WriteLine("New Cloud Quality written - 3.");
+
+                        return;
+                }
             }
 
-            if (deltaFps > 0 && newTlod >= DynamicLodSetting.CloudRecoveryTlod && _isDecreasedCloudQualityActive)
-            {
-                _isDecreasedCloudQualityActive = false;
-                WriteMemory(isVr ? _addressCloudQVr : _addressCloudQ, ReadCloudQualitySimValue(isVr) + 1);       // Ultra
-
-                _lastLodUpdateTime = _lastLodUpdateTime.AddSeconds(2);
-                Debug.WriteLine("New Cloud Quality written - 3.");
-
-                return;
-            }
-            
             Debug.WriteLine($"New TLOD written - {newTlod}.");
             WriteMemory(isVr ? _addressTlodVr : _addressTlod, newTlod / 100.0f);
         }

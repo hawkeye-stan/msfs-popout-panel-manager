@@ -5,7 +5,7 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
 {
     public class FpsCalc
     {
-        private const int FpsLen = 50;     
+        private const int FpsLen = 25;     
         private static readonly float[] FpsStatistic = new float[FpsLen];
         private static int _fpsIndex = -1;
 

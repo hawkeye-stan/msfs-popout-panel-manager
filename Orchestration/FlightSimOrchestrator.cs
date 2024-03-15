@@ -74,12 +74,19 @@ namespace MSFSPopoutPanelManager.Orchestration
 
             _simConnectProvider.OnSimConnectDataDynamicLodRefreshed += (_, e) =>
             {
-                if (!AppSettingData.ApplicationSetting.DynamicLodSetting.IsEnabled || !FlightSimData.IsFlightStarted || !WindowActionManager.IsMsfsInFocus())
+                if (!AppSettingData.ApplicationSetting.DynamicLodSetting.IsEnabled || !FlightSimData.IsFlightStarted)
                     return;
 
                 var isVr = _dynamicLodOrchestrator.ReadIsVr();
-
                 MapDynamicLodSimConnectData(e, isVr);
+
+                var isPaused = (AppSettingData.ApplicationSetting.DynamicLodSetting.PauseWhenMsfsLoseFocus && !WindowActionManager.IsMsfsInFocus()) ||
+                               (AppSettingData.ApplicationSetting.DynamicLodSetting.PauseOutsideCockpitView && FlightSimData.CameraState != CameraState.Cockpit);
+
+                if (isPaused)
+                    return;
+
+                FlightSimData.DynamicLodSimData.Fps = FpsCalc.GetAverageFps(_dynamicLodOrchestrator.ReadIsFg(isVr) ? _currentFps * 2 : _currentFps);
                 _dynamicLodOrchestrator.UpdateLod(isVr);
             };
 
@@ -513,10 +520,6 @@ namespace MSFSPopoutPanelManager.Orchestration
             var cloudQuality = _dynamicLodOrchestrator.ReadCloudQuality(isVr);
             if (FlightSimData.DynamicLodSimData.CloudQuality != cloudQuality)
                 FlightSimData.DynamicLodSimData.CloudQuality = cloudQuality;
-
-            if (FlightSimData.IsFlightStarted && FlightSimData.IsInCockpit &&
-                (!AppSettingData.ApplicationSetting.DynamicLodSetting.PauseOutsideCockpitView || (AppSettingData.ApplicationSetting.DynamicLodSetting.PauseOutsideCockpitView && FlightSimData.CameraState == CameraState.Cockpit)))
-                FlightSimData.DynamicLodSimData.Fps = FpsCalc.GetAverageFps(_dynamicLodOrchestrator.ReadIsFg(isVr) ? _currentFps * 2 : _currentFps);
         }
 
         private int _currentFps;

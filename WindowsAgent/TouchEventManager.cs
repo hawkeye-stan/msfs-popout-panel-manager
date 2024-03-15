@@ -192,6 +192,8 @@ namespace MSFSPopoutPanelManager.WindowsAgent
 
                                 if (currentRefocusIndex == _refocusedTaskIndex)
                                 {
+                                    PInvoke.SetForegroundWindow(WindowProcessManager.SimulatorProcess.Handle);
+
                                     var rect = WindowActionManager.GetWindowRectangle(WindowProcessManager.SimulatorProcess.Handle);
                                     PInvoke.SetCursorPos(rect.X + rect.Width / 2, rect.Y + rect.Height / 2);
                                 }
