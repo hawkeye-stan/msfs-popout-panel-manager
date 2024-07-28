@@ -171,3 +171,5 @@ Thank you for your super kind support of this app!
 [WPF CalcBinding](https://github.com/Alex141/CalcBinding) by Alexander Zinchenko
 
 [AutoUpdater.NET](https://github.com/ravibpatel/AutoUpdater.NET) by Ravi Patel
+
+[DynamicLOD](https://github.com/Fragtality/DynamicLOD_ by Fragtality (idea and MSFS memory access code)

@@ -228,8 +228,8 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
                     PanelType = PanelType.NumPadWindow,
                     Left = 0,
                     Top = 0,
-                    Width = 1920,
-                    Height = 40,
+                    Width = 0,
+                    Height = 0,
                     AutoGameRefocus = false
                 });
             }

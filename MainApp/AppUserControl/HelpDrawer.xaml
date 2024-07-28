@@ -247,14 +247,6 @@
                             Stroke="Gray"
                             X2="1" />
                     </WrapPanel>
-                    <TextBlock Width="Auto" Margin="0,0,0,0">
-                        <Hyperlink
-                            NavigateUri="Open Data Folder"
-                            RequestNavigate="Hyperlink_RequestNavigate"
-                            Style="{StaticResource MaterialDesignBody2Hyperlink}">
-                            <TextBlock Text="Open application data file folder" />
-                        </Hyperlink>
-                    </TextBlock>
                     <TextBlock Width="Auto" Margin="0,10,0,0">
                         <Hyperlink
                             NavigateUri="Download VCC Library"
@@ -273,16 +265,6 @@
                         KeyboardNavigation.AcceptsReturn="False"
                         Style="{StaticResource MaterialDesignOutlinedButton}"
                         ToolTip="This will delete all orphan application cache files in your Windows user account 'AppData/Local/Temp/.net/MSFSPopoutPanelManager' folder" />
-                    <!--<Button
-                        Width="280"
-                        Margin="0,10,0,0"
-                        HorizontalAlignment="Left"
-                        Command="{Binding RollBackCommand}"
-                        Content="Rollback to previous version 3.4.6.0321"
-                        KeyboardNavigation.AcceptsReturn="False"
-                        Style="{StaticResource MaterialDesignOutlinedButton}"
-                        ToolTip="This will rollback the application to previous version 3.4.6.0321. All changes since installing the latest v4.0.0 update will be lost."
-                        Visibility="{Binding IsRollBackCommandVisible, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" />-->
                 </WrapPanel>
 
                 <!--  About  -->

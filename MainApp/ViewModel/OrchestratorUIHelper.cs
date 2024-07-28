@@ -87,7 +87,7 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
         {
             Application.Current.Dispatcher.Invoke(async () =>
             {
-                var numPad = new NumPad(panelConfig.Id);
+                var numPad = new NumPad(panelConfig.Id, panelConfig.Width, panelConfig.Height);
                 numPad.Show();
 
                 await Task.Run(() =>

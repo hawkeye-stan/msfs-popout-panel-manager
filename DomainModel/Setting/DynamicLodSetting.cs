@@ -23,7 +23,7 @@ namespace MSFSPopoutPanelManager.DomainModel.Setting
 
         public int TargetedFps { get; set; } = 60;
 
-        public int FpsTolerance { get; set; } = 5;
+        public int FpsTolerance { get; set; } = 4;
 
         public bool TlodMinOnGround { get; set; } = true;
 
@@ -31,13 +31,13 @@ namespace MSFSPopoutPanelManager.DomainModel.Setting
 
         public int TlodMin { get; set; } = 50;
 
-        public int TlodMax { get; set; } = 400;
+        public int TlodMax { get; set; } = 200;
 
         public int CloudRecoveryTlod { get; set; } = 100;
 
-        public bool DecreaseCloudQuality { get; set; } = true;
+        public bool DecreaseCloudQuality { get; set; } = false;
 
-        public int OlodTop { get; set; } = 20;
+        public int OlodTop { get; set; } = 50;
 
         public int OlodBase { get; set; } = 200;
 

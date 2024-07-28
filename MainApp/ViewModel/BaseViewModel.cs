@@ -41,18 +41,5 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
             get => SharedStorage.ApplicationWindow;
             set => SharedStorage.ApplicationWindow = value;
         }
-
-        public bool LocalCompileOnly
-        {
-            get
-            {
-                #if LOCAL
-                    return true;
-                #endif
-
-                return false;
-
-            }
-        }
     }
 }

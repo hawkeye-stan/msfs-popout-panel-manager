@@ -39,11 +39,6 @@ namespace MSFSPopoutPanelManager.Orchestration
             Process.Start("notepad.exe", "VERSION.md");
         }
 
-        public void OpenDataFolder()
-        {
-            Process.Start("explorer.exe", Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "MSFS Pop Out Panel Manager"));
-        }
-
         public bool HasOrphanAppCache()
         {
             var appLocal = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
@@ -103,36 +98,6 @@ namespace MSFSPopoutPanelManager.Orchestration
             {
                 FileLogger.WriteLog("Delete app cache exception: " + ex.Message, StatusMessageType.Error);
             }
-        }
-
-        public void RollBackUpdate()
-        {
-            var userProfileBackupPath = Path.Combine(FileIo.GetUserDataFilePath(), "Backup-previous-version", "userprofiledata.json");
-            var appSettingBackupPath = Path.Combine(FileIo.GetUserDataFilePath(), "Backup-previous-version", "appsettingdata.json");
-
-            var userProfilePath = Path.Combine(FileIo.GetUserDataFilePath(), "userprofiledata.json");
-            var appSettingPath = Path.Combine(FileIo.GetUserDataFilePath(), "appsettingdata.json");
-
-            if (File.Exists(userProfileBackupPath))
-                File.Copy(userProfileBackupPath, userProfilePath, true);
-
-            if (File.Exists(appSettingBackupPath))
-                File.Copy(appSettingBackupPath, appSettingPath, true);
-
-            AutoUpdater.InstalledVersion = new Version("1.0.0.0");
-            AutoUpdater.Synchronous = true;
-            AutoUpdater.AppTitle = "MSFS Pop Out Panel Manager";
-            AutoUpdater.RunUpdateAsAdmin = false;
-            AutoUpdater.UpdateFormSize = new System.Drawing.Size(1024, 660);
-            AutoUpdater.UpdateMode = Mode.ForcedDownload;
-            AutoUpdater.Start("https://raw.githubusercontent.com/hawkeye-stan/msfs-popout-panel-manager/master/rollback.xml");
-        }
-
-        public bool IsRollBackUpdateEnabled()
-        {
-            var appSettingBackupPath = Path.Combine(FileIo.GetUserDataFilePath(), "Backup-previous-version", "appsettingdata.json");
-
-            return File.Exists(appSettingBackupPath);
         }
     }
 }

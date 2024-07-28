@@ -5,47 +5,38 @@ namespace MSFSPopoutPanelManager.Shared
 {
     public class FileIo
     {
-        public static string GetUserDataFilePath()
+        public static string GetUserDataFilePath(bool isRoamingPath)
         {
-#if DEBUG
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "MSFS Pop Out Panel Manager Debug");
-#elif LOCAL
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "MSFS Pop Out Panel Manager Local");
-#else
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "MSFS Pop Out Panel Manager");
-#endif
+            var specialFolder = isRoamingPath ? Environment.SpecialFolder.ApplicationData : Environment.SpecialFolder.MyDocuments;
+            return Path.Combine(Environment.GetFolderPath(specialFolder), GetBuildConfigPath());
         }
 
-        public static string GetErrorLogFilePath()
+        public static string GetErrorLogFilePath(bool isRoamingPath)
         {
-#if DEBUG
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), @"MSFS Pop Out Panel Manager Debug\LogFiles\error.log");
-#elif LOCAL
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), @"MSFS Pop Out Panel Manager Local\LogFiles\error.log");
-#else
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), @"MSFS Pop Out Panel Manager\LogFiles\error.log");
-#endif
+            var specialFolder = isRoamingPath ? Environment.SpecialFolder.ApplicationData : Environment.SpecialFolder.MyDocuments;
+            return Path.Combine(Environment.GetFolderPath(specialFolder), GetBuildConfigPath(), @"LogFiles\error.log");
         }
 
-        public static string GetDebugLogFilePath()
+        public static string GetDebugLogFilePath(bool isRoamingPath)
         {
-#if DEBUG
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), @"MSFS Pop Out Panel Manager Debug\LogFiles\debug.log");
-#elif LOCAL
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), @"MSFS Pop Out Panel Manager Local\LogFiles\debug.log");
-#else
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), @"MSFS Pop Out Panel Manager\LogFiles\debug.log");
-#endif
+            var specialFolder = isRoamingPath ? Environment.SpecialFolder.ApplicationData : Environment.SpecialFolder.MyDocuments;
+            return Path.Combine(Environment.GetFolderPath(specialFolder), GetBuildConfigPath(), @"LogFiles\debug.log");
         }
 
-        public static string GetInfoLogFilePath()
+        public static string GetInfoLogFilePath(bool isRoamingPath)
+        {
+            var specialFolder = isRoamingPath ? Environment.SpecialFolder.ApplicationData : Environment.SpecialFolder.MyDocuments;
+            return Path.Combine(Environment.GetFolderPath(specialFolder), GetBuildConfigPath(), @"LogFiles\info.log");
+        }
+
+        private static string GetBuildConfigPath()
         {
 #if DEBUG
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), @"MSFS Pop Out Panel Manager Debug\LogFiles\info.log");
+            return "MSFS Pop Out Panel Manager Debug";
 #elif LOCAL
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), @"MSFS Pop Out Panel Manager Local\LogFiles\info.log");
+            return "MSFS Pop Out Panel Manager Local";
 #else
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), @"MSFS Pop Out Panel Manager\LogFiles\info.log");
+            return "MSFS Pop Out Panel Manager";
 #endif
         }
     }

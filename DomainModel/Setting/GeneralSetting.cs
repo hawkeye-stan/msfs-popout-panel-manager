@@ -1,4 +1,5 @@
-﻿using MSFSPopoutPanelManager.Shared;
+﻿using System;
+using MSFSPopoutPanelManager.Shared;
 using Newtonsoft.Json;
 
 namespace MSFSPopoutPanelManager.DomainModel.Setting
@@ -8,6 +9,17 @@ namespace MSFSPopoutPanelManager.DomainModel.Setting
         public GeneralSetting()
         {
             InitializeChildPropertyChangeBinding();
+
+            PropertyChanged += (_, e) =>
+            {
+                if (e.PropertyName == "UseApplicationDataPath")
+                {
+                    OnApplicationDataPathUpdated?.Invoke(this, UseApplicationDataPath);
+                    ApplicationDataPath = FileIo.GetUserDataFilePath(UseApplicationDataPath);
+                }
+            };
+
+            ApplicationDataPath = FileIo.GetUserDataFilePath(UseApplicationDataPath);
         }
 
         public bool AlwaysOnTop { get; set; } = true;
@@ -22,6 +34,8 @@ namespace MSFSPopoutPanelManager.DomainModel.Setting
 
         public bool TurboMode { get; set; } = false;
 
+        public bool UseApplicationDataPath { get; set; } = false;
+
         [JsonIgnore, IgnorePropertyChanged]
         public bool AutoStart
         {
@@ -34,5 +48,10 @@ namespace MSFSPopoutPanelManager.DomainModel.Setting
                     AppAutoStart.Deactivate();
             }
         }
+
+        [JsonIgnore]
+        public string ApplicationDataPath { get; set; }
+
+        public event EventHandler<bool> OnApplicationDataPathUpdated;
     }
 }

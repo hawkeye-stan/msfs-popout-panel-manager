@@ -43,8 +43,10 @@ namespace MSFSPopoutPanelManager.MainApp
                 // Setup all data storage objects
                 SharedStorage = new SharedStorage();
                 SharedStorage.AppSettingData.ReadSettings();
+                SharedStorage.ProfileData.AppSettingDataRef = SharedStorage.AppSettingData;
                 SharedStorage.ProfileData.ReadProfiles();
-               
+                FileLogger.UseApplicationDataPath = SharedStorage.AppSettingData.ApplicationSetting.GeneralSetting.UseApplicationDataPath;
+
                 // Setup dependency injections
                 AppHost = Host.CreateDefaultBuilder()
                     .ConfigureServices((_, services) =>

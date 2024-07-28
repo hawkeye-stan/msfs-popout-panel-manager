@@ -1,19 +1,15 @@
-## Version 4.1.0
+## Version 4.1.1
 
-* Added new method to select panel source for an aircraft profile using fixed camera view instead of relying saved custom camera view. Previous method of using saved custom camera view is still available to use if desire.
+* Added option to store POPM profiles and configuration files in your user's AppData Roaming folder instead of Documents folder. Hopefully, this solved the issue where OneDrive users are having issue with POPM files.
 
-Video showing how to create a new aircraft profile using the new panel selection method: https://vimeo.com/917361559
+* Fixed POPM inability to close correctly when Keyboard Shortcuts preference is disabled.
 
-Video showing how to update existing aircraft profile to use the new panel selection method: https://vimeo.com/917364912 
+* Fixed issue where auto start option failed to retain CommandLine arguments in exe.xml file.
 
-* Added new virtual number pad to be used for touch enabled screen. This number pad will first focus the game window before sending num pad keystroke to the game.
+* Fixed issue where auto start does not work correctly for Steam version of MSFS since exe.xml file location has been moved by Steam installation.
 
-* Added new feature to allow pop up panel as floating window. You can assign hotkeys (Ctrl-0 to Ctrl-9) to have the pop out to toggle either showing on screen or minimize.
+* Added ability for full screen panel to work as floating panel. An example use case is to show and hide EFB as full screen using keyboard shortcut.
 
-Video showing how to manage floating panel: https://vimeo.com/918153200
+* Added dynamic LOD (my own implementation of AutoFPS) - this is totally experimental and unsupported. If you decide to use this version of dynamic LOD, you don't have to run multiple apps.
 
-* Added a new button to easily close all Pop Out Panel Manager's managed pop outs.
- 
-* Updated keyboard shortcut feature in preference setting to allow usage of custom keyboard shortcut instead of predefined set of keyboard shortcuts.
-
-* Fixed few reported bugs in the application.
+* Fixed various smaller bugs.

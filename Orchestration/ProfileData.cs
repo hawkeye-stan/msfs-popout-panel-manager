@@ -19,7 +19,7 @@ namespace MSFSPopoutPanelManager.Orchestration
         internal FlightSimData FlightSimDataRef { private get; set; }
 
         [IgnorePropertyChanged]
-        internal AppSettingData AppSettingDataRef { private get; set; }
+        public AppSettingData AppSettingDataRef { private get; set; }
 
         public void AddProfile(string profileName)
         {
@@ -29,7 +29,7 @@ namespace MSFSPopoutPanelManager.Orchestration
             Profiles.Add(newProfile);
             SetActiveProfile(newProfile.Id);
 
-            ProfileDataManager.WriteProfiles(Profiles);
+            ProfileDataManager.WriteProfiles(Profiles, AppSettingDataRef.ApplicationSetting.GeneralSetting.UseApplicationDataPath);
 
             AppSettingDataRef.ApplicationSetting.SystemSetting.LastUsedProfileId = newProfile.Id;
         }
@@ -64,7 +64,7 @@ namespace MSFSPopoutPanelManager.Orchestration
             Profiles.Add(newProfile);
             SetActiveProfile(newProfile.Id);
 
-            ProfileDataManager.WriteProfiles(Profiles);
+            ProfileDataManager.WriteProfiles(Profiles, AppSettingDataRef.ApplicationSetting.GeneralSetting.UseApplicationDataPath);
 
             AppSettingDataRef.ApplicationSetting.SystemSetting.LastUsedProfileId = newProfile.Id;
         }
@@ -99,7 +99,7 @@ namespace MSFSPopoutPanelManager.Orchestration
 
             ActiveProfile.AircraftBindings.Add(aircraft);
 
-            ProfileDataManager.WriteProfiles(Profiles);
+            ProfileDataManager.WriteProfiles(Profiles, AppSettingDataRef.ApplicationSetting.GeneralSetting.UseApplicationDataPath);
             RefreshProfile();
         }
 
@@ -110,13 +110,13 @@ namespace MSFSPopoutPanelManager.Orchestration
 
             ActiveProfile.AircraftBindings.Remove(aircraft);
 
-            ProfileDataManager.WriteProfiles(Profiles);
+            ProfileDataManager.WriteProfiles(Profiles, AppSettingDataRef.ApplicationSetting.GeneralSetting.UseApplicationDataPath);
             RefreshProfile();
         }
 
         public void ReadProfiles()
         {
-            Profiles = new SortedObservableCollection<UserProfile>(ProfileDataManager.ReadProfiles());
+            Profiles = new SortedObservableCollection<UserProfile>(ProfileDataManager.ReadProfiles(AppSettingDataRef.ApplicationSetting.GeneralSetting.UseApplicationDataPath));
             Profiles.ToList().ForEach(p => p.OnProfileChanged += (_, _) => WriteProfiles());
 
             // Detect profiles collection changes
@@ -135,7 +135,7 @@ namespace MSFSPopoutPanelManager.Orchestration
         public void WriteProfiles()
         {
             Debug.WriteLine("Saving Data ... ");
-            ProfileDataManager.WriteProfiles(Profiles);
+            ProfileDataManager.WriteProfiles(Profiles, AppSettingDataRef.ApplicationSetting.GeneralSetting.UseApplicationDataPath);
         }
 
         public void SetActiveProfile(Guid id)

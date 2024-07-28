@@ -209,7 +209,7 @@ namespace MSFSPopoutPanelManager.Orchestration
             foreach (var panel in panels)
             {
 
-                if (!panel.FloatingPanel.IsEnabled || panel.FullScreen)
+                if (!panel.FloatingPanel.IsEnabled)
                     return;
 
                 if (panel.PanelType is not (PanelType.CustomPopout or PanelType.BuiltInPopout))

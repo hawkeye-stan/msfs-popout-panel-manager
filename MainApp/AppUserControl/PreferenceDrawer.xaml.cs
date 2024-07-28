@@ -1,7 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using MSFSPopoutPanelManager.MainApp.ViewModel;
+using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
+using System.Windows.Navigation;
 
 namespace MSFSPopoutPanelManager.MainApp.AppUserControl
 {
@@ -21,6 +24,12 @@ namespace MSFSPopoutPanelManager.MainApp.AppUserControl
                 DataContext = viewModel;
                 InitializeComponent();
             };
+        }
+
+        private void Hyperlink_OpenDataFolder(object sender, RequestNavigateEventArgs e)
+        {
+            // ToDo: check for folder existence
+            Process.Start("explorer.exe",e.Uri.ToString());
         }
     }
 }

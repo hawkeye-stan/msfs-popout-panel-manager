@@ -180,6 +180,40 @@
                             <TextBlock Style="{StaticResource TextBlockLabel}">Automatically close the application when exiting MSFS.</TextBlock>
                         </WrapPanel>
                     </WrapPanel>
+                    <WrapPanel
+                        Width="Auto"
+                        Margin="0,0,20,20"
+                        Orientation="Vertical">
+                        <TextBlock Style="{StaticResource TextBlockHeading}">Folder Path to Store POPM Configuration and Profiles</TextBlock>
+                        <Line
+                            Stretch="Fill"
+                            Stroke="Gray"
+                            X2="1" />
+                        <WrapPanel>
+                            <ComboBox
+                                Width="200"
+                                Margin="20,0,0,0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                SelectedValue="{Binding AppSettingData.ApplicationSetting.GeneralSetting.UseApplicationDataPath, Mode=TwoWay}"
+                                SelectedValuePath="Tag">
+                                <ComboBoxItem Content="Documents folder (Default)" Tag="False" />
+                                <ComboBoxItem Content="AppData Roaming folder" Tag="True" />
+                            </ComboBox>
+                            <TextBlock Margin="30,5,0,0" FontSize="12">
+                                <Hyperlink
+                                    NavigateUri="{Binding AppSettingData.ApplicationSetting.GeneralSetting.ApplicationDataPath}"
+                                    RequestNavigate="Hyperlink_OpenDataFolder"
+                                    Style="{StaticResource MaterialDesignBody2Hyperlink}"
+                                    TextDecorations="Underline">
+                                    <TextBlock
+                                        Margin="0,0,0,0"
+                                        FontSize="12"
+                                        Text="{Binding AppSettingData.ApplicationSetting.GeneralSetting.ApplicationDataPath}" />
+                                </Hyperlink>
+                            </TextBlock>
+                        </WrapPanel>
+                    </WrapPanel>
                     <WrapPanel Margin="0,0,20,20" Orientation="Vertical">
                         <TextBlock Style="{StaticResource TextBlockHeading}">Turbo Mode</TextBlock>
                         <Line
@@ -630,31 +664,29 @@
                 </WrapPanel>
 
                 <!--  Dynamic LOD Settings  -->
-                <WrapPanel Visibility="{c:Binding LocalCompileOnly}">
-                    <WrapPanel Orientation="Vertical" Visibility="{Binding ElementName=CategoryDynamicLodSettings, Path=IsSelected, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
-                        <WrapPanel Margin="0,0,20,20" Orientation="Vertical">
-                            <WrapPanel>
-                                <TextBlock
-                                    Padding="0,0,5,0"
-                                    Foreground="Red"
-                                    Style="{StaticResource TextBlockHeading}">
-                                    (Unsupported Feature)
-                                </TextBlock>
-                                <TextBlock Style="{StaticResource TextBlockHeading}">Dynamically adjust Terrain and Object Level of Details</TextBlock>
-                            </WrapPanel>
-                            <Line
-                                Stretch="Fill"
-                                Stroke="Gray"
-                                X2="1" />
-                            <WrapPanel>
-                                <ToggleButton IsChecked="{Binding AppSettingData.ApplicationSetting.DynamicLodSetting.IsEnabled, Mode=TwoWay}" Style="{StaticResource ToggleButton}" />
-                                <TextBlock Style="{StaticResource TextBlockLabel}">
-                                    Enable automatic adjustments of TLOD and OLOD to get the desired targeted frame rate (FPS).
-                                </TextBlock>
-                            </WrapPanel>
-                            <WrapPanel Visibility="{Binding Path=AppSettingData.ApplicationSetting.DynamicLodSetting.IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
-                                <appUserControl:DynamicLodPreference />
-                            </WrapPanel>
+                <WrapPanel Orientation="Vertical" Visibility="{Binding ElementName=CategoryDynamicLodSettings, Path=IsSelected, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                    <WrapPanel Margin="0,0,20,20" Orientation="Vertical">
+                        <WrapPanel>
+                            <TextBlock
+                                Padding="0,0,5,0"
+                                Foreground="Red"
+                                Style="{StaticResource TextBlockHeading}">
+                                (Unsupported Feature)
+                            </TextBlock>
+                            <TextBlock Style="{StaticResource TextBlockHeading}">Dynamically adjust Terrain and Object Level of Details</TextBlock>
+                        </WrapPanel>
+                        <Line
+                            Stretch="Fill"
+                            Stroke="Gray"
+                            X2="1" />
+                        <WrapPanel>
+                            <ToggleButton IsChecked="{Binding AppSettingData.ApplicationSetting.DynamicLodSetting.IsEnabled, Mode=TwoWay}" Style="{StaticResource ToggleButton}" />
+                            <TextBlock Style="{StaticResource TextBlockLabel}">
+                                Enable automatic adjustments of TLOD and OLOD to get the desired targeted frame rate (FPS).
+                            </TextBlock>
+                        </WrapPanel>
+                        <WrapPanel Visibility="{Binding Path=AppSettingData.ApplicationSetting.DynamicLodSetting.IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                            <appUserControl:DynamicLodPreference />
                         </WrapPanel>
                     </WrapPanel>
                 </WrapPanel>

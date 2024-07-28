@@ -21,7 +21,7 @@ namespace MSFSPopoutPanelManager.Orchestration
                 ApplicationSetting = new ApplicationSetting();
                 AppSettingDataManager.WriteAppSetting(ApplicationSetting);
             }
-
+            
             // Auto Save data
             ApplicationSetting.PropertyChanged += (_, e) =>
             {

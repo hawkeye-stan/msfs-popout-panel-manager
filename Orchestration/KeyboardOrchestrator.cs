@@ -69,9 +69,13 @@ namespace MSFSPopoutPanelManager.Orchestration
         {
             Debug.WriteLine("Ends Global Keyboard Hook (Forced)");
             _keyPressCaptureList = new List<string>();
-            _globalKeyboardHook.OnKeyboardPressed -= HandleGlobalKeyboardHookOnKeyboardPressed;
-            _globalKeyboardHook?.Dispose();
-            _globalKeyboardHook = null;
+
+            if (_globalKeyboardHook != null)
+            {
+                _globalKeyboardHook.OnKeyboardPressed -= HandleGlobalKeyboardHookOnKeyboardPressed;
+                _globalKeyboardHook?.Dispose();
+                _globalKeyboardHook = null;
+            }
         }
 
         private void HandleGlobalKeyboardHookOnKeyboardPressed(object sender, GlobalKeyboardHookEventArgs e)

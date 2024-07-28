@@ -13,7 +13,7 @@ namespace MSFSPopoutPanelManager.MainApp.AppWindow
     {
         private readonly NumPadViewModel _viewModel;
 
-        public NumPad(Guid panelId)
+        public NumPad(Guid panelId, int initialWidth, int initialHeight)
         {
             InitializeComponent();
             if (DesignerProperties.GetIsInDesignMode(new DependencyObject()))
@@ -30,8 +30,19 @@ namespace MSFSPopoutPanelManager.MainApp.AppWindow
                     throw new ApplicationException("Unable to instantiate NumPad window");
 
                 _viewModel.PanelConfig.PanelHandle = new WindowInteropHelper(window).Handle;
-                _viewModel.PanelConfig.Width = Convert.ToInt32(Width);
-                _viewModel.PanelConfig.Height = Convert.ToInt32(Height);
+
+                if (initialWidth == 0 && initialHeight == 0)
+                {
+                    this.Width = 300;
+                    this.Height = 400;
+                    _viewModel.PanelConfig.Width = Convert.ToInt16(this.Width);
+                    _viewModel.PanelConfig.Height = Convert.ToInt32(this.Height);
+                }
+                else
+                {
+                    this.Width = initialWidth;
+                    this.Height = initialHeight;
+                }
             };
 
             this.MouseLeftButtonDown += NumPad_MouseLeftButtonDown;

@@ -144,7 +144,7 @@ namespace MSFSPopoutPanelManager.DomainModel.Setting
         private static string GetFilePath()
         {
             var filePathMsStore = Environment.ExpandEnvironmentVariables("%LocalAppData%") + @"\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\";
-            var filePathSteam = Environment.ExpandEnvironmentVariables("%AppData%") + @"\Microsoft Flight Simulator\LocalCache\";
+            var filePathSteam = Environment.ExpandEnvironmentVariables("%AppData%") + @"\Microsoft Flight Simulator\";
 
             if (Directory.Exists(filePathMsStore))
                 return filePathMsStore + "exe.xml";
@@ -187,5 +187,8 @@ namespace MSFSPopoutPanelManager.DomainModel.Setting
 
         [XmlElement(ElementName = "Path")]
         public string Path { get; set; }
+
+        [XmlElement(ElementName = "CommandLine")]
+        public string CommandLine { get; set; }
     }
 }

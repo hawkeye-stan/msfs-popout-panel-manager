@@ -3,10 +3,8 @@ using MSFSPopoutPanelManager.DomainModel.Setting;
 using MSFSPopoutPanelManager.Shared;
 using MSFSPopoutPanelManager.SimConnectAgent;
 using MSFSPopoutPanelManager.WindowsAgent;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Diagnostics;
-using System.Dynamic;
 using System.Runtime.InteropServices;
 
 namespace MSFSPopoutPanelManager.Orchestration

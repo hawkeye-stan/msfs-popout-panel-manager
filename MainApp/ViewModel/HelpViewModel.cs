@@ -16,8 +16,6 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
 
         public ICommand DeleteAppCacheCommand { get; private set; }
 
-        public ICommand RollBackCommand { get; private set; }
-
         public string ApplicationVersion { get; private set; }
 
         public bool IsRollBackCommandVisible { get; private set; }
@@ -30,7 +28,6 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
 
             HyperLinkCommand = new DelegateCommand<string>(OnHyperLinkActivated);
             DeleteAppCacheCommand = new DelegateCommand(OnDeleteAppCache);
-            RollBackCommand = new DelegateCommand(OnRollBack);
 
 #if DEBUG
             var buildConfig = " (Debug)";
@@ -41,8 +38,6 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
 #endif
 
             ApplicationVersion = $"{WindowProcessManager.GetApplicationVersion()}{buildConfig}";
-
-            IsRollBackCommandVisible = _helpOrchestrator.IsRollBackUpdateEnabled();
             HasOrphanAppCache = _helpOrchestrator.HasOrphanAppCache();
         }
 
@@ -68,9 +63,6 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
                 case "Version Info":
                     _helpOrchestrator.OpenVersionInfo();
                     break;
-                case "Open Data Folder":
-                    _helpOrchestrator.OpenDataFolder();
-                    break;
                 case "Download VCC Library":
                     _helpOrchestrator.DownloadVccLibrary();
                     break;
@@ -81,16 +73,6 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
         {
             _helpOrchestrator.DeleteAppCache();
             HasOrphanAppCache = _helpOrchestrator.HasOrphanAppCache();
-        }
-
-        private async void OnRollBack()
-        {
-            var result = await DialogHost.Show(new ConfirmationDialog($"WARNING!{Environment.NewLine}Are you sure you want to rollback to previous version of Pop Out Panel Manager (v3.4.6.0321)? All your changes since updated to v4.0.0 will be lost. Backups of user profile and application settings file from previous version of the application will be restored.", "Rollback"), "RootDialog");
-
-            if (result != null && result.Equals("CONFIRM"))
-            {
-                _helpOrchestrator.RollBackUpdate();
-            }
         }
     }
 }

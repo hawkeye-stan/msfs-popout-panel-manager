@@ -41,6 +41,25 @@ namespace MSFSPopoutPanelManager.Orchestration
             Task.Run(() => _flightSimOrchestrator.StartSimConnectServer());                                      // Start the SimConnect server
 
             _keyboardOrchestrator.Initialize();
+
+            AppSettingData.ApplicationSetting.GeneralSetting.OnApplicationDataPathUpdated += (_, e) =>
+            {
+                AppSettingDataManager.MoveAppSettings(AppSettingData.ApplicationSetting);
+                ProfileDataManager.MoveProfiles(ProfileData.Profiles, e);
+
+                FileLogger.UseApplicationDataPath = e;
+
+                try
+                {
+                    FileLogger.CloseFileLogger();
+                    if (Directory.Exists(FileIo.GetUserDataFilePath(!e)))
+                        Directory.Delete(FileIo.GetUserDataFilePath(!e), true);
+                }
+                catch
+                {
+                    FileLogger.WriteLog($"Unable to remove old POPM data folder. {FileIo.GetUserDataFilePath(!e)}", StatusMessageType.Error);
+                }
+            };
         }
 
         public void ApplicationClose()
@@ -56,7 +75,7 @@ namespace MSFSPopoutPanelManager.Orchestration
 
         private void CheckForAutoUpdate()
         {
-            var jsonPath = Path.Combine(Path.Combine(FileIo.GetUserDataFilePath(), "autoupdate.json"));
+            var jsonPath = Path.Combine(Path.Combine(FileIo.GetUserDataFilePath(AppSettingData.ApplicationSetting.GeneralSetting.UseApplicationDataPath), "autoupdate.json"));
             AutoUpdater.PersistenceProvider = new JsonFilePersistenceProvider(jsonPath);
             AutoUpdater.Synchronous = true;
             AutoUpdater.AppTitle = "MSFS Pop Out Panel Manager";

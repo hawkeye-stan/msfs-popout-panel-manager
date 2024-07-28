@@ -11,7 +11,7 @@ namespace MSFSPopoutPanelManager.Shared
     public class FileLogger
     {
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod()?.DeclaringType);
-
+        
         static FileLogger()
         {
             // Setup log4Net
@@ -24,17 +24,11 @@ namespace MSFSPopoutPanelManager.Shared
             if (LogManager.GetRepository(Assembly.GetEntryAssembly()).GetAppenders().First() is not RollingFileAppender errorLogAppender) 
                 return;
 
-            errorLogAppender.File = FileIo.GetErrorLogFilePath();
+            errorLogAppender.File = FileIo.GetErrorLogFilePath(UseApplicationDataPath);
             errorLogAppender.ActivateOptions();
-
-            //var infoLogAppender = LogManager.GetRepository(Assembly.GetEntryAssembly()).GetAppenders().Skip(1).First() as RollingFileAppender;
-            //infoLogAppender.File = FileIo.GetInfoLogFilePath();
-            //infoLogAppender.ActivateOptions();
-
-            //var debugLogAppender = LogManager.GetRepository(Assembly.GetEntryAssembly()).GetAppenders().Skip(2).First() as RollingFileAppender;
-            //debugLogAppender.File = FileIo.GetDebugLogFilePath();
-            //debugLogAppender.ActivateOptions();
         }
+
+        public static bool UseApplicationDataPath { get; set; } = false;
 
         public static void WriteLog(string message, StatusMessageType messageType)
         {
@@ -43,18 +37,23 @@ namespace MSFSPopoutPanelManager.Shared
                 case StatusMessageType.Error:
                     Log.Error(message);
                     break;
-                    //case StatusMessageType.Info:
-                    //    Log.Info(message);
-                    //    break;
-                    //case StatusMessageType.Debug:
-                    //    Log.Debug(message);
-                    //    break;
+                //case StatusMessageType.Info:
+                //    Log.Info(message);
+                //    break;
+                //case StatusMessageType.Debug:
+                //    Log.Debug(message);
+                //    break;
             }
         }
 
         public static void WriteException(string message, Exception exception)
         {
             Log.Error(message, exception);
+        }
+
+        public static void CloseFileLogger()
+        {
+            LogManager.ShutdownRepository();
         }
     }
 }
