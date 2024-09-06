@@ -15,7 +15,7 @@ namespace MSFSPopoutPanelManager.Orchestration
         private System.Timers.Timer _msfsGameExitDetectionTimer;
         private SimConnectProvider _simConnectProvider;
 
-        private DynamicLodOrchestrator _dynamicLodOrchestrator;
+        private readonly DynamicLodOrchestrator _dynamicLodOrchestrator;
         private bool _isTurnedOnPower;
         private bool _isTurnedOnAvionics;
 
@@ -77,17 +77,14 @@ namespace MSFSPopoutPanelManager.Orchestration
                 if (!AppSettingData.ApplicationSetting.DynamicLodSetting.IsEnabled || !FlightSimData.IsFlightStarted)
                     return;
 
-                var isVr = _dynamicLodOrchestrator.ReadIsVr();
-                MapDynamicLodSimConnectData(e, isVr);
-
                 var isPaused = (AppSettingData.ApplicationSetting.DynamicLodSetting.PauseWhenMsfsLoseFocus && !WindowActionManager.IsMsfsInFocus()) ||
                                (AppSettingData.ApplicationSetting.DynamicLodSetting.PauseOutsideCockpitView && FlightSimData.CameraState != CameraState.Cockpit);
 
                 if (isPaused)
                     return;
 
-                FlightSimData.DynamicLodSimData.Fps = FpsCalc.GetAverageFps(_dynamicLodOrchestrator.ReadIsFg(isVr) ? _currentFps * 2 : _currentFps);
-                _dynamicLodOrchestrator.UpdateLod(isVr);
+                MapDynamicLodSimConnectData(e);
+                _dynamicLodOrchestrator.UpdateLod();
             };
 
             _simConnectProvider.OnSimConnectDataEventFrameRefreshed += (_, e) =>
@@ -393,6 +390,7 @@ namespace MSFSPopoutPanelManager.Orchestration
             FlightSimData.IsFlightStarted = false;
 
             StopDynamicLod();
+            FpsCalc.Reset();
             FlightSimData.DynamicLodSimData.Clear();
         }
 
@@ -492,7 +490,7 @@ namespace MSFSPopoutPanelManager.Orchestration
                 FlightSimData.HudBarData.SimRate = newValue;
         }
 
-        private void MapDynamicLodSimConnectData(List<SimDataItem> simData, bool isVr)
+        private void MapDynamicLodSimConnectData(List<SimDataItem> simData)
         {
             if (CompareSimConnectData(simData, SimDataDefinitions.PropName.PlaneAltAboveGround, FlightSimData.DynamicLodSimData.Agl, out var newValue))
                 FlightSimData.DynamicLodSimData.Agl = newValue;
@@ -509,17 +507,19 @@ namespace MSFSPopoutPanelManager.Orchestration
             if (CompareSimConnectData(simData, SimDataDefinitions.PropName.SimOnGround, 1.0f, out newValue))
                 FlightSimData.DynamicLodSimData.PlaneOnGround = Convert.ToBoolean(newValue);
 
-            var tlod = _dynamicLodOrchestrator.ReadTlod(isVr);
+            var tlod = _dynamicLodOrchestrator.ReadTlod();
             if (FlightSimData.DynamicLodSimData.Tlod != tlod)
                 FlightSimData.DynamicLodSimData.Tlod = tlod;
 
-            var olod = _dynamicLodOrchestrator.ReadOlod(isVr);
+            var olod = _dynamicLodOrchestrator.ReadOlod();
             if (FlightSimData.DynamicLodSimData.Olod != olod)
                 FlightSimData.DynamicLodSimData.Olod = olod;
 
-            var cloudQuality = _dynamicLodOrchestrator.ReadCloudQuality(isVr);
+            var cloudQuality = _dynamicLodOrchestrator.ReadCloudQuality();
             if (FlightSimData.DynamicLodSimData.CloudQuality != cloudQuality)
                 FlightSimData.DynamicLodSimData.CloudQuality = cloudQuality;
+
+            FlightSimData.DynamicLodSimData.Fps = FpsCalc.GetAverageFps(_dynamicLodOrchestrator.ReadIsFg() ? _currentFps * 2 : _currentFps);
         }
 
         private int _currentFps;

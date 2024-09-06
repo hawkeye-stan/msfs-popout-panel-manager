@@ -419,6 +419,9 @@ namespace MSFSPopoutPanelManager.Orchestration
                     WindowActionManager.SetWindowTitleBarColor(panelConfig.PanelHandle, AppSettingData.ApplicationSetting.PopOutSetting.PopOutTitleBarCustomization.HexColor);
                 }
             }
+
+            if(ActiveProfile.PanelConfigs.Any(p => p.AlwaysOnTop))
+                WindowActionManager.ApplyAlwaysOnTop(WindowProcessManager.SimulatorProcess.Handle, PanelType.FlightSimMainWindow, true);
         }
 
         private async Task StepPostPopout()

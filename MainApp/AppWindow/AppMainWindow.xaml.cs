@@ -26,6 +26,12 @@ namespace MSFSPopoutPanelManager.MainApp.AppWindow
             StateChanged += AppWindow_StateChanged;
             WindowActionManager.OnPopOutManagerAlwaysOnTopChanged += (_, e) => { Topmost = e; };
             MouseLeftButtonDown += (_, _) => DragMove();
+
+            GotFocus += (_, _) =>
+            {
+                if (_viewModel.AppSettingData.ApplicationSetting.GeneralSetting.AlwaysOnTop)
+                    WindowActionManager.ApplyAlwaysOnTop(_viewModel.ApplicationHandle, PanelType.PopOutManager, true);
+            };
         }
 
         private void AppWindow_Loaded(object sender, RoutedEventArgs e)

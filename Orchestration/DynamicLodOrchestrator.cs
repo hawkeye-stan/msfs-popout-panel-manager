@@ -1,7 +1,6 @@
 ﻿using MSFSPopoutPanelManager.DomainModel.DynamicLod;
 using MSFSPopoutPanelManager.DomainModel.Setting;
 using MSFSPopoutPanelManager.Shared;
-using MSFSPopoutPanelManager.SimConnectAgent;
 using MSFSPopoutPanelManager.WindowsAgent;
 using System;
 using System.Diagnostics;
@@ -17,12 +16,9 @@ namespace MSFSPopoutPanelManager.Orchestration
         private const int PROCESS_VM_WRITE = 0x0020;
         private const long OFFSET_MODULE_BASE =0x004B2368;
         private const long OFFSET_POINTER_MAIN = 0x3D0;
-        private const long OFFSET_POINTER_TLOD_VR = 0x114;
         private const long OFFSET_POINTER_TLOD = 0xC;
         private const long OFFSET_POINTER_OLOD = 0xC;
-        private const long OFFSET_POINTER_CLOUDQ = 0x44;
-        private const long OFFSET_POINTER_CLOUDQ_VR = 0x108;
-        private const long OFFSET_POINTER_VR_MODE = 0x1C;
+        private const long OFFSET_POINTER_CLOUD_QUALITY = 0x44;
         private const long OFFSET_POINTER_FG_MODE = 0x4A;
         private const long OFFSET_POINTER_ANSIO_FILTER = -0x18;
         private const long OFFSET_POINTER_WATER_WAVES = 0x3C;
@@ -34,19 +30,15 @@ namespace MSFSPopoutPanelManager.Orchestration
 
         private long _addressTlod;
         private long _addressOlod;
-        private long _addressTlodVr;
-        private long _addressOlodVr;
         private long _addressCloudQ;
-        private long _addressCloudQVr;
-        private long _addressVrMode;
         private long _addressFgMode;
 
         private DynamicLodSetting DynamicLodSetting => AppSettingData.ApplicationSetting.DynamicLodSetting;
 
-        private DynamicLodSimData SimData => FlightSimData.DynamicLodSimData;
+        private DynamicLodSimData DynamicLodSimData => FlightSimData.DynamicLodSimData;
 
         private DateTime _lastLodUpdateTime = DateTime.Now;
-        private bool _isDecreasedCloudQualityActive = false;
+        private bool _isDecreasedCloudQualityActive;
 
         public DynamicLodOrchestrator(SharedStorage sharedStorage) : base(sharedStorage) {}
 
@@ -70,13 +62,9 @@ namespace MSFSPopoutPanelManager.Orchestration
 
             if (_addressTlod > 0)
             {
-                _addressTlodVr = ReadMemory<long>(_addressTlod) + OFFSET_POINTER_TLOD_VR;
                 _addressTlod = ReadMemory<long>(_addressTlod) + OFFSET_POINTER_TLOD;
                 _addressOlod = _addressTlod + OFFSET_POINTER_OLOD;
-                _addressOlodVr = _addressTlodVr + OFFSET_POINTER_OLOD;
-                _addressCloudQ = _addressTlod + OFFSET_POINTER_CLOUDQ;
-                _addressCloudQVr = _addressCloudQ + OFFSET_POINTER_CLOUDQ_VR;
-                _addressVrMode = _addressTlod - OFFSET_POINTER_VR_MODE;
+                _addressCloudQ = _addressTlod + OFFSET_POINTER_CLOUD_QUALITY;
                 _addressFgMode = _addressTlod - OFFSET_POINTER_FG_MODE;
 
                 if (!MemoryBoundaryTest())
@@ -99,9 +87,8 @@ namespace MSFSPopoutPanelManager.Orchestration
 
             if (DynamicLodSetting.ResetEnabled)
             {
-                var isVr = ReadIsVr();
-                WriteMemory(isVr ? _addressTlodVr : _addressTlod, DynamicLodSetting.ResetTlod / 100.0f);
-                WriteMemory(isVr ? _addressOlodVr : _addressOlod, DynamicLodSetting.ResetOlod / 100.0f);
+                WriteMemory(_addressTlod, DynamicLodSetting.ResetTlod / 100.0f);
+                WriteMemory(_addressOlod, DynamicLodSetting.ResetOlod / 100.0f);
             }
 
             _isActive = false;
@@ -109,19 +96,19 @@ namespace MSFSPopoutPanelManager.Orchestration
             Debug.WriteLine($"Reset to custom LOD: TLOD: {DynamicLodSetting.ResetTlod}, OLOD: {DynamicLodSetting.ResetOlod}");
         }
 
-        public int ReadTlod(bool isVr = false)
+        public int ReadTlod()
         {
-            return Convert.ToInt32(ReadMemory<float>(isVr ? _addressTlodVr : _addressTlod) * 100.0f);
+            return Convert.ToInt32(ReadMemory<float>(_addressTlod) * 100.0f);
         }
 
-        public int ReadOlod(bool isVr = false)
+        public int ReadOlod()
         {
-            return Convert.ToInt32(ReadMemory<float>(isVr ? _addressOlodVr : _addressOlod) * 100.0f);
+            return Convert.ToInt32(ReadMemory<float>(_addressOlod) * 100.0f);
         }
 
-        public string ReadCloudQuality(bool isVr = false)
+        public string ReadCloudQuality()
         {
-            return ReadCloudQualitySimValue(isVr) switch
+            return ReadCloudQualitySimValue() switch
             {
                 0 => "Low",
                 1 => "Medium",
@@ -131,33 +118,25 @@ namespace MSFSPopoutPanelManager.Orchestration
             };
         }
 
-        public int ReadCloudQualitySimValue(bool isVr = false)
+        public int ReadCloudQualitySimValue()
         {
-            return Convert.ToInt32(ReadMemory<int>(isVr ? _addressCloudQVr : _addressCloudQ));
+            return Convert.ToInt32(ReadMemory<int>(_addressCloudQ));
         }
 
-        public bool ReadIsVr()
+        public bool ReadIsFg()
         {
-            return ReadMemory<int>(_addressVrMode) == 1;
-        }
-
-        public bool ReadIsFg(bool isVr)
-        {
-            if (isVr)
-                return false;
-
             return ReadMemory<byte>(_addressFgMode) == 1;
         }
         
-        public void UpdateLod(bool isVr)
+        public void UpdateLod()
         {
+            if (!FlightSimData.IsFlightStarted || !FlightSimData.IsInCockpit)
+                return;
+            
             if (DateTime.Now - _lastLodUpdateTime <= TimeSpan.FromSeconds(1))
                 return;
 
-            if (!FlightSimData.IsFlightStarted || !FlightSimData.IsInCockpit || (DynamicLodSetting.PauseOutsideCockpitView && FlightSimData.CameraState != CameraState.Cockpit))
-                return;
-
-            var deltaFps = SimData.Fps - DynamicLodSetting.TargetedFps;
+            var deltaFps = DynamicLodSimData.Fps - DynamicLodSetting.TargetedFps;
             if (Math.Abs(deltaFps) < DynamicLodSetting.TargetedFps * DynamicLodSetting.FpsTolerance / 100.0)       // within FPS tolerance
                 return;
             
@@ -246,10 +225,9 @@ namespace MSFSPopoutPanelManager.Orchestration
         private bool MemoryBoundaryTest()
         {
             // Boundary check a few known setting memory addresses to see if any fail which likely indicates MSFS memory map has changed
-            if (ReadTlod() < 10 || ReadTlod() > 1000 || ReadTlod(true) < 10 || ReadTlod(true) > 1000
-                || ReadOlod() < 10 || ReadOlod() > 1000 || ReadOlod(true) < 10 || ReadOlod(true) > 1000
-                || ReadCloudQuality() == "N/A" || ReadCloudQuality(true) == "N/A"
-                || ReadMemory<int>(_addressVrMode) < 0 || ReadMemory<int>(_addressVrMode) > 1
+            if (ReadTlod() < 10 || ReadTlod() > 1000 || ReadTlod() < 10 || ReadTlod() > 1000
+                || ReadOlod() < 10 || ReadOlod() > 1000 || ReadOlod() < 10 || ReadOlod() > 1000
+                || ReadCloudQuality() == "N/A" || ReadCloudQuality() == "N/A"
                 || ReadMemory<int>(_addressTlod + OFFSET_POINTER_ANSIO_FILTER) < 1 || ReadMemory<int>(_addressTlod + OFFSET_POINTER_ANSIO_FILTER) > 16
                 || !(ReadMemory<int>(_addressTlod + OFFSET_POINTER_WATER_WAVES) == 128 || ReadMemory<int>(_addressTlod + OFFSET_POINTER_WATER_WAVES) == 256 || ReadMemory<int>(_addressTlod + OFFSET_POINTER_WATER_WAVES) == 512))
             {
@@ -259,12 +237,12 @@ namespace MSFSPopoutPanelManager.Orchestration
             return true;
         }
         
-        private void SetTlod(int deltaFps, bool isVr = false)
+        private void SetTlod(int deltaFps)
         {
             var tlodStep = Math.Max(5, Math.Abs(deltaFps / 2));
-            var newTlod = SimData.Tlod + Math.Sign(deltaFps) * tlodStep;
+            var newTlod = DynamicLodSimData.Tlod + Math.Sign(deltaFps) * tlodStep;
 
-            if (DynamicLodSetting.TlodMinOnGround && SimData.AltAboveGround <= DynamicLodSetting.AltTlodBase)
+            if (DynamicLodSetting.TlodMinOnGround && DynamicLodSimData.AltAboveGround <= DynamicLodSetting.AltTlodBase)
             {
                 newTlod = DynamicLodSetting.TlodMin;
             }
@@ -277,17 +255,17 @@ namespace MSFSPopoutPanelManager.Orchestration
                 newTlod = DynamicLodSetting.TlodMax;
             }
 
-            if (ReadTlod(isVr) == newTlod)
+            if (ReadTlod() == newTlod)
                 return;
 
             // Adjust cloud quality if applicable
-            if (DynamicLodSetting.DecreaseCloudQuality && (!DynamicLodSetting.TlodMinOnGround && !(SimData.AltAboveGround <= DynamicLodSetting.AltTlodBase)))
+            if (DynamicLodSetting.DecreaseCloudQuality && (!DynamicLodSetting.TlodMinOnGround && !(DynamicLodSimData.AltAboveGround <= DynamicLodSetting.AltTlodBase)))
             {
                 switch (deltaFps)
                 {
                     case < 0 when newTlod < DynamicLodSetting.CloudRecoveryTlod && !_isDecreasedCloudQualityActive:
                         _isDecreasedCloudQualityActive = true;
-                        WriteMemory(isVr ? _addressCloudQVr : _addressCloudQ, ReadCloudQualitySimValue(isVr) - 1); 
+                        WriteMemory(_addressCloudQ, ReadCloudQualitySimValue() - 1); 
 
                         _lastLodUpdateTime =
                             _lastLodUpdateTime.AddSeconds(2); // Add extra delay for cloud setting to take effect
@@ -296,7 +274,7 @@ namespace MSFSPopoutPanelManager.Orchestration
                         return;
                     case > 0 when newTlod >= DynamicLodSetting.CloudRecoveryTlod && _isDecreasedCloudQualityActive:
                         _isDecreasedCloudQualityActive = false;
-                        WriteMemory(isVr ? _addressCloudQVr : _addressCloudQ, ReadCloudQualitySimValue(isVr) + 1); 
+                        WriteMemory(_addressCloudQ, ReadCloudQualitySimValue() + 1); 
 
                         _lastLodUpdateTime = _lastLodUpdateTime.AddSeconds(2);
                         Debug.WriteLine("New Cloud Quality written - 3.");
@@ -306,31 +284,31 @@ namespace MSFSPopoutPanelManager.Orchestration
             }
 
             Debug.WriteLine($"New TLOD written - {newTlod}.");
-            WriteMemory(isVr ? _addressTlodVr : _addressTlod, newTlod / 100.0f);
+            WriteMemory(_addressTlod, newTlod / 100.0f);
         }
 
-        private void SetOlod(bool isVr = false)
+        private void SetOlod()
         {
             int newOlod;
             
-            if (SimData.AltAboveGround < DynamicLodSetting.AltOlodBase)
+            if (DynamicLodSimData.AltAboveGround < DynamicLodSetting.AltOlodBase)
             {
                 newOlod = DynamicLodSetting.OlodBase;
             }
-            else if (SimData.AltAboveGround > DynamicLodSetting.AltOlodTop)
+            else if (DynamicLodSimData.AltAboveGround > DynamicLodSetting.AltOlodTop)
             {
                 newOlod = DynamicLodSetting.OlodTop;
             }
             else
             {
-                newOlod = Convert.ToInt32(DynamicLodSetting.OlodBase - (DynamicLodSetting.OlodBase - DynamicLodSetting.OlodTop) * (SimData.AltAboveGround - DynamicLodSetting.AltOlodBase) / (DynamicLodSetting.AltOlodTop - DynamicLodSetting.AltOlodBase));
+                newOlod = Convert.ToInt32(DynamicLodSetting.OlodBase - (DynamicLodSetting.OlodBase - DynamicLodSetting.OlodTop) * (DynamicLodSimData.AltAboveGround - DynamicLodSetting.AltOlodBase) / (DynamicLodSetting.AltOlodTop - DynamicLodSetting.AltOlodBase));
             }
 
-            if (ReadOlod(isVr) == newOlod)
+            if (ReadOlod() == newOlod)
                 return;
 
             Debug.WriteLine($"New OLOD written - {newOlod}.");
-            WriteMemory(isVr ? _addressOlodVr : _addressOlod, newOlod / 100.0f);
+            WriteMemory(_addressOlod, newOlod / 100.0f);
         }
     }
 }
