@@ -248,7 +248,6 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
             if (ActiveProfile == null)
                 return;
 
-
             if (ActiveProfile.ProfileSetting.SwitchWindowConfig.IsEnabled)
             {
                 if (ActiveProfile.PanelConfigs.Any(p => p.PanelType == PanelType.SwitchWindow))
@@ -268,8 +267,8 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
             else
             {
                 ActiveProfile.PanelConfigs.RemoveAll(p => p.PanelType == PanelType.SwitchWindow);
+                ActiveProfile.ProfileSetting.SwitchWindowConfig.Panels = null;
             }
-
         }
 
         private void OnRefocusDisplayUpdated()

@@ -26,27 +26,7 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="30" />
             </Grid.ColumnDefinitions>
-            <WrapPanel Grid.Column="0" VerticalAlignment="Center">
-                <Button
-                    Width="Auto"
-                    Height="Auto"
-                    Margin="5,0"
-                    Command="{Binding ButtonCommand}"
-                    CommandParameter="VerticalPanel"
-                    Content="Main"
-                    FontSize="28"
-                    Foreground="White"
-                    Style="{StaticResource MaterialDesignOutlinedButton}" />
-                <Button
-                    Width="Auto"
-                    Height="Auto"
-                    Margin="5,0"
-                    Command="{Binding ButtonCommand}"
-                    CommandParameter="OverheadPanel"
-                    Content="Overhead"
-                    FontSize="28"
-                    Foreground="White"
-                    Style="{StaticResource MaterialDesignOutlinedButton}" />
+            <WrapPanel Grid.Column="0" VerticalAlignment="Center" Name="WrapPanelCustomButtons">
             </WrapPanel>
             <WrapPanel
                 Grid.Column="1"

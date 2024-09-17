@@ -24,10 +24,10 @@ namespace MSFSPopoutPanelManager.MainApp.AppUserControl
             _viewModel = App.AppHost.Services.GetRequiredService<ProfileCardViewModel>();
             Loaded += (_, _) => { DataContext = _viewModel; };
 
-#if LOCAL
-            this.wrapPanelSwitchWindow.Visibility = Visibility.Visible;
+#if LOCAL || DEBUG
+            this.WrapPanelSwitchWindow.Visibility = Visibility.Visible;
 #else
-            this.wrapPanelSwitchWindow.Visibility = Visibility.Collapsed;
+            this.WrapPanelSwitchWindow.Visibility = Visibility.Collapsed;
 #endif
         }
 

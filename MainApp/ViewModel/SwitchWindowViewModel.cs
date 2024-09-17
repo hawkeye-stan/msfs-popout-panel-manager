@@ -23,15 +23,10 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
 
         private void OnButtonActivated(string commandParameter)
         {
-            switch (commandParameter)
-            {
-                case "VerticalPanel":
-                    PInvoke.SwitchToThisWindow(PInvoke.GetWindowHandle("737 Instruments Vertical"), true);
-                    break;
-                case "OverheadPanel":
-                    PInvoke.SwitchToThisWindow(PInvoke.GetWindowHandle("737 Instruments Overhead"), true);
-                    break;
-            }
+            var handle = PInvoke.GetWindowHandle(commandParameter);
+
+            if(handle != IntPtr.Zero) 
+                PInvoke.SwitchToThisWindow(handle, true);
         }
     }
 }
