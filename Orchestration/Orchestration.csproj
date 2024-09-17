@@ -11,9 +11,9 @@
     <PackageProjectUrl>https://github.com/hawkeye-stan/msfs-popout-panel-manager</PackageProjectUrl>
     <RootNamespace>MSFSPopoutPanelManager.Orchestration</RootNamespace>
     <Platforms>x64</Platforms>
-    <Version>4.1.1.0</Version>
-    <AssemblyVersion>4.1.1.0</AssemblyVersion>
-    <FileVersion>4.1.1.0</FileVersion>
+    <Version>4.1.2.0</Version>
+    <AssemblyVersion>4.1.2.0</AssemblyVersion>
+    <FileVersion>4.1.2.0</FileVersion>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <DebugType>Embedded</DebugType>
     <Configurations>Debug;Release;Local</Configurations>

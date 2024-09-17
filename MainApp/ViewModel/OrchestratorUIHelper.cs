@@ -36,6 +36,9 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
 
             panelPopOutOrchestrator.OnNumPadOpened -= HandleOnNumPadOpened;
             panelPopOutOrchestrator.OnNumPadOpened += HandleOnNumPadOpened;
+
+            panelPopOutOrchestrator.OnSwitchWindowOpened -= HandleOnSwitchWindowOpened;
+            panelPopOutOrchestrator.OnSwitchWindowOpened += HandleOnSwitchWindowOpened;
         }
 
         private void HandleShowOverlay(object sender, PanelConfig panelConfig)
@@ -89,6 +92,22 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
             {
                 var numPad = new NumPad(panelConfig.Id, panelConfig.Width, panelConfig.Height);
                 numPad.Show();
+
+                await Task.Run(() =>
+                {
+                    Thread.Sleep(1000);
+                    WindowActionManager.MoveWindow(panelConfig.PanelHandle, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height);
+                    WindowActionManager.MoveWindow(panelConfig.PanelHandle, panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height);
+                });
+            });
+        }
+
+        private void HandleOnSwitchWindowOpened(object sender, PanelConfig panelConfig)
+        {
+            Application.Current.Dispatcher.Invoke(async () =>
+            {
+                var switchWindow = new SwitchWindow(panelConfig.Id, panelConfig.Width, panelConfig.Height);
+                switchWindow.Show();
 
                 await Task.Run(() =>
                 {

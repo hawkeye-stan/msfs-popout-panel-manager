@@ -133,7 +133,7 @@ namespace MSFSPopoutPanelManager.Orchestration
             if (!FlightSimData.IsFlightStarted || !FlightSimData.IsInCockpit)
                 return;
             
-            if (DateTime.Now - _lastLodUpdateTime <= TimeSpan.FromSeconds(1))
+            if (DateTime.Now - _lastLodUpdateTime <= TimeSpan.FromSeconds(3))
                 return;
 
             var deltaFps = DynamicLodSimData.Fps - DynamicLodSetting.TargetedFps;
@@ -239,7 +239,7 @@ namespace MSFSPopoutPanelManager.Orchestration
         
         private void SetTlod(int deltaFps)
         {
-            var tlodStep = Math.Max(5, Math.Abs(deltaFps / 2));
+            var tlodStep = Math.Max(10, Math.Abs(deltaFps / 2));
             var newTlod = DynamicLodSimData.Tlod + Math.Sign(deltaFps) * tlodStep;
 
             if (DynamicLodSetting.TlodMinOnGround && DynamicLodSimData.AltAboveGround <= DynamicLodSetting.AltTlodBase)

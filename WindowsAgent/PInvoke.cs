@@ -144,6 +144,9 @@ namespace MSFSPopoutPanelManager.WindowsAgent
         public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
         [DllImport("user32.dll", SetLastError = true)]
+        public static extern void SwitchToThisWindow(IntPtr hWnd, bool turnOn);
+
+        [DllImport("user32.dll", SetLastError = true)]
         public static extern int UnhookWinEvent(IntPtr hWinEventHook);
 
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
@@ -192,6 +195,23 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             DwmGetWindowAttribute(hWnd, (int)DwmWindowAttribute.DWMWA_EXTENDED_FRAME_BOUNDS, out var rect, size);
 
             return new Rectangle(rect.Left, rect.Top, rect.Right - rect.Left, rect.Bottom - rect.Top);
+        }
+
+        public static IntPtr GetWindowHandle(string windowCaption)
+        {
+            IntPtr windowHandle = IntPtr.Zero;
+
+            EnumWindows((hwnd, _) =>
+            {
+                var caption = GetWindowText(hwnd);
+
+                if (caption == windowCaption)
+                    windowHandle = hwnd;
+
+                return true;
+            }, 0);
+
+            return windowHandle;
         }
     }
 

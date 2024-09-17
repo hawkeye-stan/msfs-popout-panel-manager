@@ -50,6 +50,7 @@ namespace MSFSPopoutPanelManager.Orchestration
         public event EventHandler OnPopOutCompleted;
         public event EventHandler<PanelConfig> OnHudBarOpened;
         public event EventHandler<PanelConfig> OnNumPadOpened;
+        public event EventHandler<PanelConfig> OnSwitchWindowOpened;
 
         public async Task ManualPopOut()
         {
@@ -122,7 +123,9 @@ namespace MSFSPopoutPanelManager.Orchestration
             StepAddHudBar();
 
             StepAddNumPad();
-            
+
+            StepAddSwitchWindow();
+
             SetupRefocusDisplay();
 
             StepApplyPanelConfig();
@@ -387,6 +390,18 @@ namespace MSFSPopoutPanelManager.Orchestration
             {
                 var panelConfig = ActiveProfile.PanelConfigs.FirstOrDefault(p => p.PanelType == PanelType.NumPadWindow);
                 OnNumPadOpened?.Invoke(this, panelConfig);
+            });
+        }
+
+        private void StepAddSwitchWindow()
+        {
+            if (!ActiveProfile.ProfileSetting.SwitchWindowConfig.IsEnabled)
+                return;
+
+            WorkflowStepWithMessage.Execute("Opening Switch Window", () =>
+            {
+                var panelConfig = ActiveProfile.PanelConfigs.FirstOrDefault(p => p.PanelType == PanelType.SwitchWindow);
+                OnSwitchWindowOpened?.Invoke(this, panelConfig);
             });
         }
 

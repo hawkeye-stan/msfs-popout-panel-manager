@@ -12,6 +12,7 @@
         StatusMessageWindow = 7,
         RefocusDisplay = 8,
         NumPadWindow = 9,
+        SwitchWindow = 20,
         Unknown = 100
     }
 }

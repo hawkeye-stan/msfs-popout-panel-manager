@@ -181,6 +181,9 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                 
                 if (caption.IndexOf("Virtual NumPad", StringComparison.Ordinal) > -1)
                     return PanelType.NumPadWindow;
+
+                if (caption.IndexOf("Switch Window", StringComparison.Ordinal) > -1)
+                    return PanelType.SwitchWindow;
                 
                 return PanelType.PopOutManager;
             }
@@ -194,7 +197,7 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             {
                 var panelType = GetWindowPanelType(hwnd);
 
-                if (panelType == PanelType.CustomPopout || panelType == PanelType.HudBarWindow || panelType == PanelType.NumPadWindow)
+                if (panelType == PanelType.CustomPopout || panelType == PanelType.HudBarWindow || panelType == PanelType.NumPadWindow || panelType == PanelType.SwitchWindow)
                     CloseWindow(hwnd);
 
                 return true;

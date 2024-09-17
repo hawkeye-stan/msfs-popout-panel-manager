@@ -23,6 +23,12 @@ namespace MSFSPopoutPanelManager.MainApp.AppUserControl
 
             _viewModel = App.AppHost.Services.GetRequiredService<ProfileCardViewModel>();
             Loaded += (_, _) => { DataContext = _viewModel; };
+
+#if LOCAL
+            this.wrapPanelSwitchWindow.Visibility = Visibility.Visible;
+#else
+            this.wrapPanelSwitchWindow.Visibility = Visibility.Collapsed;
+#endif
         }
 
         private void ToggleButtonEditProfileTitle_Click(object sender, RoutedEventArgs e)
@@ -46,22 +52,27 @@ namespace MSFSPopoutPanelManager.MainApp.AppUserControl
 
         private void IncludeInGamePanel_TargetUpdated(object sender, DataTransferEventArgs e)
         {
-            _viewModel.IncludeInGamePanelUpdatedCommand.Execute(null);
+            _viewModel.IncludeInGamePanelUpdatedCommand?.Execute(null);
         }
 
         private void AddHudBar_TargetUpdated(object sender, DataTransferEventArgs e)
         {
-            _viewModel.AddHudBarUpdatedCommand.Execute(null);
+            _viewModel.AddHudBarUpdatedCommand?.Execute(null);
         }
 
         private void AddRefocusDisplay_TargetUpdated(object sender, DataTransferEventArgs e)
         {
-            _viewModel.RefocusDisplayUpdatedCommand.Execute(null);
+            _viewModel.RefocusDisplayUpdatedCommand?.Execute(null);
         }
 
         private void AddNumPad_TargetUpdated(object sender, DataTransferEventArgs e)
         {
-            _viewModel.AddNumPadUpdatedCommand.Execute(null);
+            _viewModel.AddNumPadUpdatedCommand?.Execute(null);
+        }
+
+        private void AddSwitchWindow_TargetUpdated(object sender, DataTransferEventArgs e)
+        {
+            _viewModel.AddSwitchWindowUpdatedCommand?.Execute(null);
         }
     }
 

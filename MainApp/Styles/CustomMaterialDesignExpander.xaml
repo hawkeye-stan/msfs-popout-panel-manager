@@ -25,7 +25,7 @@
                             Kind="ChevronDown"
                             Opacity="0.5"
                             RenderTransformOrigin="0.5 0.5"
-                            Visibility="{c:Binding '!DataItem.IsHudBarWindow and !DataItem.IsRefocusDisplay and !DataItem.IsNumPadWindow and !ActiveProfile.IsEditingPanelSource'}">
+                            Visibility="{c:Binding '!DataItem.IsHudBarWindow and !DataItem.IsRefocusDisplay and !DataItem.IsNumPadWindow and !DataItem.IsSwitchWindow and !ActiveProfile.IsEditingPanelSource'}">
                             <wpf:PackIcon.RenderTransform>
                                 <RotateTransform x:Name="ExpandPathRotateTransform" />
                             </wpf:PackIcon.RenderTransform>

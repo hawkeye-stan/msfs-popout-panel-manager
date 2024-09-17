@@ -41,6 +41,8 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
 
         public ICommand AddNumPadUpdatedCommand { get; }
 
+        public ICommand AddSwitchWindowUpdatedCommand { get; }
+
         public ICommand RefocusDisplayRefreshedCommand { get; }
 
         public DelegateCommand<string> RefocusDisplaySelectionUpdatedCommand { get; }
@@ -100,7 +102,9 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
             AddHudBarUpdatedCommand = new DelegateCommand(OnAddHudBarUpdated);
 
             AddNumPadUpdatedCommand = new DelegateCommand(OnAddNumPadUpdated);
-
+#if LOCAL
+            AddSwitchWindowUpdatedCommand = new DelegateCommand(OnAddSwitchWindowUpdated);
+#endif
             RefocusDisplayUpdatedCommand = new DelegateCommand(OnRefocusDisplayUpdated);
 
             RefocusDisplayRefreshedCommand = new DelegateCommand(OnRefocusDisplayRefreshed);
@@ -237,6 +241,35 @@ namespace MSFSPopoutPanelManager.MainApp.ViewModel
             {
                 ActiveProfile.PanelConfigs.RemoveAll(p => p.PanelType == PanelType.NumPadWindow);
             }
+        }
+
+        private void OnAddSwitchWindowUpdated()
+        {
+            if (ActiveProfile == null)
+                return;
+
+
+            if (ActiveProfile.ProfileSetting.SwitchWindowConfig.IsEnabled)
+            {
+                if (ActiveProfile.PanelConfigs.Any(p => p.PanelType == PanelType.SwitchWindow))
+                    return;
+
+                ActiveProfile.PanelConfigs.Add(new PanelConfig
+                {
+                    PanelName = "Switch Window",
+                    PanelType = PanelType.SwitchWindow,
+                    Left = 0,
+                    Top = 0,
+                    Width = 0,
+                    Height = 0,
+                    AutoGameRefocus = false
+                });
+            }
+            else
+            {
+                ActiveProfile.PanelConfigs.RemoveAll(p => p.PanelType == PanelType.SwitchWindow);
+            }
+
         }
 
         private void OnRefocusDisplayUpdated()
