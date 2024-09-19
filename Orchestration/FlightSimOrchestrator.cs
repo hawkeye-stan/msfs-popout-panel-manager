@@ -72,6 +72,10 @@ namespace MSFSPopoutPanelManager.Orchestration
                 MapHudBarSimConnectData(e);
             };
 
+            var _lastDynamicLodPause = DateTime.Now;
+            var _isDynamicLodPausePrevously = true;
+            var _lastDyanmicLodUpdatedTime = DateTime.Now;
+
             _simConnectProvider.OnSimConnectDataDynamicLodRefreshed += (_, e) =>
             {
                 if (!AppSettingData.ApplicationSetting.DynamicLodSetting.IsEnabled || !FlightSimData.IsFlightStarted)
@@ -80,9 +84,25 @@ namespace MSFSPopoutPanelManager.Orchestration
                 var isPaused = (AppSettingData.ApplicationSetting.DynamicLodSetting.PauseWhenMsfsLoseFocus && !WindowActionManager.IsMsfsInFocus()) ||
                                (AppSettingData.ApplicationSetting.DynamicLodSetting.PauseOutsideCockpitView && FlightSimData.CameraState != CameraState.Cockpit);
 
-                if (isPaused)
+                if (_isDynamicLodPausePrevously && !isPaused)
+                {
+                    if (DateTime.Now - _lastDynamicLodPause <= TimeSpan.FromSeconds(3))
+                        return;
+                    
+                    _lastDynamicLodPause = DateTime.Now;
+                    _isDynamicLodPausePrevously = false;
+                }
+                else if (isPaused)
+                {
+                    _isDynamicLodPausePrevously = true;
                     return;
-
+                }
+                
+                if (DateTime.Now - _lastDyanmicLodUpdatedTime <= TimeSpan.FromSeconds(0.4))     // take FPS sample every 0.4 seconds
+                    return;
+                
+                _lastDyanmicLodUpdatedTime = DateTime.Now;
+            
                 MapDynamicLodSimConnectData(e);
                 _dynamicLodOrchestrator.UpdateLod();
             };

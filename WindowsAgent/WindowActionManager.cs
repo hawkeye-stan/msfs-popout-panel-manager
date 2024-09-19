@@ -49,6 +49,8 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             if (panelType == PanelType.PopOutManager)
             {
                 OnPopOutManagerAlwaysOnTopChanged?.Invoke(null, alwaysOnTop);
+                if(alwaysOnTop)
+                    PInvoke.SetWindowPos(hwnd, new IntPtr(PInvokeConstant.HWND_TOPMOST), 0, 0, 0, 0, PInvokeConstant.SWP_ALWAYS_ON_TOP);
                 return;
             }
 

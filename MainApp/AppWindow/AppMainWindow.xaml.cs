@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Interop;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,11 +28,6 @@ namespace MSFSPopoutPanelManager.MainApp.AppWindow
             WindowActionManager.OnPopOutManagerAlwaysOnTopChanged += (_, e) => { Topmost = e; };
             MouseLeftButtonDown += (_, _) => DragMove();
 
-            GotFocus += (_, _) =>
-            {
-                if (_viewModel.AppSettingData.ApplicationSetting.GeneralSetting.AlwaysOnTop)
-                    WindowActionManager.ApplyAlwaysOnTop(_viewModel.ApplicationHandle, PanelType.PopOutManager, true);
-            };
         }
 
         private void AppWindow_Loaded(object sender, RoutedEventArgs e)

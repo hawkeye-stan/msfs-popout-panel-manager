@@ -429,14 +429,14 @@ namespace MSFSPopoutPanelManager.Orchestration
                 ApplyPanelConfig(panelConfig);
 
                 // Set title bar color
-                if (AppSettingData.ApplicationSetting.PopOutSetting.PopOutTitleBarCustomization.IsEnabled && !panelConfig.FullScreen)
-                {
-                    WindowActionManager.SetWindowTitleBarColor(panelConfig.PanelHandle, AppSettingData.ApplicationSetting.PopOutSetting.PopOutTitleBarCustomization.HexColor);
-                }
+                //if (AppSettingData.ApplicationSetting.PopOutSetting.PopOutTitleBarCustomization.IsEnabled && !panelConfig.FullScreen)
+                //{
+                //    WindowActionManager.SetWindowTitleBarColor(panelConfig.PanelHandle, AppSettingData.ApplicationSetting.PopOutSetting.PopOutTitleBarCustomization.HexColor);
+                //}
             }
 
-            if(ActiveProfile.PanelConfigs.Any(p => p.AlwaysOnTop))
-                WindowActionManager.ApplyAlwaysOnTop(WindowProcessManager.SimulatorProcess.Handle, PanelType.FlightSimMainWindow, true);
+            //if(ActiveProfile.PanelConfigs.Any(p => p.AlwaysOnTop))
+            //    WindowActionManager.ApplyAlwaysOnTop(WindowProcessManager.SimulatorProcess.Handle, PanelType.FlightSimMainWindow, true);
         }
 
         private async Task StepPostPopout()
@@ -534,17 +534,23 @@ namespace MSFSPopoutPanelManager.Orchestration
 
             if (!panel.FullScreen)
             {
-                // Apply always on top
-                if (panel.AlwaysOnTop)
+                // Set title bar color
+                if (AppSettingData.ApplicationSetting.PopOutSetting.PopOutTitleBarCustomization.IsEnabled)
                 {
-                    WindowActionManager.ApplyAlwaysOnTop(panel.PanelHandle, panel.PanelType, panel.AlwaysOnTop);
-                    Thread.Sleep(250);
+                    WindowActionManager.SetWindowTitleBarColor(panel.PanelHandle, AppSettingData.ApplicationSetting.PopOutSetting.PopOutTitleBarCustomization.HexColor);
                 }
 
                 // Apply hide title bar
                 if (panel.HideTitlebar)
                 {
                     WindowActionManager.ApplyHidePanelTitleBar(panel.PanelHandle, true);
+                    Thread.Sleep(250);
+                }
+
+                // Apply always on top (must apply this last)
+                if (panel.AlwaysOnTop)
+                {
+                    WindowActionManager.ApplyAlwaysOnTop(panel.PanelHandle, panel.PanelType, panel.AlwaysOnTop);
                     Thread.Sleep(250);
                 }
             }

@@ -5,10 +5,11 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
 {
     public class FpsCalc
     {
-        private const int FPS_LEN = 20;     
+        private const int FPS_LEN = 5;     
         private static readonly float[] FpsStatistic = new float[FPS_LEN];
         private static int _fpsIndex = -1;
         private static int _avgFps;
+        private static int _ignoreFpsSpikeCount = 0;
 
         public static int GetAverageFps(int newValue)
         {
@@ -23,6 +24,16 @@ namespace MSFSPopoutPanelManager.SimConnectAgent
             }
             else
             {
+                var isSpike = Math.Abs(newValue - _avgFps) / (_avgFps * 1.0) > 0.1;
+
+                if (_ignoreFpsSpikeCount != 3 && isSpike) // if new FPS spikes more than 10%, ignore the value
+                {
+                    _ignoreFpsSpikeCount++;
+                    return _avgFps;
+                }
+
+                _ignoreFpsSpikeCount = 0;
+
                 var deltaFps = newValue - _avgFps;
 
                 if (deltaFps < 0 && Math.Abs(deltaFps) > _avgFps * 0.1)     // FPS suddenly drops more than 10%
