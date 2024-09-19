@@ -427,16 +427,7 @@ namespace MSFSPopoutPanelManager.Orchestration
             foreach (var panelConfig in ActiveProfile.PanelConfigs)
             {
                 ApplyPanelConfig(panelConfig);
-
-                // Set title bar color
-                //if (AppSettingData.ApplicationSetting.PopOutSetting.PopOutTitleBarCustomization.IsEnabled && !panelConfig.FullScreen)
-                //{
-                //    WindowActionManager.SetWindowTitleBarColor(panelConfig.PanelHandle, AppSettingData.ApplicationSetting.PopOutSetting.PopOutTitleBarCustomization.HexColor);
-                //}
             }
-
-            //if(ActiveProfile.PanelConfigs.Any(p => p.AlwaysOnTop))
-            //    WindowActionManager.ApplyAlwaysOnTop(WindowProcessManager.SimulatorProcess.Handle, PanelType.FlightSimMainWindow, true);
         }
 
         private async Task StepPostPopout()
