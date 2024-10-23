@@ -193,6 +193,23 @@ namespace MSFSPopoutPanelManager.WindowsAgent
 
             return new Rectangle(rect.Left, rect.Top, rect.Right - rect.Left, rect.Bottom - rect.Top);
         }
+
+        public static IntPtr GetWindowHandle(string windowCaption)
+        {
+            IntPtr windowHandle = IntPtr.Zero;
+
+            EnumWindows((hwnd, _) =>
+            {
+                var caption = GetWindowText(hwnd);
+
+                if (caption == windowCaption)
+                    windowHandle = hwnd;
+
+                return true;
+            }, 0);
+
+            return windowHandle;
+        }
     }
 
     public struct RECT

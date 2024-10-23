@@ -8,7 +8,7 @@ namespace MSFSPopoutPanelManager.DomainModel.Profile
     {
         public FloatingPanel()
         {
-            PropertyChanged += FloatingPanel_PropertyChanged; ;
+            PropertyChanged += FloatingPanel_PropertyChanged;
         }
 
         private void FloatingPanel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

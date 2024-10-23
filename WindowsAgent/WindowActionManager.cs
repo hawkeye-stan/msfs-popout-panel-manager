@@ -49,6 +49,8 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             if (panelType == PanelType.PopOutManager)
             {
                 OnPopOutManagerAlwaysOnTopChanged?.Invoke(null, alwaysOnTop);
+                if(alwaysOnTop)
+                    PInvoke.SetWindowPos(hwnd, new IntPtr(PInvokeConstant.HWND_TOPMOST), 0, 0, 0, 0, PInvokeConstant.SWP_ALWAYS_ON_TOP);
                 return;
             }
 
@@ -308,6 +310,23 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                 return false;
 
             return text.Substring(0, 26).Equals("Microsoft Flight Simulator", StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        public static void SetHostMonitor(PanelConfig panelConfig)
+        {
+            foreach (var screen in System.Windows.Forms.Screen.AllScreens)
+            {
+                if (screen.Bounds.IntersectsWith(new Rectangle(panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height)))
+                    panelConfig.FullScreenMonitorInfo =
+                        new MonitorInfo
+                        {
+                            Name = screen.DeviceName.Substring(screen.DeviceName.LastIndexOf("\\", StringComparison.Ordinal) + 1),
+                            X = screen.Bounds.X,
+                            Y = screen.Bounds.Y,
+                            Width = screen.Bounds.Width,
+                            Height = screen.Bounds.Height
+                        };
+            }
         }
     }
 }

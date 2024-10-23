@@ -256,6 +256,7 @@
                                 <TextBlock Style="{StaticResource TxtBlockDisableWhenLocked}" ToolTip="Add in-game menu bar panels such as VFR Map, Checklist, ATC, etc. to profile to enable panel size and location management and touch support">Include in-game menu bar panels for pop out management and touch screen support</TextBlock>
                             </WrapPanel>
 
+
                             <WrapPanel Margin="0,8,0,0">
                                 <ToggleButton
                                     IsChecked="{Binding ActiveProfile.ProfileSetting.NumPadConfig.IsEnabled, Mode=TwoWay, NotifyOnTargetUpdated=True}"

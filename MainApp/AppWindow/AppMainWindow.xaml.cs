@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Interop;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,6 +27,7 @@ namespace MSFSPopoutPanelManager.MainApp.AppWindow
             StateChanged += AppWindow_StateChanged;
             WindowActionManager.OnPopOutManagerAlwaysOnTopChanged += (_, e) => { Topmost = e; };
             MouseLeftButtonDown += (_, _) => DragMove();
+
         }
 
         private void AppWindow_Loaded(object sender, RoutedEventArgs e)

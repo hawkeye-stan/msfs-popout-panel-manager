@@ -122,7 +122,7 @@ namespace MSFSPopoutPanelManager.Orchestration
             StepAddHudBar();
 
             StepAddNumPad();
-            
+
             SetupRefocusDisplay();
 
             StepApplyPanelConfig();
@@ -412,12 +412,6 @@ namespace MSFSPopoutPanelManager.Orchestration
             foreach (var panelConfig in ActiveProfile.PanelConfigs)
             {
                 ApplyPanelConfig(panelConfig);
-
-                // Set title bar color
-                if (AppSettingData.ApplicationSetting.PopOutSetting.PopOutTitleBarCustomization.IsEnabled && !panelConfig.FullScreen)
-                {
-                    WindowActionManager.SetWindowTitleBarColor(panelConfig.PanelHandle, AppSettingData.ApplicationSetting.PopOutSetting.PopOutTitleBarCustomization.HexColor);
-                }
             }
         }
 
@@ -516,17 +510,23 @@ namespace MSFSPopoutPanelManager.Orchestration
 
             if (!panel.FullScreen)
             {
-                // Apply always on top
-                if (panel.AlwaysOnTop)
+                // Set title bar color
+                if (AppSettingData.ApplicationSetting.PopOutSetting.PopOutTitleBarCustomization.IsEnabled)
                 {
-                    WindowActionManager.ApplyAlwaysOnTop(panel.PanelHandle, panel.PanelType, panel.AlwaysOnTop);
-                    Thread.Sleep(250);
+                    WindowActionManager.SetWindowTitleBarColor(panel.PanelHandle, AppSettingData.ApplicationSetting.PopOutSetting.PopOutTitleBarCustomization.HexColor);
                 }
 
                 // Apply hide title bar
                 if (panel.HideTitlebar)
                 {
                     WindowActionManager.ApplyHidePanelTitleBar(panel.PanelHandle, true);
+                    Thread.Sleep(250);
+                }
+
+                // Apply always on top (must apply this last)
+                if (panel.AlwaysOnTop)
+                {
+                    WindowActionManager.ApplyAlwaysOnTop(panel.PanelHandle, panel.PanelType, panel.AlwaysOnTop);
                     Thread.Sleep(250);
                 }
             }
@@ -536,6 +536,9 @@ namespace MSFSPopoutPanelManager.Orchestration
                 Thread.Sleep(500);
                 InputEmulationManager.ToggleFullScreenPanel(panel.PanelHandle);
                 Thread.Sleep(250);
+
+                if (panel.TouchEnabled)
+                    WindowActionManager.SetHostMonitor(panel);      // Set full screen coordinate for touch
             }
 
             if (panel.FloatingPanel.IsEnabled && panel.FloatingPanel.HasKeyboardBinding && panel.FloatingPanel.IsHiddenOnStart)

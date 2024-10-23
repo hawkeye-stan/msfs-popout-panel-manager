@@ -127,5 +127,8 @@ namespace MSFSPopoutPanelManager.DomainModel.Profile
                 return $"Left: {PanelSource.X} / Top: {PanelSource.Y}";
             }
         }
+
+        [JsonIgnore]
+        public MonitorInfo FullScreenMonitorInfo { get; set; }
     }
 }
