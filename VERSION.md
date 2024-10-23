@@ -1,6 +1,15 @@
 # Version History
 <hr/>
 
+## Version 4.1.2
+
+* Added touch support for pop out when in full screen mode.
+
+* Fixed pop out always on top issue where it sometimes does not work.
+
+* Improved dynamic LOD FPS detection and logic.
+
+
 ## Version 4.1.1
 
 * Added option to store POPM profiles and configuration files in your user's AppData Roaming folder instead of Documents folder. Hopefully, this solved the issue where OneDrive users are having issue with POPM files.
