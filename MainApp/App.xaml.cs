@@ -82,7 +82,6 @@ namespace MSFSPopoutPanelManager.MainApp
                         services.AddTransient(s => new MessageWindowViewModel(SharedStorage, s.GetRequiredService<PanelSourceOrchestrator>(), s.GetRequiredService<PanelPopOutOrchestrator>()));
                         services.AddTransient(s => new HudBarViewModel(SharedStorage, s.GetRequiredService<FlightSimOrchestrator>()));
                         services.AddTransient(_ => new NumPadViewModel(SharedStorage));
-                        services.AddTransient(_ => new SwitchWindowViewModel(SharedStorage));
 
                     }).Build();
 

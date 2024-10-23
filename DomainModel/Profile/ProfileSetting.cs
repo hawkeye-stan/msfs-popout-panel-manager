@@ -18,7 +18,5 @@ namespace MSFSPopoutPanelManager.DomainModel.Profile
         public RefocusOnDisplay RefocusOnDisplay { get; set; } = new();
 
         public NumPadConfig NumPadConfig { get; set; } = new();
-
-        public SwitchWindowConfig SwitchWindowConfig { get; set; } = new();
     }
 }

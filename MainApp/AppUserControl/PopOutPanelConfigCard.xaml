@@ -224,7 +224,7 @@
                             x:Name="StackPanelAdjustment"
                             Width="440"
                             Orientation="Horizontal"
-                            Visibility="{c:Binding 'DataItem.IsBuiltInPopOut or DataItem.IsHudBarWindow or DataItem.IsNumPadWindow or DataItem.IsSwitchWindow or (DataItem.IsCustomPopOut and DataItem.PanelSource.X != null)'}">
+                            Visibility="{c:Binding 'DataItem.IsBuiltInPopOut or DataItem.IsHudBarWindow or DataItem.IsNumPadWindow or (DataItem.IsCustomPopOut and DataItem.PanelSource.X != null)'}">
                             <popOutPanelCard:PanelConfigField
                                 Margin="20,0,0,0"
                                 BindingPath="Top"

@@ -183,9 +183,6 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                 
                 if (caption.IndexOf("Virtual NumPad", StringComparison.Ordinal) > -1)
                     return PanelType.NumPadWindow;
-
-                if (caption.IndexOf("Switch Window", StringComparison.Ordinal) > -1)
-                    return PanelType.SwitchWindow;
                 
                 return PanelType.PopOutManager;
             }
@@ -199,7 +196,7 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             {
                 var panelType = GetWindowPanelType(hwnd);
 
-                if (panelType == PanelType.CustomPopout || panelType == PanelType.HudBarWindow || panelType == PanelType.NumPadWindow || panelType == PanelType.SwitchWindow)
+                if (panelType == PanelType.CustomPopout || panelType == PanelType.HudBarWindow || panelType == PanelType.NumPadWindow)
                     CloseWindow(hwnd);
 
                 return true;
@@ -313,6 +310,23 @@ namespace MSFSPopoutPanelManager.WindowsAgent
                 return false;
 
             return text.Substring(0, 26).Equals("Microsoft Flight Simulator", StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        public static void SetHostMonitor(PanelConfig panelConfig)
+        {
+            foreach (var screen in System.Windows.Forms.Screen.AllScreens)
+            {
+                if (screen.Bounds.IntersectsWith(new Rectangle(panelConfig.Left, panelConfig.Top, panelConfig.Width, panelConfig.Height)))
+                    panelConfig.FullScreenMonitorInfo =
+                        new MonitorInfo
+                        {
+                            Name = screen.DeviceName.Substring(screen.DeviceName.LastIndexOf("\\", StringComparison.Ordinal) + 1),
+                            X = screen.Bounds.X,
+                            Y = screen.Bounds.Y,
+                            Width = screen.Bounds.Width,
+                            Height = screen.Bounds.Height
+                        };
+            }
         }
     }
 }

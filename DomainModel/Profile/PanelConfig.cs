@@ -94,11 +94,11 @@ namespace MSFSPopoutPanelManager.DomainModel.Profile
 
         [JsonIgnore]
         public bool IsDeletablePanel => PanelType != PanelType.HudBarWindow && PanelType != PanelType.RefocusDisplay &&
-                                        PanelType != PanelType.NumPadWindow && PanelType != PanelType.SwitchWindow;
+                                        PanelType != PanelType.NumPadWindow;
 
         [JsonIgnore]
         public bool IsTouchEnablePanel => PanelType != PanelType.HudBarWindow && PanelType != PanelType.RefocusDisplay &&
-                                        PanelType != PanelType.NumPadWindow && PanelType != PanelType.SwitchWindow;
+                                        PanelType != PanelType.NumPadWindow;
 
         [JsonIgnore]
         public bool IsCustomPopOut => PanelType == PanelType.CustomPopout;
@@ -117,9 +117,6 @@ namespace MSFSPopoutPanelManager.DomainModel.Profile
         public bool IsNumPadWindow => PanelType == PanelType.NumPadWindow;
 
         [JsonIgnore]
-        public bool IsSwitchWindow => PanelType == PanelType.SwitchWindow;
-
-        [JsonIgnore]
         public string PanelSourceCoordinateText
         {
             get
@@ -130,5 +127,8 @@ namespace MSFSPopoutPanelManager.DomainModel.Profile
                 return $"Left: {PanelSource.X} / Top: {PanelSource.Y}";
             }
         }
+
+        [JsonIgnore]
+        public MonitorInfo FullScreenMonitorInfo { get; set; }
     }
 }

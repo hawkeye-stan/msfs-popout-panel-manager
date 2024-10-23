@@ -92,10 +92,8 @@ namespace MSFSPopoutPanelManager.WindowsAgent
 
             // If touch point is within pop out panel boundaries and have touch enabled
             var panelConfig = ActiveProfile.PanelConfigs.FirstOrDefault(p => p.TouchEnabled &&
-                                                    (info.pt.X > p.Left
-                                                    && info.pt.X < p.Left + p.Width
-                                                    && info.pt.Y > p.Top + (p.HideTitlebar ? 5 : PANEL_MENUBAR_HEIGHT)
-                                                    && info.pt.Y < p.Top + p.Height));
+                                                                             ((p.FullScreen && CheckWithinFullScreenCoordinate(p, info)) || CheckWithinWindowCoordinate(p, info)));
+
 
             if (panelConfig == null)
                 return PInvoke.CallNextHookEx(_hHook, code, wParam, lParam);
@@ -217,6 +215,22 @@ namespace MSFSPopoutPanelManager.WindowsAgent
             }
 
             return PInvoke.CallNextHookEx(_hHook, code, wParam, lParam);
+        }
+
+        private static bool CheckWithinWindowCoordinate(PanelConfig panelConfig, MSLLHOOKSTRUCT coor)
+        {
+            return coor.pt.X > panelConfig.Left
+                   && coor.pt.X < panelConfig.Left + panelConfig.Width
+                   && coor.pt.Y > panelConfig.Top + (panelConfig.HideTitlebar ? 5 : PANEL_MENUBAR_HEIGHT)
+                   && coor.pt.Y < panelConfig.Top + panelConfig.Height;
+        }
+
+        private static bool CheckWithinFullScreenCoordinate(PanelConfig panelConfig, MSLLHOOKSTRUCT coor)
+        {
+            return coor.pt.X > panelConfig.FullScreenMonitorInfo.X
+                   && coor.pt.X < panelConfig.FullScreenMonitorInfo.X + panelConfig.FullScreenMonitorInfo.Width
+                   && coor.pt.Y > panelConfig.FullScreenMonitorInfo.Y
+                   && coor.pt.Y < panelConfig.FullScreenMonitorInfo.Y + panelConfig.FullScreenMonitorInfo.Height;
         }
     }
 }

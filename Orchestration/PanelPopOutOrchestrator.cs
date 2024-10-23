@@ -50,7 +50,6 @@ namespace MSFSPopoutPanelManager.Orchestration
         public event EventHandler OnPopOutCompleted;
         public event EventHandler<PanelConfig> OnHudBarOpened;
         public event EventHandler<PanelConfig> OnNumPadOpened;
-        public event EventHandler<PanelConfig> OnSwitchWindowOpened;
 
         public async Task ManualPopOut()
         {
@@ -123,8 +122,6 @@ namespace MSFSPopoutPanelManager.Orchestration
             StepAddHudBar();
 
             StepAddNumPad();
-
-            StepAddSwitchWindow();
 
             SetupRefocusDisplay();
 
@@ -393,18 +390,6 @@ namespace MSFSPopoutPanelManager.Orchestration
             });
         }
 
-        private void StepAddSwitchWindow()
-        {
-            if (!ActiveProfile.ProfileSetting.SwitchWindowConfig.IsEnabled)
-                return;
-
-            WorkflowStepWithMessage.Execute("Opening Switch Window", () =>
-            {
-                var panelConfig = ActiveProfile.PanelConfigs.FirstOrDefault(p => p.PanelType == PanelType.SwitchWindow);
-                OnSwitchWindowOpened?.Invoke(this, panelConfig);
-            });
-        }
-
         public void SetupRefocusDisplay()
         {
             if (!ActiveProfile.ProfileSetting.RefocusOnDisplay.IsEnabled)
@@ -551,6 +536,9 @@ namespace MSFSPopoutPanelManager.Orchestration
                 Thread.Sleep(500);
                 InputEmulationManager.ToggleFullScreenPanel(panel.PanelHandle);
                 Thread.Sleep(250);
+
+                if (panel.TouchEnabled)
+                    WindowActionManager.SetHostMonitor(panel);      // Set full screen coordinate for touch
             }
 
             if (panel.FloatingPanel.IsEnabled && panel.FloatingPanel.HasKeyboardBinding && panel.FloatingPanel.IsHiddenOnStart)

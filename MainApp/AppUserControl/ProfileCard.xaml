@@ -267,16 +267,6 @@
                                 <TextBlock Style="{StaticResource TxtBlockDisableWhenLocked}" ToolTip="Add a virtual keyboard NumPad to the game that has MSFS focused before sending key command">Add a virtual keyboard NumPad</TextBlock>
                             </WrapPanel>
 
-                            <WrapPanel Name="WrapPanelSwitchWindow" Margin="0,8,0,0">
-                                <ToggleButton
-                                    IsChecked="{Binding ActiveProfile.ProfileSetting.SwitchWindowConfig.IsEnabled, Mode=TwoWay, NotifyOnTargetUpdated=True}"
-                                    IsHitTestVisible="{c:Binding '!ActiveProfile.IsLocked',
-                                                                 Mode=OneWay}"
-                                    Style="{StaticResource ToggleButton}"
-                                    TargetUpdated="AddSwitchWindow_TargetUpdated" />
-                                <TextBlock Style="{StaticResource TxtBlockDisableWhenLocked}" ToolTip="Add a switch window command bar to the game">Add a switch window command bar</TextBlock>
-                            </WrapPanel>
-
                             <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
                                 <WrapPanel>
                                     <ToggleButton
